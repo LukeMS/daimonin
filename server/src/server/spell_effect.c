@@ -3065,13 +3065,13 @@ int summon_avatar(object *op, object *caster, int dir, archetype *at, int spelln
     char    buf[MEDIUM_BUF];
     object *god = find_god(determine_god(caster));
 
-    if (god)
-        at = determine_holy_arch(god, (spellnum == SP_HOLY_SERVANT) ? "holy servant" : "avatar");
-    else
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "You must worship a god first.");
-        return 0;
-    }
+//    if (god)
+//        at = determine_holy_arch(god, (spellnum == SP_HOLY_SERVANT) ? "holy servant" : "avatar");
+//    else
+//    {
+//        new_draw_info(NDI_UNIQUE, 0, op, "You must worship a god first.");
+//        return 0;
+//    }
     if (!at)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "%s has no %s for you to call.", god->name,

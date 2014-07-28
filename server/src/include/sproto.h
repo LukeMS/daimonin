@@ -26,18 +26,42 @@
 #ifndef __SPROTO_H
 #define __SPROTO_H
 
-/* alchemy.c */
-char                       *cauldron_sound(void);
-void                        attempt_do_alchemy(object *caster, object *cauldron);
-int                         content_recipe_value(object *op);
-int                         numb_ob_inside(object *op);
-object                     *attempt_recipe(object *caster, object *cauldron, int ability, recipe *rp, int nbatches);
-void                        adjust_product(object *item, int lvl, int yield);
-object                     *make_item_from_recipe(object *cauldron, recipe *rp);
-object                     *find_transmution_ob(object *first_ingred, recipe *rp);
-void                        alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int danger);
-void                        remove_contents(object *first_ob, object *save_item);
-int                         calc_alch_danger(object *caster, object *cauldron);
+/* TODO: Reference only. Will be removed. */
+#if 0
+///* alchemy.c */
+//char                       *cauldron_sound(void);
+//void                        attempt_do_alchemy(object *caster, object *cauldron);
+//int                         content_recipe_value(object *op);
+//int                         numb_ob_inside(object *op);
+//object                     *attempt_recipe(object *caster, object *cauldron, int ability, recipe *rp, int nbatches);
+//void                        adjust_product(object *item, int lvl, int yield);
+//object                     *make_item_from_recipe(object *cauldron, recipe *rp);
+//object                     *find_transmution_ob(object *first_ingred, recipe *rp);
+//void                        alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int danger);
+//void                        remove_contents(object *first_ob, object *save_item);
+//int                         calc_alch_danger(object *caster, object *cauldron);
+///* gods.c */
+//int                         worship_forbids_use(object *op, object *skillgroup, uint32 flag, char *string);
+//void                        stop_using_item(object *op, int type, int number);
+//void                        update_priest_flag(object *god, object *skillgroup, uint32 flag);
+//archetype                  *determine_holy_arch(object *god, const char *type);
+//void                        god_intervention(object *op, object *god);
+//int                         god_examines_priest(object *op, object *god);
+//int                         god_examines_item(object *god, object *item);
+//int                         get_god(object *priest);
+//int                         tailor_god_spell(object *spellop, object *caster);
+//void                        lose_priest_exp(object *pl, int loss);
+///* resurrection.c */
+//void                        dead_player(object *op);
+//int                         cast_raise_dead_spell(object *op, int dir, int spell_type, object *corpseobj);
+//int                         resurrection_fails(int levelcaster, int leveldead);
+//int                         resurrect_player(object *op, char *playername, int rspell);
+//void                        dead_character(char *name);
+//int                         dead_player_exists(char *name);
+///* swamp.c */
+//void                        walk_on_deep_swamp(object *op, object *victim);
+//void                        move_deep_swamp(object *op);
+#endif
 /* apply.c */
 int                         check_item(object *op, const char *item);
 void                        eat_item(object *op, const char *item);
@@ -305,20 +329,10 @@ void                        update_gmaster_file(void);
 void                        free_gmaster_list(void);
 /* gods.c */
 int                         lookup_god_by_name(const char *name);
+const char                 *determine_god(object *op);
 object                     *find_god(const char *name);
 void                        pray_at_altar(object *pl, object *altar);
 void                        become_follower(object *op, object *new_god);
-int                         worship_forbids_use(object *op, object *skillgroup, uint32 flag, char *string);
-void                        stop_using_item(object *op, int type, int number);
-void                        update_priest_flag(object *god, object *skillgroup, uint32 flag);
-const char                 *determine_god(object *op);
-archetype                  *determine_holy_arch(object *god, const char *type);
-void                        god_intervention(object *op, object *god);
-int                         god_examines_priest(object *op, object *god);
-int                         god_examines_item(object *god, object *item);
-int                         get_god(object *priest);
-int                         tailor_god_spell(object *spellop, object *caster);
-void                        lose_priest_exp(object *pl, int loss);
 /* init.c */
 char                       *version_string(void);
 void                        init(int argc, char **argv);
@@ -500,14 +514,6 @@ CFParm                     *CFMapSave(CFParm *PParm);
 CFParm                     *CFMapDelete(CFParm *PParm);
 CFParm                     *CFInterface(CFParm *PParm);
 void                        send_plugin_custom_message(object *pl, char *buf);
-
-/* resurrection.c */
-void                        dead_player(object *op);
-int                         cast_raise_dead_spell(object *op, int dir, int spell_type, object *corpseobj);
-int                         resurrection_fails(int levelcaster, int leveldead);
-int                         resurrect_player(object *op, char *playername, int rspell);
-void                        dead_character(char *name);
-int                         dead_player_exists(char *name);
 /* rune.c */
 int                         write_rune(object *op, int dir, int inspell, int level, char *runename);
 void                        rune_attack(object *op, object *victim);
@@ -664,9 +670,6 @@ int                         cast_smite_spell(object *op, object *caster, int dir
 int                         SP_lvl_dam_adjust(int level, int spell_type, int base_dam, int stats_bonus);
 /* stats.c */
 void                        stats_event(stats_event_type type, ...);
-/* swamp.c */
-void                        walk_on_deep_swamp(object *op, object *victim);
-void                        move_deep_swamp(object *op);
 /* time.c */
 object                     *find_key(object *op, object *door);
 int                         open_door(object *op, mapstruct *m, int x, int y, int mode);
