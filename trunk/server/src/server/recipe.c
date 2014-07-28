@@ -22,6 +22,11 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
+
+/* TODO: This will be rewritten/removed. It has no real use ATM but some random
+ * books of recipes may be generated. Useless but nice for collecters.
+ *
+ * -- Smacky 20140517 */
 /* Basic stuff for use with the alchemy code. Clearly some of this stuff
  * could go into server/alchemy, but I left it here just in case it proves
  * more generally useful.
