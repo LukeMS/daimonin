@@ -103,7 +103,7 @@
 
 //#define SEND_BUFFER_DEBUG
 
-#define DEBUG_PROCESS_QUEUE
+//#define DEBUG_PROCESS_QUEUE
 
 /* Active list debugging: object.c/activelist_insert_inline() and
  * object.c/activelist_remove_inline(). */
