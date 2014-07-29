@@ -507,26 +507,6 @@ void remove_force(object *op)
     check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
 }
 
-/* TODO: implement and fix word of recall for instance map patch */
-void execute_wor(object *op)
-{
-/*
-    object *wor = op;
-    while (op != NULL && op->type != PLAYER)
-        op = op->env;
-    if (op != NULL)
-    {
-
-        if (blocks_magic(op->map, op->x, op->y))
-            new_draw_info(NDI_UNIQUE, 0, op, "You feel something fizzle inside you.");
-        else
-            enter_map_by_exit(op, wor);
-    }
-    remove_ob(wor);
-    check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
-*/
-}
-
 void poison_more(object *op)
 {
     object     *tmp;
@@ -1093,12 +1073,14 @@ void move_firewall(object *op)
     cast_spell(op, op, op->direction, op->stats.dam, 1, spellNPC, NULL);
 }
 
-void move_firechest(object *op)
-{
-    if (!op->map)
-        return;   /* dm has created a firechest in his inventory */
-    fire_a_ball(op, random_roll(1, 8), 7);
-}
+#if 0
+//void move_firechest(object *op)
+//{
+//    if (!op->map)
+//        return;   /* dm has created a firechest in his inventory */
+//    fire_a_ball(op, random_roll(1, 8), 7);
+//}
+#endif
 
 
 /*  move_player_mover:  this function takes a "player mover" as an
@@ -1690,30 +1672,15 @@ int process_object(object *op)
           }
           return 0;
 #endif
-          /*
-        case WORD_OF_RECALL:
-          execute_wor(op);
-          return 0;
-          */
         case TYPE_FOOD_FORCE:
           food_force_reg(op);
         return 0;
         case BULLET:
           move_fired_arch(op);
           return 0;
-        case MMISSILE:
-          move_magic_missile(op);
-          return 0;
         case THROWN_OBJ:
         case ARROW:
           move_missile(op);
-          return 0;
-        case FBULLET:
-          move_fired_arch(op);
-          return 0;
-        case FBALL:
-        case POISONCLOUD:
-          explosion(op);
           return 0;
         case LIGHTNING:
           /* It now moves twice as fast */
@@ -1731,28 +1698,12 @@ int process_object(object *op)
         case TELEPORTER:
           move_teleporter(op);
           return 0;
-        case BOMB:
-          animate_bomb(op);
-          return 0;
         case GOLEM:
           move_golem(op);
           return 0;
-          /*
-        case EARTHWALL:
-          damage_ob(op, 2, op, ENV_ATTACK_CHECK);
-          return 0;
-          */
         case FIREWALL:
           move_firewall(op);
           return 0;
-        case FIRECHEST:
-          move_firechest(op);
-          return 0;
-          /*
-        case MOOD_FLOOR:
-          do_mood_floor(op, op);
-          return 0;
-          */
         case GATE:
           move_gate(op);
           return 0;
@@ -1771,20 +1722,6 @@ int process_object(object *op)
         case PIT:
           move_pit(op);
           return 0;
-          /*
-        case DEEP_SWAMP:
-          move_deep_swamp(op);
-          return 0;
-          */
-        case CANCELLATION:
-          move_cancellation(op);
-          return 0;
-        case BALL_LIGHTNING:
-          move_ball_lightning(op);
-          return 0;
-        case SWARM_SPELL:
-          move_swarm_spell(op);
-          return 0;
         case PLAYERMOVER:
           move_player_mover(op);
           return 0;
@@ -1794,20 +1731,57 @@ int process_object(object *op)
         case MARKER:
           move_marker(op);
           return 0;
-          /*
-        case AURA:
-          move_aura(op);
-          return 0;
-        case PEACEMAKER:
-          move_peacemaker(op);
-          return 0;
-          */
         case TYPE_TIMER:
           move_timer(op);
           return 0;
         case TYPE_ENV_SENSOR:
           move_environment_sensor(op);
           return 0;
+#if 0
+//        case FBULLET:
+//          move_fired_arch(op);
+//          return 0;
+//        case MMISSILE:
+//          move_magic_missile(op);
+//          return 0;
+//        case FIRECHEST:
+//          move_firechest(op);
+//          return 0;
+//        case WORD_OF_RECALL:
+//          execute_wor(op);
+//          return 0;
+//        case FBALL:
+//        case POISONCLOUD:
+//          explosion(op);
+//          return 0;
+//        case BOMB:
+//          animate_bomb(op);
+//          return 0;
+//        case EARTHWALL:
+//          damage_ob(op, 2, op, ENV_ATTACK_CHECK);
+//          return 0;
+//        case MOOD_FLOOR:
+//          do_mood_floor(op, op);
+//          return 0;
+//        case DEEP_SWAMP:
+//          move_deep_swamp(op);
+//          return 0;
+//        case CANCELLATION:
+//          move_cancellation(op);
+//          return 0;
+//        case BALL_LIGHTNING:
+//          move_ball_lightning(op);
+//          return 0;
+//        case SWARM_SPELL:
+//          move_swarm_spell(op);
+//          return 0;
+//        case AURA:
+//          move_aura(op);
+//          return 0;
+//        case PEACEMAKER:
+//          move_peacemaker(op);
+//          return 0;
+#endif
     }
 
     return 0;
