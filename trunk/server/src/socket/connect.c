@@ -44,27 +44,32 @@
  */
 void InitConnection(NewSocket *ns, char *ip)
 {
-    int oldbufsize;
-    unsigned int buflen  = sizeof(int);
-
+    LOG(llevSystem, "Initializing socket... ");
 #ifdef WIN32 /* ***WIN32 SOCKET: init win32 non blocking socket */
     u_long temp = 1;
 
     if (ioctlsocket(ns->fd, FIONBIO, &temp) == -1)
-        LOG(llevDebug, "InitConnection:  Error on ioctlsocket.\n");
+    {
+        LOG(llevError, "FAILED!\n");
+    }
 #else
-    LOG(llevDebug, "InitConnection:  fcntl(%x %x) %x.\n", O_NDELAY, O_NONBLOCK, fcntl(ns->fd, F_GETFL));
     if (fcntl(ns->fd, F_SETFL, fcntl(ns->fd, F_GETFL) | O_NDELAY | O_NONBLOCK ) == -1)
-        LOG(llevError, "InitConnection:  Error on fcntl %x.\n", fcntl(ns->fd, F_GETFL));
-    LOG(llevDebug, "InitConnection:  fcntl %x.\n", fcntl(ns->fd, F_GETFL));
-#endif /* end win32 */
-
-#ifdef ESRV_DEBUG
-    getsockopt(ns->fd, SOL_SOCKET, SO_SNDBUF, (char *) &oldbufsize, &buflen);
-    LOG(llevDebug, "InitConnection: Socket send buffer size is %d bytes\n", oldbufsize);
-    getsockopt(ns->fd, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen);
-    LOG(llevDebug, "InitConnection: Socket read buffer size is %d bytes\n", oldbufsize);
+    {
+        LOG(llevError, "FAILED!\n");
+    }
 #endif
+    else
+    {
+        int          sndbufsize,
+                     rcvbufsize;
+        unsigned int sndbuflen = sizeof(int),
+                     rcvbuflen = sizeof(int);
+
+        getsockopt(ns->fd, SOL_SOCKET, SO_SNDBUF, (char *) &sndbufsize, &sndbuflen);
+        getsockopt(ns->fd, SOL_SOCKET, SO_RCVBUF, (char *) &rcvbufsize, &rcvbuflen);
+        LOG(llevSystem, "OK (send buffer size is %d bytes, read buffer size is %d bytes)!\n",
+            sndbufsize, rcvbufsize);
+    }
 
     ns->login_count = ROUND_TAG + pticks_socket_idle;
     ns->idle_flag = 0;
@@ -116,17 +121,21 @@ void InitConnection(NewSocket *ns, char *ip)
 
 void close_newsocket(NewSocket *ns)
 {
+    LOG(llevSystem, "Closing socket %d... ", ns->fd);
 #ifdef WIN32
     WSAAsyncSelect(ns->fd, NULL, 0, FD_CLOSE);
     shutdown(ns->fd, SD_SEND);
+
     if (closesocket(ns->fd))
 #else
     if (close(ns->fd))
 #endif
     {
-#ifdef ESRV_DEBUG
-        LOG(llevDebug, "Error closing socket %d\n", ns->fd);
-#endif
+        LOG(llevSystem, "FAILED!\n");
+    }
+    else
+    {
+        LOG(llevSystem, "OK!");
     }
 }
 
@@ -134,7 +143,6 @@ void free_newsocket(NewSocket *ns)
 {
     unsigned char *tmp_read = ns->readbuf.buf;
 
-    LOG(llevDebug, "Closing socket %d\n", ns->fd);
     close_newsocket(ns);
 
     account_clear(&ns->pl_account);
