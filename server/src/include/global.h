@@ -103,7 +103,6 @@
 
 //#define SEND_BUFFER_DEBUG
 
-#define ESRV_DEBUG
 #define DEBUG_PROCESS_QUEUE
 
 /* Active list debugging: object.c/activelist_insert_inline() and
