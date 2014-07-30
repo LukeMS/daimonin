@@ -493,313 +493,314 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
                   STRING_OBJ_NAME(op), STRING_OBJ_NAME(caster), STRING_OBJ_NAME(target));
 
           break;
-
-
-          /*---------- old -------------- */
-
-        case SP_RAGE:
-          {
-              if (tmp->type != PLAYER)
-                  break;
-              /* Str, Dex, Con */
-              cast_change_attr(op, caster, target, dir, SP_HEROISM);
-              /* haste */
-              cast_change_attr(op, caster, target, dir, SP_HASTE);
-              /* armour */
-              cast_change_attr(op, caster, target, dir, SP_ARMOUR);
-              /* regeneration */
-              cast_change_attr(op, caster, target, dir, SP_REGENERATION);
-              /* weapon class */
-              /* ADD POSITIVE WC ADD HERE */
-              force->stats.wc += SP_level_dam_adjust(op, caster, SP_BLESS);
-
-              break;
-          }
-        case SP_DEXTERITY:
-          if (tmp->type != PLAYER)
-              break;
-          if (!(random_roll(0, (MAX(1, (10 - 30 + tmp->stats.Dex))) - 1)))
-          {
-              for (i = 20,force->stats.Dex = 1; i > tmp->stats.Dex; i -= 2)
-                  force->stats.Dex++;
-          }
-          else
-          {
-              new_draw_info(NDI_UNIQUE, 0, op, "You grow no more agile."); force->stats.Dex = 0;
-          }
-
-          break;
-        case SP_CONSTITUTION:
-          if (tmp->type != PLAYER)
-              break;
-          if (!(random_roll(0, (MAX(1, (10 - 30 + tmp->stats.Con))) - 1)))
-          {
-              for (i = 20,force->stats.Con = 1; i > tmp->stats.Con; i -= 2)
-                  force->stats.Con++;
-          }
-          else
-          {
-              new_draw_info(NDI_UNIQUE, 0, op, "You don't feel any healthier."); force->stats.Con = 0;
-          }
-
-          break;
-        case SP_CHARISMA:
-          if (tmp->type != PLAYER)
-              break;
-          if (!(random_roll(0, (MAX(1, (10 - 30 + tmp->stats.Cha))) - 1)))
-          {
-              for (i = 20,force->stats.Cha = 1; i > tmp->stats.Cha; i -= 2)
-                  force->stats.Cha++;
-          }
-          else
-          {
-              new_draw_info(NDI_UNIQUE, 0, op, "You are no easier to look at."); force->stats.Cha = 0;
-          }
-
-          break;
-        case SP_IRONWOOD_SKIN:
-        case SP_ARMOUR:
-          {
-              /* armour MAY be used multiple times. */
-              force->weight_limit = 0;
-              /* With PR code, I wonder if this could get merged in with the other protection spells */
-              /* peterm, modified so that it uses level-depend functions */
-              /* change this to POSITIVE AC!! */
-              force->stats.ac = 2 + SP_level_dam_adjust(op, caster, spell_type);
-              if ((tmp->stats.ac - force->stats.ac) < -20)
-                  force->stats.ac = tmp->stats.ac + 20;
-
-              force->resist[ATNR_IMPACT] = 5 + 4 * SP_level_dam_adjust(op, caster, spell_type);
-              if (force->resist[ATNR_IMPACT] > 25)
-                  force->resist[ATNR_IMPACT] = 25;
-              if (tmp->resist[ATNR_IMPACT] > 70
-               && force->resist[ATNR_IMPACT] > (100 - tmp->resist[ATNR_IMPACT]) / 3)
-                  force->resist[ATNR_IMPACT] = 3;  /* diminishing returns at high armor. */
-              new_draw_info(NDI_UNIQUE, 0, tmp, "A force shimmers around you.");
-              break;
-          }
-        case SP_CONFUSION:
-          force->resist[ATNR_CONFUSION] = 50;   /*??? It was here before PR */
-          break;
-        case SP_HEROISM:
-          if (tmp->type != PLAYER)
-              break;
-          cast_change_attr(op, caster, target, dir, SP_STRENGTH);
-          cast_change_attr(op, caster, target, dir, SP_DEXTERITY);
-          cast_change_attr(op, caster, target, dir, SP_CONSTITUTION);
-          break;
-        case SP_HOLY_POSSESSION:
-          {
-              object   *god = find_god(determine_god(op));
-              int       i;
-
-              if (god)
-              {
-                  if (god->slaying)
-                      FREE_AND_COPY_HASH(force->slaying, god->slaying);
-
-                  /* Only give out good benefits, not bad */
-                  for (i = 0; i < NROFATTACKS; i++)
-                  {
-                      if (god->resist[i] > 0)
-                      {
-                          force->resist[i] = god->resist[i];
-                          if (force->resist[i] > 95)
-                              force->resist[i] = 95;
-                      }
-                      else
-                          force->resist[i] = 0; /* adding of diff. types not allowed */
-                  }
-
-                  force->path_attuned |= god->path_attuned;
-                  new_draw_info(NDI_UNIQUE, 0, tmp, "You are possessed by the essence of %s!", god->name);
-              }
-              else
-                  new_draw_info(NDI_UNIQUE, 0, op, "Your blessing seems empty.");
-              if (tmp != op && op->type == PLAYER && tmp->type == PLAYER)
-              {
-                  new_draw_info(NDI_UNIQUE, 0, op, "You bless %s mightily!", tmp->name);
-                  new_draw_info(NDI_UNIQUE, 0, tmp, "%s blessed you mightily!", op->name);
-              }
-              /* ADD POSITIVE WC ADD HERE */
-              force->stats.wc += SP_level_dam_adjust(op, caster, SP_HOLY_POSSESSION);
-              force->stats.ac += SP_level_dam_adjust(op, caster, SP_HOLY_POSSESSION);
-              break;
-          }
-        case SP_REGENERATION:
-          force->stats.hp = 1 + SP_level_dam_adjust(op, caster, SP_REGENERATION);
-          break;
-        case SP_CURSE:
-          {
-              object   *god = find_god(determine_god(op));
-              if (god)
-              {
-                  force->path_repelled |= god->path_repelled;
-                  force->path_denied |= god->path_denied;
-                  new_draw_info(NDI_UNIQUE, 0, tmp, "You are a victim of %s's curse!", god->name);
-              }
-              else
-                  new_draw_info(NDI_UNIQUE, 0, op, "Your curse seems empty.");
-
-              if (tmp != op && caster->type == PLAYER)
-                  new_draw_info(NDI_UNIQUE, 0, caster, "You curse %s!", tmp->name);
-              /* change this to negative ! */
-              /* ADD POSITIVE WC ADD HERE */
-              force->stats.ac -= SP_level_dam_adjust(op, caster, SP_CURSE);
-              force->stats.wc -= SP_level_dam_adjust(op, caster, SP_CURSE);
-              break;
-          }
-        case SP_BLESS:
-          {
-              object   *god = find_god(determine_god(op));
-              if (god)
-              {
-                  int   i;
-
-                  /* Only give out good benefits, and put a max on it */
-                  for (i = 0; i < NROFATTACKS; i++)
-                  {
-                      if (god->resist[i] > 0)
-                      {
-                          force->resist[i] = god->resist[i];
-                          if (force->resist[i] > 30)
-                              force->resist[i] = 30;
-                      }
-                      else
-                          force->resist[i] = 0; /* adding of diff. types not allowed */
-                  }
-                  force->path_attuned |= god->path_attuned;
-                  new_draw_info(NDI_UNIQUE, 0, tmp, "You receive the blessing of %s.", god->name);
-              }
-              else
-                  new_draw_info(NDI_UNIQUE, 0, op, "Your blessing seems empty.");
-
-              if (tmp != op && op->type == PLAYER && tmp->type == PLAYER)
-              {
-                  new_draw_info(NDI_UNIQUE, 0, op, "You bless %s.", tmp->name);
-                  new_draw_info(NDI_UNIQUE, 0, tmp, "%s blessed you.", op->name);
-              }
-              /* ADD POSITIVE WC ADD HERE */
-              force->stats.wc += SP_level_dam_adjust(op, caster, SP_BLESS);
-              force->stats.ac += SP_level_dam_adjust(op, caster, SP_BLESS);
-              break;
-          }
-        case SP_DARK_VISION:
-          SET_FLAG(force, FLAG_SEE_IN_DARK);
-          break;
-          /* attacktype-protection spells: */
-          /*
-        case SP_PROT_COLD:
-          if (!i)
-              atnr = ATNR_COLD, path = PATH_FROST, i = 1;
-        case SP_PROT_FIRE:
-          if (!i)
-              atnr = ATNR_FIRE, path = PATH_FIRE, i = 1;
-        case SP_PROT_ELEC:
-          if (!i)
-              atnr = ATNR_ELECTRICITY, path = PATH_ELEC, i = 1;
-        case SP_PROT_POISON:
-          if (!i)
-              atnr = ATNR_POISON, i = 1;
-        case SP_PROT_SLOW:
-          if (!i)
-              atnr = ATNR_SLOW, i = 1;
-        case SP_PROT_PARALYZE:
-          if (!i)
-              atnr = ATNR_PARALYZE, path = PATH_MIND, i = 1;
-        case SP_PROT_DRAIN:
-          if (!i)
-              atnr = ATNR_DRAIN, path = PATH_DEATH, i = 1;
-        case SP_PROT_ATTACK:
-          if (!i)
-              atnr = ATNR_IMPACT, path = PATH_PROT, i = 1;
-        case SP_PROT_MAGIC:
-          if (!i)
-              atnr = ATNR_CHANNELLING, i = 1;
-        case SP_PROT_CONFUSE:
-          if (!i)
-              atnr = ATNR_CONFUSION, path = PATH_MIND, i = 1;
-        case SP_PROT_CANCEL:
-          if (!i)
-              atnr = ATNR_CANCELLATION, i = 1;
-        case SP_PROT_DEPLETE:
-          if (!i)
-              atnr = ATNR_DEPLETE, path = PATH_DEATH, i = 1;
-*/
-          /* The amount of prot. granted depends on caster's skill-level and
-           * on attunement to spellpath, if there is a related one: */
-          force->resist[atnr] = (20
-                               + 30 * SK_level(caster) / 100
-                               + ((caster->path_attuned & path) ? 10 : 0)
-                               - ((caster->path_repelled & path) ? 10 : 0))
-                              / ((caster->path_denied & path) ? 2 : 1);
-          break;
-        case SP_LEVITATE:
-          SET_MULTI_FLAG(force, FLAG_LEVITATE);
-          break;
-          /* The following immunity spells are obsolete... -AV */
-        case SP_IMMUNE_COLD:
-          force->resist[ATNR_COLD] = 100;
-          break;
-        case SP_IMMUNE_FIRE:
-          force->resist[ATNR_FIRE] = 100;
-          break;
-        case SP_IMMUNE_ELEC:
-          force->resist[ATNR_ELECTRICITY] = 100;
-          break;
-        case SP_IMMUNE_POISON:
-          force->resist[ATNR_POISON] = 100;
-          break;
-        case SP_IMMUNE_SLOW:
-          force->resist[ATNR_SLOW] = 100;
-          break;
-        case SP_IMMUNE_PARALYZE:
-          force->resist[ATNR_PARALYZE] = 100;
-          break;
-        case SP_IMMUNE_DRAIN:
-          force->resist[ATNR_DRAIN] = 100;
-          break;
-        case SP_IMMUNE_ATTACK:
-          force->resist[ATNR_IMPACT] = 100;
-          break;
-        case SP_IMMUNE_MAGIC:
-          force->resist[ATNR_CHANNELLING] = 100;
-          break;
-
-        case SP_INVULNERABILITY:
-        case SP_PROTECTION:
-          /* Don't give them everything, so can't do a simple loop.
-           * Added holyword & blind with PR's - they seemed to be
-           * misising before.
-           * Note: These Spells shouldn't be used. Especially not on players! -AV
-           */
-          if (spell_type == SP_INVULNERABILITY)
-              i = 100;
-          else
-              i = 30;
-          force->resist[ATNR_IMPACT] = i;
-          force->resist[ATNR_FIRE] = i;
-          force->resist[ATNR_ELECTRICITY] = i;
-          force->resist[ATNR_COLD] = i;
-          force->resist[ATNR_CONFUSION] = i;
-          force->resist[ATNR_ACID] = i;
-          force->resist[ATNR_DRAIN] = i;
-          force->resist[ATNR_POISON] = i;
-          force->resist[ATNR_SLOW] = i;
-          force->resist[ATNR_PARALYZE] = i;
-          force->resist[ATNR_FEAR] = i;
-          force->resist[ATNR_DEPLETION] = i;
-          force->resist[ATNR_DEATH] = i;
-
-
-        case SP_HASTE:
-          force->stats.exp = (3 + SP_level_dam_adjust(op, caster, SP_HASTE));
-          if (op->speed > 0.2 * SP_level_strength_adjust(op, caster, SP_HASTE))
-              force->stats.exp = 0;
-          break;
-        case SP_XRAY:
-          SET_FLAG(force, FLAG_XRAYS);
-          break;
+/* TODO: Reference only. Will be removed. */
+#if 0
+//          /*---------- old -------------- */
+//
+//        case SP_RAGE:
+//          {
+//              if (tmp->type != PLAYER)
+//                  break;
+//              /* Str, Dex, Con */
+//              cast_change_attr(op, caster, target, dir, SP_HEROISM);
+//              /* haste */
+//              cast_change_attr(op, caster, target, dir, SP_HASTE);
+//              /* armour */
+//              cast_change_attr(op, caster, target, dir, SP_ARMOUR);
+//              /* regeneration */
+//              cast_change_attr(op, caster, target, dir, SP_REGENERATION);
+//              /* weapon class */
+//              /* ADD POSITIVE WC ADD HERE */
+//              force->stats.wc += SP_level_dam_adjust(op, caster, SP_BLESS);
+//
+//              break;
+//          }
+//        case SP_DEXTERITY:
+//          if (tmp->type != PLAYER)
+//              break;
+//          if (!(random_roll(0, (MAX(1, (10 - 30 + tmp->stats.Dex))) - 1)))
+//          {
+//              for (i = 20,force->stats.Dex = 1; i > tmp->stats.Dex; i -= 2)
+//                  force->stats.Dex++;
+//          }
+//          else
+//          {
+//              new_draw_info(NDI_UNIQUE, 0, op, "You grow no more agile."); force->stats.Dex = 0;
+//          }
+//
+//          break;
+//        case SP_CONSTITUTION:
+//          if (tmp->type != PLAYER)
+//              break;
+//          if (!(random_roll(0, (MAX(1, (10 - 30 + tmp->stats.Con))) - 1)))
+//          {
+//              for (i = 20,force->stats.Con = 1; i > tmp->stats.Con; i -= 2)
+//                  force->stats.Con++;
+//          }
+//          else
+//          {
+//              new_draw_info(NDI_UNIQUE, 0, op, "You don't feel any healthier."); force->stats.Con = 0;
+//          }
+//
+//          break;
+//        case SP_CHARISMA:
+//          if (tmp->type != PLAYER)
+//              break;
+//          if (!(random_roll(0, (MAX(1, (10 - 30 + tmp->stats.Cha))) - 1)))
+//          {
+//              for (i = 20,force->stats.Cha = 1; i > tmp->stats.Cha; i -= 2)
+//                  force->stats.Cha++;
+//          }
+//          else
+//          {
+//              new_draw_info(NDI_UNIQUE, 0, op, "You are no easier to look at."); force->stats.Cha = 0;
+//          }
+//
+//          break;
+//        case SP_IRONWOOD_SKIN:
+//        case SP_ARMOUR:
+//          {
+//              /* armour MAY be used multiple times. */
+//              force->weight_limit = 0;
+//              /* With PR code, I wonder if this could get merged in with the other protection spells */
+//              /* peterm, modified so that it uses level-depend functions */
+//              /* change this to POSITIVE AC!! */
+//              force->stats.ac = 2 + SP_level_dam_adjust(op, caster, spell_type);
+//              if ((tmp->stats.ac - force->stats.ac) < -20)
+//                  force->stats.ac = tmp->stats.ac + 20;
+//
+//              force->resist[ATNR_IMPACT] = 5 + 4 * SP_level_dam_adjust(op, caster, spell_type);
+//              if (force->resist[ATNR_IMPACT] > 25)
+//                  force->resist[ATNR_IMPACT] = 25;
+//              if (tmp->resist[ATNR_IMPACT] > 70
+//               && force->resist[ATNR_IMPACT] > (100 - tmp->resist[ATNR_IMPACT]) / 3)
+//                  force->resist[ATNR_IMPACT] = 3;  /* diminishing returns at high armor. */
+//              new_draw_info(NDI_UNIQUE, 0, tmp, "A force shimmers around you.");
+//              break;
+//          }
+//        case SP_CONFUSION:
+//          force->resist[ATNR_CONFUSION] = 50;   /*??? It was here before PR */
+//          break;
+//        case SP_HEROISM:
+//          if (tmp->type != PLAYER)
+//              break;
+//          cast_change_attr(op, caster, target, dir, SP_STRENGTH);
+//          cast_change_attr(op, caster, target, dir, SP_DEXTERITY);
+//          cast_change_attr(op, caster, target, dir, SP_CONSTITUTION);
+//          break;
+//        case SP_HOLY_POSSESSION:
+//          {
+//              object   *god = find_god(determine_god(op));
+//              int       i;
+//
+//              if (god)
+//              {
+//                  if (god->slaying)
+//                      FREE_AND_COPY_HASH(force->slaying, god->slaying);
+//
+//                  /* Only give out good benefits, not bad */
+//                  for (i = 0; i < NROFATTACKS; i++)
+//                  {
+//                      if (god->resist[i] > 0)
+//                      {
+//                          force->resist[i] = god->resist[i];
+//                          if (force->resist[i] > 95)
+//                              force->resist[i] = 95;
+//                      }
+//                      else
+//                          force->resist[i] = 0; /* adding of diff. types not allowed */
+//                  }
+//
+//                  force->path_attuned |= god->path_attuned;
+//                  new_draw_info(NDI_UNIQUE, 0, tmp, "You are possessed by the essence of %s!", god->name);
+//              }
+//              else
+//                  new_draw_info(NDI_UNIQUE, 0, op, "Your blessing seems empty.");
+//              if (tmp != op && op->type == PLAYER && tmp->type == PLAYER)
+//              {
+//                  new_draw_info(NDI_UNIQUE, 0, op, "You bless %s mightily!", tmp->name);
+//                  new_draw_info(NDI_UNIQUE, 0, tmp, "%s blessed you mightily!", op->name);
+//              }
+//              /* ADD POSITIVE WC ADD HERE */
+//              force->stats.wc += SP_level_dam_adjust(op, caster, SP_HOLY_POSSESSION);
+//              force->stats.ac += SP_level_dam_adjust(op, caster, SP_HOLY_POSSESSION);
+//              break;
+//          }
+//        case SP_REGENERATION:
+//          force->stats.hp = 1 + SP_level_dam_adjust(op, caster, SP_REGENERATION);
+//          break;
+//        case SP_CURSE:
+//          {
+//              object   *god = find_god(determine_god(op));
+//              if (god)
+//              {
+//                  force->path_repelled |= god->path_repelled;
+//                  force->path_denied |= god->path_denied;
+//                  new_draw_info(NDI_UNIQUE, 0, tmp, "You are a victim of %s's curse!", god->name);
+//              }
+//              else
+//                  new_draw_info(NDI_UNIQUE, 0, op, "Your curse seems empty.");
+//
+//              if (tmp != op && caster->type == PLAYER)
+//                  new_draw_info(NDI_UNIQUE, 0, caster, "You curse %s!", tmp->name);
+//              /* change this to negative ! */
+//              /* ADD POSITIVE WC ADD HERE */
+//              force->stats.ac -= SP_level_dam_adjust(op, caster, SP_CURSE);
+//              force->stats.wc -= SP_level_dam_adjust(op, caster, SP_CURSE);
+//              break;
+//          }
+//        case SP_BLESS:
+//          {
+//              object   *god = find_god(determine_god(op));
+//              if (god)
+//              {
+//                  int   i;
+//
+//                  /* Only give out good benefits, and put a max on it */
+//                  for (i = 0; i < NROFATTACKS; i++)
+//                  {
+//                      if (god->resist[i] > 0)
+//                      {
+//                          force->resist[i] = god->resist[i];
+//                          if (force->resist[i] > 30)
+//                              force->resist[i] = 30;
+//                      }
+//                      else
+//                          force->resist[i] = 0; /* adding of diff. types not allowed */
+//                  }
+//                  force->path_attuned |= god->path_attuned;
+//                  new_draw_info(NDI_UNIQUE, 0, tmp, "You receive the blessing of %s.", god->name);
+//              }
+//              else
+//                  new_draw_info(NDI_UNIQUE, 0, op, "Your blessing seems empty.");
+//
+//              if (tmp != op && op->type == PLAYER && tmp->type == PLAYER)
+//              {
+//                  new_draw_info(NDI_UNIQUE, 0, op, "You bless %s.", tmp->name);
+//                  new_draw_info(NDI_UNIQUE, 0, tmp, "%s blessed you.", op->name);
+//              }
+//              /* ADD POSITIVE WC ADD HERE */
+//              force->stats.wc += SP_level_dam_adjust(op, caster, SP_BLESS);
+//              force->stats.ac += SP_level_dam_adjust(op, caster, SP_BLESS);
+//              break;
+//          }
+//        case SP_DARK_VISION:
+//          SET_FLAG(force, FLAG_SEE_IN_DARK);
+//          break;
+//          /* attacktype-protection spells: */
+//          /*
+//        case SP_PROT_COLD:
+//          if (!i)
+//              atnr = ATNR_COLD, path = PATH_FROST, i = 1;
+//        case SP_PROT_FIRE:
+//          if (!i)
+//              atnr = ATNR_FIRE, path = PATH_FIRE, i = 1;
+//        case SP_PROT_ELEC:
+//          if (!i)
+//              atnr = ATNR_ELECTRICITY, path = PATH_ELEC, i = 1;
+//        case SP_PROT_POISON:
+//          if (!i)
+//              atnr = ATNR_POISON, i = 1;
+//        case SP_PROT_SLOW:
+//          if (!i)
+//              atnr = ATNR_SLOW, i = 1;
+//        case SP_PROT_PARALYZE:
+//          if (!i)
+//              atnr = ATNR_PARALYZE, path = PATH_MIND, i = 1;
+//        case SP_PROT_DRAIN:
+//          if (!i)
+//              atnr = ATNR_DRAIN, path = PATH_DEATH, i = 1;
+//        case SP_PROT_ATTACK:
+//          if (!i)
+//              atnr = ATNR_IMPACT, path = PATH_PROT, i = 1;
+//        case SP_PROT_MAGIC:
+//          if (!i)
+//              atnr = ATNR_CHANNELLING, i = 1;
+//        case SP_PROT_CONFUSE:
+//          if (!i)
+//              atnr = ATNR_CONFUSION, path = PATH_MIND, i = 1;
+//        case SP_PROT_CANCEL:
+//          if (!i)
+//              atnr = ATNR_CANCELLATION, i = 1;
+//        case SP_PROT_DEPLETE:
+//          if (!i)
+//              atnr = ATNR_DEPLETE, path = PATH_DEATH, i = 1;
+//*/
+//          /* The amount of prot. granted depends on caster's skill-level and
+//           * on attunement to spellpath, if there is a related one: */
+//          force->resist[atnr] = (20
+//                               + 30 * SK_level(caster) / 100
+//                               + ((caster->path_attuned & path) ? 10 : 0)
+//                               - ((caster->path_repelled & path) ? 10 : 0))
+//                              / ((caster->path_denied & path) ? 2 : 1);
+//          break;
+//        case SP_LEVITATE:
+//          SET_MULTI_FLAG(force, FLAG_LEVITATE);
+//          break;
+//          /* The following immunity spells are obsolete... -AV */
+//        case SP_IMMUNE_COLD:
+//          force->resist[ATNR_COLD] = 100;
+//          break;
+//        case SP_IMMUNE_FIRE:
+//          force->resist[ATNR_FIRE] = 100;
+//          break;
+//        case SP_IMMUNE_ELEC:
+//          force->resist[ATNR_ELECTRICITY] = 100;
+//          break;
+//        case SP_IMMUNE_POISON:
+//          force->resist[ATNR_POISON] = 100;
+//          break;
+//        case SP_IMMUNE_SLOW:
+//          force->resist[ATNR_SLOW] = 100;
+//          break;
+//        case SP_IMMUNE_PARALYZE:
+//          force->resist[ATNR_PARALYZE] = 100;
+//          break;
+//        case SP_IMMUNE_DRAIN:
+//          force->resist[ATNR_DRAIN] = 100;
+//          break;
+//        case SP_IMMUNE_ATTACK:
+//          force->resist[ATNR_IMPACT] = 100;
+//          break;
+//        case SP_IMMUNE_MAGIC:
+//          force->resist[ATNR_CHANNELLING] = 100;
+//          break;
+//
+//        case SP_INVULNERABILITY:
+//        case SP_PROTECTION:
+//          /* Don't give them everything, so can't do a simple loop.
+//           * Added holyword & blind with PR's - they seemed to be
+//           * misising before.
+//           * Note: These Spells shouldn't be used. Especially not on players! -AV
+//           */
+//          if (spell_type == SP_INVULNERABILITY)
+//              i = 100;
+//          else
+//              i = 30;
+//          force->resist[ATNR_IMPACT] = i;
+//          force->resist[ATNR_FIRE] = i;
+//          force->resist[ATNR_ELECTRICITY] = i;
+//          force->resist[ATNR_COLD] = i;
+//          force->resist[ATNR_CONFUSION] = i;
+//          force->resist[ATNR_ACID] = i;
+//          force->resist[ATNR_DRAIN] = i;
+//          force->resist[ATNR_POISON] = i;
+//          force->resist[ATNR_SLOW] = i;
+//          force->resist[ATNR_PARALYZE] = i;
+//          force->resist[ATNR_FEAR] = i;
+//          force->resist[ATNR_DEPLETION] = i;
+//          force->resist[ATNR_DEATH] = i;
+//
+//
+//        case SP_HASTE:
+//          force->stats.exp = (3 + SP_level_dam_adjust(op, caster, SP_HASTE));
+//          if (op->speed > 0.2 * SP_level_strength_adjust(op, caster, SP_HASTE))
+//              force->stats.exp = 0;
+//          break;
+//        case SP_XRAY:
+//          SET_FLAG(force, FLAG_XRAYS);
+//          break;
+#endif
     }
     force->speed_left = -1 - SP_level_strength_adjust(op, caster, spell_type) * 0.1f;
 
@@ -1317,6 +1318,52 @@ object *cure_what_ails_you(object *op, uint8 st1)
 //    for (i = 0; i < n; i++)
 //        put_a_monster(op, monstername);
 //    return n;
+//}
+//
+//void put_a_monster(object *op, const char *monstername)
+//{
+//    object     *tmp, *head = NULL, *prev = NULL;
+//    archetype  *at;
+//    int         dir;
+//
+//    /* find a free square nearby */
+//    /* first we check the closest square for free squares */
+//    if ((at = find_archetype(monstername)) == NULL)
+//        return;
+//    dir = find_first_free_spot(at, NULL, op->map, op->x, op->y);
+//    if (dir != -1)
+//    {
+//        /* This is basically grabbed for generate monster.  Fixed 971225 to
+//         * insert multipart monsters properly
+//         */
+//        while (at != NULL)
+//        {
+//            tmp = arch_to_object(at);
+//            tmp->x = op->x + freearr_x[dir] + at->clone.x;
+//            tmp->y = op->y + freearr_y[dir] + at->clone.y;
+//            if (head)
+//            {
+//                tmp->head = head;
+//                prev->more = tmp;
+//            }
+//            if (!head)
+//                head = tmp;
+//            prev = tmp;
+//            at = at->more;
+//        }
+//
+//        if (head->randomitems)
+//            create_treasure_list(head->randomitems, head, GT_INVISIBLE, op->level ? op->level : op->map->difficulty,
+//                                 ART_CHANCE_UNSET, 0);
+//        insert_ob_in_map(head, op->map, op, 0);
+//
+//        /* thought it'd be cool to insert a burnout, too.*/
+//        tmp = get_archetype("burnout");
+//        tmp->map = op->map;
+//        tmp->x = op->x + freearr_x[dir];
+//        tmp->y = op->y + freearr_y[dir];
+//        insert_ob_in_map(tmp, op->map, op, 0);
+//    }
 //}
 //
 ///* Alchemy code by Mark Wedel (master@rahul.net)
@@ -4371,7 +4418,25 @@ object *cure_what_ails_you(object *op, uint8 st1)
 //    return 0;
 //}
 //
+///* create an aura spell object and put it in the player's inventory.  */
 //
+//int create_aura(object *op, object *caster, archetype *aura_arch, int spell_type, int magic)
+//{
+//    object *new_aura    = arch_to_object(aura_arch);
+//    new_aura->stats.food = spells[spell_type].bdur + 10 * SP_level_strength_adjust(op, caster, spell_type);
+//    new_aura->stats.dam = spells[spell_type].bdam + SP_level_dam_adjust(op, caster, spell_type);
+//    set_owner(new_aura, op);
+//
+//    if (new_aura->owner)
+//    {
+//        new_aura->chosen_skill = op->chosen_skill;
+//        if (new_aura->chosen_skill)
+//            new_aura->skillgroup = op->chosen_skill->skillgroup;
+//    }
+//    new_aura->level = SK_level(caster);
+//    insert_ob_in_ob(new_aura, op);
+//    return 1;
+//}
 //
 ///* move aura function.  An aura is a part of someone's inventory,
 //which he carries with him, but which acts on the map immediately
