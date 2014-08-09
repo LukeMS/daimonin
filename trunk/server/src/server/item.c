@@ -1225,10 +1225,11 @@ static object *PickUp(object *who, object *what, object *where, uint32 nrof, obj
     }
 
     /* Now we've determined the pick up is possible, so lets do it! */
-    /* When a monster is picked up, it becomes a script-spawned mob. */
-    if (what->type == MONSTER)
+    /* When a monster is picked up, it becomes a homeless mob. */
+    if (what->type == MONSTER &&
+        !QUERY_FLAG(what, FLAG_HOMELESS_MOB))
     {
-        make_mob_script_spawn(what);
+        make_mob_homeless(what);
     }
 
     /* what can have a PICKUP script on it which, if it returns true, aborts

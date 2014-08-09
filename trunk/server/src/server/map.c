@@ -3195,9 +3195,8 @@ static void SaveObjects(mapstruct *m, FILE *fp)
 
                         continue;
                     }
-                    /* This is for mobs whose spawn has been interrupted by a
-                     * script so do not have SPAWN_INFO. */
-                    else if (QUERY_FLAG(head, FLAG_SCRIPT_MOB))
+                    /* This is for homeless mobs. */
+                    else if (QUERY_FLAG(head, FLAG_HOMELESS_MOB))
                     {
                         REMOVE_OBJECT(head, 1);
                         VALIDATE_NEXT(this, next, prev, mp->first);
@@ -3240,15 +3239,13 @@ static void SaveObjects(mapstruct *m, FILE *fp)
                             {
                                 REMOVE_OBJECT(head->enemy, 1);
                                 VALIDATE_NEXT(this, next, prev, mp->first);
+                                head->enemy = NULL;
+                                head->enemy_count = 0;
                             }
+                            else
                             {
-                                CLEAR_MULTI_FLAG(head->enemy, FLAG_SPAWN_MOB);
-                                SET_MULTI_FLAG(head->enemy, FLAG_SCRIPT_MOB);
-                                remove_ob(MOB_DATA(head->enemy)->spawn_info);
-                                MOB_DATA(head->enemy)->spawn_info = NULL;
+                                make_mob_homeless(head->enemy);
                             }
-
-                            head->enemy = NULL;
                         }
                     }
 
@@ -3295,7 +3292,7 @@ static void SaveObjects(mapstruct *m, FILE *fp)
                 {
                     if (QUERY_FLAG(head, FLAG_NO_SAVE) ||
                         QUERY_FLAG(head, FLAG_SPAWN_MOB) ||
-                        QUERY_FLAG(head, FLAG_SCRIPT_MOB) ||
+                        QUERY_FLAG(head, FLAG_HOMELESS_MOB) ||
                         QUERY_FLAG(head, FLAG_IS_MISSILE) ||
                         head->owner)
                     {
