@@ -721,12 +721,7 @@
 #define FLAG_NO_INVENTORY       108 /* special flag to avoid load/save of the inventory of an object */
 #define FLAG_DONATION_ITEM      109 /* checked by /generate command to stop generation of these items */
 #define FLAG_SYS_OBJECT         110 /* thats old invisible - now sys_object (which are invisible) */
-#define FLAG_SCRIPT_MOB         111 /* monsters with this flag are created by a
-                                     * spawn point but the process is
-                                     * interrupted by a script so the mob does
-                                     * not have a spawn info object inside its
-                                     * inventory. See also 118.
-                                     */
+#define FLAG_HOMELESS_MOB       111
 #define FLAG_UNPAID             112 /* Object hasn't been paid for yet */
 #define FLAG_IS_AGED            113 /* if set, object falls under heavy ageing effects */
 #define FLAG_MAKE_INVISIBLE     114 /* if a applyable item has this set, he makes the wearer invisible */

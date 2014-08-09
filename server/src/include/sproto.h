@@ -472,7 +472,7 @@ void                        talk_to_npc(player *pl, char *topic);
 void                        gui_npc(object *who, uint8 mode, const char *text);
 /* spawn_point.c */
 void                        spawn_point(object *op);
-void                        make_mob_script_spawn(object *mob);
+void                        make_mob_homeless(object *mob);
 void                        adjust_monster(object *monster);
 objectlink                 *add_linked_spawn(object *spawn);
 void                        remove_linked_spawn_list(mapstruct *map);

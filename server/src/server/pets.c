@@ -133,7 +133,7 @@ int add_pet(object *owner, object *pet, int force)
         remove_ob(spawninfo);
         MOB_DATA(pet)->spawn_info = NULL;
         CLEAR_MULTI_FLAG(pet, FLAG_SPAWN_MOB);
-        CLEAR_MULTI_FLAG(pet, FLAG_SCRIPT_MOB);
+        CLEAR_MULTI_FLAG(pet, FLAG_HOMELESS_MOB);
     }
 
     return 0;

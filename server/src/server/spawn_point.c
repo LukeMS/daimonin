@@ -458,7 +458,7 @@ void spawn_point(object *op)
         {
             mob->last_eat = 0;
             insert_spawn_mob_loot(op, mob, loot->inv);
-            make_mob_script_spawn(mob);
+            make_mob_homeless(mob);
         }
 
         if (OBJECT_ACTIVE(loot)) /* make sure loot is removed */
@@ -541,13 +541,13 @@ void spawn_point(object *op)
 #endif
 }
 
-/* make_mob_script_spawn() turns mob (which is basically already spawned) into
- * a 'script-spawned mob' (ie, not chained to a spawn point). */
-void make_mob_script_spawn(object *mob)
+/* make_mob_homeless() turns mob (which is basically already spawned) into
+ * a 'homeless mob' (ie, not chained to a spawn point). */
+void make_mob_homeless(object *mob)
 {
     RemoveStuff(mob);
     CLEAR_MULTI_FLAG(mob, FLAG_SPAWN_MOB);
-    SET_MULTI_FLAG(mob, FLAG_SCRIPT_MOB);
+    SET_MULTI_FLAG(mob, FLAG_HOMELESS_MOB);
     fix_monster(mob);
 }
 
