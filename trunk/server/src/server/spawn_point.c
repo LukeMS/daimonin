@@ -542,12 +542,38 @@ void spawn_point(object *op)
 }
 
 /* make_mob_homeless() turns mob (which is basically already spawned) into
- * a 'homeless mob' (ie, not chained to a spawn point). */
+ * a 'homeless mob' (ie, not chained to a spawn point).
+ *
+ * Once a mob has been made homeless, his old spawn point is free to spawn
+ * another. This will lead to a situation with multiple instances of the 'same'
+ * mob -- not an issue normally, but there are two considerations:
+ *   1 TODO: this is perhaps undesirable with eg, boss mobs, quest
+ *     givers/targets, etc so we should have a boolean arch attribute. If 1,
+ *     don't allow this decoupling (return 1 and the caller can take
+ *     appropriate action);
+ *   2 In theory rare situations, abusive player actions and scripts, etc could
+ *     lead to there being many tens or even hundreds of homeless mobs running
+ *     about eating up processing time. While this is unlikely to be a problem
+ *     in practice, we take a precaution by adding an IS_USED_UP fuse to
+ *     homeless mobs (which is kind of nice anyway). */
 void make_mob_homeless(object *mob)
 {
     RemoveStuff(mob);
     CLEAR_MULTI_FLAG(mob, FLAG_SPAWN_MOB);
     SET_MULTI_FLAG(mob, FLAG_HOMELESS_MOB);
+    SET_FLAG(mob, FLAG_IS_USED_UP);
+
+    /* If the mob already has a fuse, use that, else give it one. */
+    if (mob->stats.food <= 0)
+    {
+        /* This is kind of an arbitrary value that seems reasonable. Note that
+         * the actual length of time depends on the mob's speed and whether he
+         * is idle or moving/fighting. Generally this is approx seconds with
+         * moving/fighting mobs having about half the life expectancy of idle
+         * ones. */
+        mob->stats.food = 300;
+    }
+
     fix_monster(mob);
 }
 
