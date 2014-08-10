@@ -3226,15 +3226,7 @@ static void SaveObjects(mapstruct *m, FILE *fp)
 
                             /* ...If the spawn is on the same map as the spawn
                              * point, delete the mob. Otherwise, turn him into
-                             * a script mob (ie, no spawn point). */
-                            /* TODO: This will lead to a situation with
-                             * multiple instances of the 'same' mob -- not an
-                             * issue normally, but perhaps undesirable with
-                             * boss mobs, quest givers/targets, etc. So we
-                             * should have a boolean attribute. If 1, remove
-                             * the mob, don't decouple it.
-                             *
-                             * -- Smacky 20120817 */
+                             * a homeless mob. */
                             if (head->enemy->map == head->map)
                             {
                                 REMOVE_OBJECT(head->enemy, 1);
