@@ -97,13 +97,13 @@
  * debugflags get enabled/disabled by commenting then out or not.
  */
 
-#define DEBUG_SKILL_UTIL
-
 #ifdef DAI_DEVELOPMENT_CODE
 
 //#define SEND_BUFFER_DEBUG
 
 //#define DEBUG_PROCESS_QUEUE
+
+//#define DEBUG_SKILL_UTIL
 
 /* Active list debugging: object.c/activelist_insert_inline() and
  * object.c/activelist_remove_inline(). */
