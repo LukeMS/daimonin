@@ -497,7 +497,19 @@ object * create_singularity(const char *name)
 
     FREE_AND_COPY_HASH(op->name, name);
     FREE_AND_COPY_HASH(op->title, " (singularity)");
-//    SET_FLAG(op, FLAG_NO_SAVE); /* remove them automatically - good for player inventory */
+
+    /* Remove them automatically - good for player inventory */
+    /* FIXME: Or is it that simple? This also means that ->inv will be
+     * removed/not saved AND that the evidence of whatever bug caused the
+     * singularity disappears up its own bughole. These were both factors that
+     * made the 0.10.6 skills bug such a pain to find and fix and have worse
+     * consequences than otherwise.
+     *
+     * I will therefore leave this disabled which leaves the object heirarchy
+     * complete ammd ready for manual fixing.
+     *
+     * -- Smacky 20140811 */
+//    SET_FLAG(op, FLAG_NO_SAVE);
     LOG(llevInfo, "INFO:: Created singularity: %s\n", STRING_OBJ_NAME(op));
     return op;
 }
