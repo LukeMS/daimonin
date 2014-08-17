@@ -481,7 +481,6 @@ op->oz= op->z;
 ^use_dmg_info{S}	SET_OR_CLEAR_FLAG(op, FLAG_USE_DMG_INFO, IVAL);
 ^no_magic{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_NO_MAGIC, IVAL);
 ^no_cleric{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_NO_CLERIC, IVAL);
-^wiz{S}  	    LOG(llevMapbug,"ARCHBUG: loader(): Illegal attribute: %s[%d] has wiz %d!\n", STRING_OBJ_NAME(op), TAG(op), IVAL);
 ^no_fix_player{S}   SET_OR_CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER, IVAL);
 ^tear_down{S}	    SET_OR_CLEAR_FLAG(op, FLAG_TEAR_DOWN, IVAL);
 ^run_away{S}	    op->run_away = IVAL;
