@@ -3115,13 +3115,13 @@ end
 #
 Allowed all
 chance 40
-t_style 1
 difficulty 2
 artifact legs_min_fire
-def_arch legs_leather
+def_arch legs_chain_fire
 editor 2:items/armour/legs
 Object
 title of minor fire protection
+face legs_chain_fire.101
 item_level_art 2
 type 143
 resist_fire 5
@@ -3131,13 +3131,13 @@ end
 #
 Allowed all
 chance 40
-t_style 2
 difficulty 2
 artifact legs_min_cold
-def_arch legs_leather
+def_arch legs_chain_ice
 editor 2:items/armour/legs
 Object
 title of minor cold protection
+face legs_chain_ice.101
 item_level_art 2
 type 143
 resist_cold 5
@@ -3147,13 +3147,13 @@ end
 #
 Allowed all
 chance 40
-t_style 3
 difficulty 2
 artifact legs_min_elec
-def_arch legs_leather
+def_arch legs_chain_elec
 editor 2:items/armour/legs
 Object
 title of minor electricity protection
+face legs_chain_elec.101
 item_level_art 2
 type 143
 resist_electricity 5
@@ -3163,13 +3163,13 @@ end
 #
 Allowed all
 chance 40
-t_style 4
 difficulty 2
 artifact legs_min_poison
-def_arch legs_leather
+def_arch legs_chain_poison
 editor 2:items/armour/legs
 Object
 title of minor poison protection
+face legs_chain_poison.101
 item_level_art 2
 type 143
 resist_poison 5
@@ -3179,13 +3179,13 @@ end
 #
 Allowed all
 chance 40
-t_style 5
 difficulty 2
 artifact legs_min_acid
-def_arch legs_leather
+def_arch legs_chain_acid
 editor 2:items/armour/legs
 Object
 title of minor acid protection
+face legs_chain_acid.101
 item_level_art 2
 type 143
 resist_acid 5
@@ -3195,13 +3195,13 @@ end
 #
 Allowed all
 chance 20
-t_style 1
 difficulty 7
 artifact legs_less_fire
-def_arch legs_leather
+def_arch legs_chain_fire
 editor 2:items/armour/legs
 Object
 title of lesser fire protection
+face legs_chain_fire.101
 item_level_art 7
 type 143
 resist_fire 10
@@ -3211,13 +3211,13 @@ end
 #
 Allowed all
 chance 20
-t_style 2
 difficulty 7
 artifact legs_less_cold
-def_arch legs_leather
+def_arch legs_chain_ice
 editor 2:items/armour/legs
 Object
 title of lesser cold protection
+face legs_chain_ice.101
 item_level_art 7
 type 143
 resist_cold 10
@@ -3227,13 +3227,13 @@ end
 #
 Allowed all
 chance 20
-t_style 3
 difficulty 7
 artifact legs_less_elec
-def_arch legs_leather
+def_arch legs_chain_elec
 editor 2:items/armour/legs
 Object
 title of lesser electricity protection
+face legs_chain_elec.101
 item_level_art 7
 type 143
 resist_electricity 10
@@ -3243,13 +3243,13 @@ end
 #
 Allowed all
 chance 20
-t_style 4
 difficulty 7
 artifact legs_less_poison
-def_arch legs_leather
+def_arch legs_chain_poison
 editor 2:items/armour/legs
 Object
 title of lesser poison protection
+face legs_chain_poison.101
 item_level_art 7
 type 143
 resist_poison 10
@@ -3259,13 +3259,13 @@ end
 #
 Allowed all
 chance 20
-t_style 5
 difficulty 7
 artifact legs_less_acid
-def_arch legs_leather
+def_arch legs_chain_acid
 editor 2:items/armour/legs
 Object
 title of lesser acid protection
+face legs_chain_acid.101
 item_level_art 7
 type 143
 resist_acid 10
@@ -3275,13 +3275,13 @@ end
 #
 Allowed all
 chance 10
-t_style 1
 difficulty 15
 artifact legs_sm_fire
-def_arch legs_leather
+def_arch legs_chain_fire
 editor 2:items/armour/legs
 Object
 title of small fire protection
+face legs_chain_fire.101
 item_level_art 15
 type 143
 resist_fire 15
@@ -3291,13 +3291,13 @@ end
 #
 Allowed all
 chance 10
-t_style 2
 difficulty 15
 artifact legs_sm_cold
-def_arch legs_leather
+def_arch legs_chain_ice
 editor 2:items/armour/legs
 Object
 title of small cold protection
+face legs_chain_ice.101
 item_level_art 15
 type 143
 resist_cold 15
@@ -3307,13 +3307,13 @@ end
 #
 Allowed all
 chance 10
-t_style 3
 difficulty 15
 artifact legs_sm_elec
-def_arch legs_leather
+def_arch legs_chain_elec
 editor 2:items/armour/legs
 Object
 title of small electricity protection
+face legs_chain_elec.101
 item_level_art 15
 type 143
 resist_electricity 15
@@ -3323,13 +3323,13 @@ end
 #
 Allowed all
 chance 10
-t_style 4
 difficulty 15
 artifact legs_sm_poison
-def_arch legs_leather
+def_arch legs_chain_poison
 editor 2:items/armour/legs
 Object
 title of small poison protection
+face legs_chain_poison.101
 item_level_art 15
 type 143
 resist_poison 15
@@ -3339,13 +3339,13 @@ end
 #
 Allowed all
 chance 10
-t_style 5
 difficulty 15
 artifact legs_sm_acid
-def_arch legs_leather
+def_arch legs_chain_acid
 editor 2:items/armour/legs
 Object
 title of small acid protection
+face legs_chain_acid.101
 item_level_art 15
 type 143
 resist_acid 15
@@ -3355,13 +3355,13 @@ end
 #
 Allowed all
 chance 5
-t_style 1
 difficulty 25
 artifact legs_med_fire
-def_arch legs_leather
+def_arch legs_chain_fire
 editor 2:items/armour/legs
 Object
 title of medium fire protection
+face legs_chain_fire.101
 item_level_art 25
 type 143
 resist_fire 20
@@ -3371,13 +3371,13 @@ end
 #
 Allowed all
 chance 5
-t_style 2
 difficulty 25
 artifact legs_med_cold
-def_arch legs_leather
+def_arch legs_chain_ice
 editor 2:items/armour/legs
 Object
 title of medium cold protection
+face legs_chain_ice.101
 item_level_art 25
 type 143
 resist_cold 20
@@ -3387,13 +3387,13 @@ end
 #
 Allowed all
 chance 5
-t_style 3
 difficulty 25
 artifact legs_med_elec
-def_arch legs_leather
+def_arch legs_chain_elec
 editor 2:items/armour/legs
 Object
 title of medium electricity protection
+face legs_chain_elec.101
 item_level_art 25
 type 143
 resist_electricity 20
@@ -3403,13 +3403,13 @@ end
 #
 Allowed all
 chance 5
-t_style 4
 difficulty 25
 artifact legs_med_poison
-def_arch legs_leather
+def_arch legs_chain_poison
 editor 2:items/armour/legs
 Object
 title of medium poison protection
+face legs_chain_poison.101
 item_level_art 25
 type 143
 resist_poison 20
@@ -3419,13 +3419,973 @@ end
 #
 Allowed all
 chance 5
-t_style 5
 difficulty 25
 artifact legs_med_acid
-def_arch legs_leather
+def_arch legs_chain_acid
 editor 2:items/armour/legs
 Object
 title of medium acid protection
+face legs_chain_acid.101
+item_level_art 25
+type 143
+resist_acid 20
+is_magical 1
+value 4653
+end
+#
+Allowed all
+chance 40
+difficulty 2
+artifact legs_min_fire
+def_arch legs_plate_fire
+editor 2:items/armour/legs
+Object
+title of minor fire protection
+face legs_plate_fire.101
+item_level_art 2
+type 143
+resist_fire 5
+is_magical 1
+value 3500
+end
+#
+Allowed all
+chance 40
+difficulty 2
+artifact legs_min_cold
+def_arch legs_plate_ice
+editor 2:items/armour/legs
+Object
+title of minor cold protection
+face legs_plate_ice.101
+item_level_art 2
+type 143
+resist_cold 5
+is_magical 1
+value 3500
+end
+#
+Allowed all
+chance 40
+difficulty 2
+artifact legs_min_elec
+def_arch legs_plate_elec
+editor 2:items/armour/legs
+Object
+title of minor electricity protection
+face legs_plate_elec.101
+item_level_art 2
+type 143
+resist_electricity 5
+is_magical 1
+value 3500
+end
+#
+Allowed all
+chance 40
+difficulty 2
+artifact legs_min_poison
+def_arch legs_plate_poison
+editor 2:items/armour/legs
+Object
+title of minor poison protection
+face legs_plate_poison.101
+item_level_art 2
+type 143
+resist_poison 5
+is_magical 1
+value 3500
+end
+#
+Allowed all
+chance 40
+difficulty 2
+artifact legs_min_acid
+def_arch legs_plate_acid
+editor 2:items/armour/legs
+Object
+title of minor acid protection
+face legs_plate_acid.101
+item_level_art 2
+type 143
+resist_acid 5
+is_magical 1
+value 3500
+end
+#
+Allowed all
+chance 20
+difficulty 7
+artifact legs_less_fire
+def_arch legs_plate_fire
+editor 2:items/armour/legs
+Object
+title of lesser fire protection
+face legs_plate_fire.101
+item_level_art 7
+type 143
+resist_fire 10
+is_magical 1
+value 3750
+end
+#
+Allowed all
+chance 20
+difficulty 7
+artifact legs_less_cold
+def_arch legs_plate_ice
+editor 2:items/armour/legs
+Object
+title of lesser cold protection
+face legs_plate_ice.101
+item_level_art 7
+type 143
+resist_cold 10
+is_magical 1
+value 3850
+end
+#
+Allowed all
+chance 20
+difficulty 7
+artifact legs_less_elec
+def_arch legs_plate_elec
+editor 2:items/armour/legs
+Object
+title of lesser electricity protection
+face legs_plate_elec.101
+item_level_art 7
+type 143
+resist_electricity 10
+is_magical 1
+value 3850
+end
+#
+Allowed all
+chance 20
+difficulty 7
+artifact legs_less_poison
+def_arch legs_plate_poison
+editor 2:items/armour/legs
+Object
+title of lesser poison protection
+face legs_plate_poison.101
+item_level_art 7
+type 143
+resist_poison 10
+is_magical 1
+value 3850
+end
+#
+Allowed all
+chance 20
+difficulty 7
+artifact legs_less_acid
+def_arch legs_plate_acid
+editor 2:items/armour/legs
+Object
+title of lesser acid protection
+face legs_plate_acid.101
+item_level_art 7
+type 143
+resist_acid 10
+is_magical 1
+value 3850
+end
+#
+Allowed all
+chance 10
+difficulty 15
+artifact legs_sm_fire
+def_arch legs_plate_fire
+editor 2:items/armour/legs
+Object
+title of small fire protection
+face legs_plate_fire.101
+item_level_art 15
+type 143
+resist_fire 15
+is_magical 1
+value 4230
+end
+#
+Allowed all
+chance 10
+difficulty 15
+artifact legs_sm_cold
+def_arch legs_plate_ice
+editor 2:items/armour/legs
+Object
+title of small cold protection
+face legs_plate_ice.101
+item_level_art 15
+type 143
+resist_cold 15
+is_magical 1
+value 4230
+end
+#
+Allowed all
+chance 10
+difficulty 15
+artifact legs_sm_elec
+def_arch legs_plate_elec
+editor 2:items/armour/legs
+Object
+title of small electricity protection
+face legs_plate_elec.101
+item_level_art 15
+type 143
+resist_electricity 15
+is_magical 1
+value 4230
+end
+#
+Allowed all
+chance 10
+difficulty 15
+artifact legs_sm_poison
+def_arch legs_plate_poison
+editor 2:items/armour/legs
+Object
+title of small poison protection
+face legs_plate_poison.101
+item_level_art 15
+type 143
+resist_poison 15
+is_magical 1
+value 4230
+end
+#
+Allowed all
+chance 10
+difficulty 15
+artifact legs_sm_acid
+def_arch legs_plate_acid
+editor 2:items/armour/legs
+Object
+title of small acid protection
+face legs_plate_acid.101
+item_level_art 15
+type 143
+resist_acid 15
+is_magical 1
+value 4230
+end
+#
+Allowed all
+chance 5
+difficulty 25
+artifact legs_med_fire
+def_arch legs_plate_fire
+editor 2:items/armour/legs
+Object
+title of medium fire protection
+face legs_plate_fire.101
+item_level_art 25
+type 143
+resist_fire 20
+is_magical 1
+value 4653
+end
+#
+Allowed all
+chance 5
+difficulty 25
+artifact legs_med_cold
+def_arch legs_plate_ice
+editor 2:items/armour/legs
+Object
+title of medium cold protection
+face legs_plate_ice.101
+item_level_art 25
+type 143
+resist_cold 20
+is_magical 1
+value 4653
+end
+#
+Allowed all
+chance 5
+difficulty 25
+artifact legs_med_elec
+def_arch legs_plate_elec
+editor 2:items/armour/legs
+Object
+title of medium electricity protection
+face legs_plate_elec.101
+item_level_art 25
+type 143
+resist_electricity 20
+is_magical 1
+value 4653
+end
+#
+Allowed all
+chance 5
+difficulty 25
+artifact legs_med_poison
+def_arch legs_plate_poison
+editor 2:items/armour/legs
+Object
+title of medium poison protection
+face legs_plate_poison.101
+item_level_art 25
+type 143
+resist_poison 20
+is_magical 1
+value 4653
+end
+#
+Allowed all
+chance 5
+difficulty 25
+artifact legs_med_acid
+def_arch legs_plate_acid
+editor 2:items/armour/legs
+Object
+title of medium acid protection
+face legs_plate_acid.101
+item_level_art 25
+type 143
+resist_acid 20
+is_magical 1
+value 4653
+end
+#
+Allowed all
+chance 40
+difficulty 2
+artifact legs_min_fire
+def_arch pants_fire
+editor 2:items/armour/legs
+Object
+title of minor fire protection
+face pants_fire.101
+item_level_art 2
+type 143
+resist_fire 5
+is_magical 1
+value 3500
+end
+#
+Allowed all
+chance 40
+difficulty 2
+artifact legs_min_cold
+def_arch pants_ice
+editor 2:items/armour/legs
+Object
+title of minor cold protection
+face pants_ice.101
+item_level_art 2
+type 143
+resist_cold 5
+is_magical 1
+value 3500
+end
+#
+Allowed all
+chance 40
+difficulty 2
+artifact legs_min_elec
+def_arch pants_elec
+editor 2:items/armour/legs
+Object
+title of minor electricity protection
+face pants_elec.101
+item_level_art 2
+type 143
+resist_electricity 5
+is_magical 1
+value 3500
+end
+#
+Allowed all
+chance 40
+difficulty 2
+artifact legs_min_poison
+def_arch pants_poison
+editor 2:items/armour/legs
+Object
+title of minor poison protection
+face pants_poison.101
+item_level_art 2
+type 143
+resist_poison 5
+is_magical 1
+value 3500
+end
+#
+Allowed all
+chance 40
+difficulty 2
+artifact legs_min_acid
+def_arch pants_acid
+editor 2:items/armour/legs
+Object
+title of minor acid protection
+face pants_acid.101
+item_level_art 2
+type 143
+resist_acid 5
+is_magical 1
+value 3500
+end
+#
+Allowed all
+chance 20
+difficulty 7
+artifact legs_less_fire
+def_arch pants_fire
+editor 2:items/armour/legs
+Object
+title of lesser fire protection
+face pants_fire.101
+item_level_art 7
+type 143
+resist_fire 10
+is_magical 1
+value 3750
+end
+#
+Allowed all
+chance 20
+difficulty 7
+artifact legs_less_cold
+def_arch pants_ice
+editor 2:items/armour/legs
+Object
+title of lesser cold protection
+face pants_ice.101
+item_level_art 7
+type 143
+resist_cold 10
+is_magical 1
+value 3850
+end
+#
+Allowed all
+chance 20
+difficulty 7
+artifact legs_less_elec
+def_arch pants_elec
+editor 2:items/armour/legs
+Object
+title of lesser electricity protection
+face pants_elec.101
+item_level_art 7
+type 143
+resist_electricity 10
+is_magical 1
+value 3850
+end
+#
+Allowed all
+chance 20
+difficulty 7
+artifact legs_less_poison
+def_arch pants_poison
+editor 2:items/armour/legs
+Object
+title of lesser poison protection
+face pants_poison.101
+item_level_art 7
+type 143
+resist_poison 10
+is_magical 1
+value 3850
+end
+#
+Allowed all
+chance 20
+difficulty 7
+artifact legs_less_acid
+def_arch pants_acid
+editor 2:items/armour/legs
+Object
+title of lesser acid protection
+face pants_acid.101
+item_level_art 7
+type 143
+resist_acid 10
+is_magical 1
+value 3850
+end
+#
+Allowed all
+chance 10
+difficulty 15
+artifact legs_sm_fire
+def_arch pants_fire
+editor 2:items/armour/legs
+Object
+title of small fire protection
+face pants_fire.101
+item_level_art 15
+type 143
+resist_fire 15
+is_magical 1
+value 4230
+end
+#
+Allowed all
+chance 10
+difficulty 15
+artifact legs_sm_cold
+def_arch pants_ice
+editor 2:items/armour/legs
+Object
+title of small cold protection
+face pants_ice.101
+item_level_art 15
+type 143
+resist_cold 15
+is_magical 1
+value 4230
+end
+#
+Allowed all
+chance 10
+difficulty 15
+artifact legs_sm_elec
+def_arch pants_elec
+editor 2:items/armour/legs
+Object
+title of small electricity protection
+face pants_elec.101
+item_level_art 15
+type 143
+resist_electricity 15
+is_magical 1
+value 4230
+end
+#
+Allowed all
+chance 10
+difficulty 15
+artifact legs_sm_poison
+def_arch pants_poison
+editor 2:items/armour/legs
+Object
+title of small poison protection
+face pants_poison.101
+item_level_art 15
+type 143
+resist_poison 15
+is_magical 1
+value 4230
+end
+#
+Allowed all
+chance 10
+difficulty 15
+artifact legs_sm_acid
+def_arch pants_acid
+editor 2:items/armour/legs
+Object
+title of small acid protection
+face pants_acid.101
+item_level_art 15
+type 143
+resist_acid 15
+is_magical 1
+value 4230
+end
+#
+Allowed all
+chance 5
+difficulty 25
+artifact legs_med_fire
+def_arch pants_fire
+editor 2:items/armour/legs
+Object
+title of medium fire protection
+face pants_fire.101
+item_level_art 25
+type 143
+resist_fire 20
+is_magical 1
+value 4653
+end
+#
+Allowed all
+chance 5
+difficulty 25
+artifact legs_med_cold
+def_arch pants_ice
+editor 2:items/armour/legs
+Object
+title of medium cold protection
+face pants_ice.101
+item_level_art 25
+type 143
+resist_cold 20
+is_magical 1
+value 4653
+end
+#
+Allowed all
+chance 5
+difficulty 25
+artifact legs_med_elec
+def_arch pants_elec
+editor 2:items/armour/legs
+Object
+title of medium electricity protection
+face pants_elec.101
+item_level_art 25
+type 143
+resist_electricity 20
+is_magical 1
+value 4653
+end
+#
+Allowed all
+chance 5
+difficulty 25
+artifact legs_med_poison
+def_arch pants_poison
+editor 2:items/armour/legs
+Object
+title of medium poison protection
+face pants_poison.101
+item_level_art 25
+type 143
+resist_poison 20
+is_magical 1
+value 4653
+end
+#
+Allowed all
+chance 5
+difficulty 25
+artifact legs_med_acid
+def_arch pants_acid
+editor 2:items/armour/legs
+Object
+title of medium acid protection
+face pants_acid.101
+item_level_art 25
+type 143
+resist_acid 20
+is_magical 1
+value 4653
+end
+#
+Allowed all
+chance 40
+difficulty 2
+artifact legs_min_fire
+def_arch legs_leather_fire
+editor 2:items/armour/legs
+Object
+title of minor fire protection
+face legs_leather_fire.101
+item_level_art 2
+type 143
+resist_fire 5
+is_magical 1
+value 3500
+end
+#
+Allowed all
+chance 40
+difficulty 2
+artifact legs_min_cold
+def_arch legs_leather_ice
+editor 2:items/armour/legs
+Object
+title of minor cold protection
+face legs_leather_ice.101
+item_level_art 2
+type 143
+resist_cold 5
+is_magical 1
+value 3500
+end
+#
+Allowed all
+chance 40
+difficulty 2
+artifact legs_min_elec
+def_arch legs_leather_elec
+editor 2:items/armour/legs
+Object
+title of minor electricity protection
+face legs_leather_elec.101
+item_level_art 2
+type 143
+resist_electricity 5
+is_magical 1
+value 3500
+end
+#
+Allowed all
+chance 40
+difficulty 2
+artifact legs_min_poison
+def_arch legs_leather_poison
+editor 2:items/armour/legs
+Object
+title of minor poison protection
+face legs_leather_poison.101
+item_level_art 2
+type 143
+resist_poison 5
+is_magical 1
+value 3500
+end
+#
+Allowed all
+chance 40
+difficulty 2
+artifact legs_min_acid
+def_arch legs_leather_acid
+editor 2:items/armour/legs
+Object
+title of minor acid protection
+face legs_leather_acid.101
+item_level_art 2
+type 143
+resist_acid 5
+is_magical 1
+value 3500
+end
+#
+Allowed all
+chance 20
+difficulty 7
+artifact legs_less_fire
+def_arch legs_leather_fire
+editor 2:items/armour/legs
+Object
+title of lesser fire protection
+face legs_leather_fire.101
+item_level_art 7
+type 143
+resist_fire 10
+is_magical 1
+value 3750
+end
+#
+Allowed all
+chance 20
+difficulty 7
+artifact legs_less_cold
+def_arch legs_leather_ice
+editor 2:items/armour/legs
+Object
+title of lesser cold protection
+face legs_leather_ice.101
+item_level_art 7
+type 143
+resist_cold 10
+is_magical 1
+value 3850
+end
+#
+Allowed all
+chance 20
+difficulty 7
+artifact legs_less_elec
+def_arch legs_leather_elec
+editor 2:items/armour/legs
+Object
+title of lesser electricity protection
+face legs_leather_elec.101
+item_level_art 7
+type 143
+resist_electricity 10
+is_magical 1
+value 3850
+end
+#
+Allowed all
+chance 20
+difficulty 7
+artifact legs_less_poison
+def_arch legs_leather_poison
+editor 2:items/armour/legs
+Object
+title of lesser poison protection
+face legs_leather_poison.101
+item_level_art 7
+type 143
+resist_poison 10
+is_magical 1
+value 3850
+end
+#
+Allowed all
+chance 20
+difficulty 7
+artifact legs_less_acid
+def_arch legs_leather_acid
+editor 2:items/armour/legs
+Object
+title of lesser acid protection
+face legs_leather_acid.101
+item_level_art 7
+type 143
+resist_acid 10
+is_magical 1
+value 3850
+end
+#
+Allowed all
+chance 10
+difficulty 15
+artifact legs_sm_fire
+def_arch legs_leather_fire
+editor 2:items/armour/legs
+Object
+title of small fire protection
+face legs_leather_fire.101
+item_level_art 15
+type 143
+resist_fire 15
+is_magical 1
+value 4230
+end
+#
+Allowed all
+chance 10
+difficulty 15
+artifact legs_sm_cold
+def_arch legs_leather_ice
+editor 2:items/armour/legs
+Object
+title of small cold protection
+face legs_leather_ice.101
+item_level_art 15
+type 143
+resist_cold 15
+is_magical 1
+value 4230
+end
+#
+Allowed all
+chance 10
+difficulty 15
+artifact legs_sm_elec
+def_arch legs_leather_elec
+editor 2:items/armour/legs
+Object
+title of small electricity protection
+face legs_leather_elec.101
+item_level_art 15
+type 143
+resist_electricity 15
+is_magical 1
+value 4230
+end
+#
+Allowed all
+chance 10
+difficulty 15
+artifact legs_sm_poison
+def_arch legs_leather_poison
+editor 2:items/armour/legs
+Object
+title of small poison protection
+face legs_leather_poison.101
+item_level_art 15
+type 143
+resist_poison 15
+is_magical 1
+value 4230
+end
+#
+Allowed all
+chance 10
+difficulty 15
+artifact legs_sm_acid
+def_arch legs_leather_acid
+editor 2:items/armour/legs
+Object
+title of small acid protection
+face legs_leather_acid.101
+item_level_art 15
+type 143
+resist_acid 15
+is_magical 1
+value 4230
+end
+#
+Allowed all
+chance 5
+difficulty 25
+artifact legs_med_fire
+def_arch legs_leather_fire
+editor 2:items/armour/legs
+Object
+title of medium fire protection
+face legs_leather_fire.101
+item_level_art 25
+type 143
+resist_fire 20
+is_magical 1
+value 4653
+end
+#
+Allowed all
+chance 5
+difficulty 25
+artifact legs_med_cold
+def_arch legs_leather_ice
+editor 2:items/armour/legs
+Object
+title of medium cold protection
+face legs_leather_ice.101
+item_level_art 25
+type 143
+resist_cold 20
+is_magical 1
+value 4653
+end
+#
+Allowed all
+chance 5
+difficulty 25
+artifact legs_med_elec
+def_arch legs_leather_elec
+editor 2:items/armour/legs
+Object
+title of medium electricity protection
+face legs_leather_elec.101
+item_level_art 25
+type 143
+resist_electricity 20
+is_magical 1
+value 4653
+end
+#
+Allowed all
+chance 5
+difficulty 25
+artifact legs_med_poison
+def_arch legs_leather_poison
+editor 2:items/armour/legs
+Object
+title of medium poison protection
+face legs_leather_poison.101
+item_level_art 25
+type 143
+resist_poison 20
+is_magical 1
+value 4653
+end
+#
+Allowed all
+chance 5
+difficulty 25
+artifact legs_med_acid
+def_arch legs_leather_acid
+editor 2:items/armour/legs
+Object
+title of medium acid protection
+face legs_leather_acid.101
 item_level_art 25
 type 143
 resist_acid 20
