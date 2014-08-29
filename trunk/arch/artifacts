@@ -3113,7 +3113,7 @@ cursed 1
 weight 25000
 end
 #
-Allowed legs_chain_fire
+Allowed legs_chain
 chance 40
 t_style 1
 difficulty 2
@@ -3134,7 +3134,7 @@ is_magical 1
 value 3500
 end
 #
-Allowed legs_chain_ice
+Allowed legs_chain
 chance 40
 t_style 2
 difficulty 2
@@ -3155,7 +3155,7 @@ is_magical 1
 value 3500
 end
 #
-Allowed legs_chain_elec
+Allowed legs_chain
 chance 40
 t_style 3
 difficulty 2
@@ -3176,7 +3176,7 @@ is_magical 1
 value 3500
 end
 #
-Allowed legs_chain_poison
+Allowed legs_chain
 chance 40
 t_style 4
 difficulty 2
@@ -3197,7 +3197,7 @@ is_magical 1
 value 3500
 end
 #
-Allowed legs_chain_acid
+Allowed legs_chain
 chance 40
 t_style 5
 difficulty 2
@@ -3218,7 +3218,7 @@ is_magical 1
 value 3500
 end
 #
-Allowed legs_chain_fire
+Allowed legs_chain
 chance 20
 t_style 1
 difficulty 7
@@ -3239,7 +3239,7 @@ is_magical 1
 value 3750
 end
 #
-Allowed legs_chain_ice
+Allowed legs_chain
 chance 20
 t_style 2
 difficulty 7
@@ -3260,7 +3260,7 @@ is_magical 1
 value 3850
 end
 #
-Allowed legs_chain_elec
+Allowed legs_chain
 chance 20
 t_style 3
 difficulty 7
@@ -3281,7 +3281,7 @@ is_magical 1
 value 3850
 end
 #
-Allowed legs_chain_poison
+Allowed legs_chain
 chance 20
 t_style 4
 difficulty 7
@@ -3302,7 +3302,7 @@ is_magical 1
 value 3850
 end
 #
-Allowed legs_chain_acid
+Allowed legs_chain
 chance 20
 t_style 5
 difficulty 7
@@ -3323,7 +3323,7 @@ is_magical 1
 value 3850
 end
 #
-Allowed legs_chain_fire
+Allowed legs_chain
 chance 10
 t_style 1
 difficulty 15
@@ -3344,7 +3344,7 @@ is_magical 1
 value 4230
 end
 #
-Allowed legs_chain_ice
+Allowed legs_chain
 chance 10
 t_style 2
 difficulty 15
@@ -3365,7 +3365,7 @@ is_magical 1
 value 4230
 end
 #
-Allowed legs_chain_elec
+Allowed legs_chain
 chance 10
 t_style 3
 difficulty 15
@@ -3386,7 +3386,7 @@ is_magical 1
 value 4230
 end
 #
-Allowed legs_chain_poison
+Allowed legs_chain
 chance 10
 t_style 4
 difficulty 15
@@ -3407,7 +3407,7 @@ is_magical 1
 value 4230
 end
 #
-Allowed legs_chain_acid
+Allowed legs_chain
 chance 10
 t_style 5
 difficulty 15
@@ -3428,7 +3428,7 @@ is_magical 1
 value 4230
 end
 #
-Allowed legs_chain_fire
+Allowed legs_chain
 chance 5
 t_style 1
 difficulty 25
@@ -3449,7 +3449,7 @@ is_magical 1
 value 4653
 end
 #
-Allowed legs_chain_ice
+Allowed legs_chain
 chance 5
 t_style 2
 difficulty 25
@@ -3470,7 +3470,7 @@ is_magical 1
 value 4653
 end
 #
-Allowed legs_chain_elec
+Allowed legs_chain
 chance 5
 t_style 3
 difficulty 25
@@ -3491,7 +3491,7 @@ is_magical 1
 value 4653
 end
 #
-Allowed legs_chain_poison
+Allowed legs_chain
 chance 5
 t_style 4
 difficulty 25
@@ -3512,7 +3512,7 @@ is_magical 1
 value 4653
 end
 #
-Allowed legs_chain_acid
+Allowed legs_chain
 chance 5
 t_style 5
 difficulty 25
@@ -3533,7 +3533,7 @@ is_magical 1
 value 4653
 end
 #
-Allowed legs_plate_fire
+Allowed legs_plate
 chance 40
 t_style 1
 difficulty 2
@@ -3554,7 +3554,7 @@ is_magical 1
 value 3500
 end
 #
-Allowed legs_plate_ice
+Allowed legs_plate
 chance 40
 t_style 2
 difficulty 2
@@ -3575,7 +3575,7 @@ is_magical 1
 value 3500
 end
 #
-Allowed legs_plate_elec
+Allowed legs_plate
 chance 40
 t_style 3
 difficulty 2
@@ -3596,7 +3596,7 @@ is_magical 1
 value 3500
 end
 #
-Allowed legs_plate_poison
+Allowed legs_plate
 chance 40
 t_style 4
 difficulty 2
@@ -3617,7 +3617,7 @@ is_magical 1
 value 3500
 end
 #
-Allowed legs_plate_acid
+Allowed legs_plate
 chance 40
 t_style 5
 difficulty 2
@@ -3638,7 +3638,7 @@ is_magical 1
 value 3500
 end
 #
-Allowed legs_plate_fire
+Allowed legs_plate
 chance 20
 t_style 1
 difficulty 7
@@ -3659,7 +3659,7 @@ is_magical 1
 value 3750
 end
 #
-Allowed legs_plate_ice
+Allowed legs_plate
 chance 20
 t_style 2
 difficulty 7
@@ -3680,7 +3680,7 @@ is_magical 1
 value 3850
 end
 #
-Allowed legs_plate_elec
+Allowed legs_plate
 chance 20
 t_style 3
 difficulty 7
@@ -3701,7 +3701,7 @@ is_magical 1
 value 3850
 end
 #
-Allowed legs_plate_poison
+Allowed legs_plate
 chance 20
 t_style 4
 difficulty 7
@@ -3722,7 +3722,7 @@ is_magical 1
 value 3850
 end
 #
-Allowed legs_plate_acid
+Allowed legs_plate
 chance 20
 t_style 5
 difficulty 7
@@ -3743,7 +3743,7 @@ is_magical 1
 value 3850
 end
 #
-Allowed legs_plate_fire
+Allowed legs_plate
 chance 10
 t_style 1
 difficulty 15
@@ -3764,7 +3764,7 @@ is_magical 1
 value 4230
 end
 #
-Allowed legs_plate_ice
+Allowed legs_plate
 chance 10
 t_style 2
 difficulty 15
@@ -3785,7 +3785,7 @@ is_magical 1
 value 4230
 end
 #
-Allowed legs_plate_elec
+Allowed legs_plate
 chance 10
 t_style 3
 difficulty 15
@@ -3806,7 +3806,7 @@ is_magical 1
 value 4230
 end
 #
-Allowed legs_plate_poison
+Allowed legs_plate
 chance 10
 t_style 4
 difficulty 15
@@ -3827,7 +3827,7 @@ is_magical 1
 value 4230
 end
 #
-Allowed legs_plate_acid
+Allowed legs_plate
 chance 10
 t_style 5
 difficulty 15
@@ -3848,7 +3848,7 @@ is_magical 1
 value 4230
 end
 #
-Allowed legs_plate_fire
+Allowed legs_plate
 chance 5
 t_style 1
 difficulty 25
@@ -3869,7 +3869,7 @@ is_magical 1
 value 4653
 end
 #
-Allowed legs_plate_ice
+Allowed legs_plate
 chance 5
 t_style 2
 difficulty 25
@@ -3890,7 +3890,7 @@ is_magical 1
 value 4653
 end
 #
-Allowed legs_plate_elec
+Allowed legs_plate
 chance 5
 t_style 3
 difficulty 25
@@ -3911,7 +3911,7 @@ is_magical 1
 value 4653
 end
 #
-Allowed legs_plate_poison
+Allowed legs_plate
 chance 5
 t_style 4
 difficulty 25
@@ -3932,7 +3932,7 @@ is_magical 1
 value 4653
 end
 #
-Allowed legs_plate_acid
+Allowed legs_plate
 chance 5
 t_style 5
 difficulty 25
@@ -3953,7 +3953,7 @@ is_magical 1
 value 4653
 end
 #
-Allowed pants_fire
+Allowed pants
 chance 40
 t_style 1
 difficulty 2
@@ -3974,7 +3974,7 @@ is_magical 1
 value 3500
 end
 #
-Allowed pants_ice
+Allowed pants
 chance 40
 t_style 2
 difficulty 2
@@ -3995,7 +3995,7 @@ is_magical 1
 value 3500
 end
 #
-Allowed pants_elec
+Allowed pants
 chance 40
 t_style 3
 difficulty 2
@@ -4016,7 +4016,7 @@ is_magical 1
 value 3500
 end
 #
-Allowed pants_poison
+Allowed pants
 chance 40
 t_style 4
 difficulty 2
@@ -4037,7 +4037,7 @@ is_magical 1
 value 3500
 end
 #
-Allowed pants_acid
+Allowed pants
 chance 40
 t_style 5
 difficulty 2
@@ -4058,7 +4058,7 @@ is_magical 1
 value 3500
 end
 #
-Allowed pants_fire
+Allowed pants
 chance 20
 t_style 1
 difficulty 7
@@ -4079,7 +4079,7 @@ is_magical 1
 value 3750
 end
 #
-Allowed pants_ice
+Allowed pants
 chance 20
 t_style 2
 difficulty 7
@@ -4100,7 +4100,7 @@ is_magical 1
 value 3850
 end
 #
-Allowed pants_elec
+Allowed pants
 chance 20
 t_style 3
 difficulty 7
@@ -4121,7 +4121,7 @@ is_magical 1
 value 3850
 end
 #
-Allowed pants_poison
+Allowed pants
 chance 20
 t_style 4
 difficulty 7
@@ -4142,7 +4142,7 @@ is_magical 1
 value 3850
 end
 #
-Allowed pants_acid
+Allowed pants
 chance 20
 t_style 5
 difficulty 7
@@ -4163,7 +4163,7 @@ is_magical 1
 value 3850
 end
 #
-Allowed pants_fire
+Allowed pants
 chance 10
 t_style 1
 difficulty 15
@@ -4184,7 +4184,7 @@ is_magical 1
 value 4230
 end
 #
-Allowed pants_ice
+Allowed pants
 chance 10
 t_style 2
 difficulty 15
@@ -4205,7 +4205,7 @@ is_magical 1
 value 4230
 end
 #
-Allowed pants_elec
+Allowed pants
 chance 10
 t_style 3
 difficulty 15
@@ -4226,7 +4226,7 @@ is_magical 1
 value 4230
 end
 #
-Allowed pants_poison
+Allowed pants
 chance 10
 t_style 4
 difficulty 15
@@ -4247,7 +4247,7 @@ is_magical 1
 value 4230
 end
 #
-Allowed pants_acid
+Allowed pants
 chance 10
 t_style 5
 difficulty 15
@@ -4268,7 +4268,7 @@ is_magical 1
 value 4230
 end
 #
-Allowed pants_fire
+Allowed pants
 chance 5
 t_style 1
 difficulty 25
@@ -4289,7 +4289,7 @@ is_magical 1
 value 4653
 end
 #
-Allowed pants_ice
+Allowed pants
 chance 5
 t_style 2
 difficulty 25
@@ -4310,7 +4310,7 @@ is_magical 1
 value 4653
 end
 #
-Allowed pants_elec
+Allowed pants
 chance 5
 t_style 3
 difficulty 25
@@ -4331,7 +4331,7 @@ is_magical 1
 value 4653
 end
 #
-Allowed pants_poison
+Allowed pants
 chance 5
 t_style 4
 difficulty 25
@@ -4352,7 +4352,7 @@ is_magical 1
 value 4653
 end
 #
-Allowed pants_acid
+Allowed pants
 chance 5
 t_style 5
 difficulty 25
@@ -4373,7 +4373,7 @@ is_magical 1
 value 4653
 end
 #
-Allowed legs_leather_fire
+Allowed legs_leather
 chance 40
 t_style 1
 difficulty 2
@@ -4394,7 +4394,7 @@ is_magical 1
 value 3500
 end
 #
-Allowed legs_leather_ice
+Allowed legs_leather
 chance 40
 t_style 2
 difficulty 2
@@ -4415,7 +4415,7 @@ is_magical 1
 value 3500
 end
 #
-Allowed legs_leather_elec
+Allowed legs_leather
 chance 40
 t_style 3
 difficulty 2
@@ -4436,7 +4436,7 @@ is_magical 1
 value 3500
 end
 #
-Allowed legs_leather_poison
+Allowed legs_leather
 chance 40
 t_style 4
 difficulty 2
@@ -4457,7 +4457,7 @@ is_magical 1
 value 3500
 end
 #
-Allowed legs_leather_acid
+Allowed legs_leather
 chance 40
 t_style 5
 difficulty 2
@@ -4478,7 +4478,7 @@ is_magical 1
 value 3500
 end
 #
-Allowed legs_leather_fire
+Allowed legs_leather
 chance 20
 t_style 1
 difficulty 7
@@ -4499,7 +4499,7 @@ is_magical 1
 value 3750
 end
 #
-Allowed legs_leather_ice
+Allowed legs_leather
 chance 20
 t_style 2
 difficulty 7
@@ -4520,7 +4520,7 @@ is_magical 1
 value 3850
 end
 #
-Allowed legs_leather_elec
+Allowed legs_leather
 chance 20
 t_style 3
 difficulty 7
@@ -4541,7 +4541,7 @@ is_magical 1
 value 3850
 end
 #
-Allowed legs_leather_poison
+Allowed legs_leather
 chance 20
 t_style 4
 difficulty 7
@@ -4562,7 +4562,7 @@ is_magical 1
 value 3850
 end
 #
-Allowed legs_leather_acid
+Allowed legs_leather
 chance 20
 t_style 5
 difficulty 7
@@ -4583,7 +4583,7 @@ is_magical 1
 value 3850
 end
 #
-Allowed legs_leather_fire
+Allowed legs_leather
 chance 10
 t_style 1
 difficulty 15
@@ -4604,7 +4604,7 @@ is_magical 1
 value 4230
 end
 #
-Allowed legs_leather_ice
+Allowed legs_leather
 chance 10
 t_style 2
 difficulty 15
@@ -4625,7 +4625,7 @@ is_magical 1
 value 4230
 end
 #
-Allowed legs_leather_elec
+Allowed legs_leather
 chance 10
 t_style 3
 difficulty 15
@@ -4646,7 +4646,7 @@ is_magical 1
 value 4230
 end
 #
-Allowed legs_leather_poison
+Allowed legs_leather
 chance 10
 t_style 4
 difficulty 15
@@ -4667,7 +4667,7 @@ is_magical 1
 value 4230
 end
 #
-Allowed legs_leather_acid
+Allowed legs_leather
 chance 10
 t_style 5
 difficulty 15
@@ -4688,7 +4688,7 @@ is_magical 1
 value 4230
 end
 #
-Allowed legs_leather_fire
+Allowed legs_leather
 chance 5
 t_style 1
 difficulty 25
@@ -4709,7 +4709,7 @@ is_magical 1
 value 4653
 end
 #
-Allowed legs_leather_ice
+Allowed legs_leather
 chance 5
 t_style 2
 difficulty 25
@@ -4730,7 +4730,7 @@ is_magical 1
 value 4653
 end
 #
-Allowed legs_leather_elec
+Allowed legs_leather
 chance 5
 t_style 3
 difficulty 25
@@ -4751,7 +4751,7 @@ is_magical 1
 value 4653
 end
 #
-Allowed legs_leather_poison
+Allowed legs_leather
 chance 5
 t_style 4
 difficulty 25
@@ -4772,7 +4772,7 @@ is_magical 1
 value 4653
 end
 #
-Allowed legs_leather_acid
+Allowed legs_leather
 chance 5
 t_style 5
 difficulty 25
