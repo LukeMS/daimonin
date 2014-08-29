@@ -1,0 +1,18 @@
+Daimonin Installer with GTK/KDE GUI by elwin013.
+With this script you can simply install latest version of Daimonin MMORPG (http://daimonin.org).
+Quick how-to-use:
+1. You can choose 4 actions:
+ - install - script will download, unpack, compile and install game
+ - remove - script will remove game and downloaded source
+ - upgrade - script will remove old installation of game and install new version
+ - help - script will show you this window ;)
+2. Next you must choose install/upgrade/remove mode:
+ - single - install game in home directory (i.e. ~/daimonin) for one user
+ - multi - install game in /usr/ for multiple user
+ If you chose single-user mode you can specify installation folder. 
+3. At last if you want install dependencies or you are using (K)Ubuntu you must choose your distribution.
+
+After that choices, if you chose multi-user mode, you will be prompted for root or current user ((K)Ubuntu only) password.
+
+Author: elwin013
+Script webpage: http://daimonin.elwin013.com/

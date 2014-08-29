@@ -1,0 +1,11 @@
+Daimonin Installer - instalation script for Daimonin MMORPG
+-----------------------------------------------------------
+
+Daimonin Installer is simple script which installs Daimonin MMORPG 
+(download source (main), unpack, compile, install) in specified 
+directory (home directory for single-user mode and /usr for multi-user).
+Script is mostly for non-advanced users of Ubuntu, openSuse, Fedora and 
+other GNU/Linux distributions.
+
+Project site: http://daimonin.elwin013.com/
+Daimonin MMORPG site: http://www.daimonin.org/

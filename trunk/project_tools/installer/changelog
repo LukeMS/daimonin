@@ -1,0 +1,33 @@
+Project: Daimonin Installer
+Website: http://daimonin.elwin013.com/
+Author: Kamil "elwin013" Banach < kontakt AT elwin013 DOT com >
+
+0.5 - February 10, 2012
+ - Important (mostly recurrent) functions moved to instfunctions.bash.
+ - Fixed bugged desktop shortcut.
+ - KDE still not tested. 
+ - Shortcut in menu for single mode installation.
+
+0.4 - September 25, 2010
+ - Split into dai-installer-cli.sh (command line version) and
+   dai-installer-gtk.sh (GTK GUI with Zenity).
+ - Uninstaller script (installed into game directory) for single-user mode.
+ - Added install dir - now user can specify where install game in
+   single-user mode.
+ - Script saves distribution choice.
+
+0.3 - August 23, 2010
+ - Added update function - it reinstall game (delete old version, 
+   download new tarball, unpack, compile, install).
+ - Fixed bug with installing game in multi user mode on Ubuntu.
+ - Changed help message - for clarity 
+ 
+0.2 - August 20, 2010
+ - Added dependencies installation – just put your distribution name 
+   as third input value. At this version supported Fedora (put fedora), 
+   Arch Linux (arch), Ubuntu (ubuntu), Debian (debian) and openSuse (opensuse).
+ - Fixed problem with removing multi-user installation on Ubuntu – 
+   now for remove it just put "sh dai-installer.sh remove multi ubuntu"
+
+0.1 - August 17, 2010
+First release.
