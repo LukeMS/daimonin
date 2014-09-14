@@ -48,8 +48,13 @@ static void DoPrint(char *buf, FILE *fp);
 /* Logs a message to tlogfile.
  *
  * See include/logger.h for possible logLevels.  Messages with llevSystem
- * and llevError are always printed, regardless of debug mode. */
-void LOG(LogLevel logLevel, char *format, ...)
+ * and llevError are always printed, regardless of debug mode. 
+ *
+ * The return is always 1 (but errors and bug floods kill the server so do not
+ * return). As this says nothing about how the function has performed this can
+ * usually be ignored. But it does mean LOG() can be used in tests (eg, if
+ * (LOG())) which is extremely useful for debugging, particularly in macros. */
+sint8 LOG(LogLevel logLevel, char *format, ...)
 {
     /* Check if timestamp needed */
     CheckTimestamp();
@@ -99,6 +104,8 @@ void LOG(LogLevel logLevel, char *format, ...)
         DoPrint("Fatal: Shutdown server. Reason: BUG flood\n", tlogfile);
         fatal_signal(0, 1, SERVER_EXIT_FLOOD);
     }
+
+    return 1;
 }
 
 /* Logs a message to clogfile.  */
@@ -173,4 +180,3 @@ static void DoPrint(char *buf, FILE *fp)
     }
 #endif
 }
-

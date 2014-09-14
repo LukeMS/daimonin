@@ -164,7 +164,7 @@ extern void             init_vars(void);
 extern char            *get_ob_diff(const object *op, const object *op2);
 extern void             save_object(FILE *fp, object *op, int flag);
 /* logger.c */
-extern void             LOG(LogLevel logLevel, char *format, ...) DAI_GNUC_PRINTF(2, 3);
+extern sint8            LOG(LogLevel logLevel, char *format, ...) DAI_GNUC_PRINTF(2, 3);
 extern void             CHATLOG(char *format, ...) DAI_GNUC_PRINTF(1, 2);
 /* los.c */
 extern void             init_block(void);
