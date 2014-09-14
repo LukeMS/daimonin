@@ -340,7 +340,7 @@ struct plugin_hooklist
     /* L */
     object *(*load_object_str)(char *);
     object *(*locate_beacon)(shstr *);
-    void (*LOG)(LogLevel, char *, ...) DAI_GNUC_PRINTF(2, 3);
+    sint8 (*LOG)(LogLevel, char *, ...) DAI_GNUC_PRINTF(2, 3);
     int (*look_up_spell_name)(const char *);
     int (*lookup_skill_by_name)(char *);
 #ifdef USE_CHANNELS
