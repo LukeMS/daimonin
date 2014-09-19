@@ -846,22 +846,22 @@ object *pick_up(object *who, object *what, object *where, uint32 nrof)
             SET_FLAG(who, FLAG_NO_FIX_PLAYER);
         }
 
+        /* Nested loots will be thrown away. */
+        while (looted &&
+               looted->type == LOOT)
+        {
+            object *next = looted->below;
+
+            remove_ob(looted);
+            looted = next;
+        }
+
         /* Attempt to pick up each of the contents of the loot. */
         while (looted)
         {
             object *next = looted->below;
-            uint32  nr;
+            uint32  nr = MAX(1, MIN(looted->nrof, MAX_OBJ_NROF));
 
-            /* Nested loots will be thrown away. */
-            while (looted &&
-                   looted->type == LOOT)
-            {
-                next = looted->below;
-                remove_ob(looted);
-                looted = next;
-            }
-
-            nr = MAX(1, MIN(looted->nrof, MAX_OBJ_NROF));
             (void)PickUp(who, looted, where, nr, from, to);
             looted = next;
         }
