@@ -2780,20 +2780,16 @@ static void LoadObjects(mapstruct *m, FILE *fp, int mapflags)
             case PIT:
             case TRAPDOOR:
                 /* Check for invalid exit path. */
-                if (EXIT_PATH(op))
+                if (op->slaying)
                 {
                     char buf[MAXPATHLEN];
 
-                    /* Absolute path? */
-                    if (*op->slaying == '/')
-                    {
-                        sprintf(buf, "%s", op->slaying);
-                    }
-                    else
-                    {
-                        (void)normalize_path(m->orig_path, op->slaying, buf);
-                    }
+                    /* Normalize ->slaying and then rewrite it. This is the
+                     * original destination path. */
+                    (void)normalize_path(m->orig_path, op->slaying, buf);
+                    FREE_AND_COPY_HASH(op->slaying, buf);
 
+                    /* If it does not exist, shout about it. */
                     if (check_path(buf, 1) == -1)
                     {
                         LOG(llevMapbug, "MAPBUG:: %s[>%s< %d %d] destination map %s does not exist!\n",

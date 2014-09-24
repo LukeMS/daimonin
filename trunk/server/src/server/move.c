@@ -683,11 +683,8 @@ int enter_map_by_exit(object *op, object *exit_ob)
                 x,
                 y;
     object     *tmp;
-    char        tmp_path[MAXPATHLEN];
     mapstruct  *exit_map,
                *newmap;
-    const char *file_path = NULL,
-               *dyn_path = NULL;
     shstr      *reference = NULL;
 
     if (op->head)
@@ -719,136 +716,161 @@ int enter_map_by_exit(object *op, object *exit_ob)
 
     exit_map = tmp->map;
 
-    /* Always recalculate ->race if we're going to allow exits in envs, as envs
-     * can move and exits can be dropped from envs to maps, etc.
+    /* We now need to generate a normalized (means absolute) path to the exit's
+     * destination map. The precise destination path depends ultimately on what
+     * status the destination map is being loaded with: multiplayer maps have a
+     * path pointing to /maps/...; unique maps point to
+     * /server/data/players/...; and instances point to
+     * /server/data/instance/....
      *
-     * Potentially we could allow exits to be acquired from maps to envs in the
-     * future too (and of course scripts can already move exits about).
+     * When an exit object is first loaded on a map it's destination path (in
+     * ->slaying) is normalized and rewritten to ->slaying (we'll call this the
+     * original destination path). This only needs to be done once because
+     * original map paths very rarely change (and never while the server is
+     * running), so once normalized, the original destination path will be
+     * valid almost forever, even if the exit is picked up and/or moved.
      *
-     * FIXME: If this is a permanent change then perhaps there is no point
-     * storing it in ->race anyway (just use a temp local var)? (Similarly for
-     * ->title below).
-     * -- Smacky 20101231 */
-#if 0
-    /* our target map is in ->slaying in non normalized format, in last_eat the type.
-    * Non normalized means, it can be something like "../test/../test/....."
-    * To know path/map A is the same like B we need to normalize the path & name.
-    * in ->race *can* be the normalized src path, *if* the exit was used before.
-    * if not, we have to process it now first.
-    */
-    if(!exit_ob->race)
-    {
-        char tmp_path[MAXPATHLEN];
+     * From time to time however, original map paths DO change (eg, /maps/ is
+     * reorganized). When this happens, exits in inventories and (amost always)
+     * on maps will have their destination path become invalid (so 'the exit is
+     * closed'). Bt this is OK as ->slaying should either have been manually
+     * updated anyway as part of the reorganization or the invalidation/closure
+     * was intentional.
+     *
+     * So the original destination path is translated, according to status
+     * (->last_eat or exit_map->map_status), into a destination path (->race),
+     *
+     * TODO: Exits created/modified by scripts do not have their original
+     * destination paths normalized/validated in this way so may well be
+     * broken. This will be fixed in a future update. */
 
-        /* note the use of ->orig_path as normalized src path inside /maps */
-        exit_ob->race = add_string(normalize_path(exit_map->orig_path, EXIT_PATH(exit_ob), tmp_path));
-    }
-#else
-    exit_ob->race = add_string(normalize_path(exit_map->orig_path, EXIT_PATH(exit_ob), tmp_path));
-#endif
-
-    /* Relative exit paths and exits (that have been) in envs can lead to bogus
-     * normalized paths, so check it. Such an exit should always have an
-     * absolute path to guarantee success.
-     *
-     * FIXME: This is not reported as a MAPBUG as a relative path on a mobile
-     * exit may be intentional for a puzzle. However, this area will
-     * undoubtedly need some attention.
-     * -- Smacky 20101231 */
-    if (check_path(exit_ob->race, 1) == -1)
+    /* If the destination path is nonexistent or invalid, we ain't goin'
+     * nowhere. */
+    if (!exit_ob->slaying ||
+        check_path(exit_ob->slaying, 1) == -1)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "%s is temporarily closed.",
             QUERY_SHORT_NAME(exit_ob, op));
         return FALSE;
     }
 
-    /* now we have some choices:
-    * If the new map type is inheritanced from exit_map , we can generate
-    * a static path which will not change for this map/exit anymore.
-    * For an explicit _INSTANCE and _UNIQUE we have always to use a dynamic path.
-    * For MAP_STATUS_MULTI we can simply copy the ob->race ptr.
-    */
-    if(MAP_STATUS_TYPE(exit_ob->last_eat))
+    /* We need to know the status with which to load the destination map. This
+     * either held by the exit itself or is inherited from the exit map. */
+    mstatus = (!exit_ob->last_eat) ? // means inherited
+       (int)MAP_STATUS_TYPE(exit_map->map_status) :
+       (int)MAP_STATUS_TYPE(exit_ob->last_eat);
+
+    /* If our status is not one of these we have a problem and must bail out. */
+    if (!(mstatus & (MAP_STATUS_MULTI | MAP_STATUS_STYLE | MAP_STATUS_UNIQUE | MAP_STATUS_INSTANCE)))
     {
-        reference = op->name;
-
-        if(exit_ob->last_eat & (MAP_STATUS_MULTI|MAP_STATUS_STYLE))
-            file_path = exit_ob->race; /* multi == original map path */
-        else /* dynamic path */
+        /* So it's an inherited status which means ecit_map is already in memory
+         * with an invalid status. This should never be possible but JIC. */
+        if (!exit_ob->last_eat)
         {
-            if(op->type != PLAYER || !CONTR(op))
-                return FALSE;
+            LOG(llevMapbug, "MAPBUG:: %s has an unrecgnized map status: %d!\n",
+                STRING_MAP_PATH(exit_map), mstatus);
+        }
+        /* The exit has a bad explicit status. Lets kill the mapper. */
+        else
+        {
+            LOG(llevMapbug, "MAPBUG:: %s[%d][%s %d %d] has an unrecgnized map status: %d!\n",
+                STRING_OBJ_NAME(exit_ob), TAG(exit_ob),
+                STRING_MAP_PATH(exit_map), exit_ob->x, exit_ob->y,
+                mstatus);
+        }
 
-            if(exit_ob->last_eat & MAP_STATUS_UNIQUE)
-                file_path = dyn_path = create_unique_path_sh(op, exit_ob->race);
-            else if(exit_ob->last_eat & MAP_STATUS_INSTANCE)
+        return FALSE;
+    }
+    /* Multiplayer maps are easy as reference is always NULL and the
+     * destination path is the same as the original destination path. */
+    else if ((mstatus & (MAP_STATUS_MULTI | MAP_STATUS_STYLE)))
+    {
+        FREE_AND_CLEAR_HASH(reference);
+
+        if (!exit_ob->race ||
+            exit_ob->env)
+        {
+            FREE_AND_ADD_REF_HASH(exit_ob->race, exit_ob->slaying);
+        }
+    }
+    /* Uniques and instances are a bit more complex. */
+    else
+    {
+        /* When the exit is to an inherited map (means to elsewhere within the
+         * same unique/instanced node), the reference MUST be the same as the
+         * exit map's ->reference and the desination path MUST be a mash up of
+         * the exit map's ->path and the exit object's ->slaying. */
+        if (!exit_ob->last_eat)
+        {
+            FREE_AND_ADD_REF_HASH(reference, exit_map->reference);
+
+            if (!exit_ob->race ||
+                exit_ob->env)
             {
-                player *pl = CONTR(op);
+                char buf[MAXPATHLEN];
 
+                /* we have now this:
+                * - in map->path a normalized path to /players or /instance
+                * - in exit_ob->slaying the normalized path + name to the original map
+                * we create now a new path out of it by using the root from ->path.
+                * NOTE: the path to /maps is always part of the unique/instance map name. */
+                (void)normalize_path_direct(exit_map->path, exit_ob->slaying, buf);
+                FREE_AND_COPY_HASH(exit_ob->race, buf);
+            }
+        }
+        /* Here we're going from a multiplayer map to a unique/instance. */
+        else
+        {
+            player *pl = (op->type == PLAYER) ? CONTR(op) : NULL;
+            uint32  flags;
+
+            /* Only players can have uniques/instances. */
+            /* TODO: ATM only players can use exits at all but this will likely
+             * change soon. */
+            if (!pl)
+            {
+                return FALSE;
+            }
+
+            /* So the reference is the player's name. */
+            reference = pl->quick_name;
+
+            /* For a unique, the destination path is in server/data/players/ */
+            if ((mstatus & MAP_STATUS_UNIQUE))
+            {
+                FREE_AND_COPY_HASH(exit_ob->race, create_unique_path_sh(op, exit_ob->slaying));
+            }
+            /* For an instance, the destination path is in
+             * server/data/instance/ */
+            else if ((mstatus & MAP_STATUS_INSTANCE))
+            {
                 /* we give here a player a "temporary" instance directory inside /instance
-                * which is identified by global_instance_num (directory name  = itoa(num)).
-                * we use the normalized original map path of the exit_ob as identifier of the
-                * instanced map or map set itself.
-                */
-                if( pl->instance_name == exit_ob->race && pl->instance_id == global_instance_id)
+                 * which is identified by global_instance_num (directory name  = itoa(num)).
+                 * we use the normalized original map path of the exit_ob as identifier of the
+                 * instanced map or map set itself. */
+                if (pl->instance_name == exit_ob->slaying &&
+                    pl->instance_id == global_instance_id)
                 {
                     /* add here the instance validation checks for this player */
                 }
                 else
+                {
                     pl->instance_num = MAP_INSTANCE_NUM_INVALID; /* if set, we generate a NEW instance! */
+                }
+
+                flags = (QUERY_FLAG(exit_ob, FLAG_IS_MALE)) ? INSTANCE_FLAG_NO_REENTER : 0;
 
                 /* create_instance..() will try to load an old instance, will fallback to
-                * a new one if needed and setup all what need be done to start the instance.
-                */
-                file_path = dyn_path = create_instance_path_sh(pl, exit_ob->race,
-                                        QUERY_FLAG(exit_ob, FLAG_IS_MALE)?INSTANCE_FLAG_NO_REENTER:0);
+                 * a new one if needed and setup all what need be done to start the instance. */
+                FREE_AND_COPY_HASH(exit_ob->race, create_instance_path_sh(pl, exit_ob->slaying, flags));
             }
-            else
-                LOG(llevError, "FATAL ERROR: enter_map_by_exit(): Map %s without valid map status (dynamic) (%d)!\n",
-                    STRING_MAP_PATH(exit_map), exit_map->map_status);
         }
     }
-    else /* dst path is static and stored in exit_ob->title */
-    {
-        reference = exit_map->reference;
-
-        /* See ->race above. */
-#if 0
-        if(!exit_ob->title) /* first call, generate the static path first */
-        {
-#endif
-            if(exit_map->map_status & (MAP_STATUS_MULTI|MAP_STATUS_STYLE))
-                exit_ob->title = add_refcount(exit_ob->race); /* multi = original map path */
-            else if(exit_map->map_status & (MAP_STATUS_INSTANCE|MAP_STATUS_UNIQUE) )
-            {
-                char tmp_path[MAXPATHLEN];
-
-                /* we have now this:
-                * - in map->path a normalized path to /players or /instance
-                * - in exit_ob->race the normalized path + name to the original map
-                * we create now a new path out of it by using the root from ->path.
-                * NOTE: the path to /maps is always part of the unique/instance map name. */
-                FREE_AND_COPY_HASH(exit_ob->title,
-                                   normalize_path_direct(exit_map->path,
-                                   exit_ob->race, tmp_path));
-            }
-            else /* this should never happen and will break the inheritance system - so kill the server */
-                LOG(llevError, "FATAL ERROR: enter_map_by_exit(): Map %s loaded without valid map status (%d)!\n",
-                    STRING_MAP_PATH(exit_map),exit_map->map_status);
-#if 0
-        }
-#endif
-        file_path = exit_ob->title;
-    }
-
-    /* lets fetch the right map status */
-    mstatus = exit_ob->last_eat ? (int)MAP_STATUS_TYPE(exit_ob->last_eat) : (int)MAP_STATUS_TYPE(exit_map->map_status);
 
     /* get the map ptr - load the map if needed */
-    newmap = ready_map_name( file_path, exit_ob->race, mstatus, reference);
+    newmap = ready_map_name(exit_ob->race, exit_ob->slaying, mstatus, reference);
 
-    FREE_ONLY_HASH(dyn_path);
-
+    /* If no map could be readied, we ain't goin' nowhere. */
     if (!newmap)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "%s is closed.",
@@ -896,7 +918,6 @@ int enter_map_by_exit(object *op, object *exit_ob)
 
     return TRUE;
 }
-
 
 #if 0
 /* Random maps are disabled ATM.

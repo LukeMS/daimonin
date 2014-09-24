@@ -2373,6 +2373,18 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
     if(op->type == PLAYER && op->map != old_map && CONTR(op)->pets)
         pets_follow_owner(op);
 
+    /* For exits we NULL ->race, which is the destination path. This forces it
+     * to be recalculated next time the exit is used. Which means that an
+     * inherited exit can be moved to a different (status) map and still
+     * function correctly as an exit. */
+    if (op->type == EXIT ||
+        op->type == TELEPORTER ||
+        op->type == PIT ||
+        op->type == TRAPDOOR)
+    {
+        FREE_AND_CLEAR_HASH(op->race);
+    }
+
     /* check walk on/fly on flag if not canceled AND there is some to move on.
      * Note: We are first inserting the WHOLE object/multi arch - then we check all
      * part for traps. This ensures we don't must do nasty hacks with half inserted/removed
