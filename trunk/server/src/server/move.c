@@ -702,9 +702,12 @@ int enter_map_by_exit(object *op, object *exit_ob)
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
         return FALSE;
 
-    if(! EXIT_PATH(exit_ob))
+    /* If the destination path is nonexistent or invalid, we ain't goin'
+     * nowhere. */
+    if (!exit_ob->slaying ||
+        check_path(exit_ob->slaying, 1) == -1)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "%s is closed.",
+        new_draw_info(NDI_UNIQUE, 0, op, "%s is temporarily closed.",
             QUERY_SHORT_NAME(exit_ob, op));
         return FALSE;
     }
@@ -743,16 +746,6 @@ int enter_map_by_exit(object *op, object *exit_ob)
      * TODO: Exits created/modified by scripts do not have their original
      * destination paths normalized/validated in this way so may well be
      * broken. This will be fixed in a future update. */
-
-    /* If the destination path is nonexistent or invalid, we ain't goin'
-     * nowhere. */
-    if (!exit_ob->slaying ||
-        check_path(exit_ob->slaying, 1) == -1)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "%s is temporarily closed.",
-            QUERY_SHORT_NAME(exit_ob, op));
-        return FALSE;
-    }
 
     /* We need to know the status with which to load the destination map. This
      * either held by the exit itself or is inherited from the exit map. */
