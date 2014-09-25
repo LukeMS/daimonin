@@ -886,11 +886,7 @@ int enter_map_by_exit(object *op, object *exit_ob)
 
     /* get the map ptr - load the map if needed */
     newmap = ready_map_name(exit_ob->race, exit_ob->slaying, mstatus, reference);
-
-    if (reference)
-    {
-        FREE_ONLY_HASH(reference);
-    }
+    FREE_ONLY_HASH(reference);
 
     /* If no map could be readied, we ain't goin' nowhere. */
     if (!newmap)
