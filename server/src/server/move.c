@@ -826,7 +826,7 @@ int enter_map_by_exit(object *op, object *exit_ob)
             }
 
             /* So the reference is the player's name. */
-            reference = pl->quick_name;
+            reference = op->name;
 
             /* For a unique, the destination path is in server/data/players/ */
             if ((mstatus & MAP_STATUS_UNIQUE))
