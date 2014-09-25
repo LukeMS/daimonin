@@ -565,7 +565,7 @@ mapstruct *enter_map_by_name(object *op, const char *path, const char *src_path,
                 return NULL;
 
             if(flags & MAP_STATUS_UNIQUE)
-                path = dyn_path = create_unique_path_sh(op, src_path);
+                path = dyn_path = create_unique_path_sh(op->name, src_path);
             else /* ATM we always get here a new instance... can't see the sense to use an old one in this case */
             {
                 /* a forced instance... this is for example done by a script forcing a player in an instance! */
@@ -825,18 +825,42 @@ int enter_map_by_exit(object *op, object *exit_ob)
                 return FALSE;
             }
 
-            /* So the reference is the player's name. */
-            reference = op->name;
-
-            /* For a unique, the destination path is in server/data/players/ */
+            /* For a unique, the destination path is in server/data/players/.
+             * The reference is normally op's name (that means whoever applied
+             * the exit goes to their own apt) but for egobound exits is the
+             * name of the player to whom it is bound. In this way a
+             * (portable) entrance to let friends into your apt is possible. */
+            /* TODO: But ATM the manual apply ego check prevents players
+             * applying other's ego items s anyway. This restriction is kept
+             * for now as several issues need to be addressed before we allow
+             * visitors in apts anyway.
+             *
+             * -- Smacky 20140925 */
             if ((mstatus & MAP_STATUS_UNIQUE))
             {
-                FREE_AND_COPY_HASH(exit_ob->race, create_unique_path_sh(op, exit_ob->slaying));
+                /* If the exit is egoboung, the reference is the name of the
+                 * player to whom it is bound. The more elaborate ego test
+                 * (check_ego_item()) has already been done before this
+                 * function so here it's just a flag query. */
+                if (QUERY_FLAG(exit_ob, FLAG_IS_EGOBOUND))
+                {
+                    FREE_AND_COPY_HASH(reference, get_ego_item_name(exit_ob));
+                }
+                /* So the reference is the player's name. */
+                else
+                {
+                    FREE_AND_ADD_REF_HASH(reference, op->name);
+                }
+
+                FREE_AND_COPY_HASH(exit_ob->race, create_unique_path_sh(reference, exit_ob->slaying));
             }
             /* For an instance, the destination path is in
              * server/data/instance/ */
             else if ((mstatus & MAP_STATUS_INSTANCE))
             {
+                /* So the reference is the player's name. */
+                FREE_AND_ADD_REF_HASH(reference, op->name);
+
                 /* we give here a player a "temporary" instance directory inside /instance
                  * which is identified by global_instance_num (directory name  = itoa(num)).
                  * we use the normalized original map path of the exit_ob as identifier of the
@@ -862,6 +886,11 @@ int enter_map_by_exit(object *op, object *exit_ob)
 
     /* get the map ptr - load the map if needed */
     newmap = ready_map_name(exit_ob->race, exit_ob->slaying, mstatus, reference);
+
+    if (reference)
+    {
+        FREE_ONLY_HASH(reference);
+    }
 
     /* If no map could be readied, we ain't goin' nowhere. */
     if (!newmap)
