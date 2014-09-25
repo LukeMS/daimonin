@@ -194,7 +194,7 @@ extern void             set_map_darkness(mapstruct *m, int value);
 extern mapstruct       *map_save(mapstruct *m);
 extern void             delete_map(mapstruct *m);
 extern shstr           *create_safe_path_sh(const char *path);
-extern shstr           *create_unique_path_sh(object *op, shstr *orig_path_sh);
+extern shstr           *create_unique_path_sh(shstr *name_sh, shstr *orig_path_sh);
 extern shstr           *create_instance_path_sh(player *pl, shstr *orig_path_sh, uint32 flags);
 extern mapstruct       *ready_map_name(shstr *path_sh, shstr *orig_path_sh, uint32 flags, shstr *reference);
 extern void             clean_tmp_map(mapstruct *m);

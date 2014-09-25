@@ -265,7 +265,7 @@ struct plugin_hooklist
         uint32, chunk_initialisator, chunk_deinitialisator,
         chunk_constructor, chunk_destructor);
     shstr *(*create_safe_path_sh)(const char *);
-    shstr *(*create_unique_path_sh)(object *, shstr *);
+    shstr *(*create_unique_path_sh)(shstr *, shstr *);
     /* D */
     object *(*decrease_ob_nr)(object *, uint32);
     void (*destruct_ob)(object *);

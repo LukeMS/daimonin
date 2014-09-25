@@ -790,7 +790,7 @@ static int GameObject_ReadyUniqueMap(lua_State *L)
                           STRING_SAFE(path));
     }
 
-    path_sh = hooks->create_unique_path_sh(WHO, orig_path_sh);
+    path_sh = hooks->create_unique_path_sh(WHO->name, orig_path_sh);
     m = hooks->map_is_in_memory(path_sh);
 
     if (mode == PLUGIN_MAP_NEW &&

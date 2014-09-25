@@ -1456,14 +1456,14 @@ shstr *create_safe_path_sh(const char *path)
 }
 
 /* Returns a unique path_sh based on the arguments. */
-shstr *create_unique_path_sh(object *op, shstr *orig_path_sh)
+shstr *create_unique_path_sh(shstr *name_sh, shstr *orig_path_sh)
 {
      char   path[LARGE_BUF];
      shstr *path_sh = NULL;
 
      sprintf(path, "%s/%s/%s/%s/%s",
-             settings.localdir, settings.playerdir, get_subdir(op->name),
-             op->name, PathToName(orig_path_sh));
+         settings.localdir, settings.playerdir, get_subdir(name_sh), name_sh,
+         PathToName(orig_path_sh));
      FREE_AND_COPY_HASH(path_sh, path);
 
      return path_sh;

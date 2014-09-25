@@ -388,7 +388,7 @@ int command_goto(object *op, char *params)
         }
 
         orig_path_sh = create_safe_path_sh(walk->title);
-        path_sh = create_unique_path_sh(other->ob, orig_path_sh);
+        path_sh = create_unique_path_sh(other->ob->name, orig_path_sh);
         flags = MAP_STATUS_UNIQUE;
 
         if (!(m = ready_map_name(path_sh, orig_path_sh, flags, op->name)))
