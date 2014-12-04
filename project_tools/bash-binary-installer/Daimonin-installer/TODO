@@ -1,0 +1,32 @@
+* The qt GUI (uses kdialog) has all sorts of issues. These seem to be cosmetic
+  only so installation does work but ain't pretty.
+
+  In particular, no progress dialog is displayed during installation.
+
+* Not much I can do about this one, but the desktop entry file has several
+  actions (PlayMain, PlayDev, and Uninstall). However no DEs seem to support
+  actions so these are not accessible.
+
+  I COULD create several top-level desktop entry files and possibly a new
+  Daimonin category so as not to clutter Games but IMO these are somewhat ugly
+  solutions to a problem which is not an application writer's responsibility to
+  solve. Perhaps wait for DEs to work properly?
+
+* gui_choosedir: I'd prefer a two-step solution: 1) a text entry dialog with a
+  browse button; 2) if browse is clicked, open the file-selection dialog. But
+  zenity/kdialog do not seem to work like that (no way to specify buttons
+  and/or no browse dialog) so we go straight to the file-selection dialog.
+
+  In theory I can think of a simple update to zenity at least that would
+  accomplish this. Obviously this is only useful if added to the official code,
+  so perhaps later I will code a patch and submit to the devs.
+
+* Improve validation of installdir (ie, don't just exit if the user's choice is
+  invalid but let him try again).
+
+* General tidying and finish commenting install.bash.
+
+* Check/patch auto-updater under Linux and include in this package.
+
+* Write proper GUI launcher and include in this installer rather than
+  daimonin script.

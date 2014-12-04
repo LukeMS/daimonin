@@ -1,0 +1,38 @@
+#!/bin/bash
+# Daimonin
+# Copyright (C) 2014 Julian Arnold
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+MODES="main dev uninstall" # possible modes
+MODE="main" # chosen mode
+# The user may pass a mode as the first script parameter. If this is one of
+# $MODES then this becomes $MODE and shift the parameters (ie, throw that
+# one away). Otherwise use the default.
+if [ $# -gt 0 ]; then
+  if $(echo "$MODES" | grep -qw "$1"); then
+    MODE=$1
+    shift
+  fi
+fi
+# And in we go.
+if [ "$MODE" = "uninstall" ]; then
+  rm -iv $0
+  rm -Irv %INSTALLDIR%
+  rm -iv %MENUDIR%/%DESKTOPENTRY%
+else
+  cd  %INSTALLDIR%/$MODE
+  LD_LIBRARY_PATH=../lib ./client.bin "$@"
+fi

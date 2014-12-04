@@ -1,0 +1,27 @@
+[Desktop Entry]
+Type=Application
+Version=1.1
+Name=Daimonin
+GenericName=MMORPG
+Comment=Free open source MMORPG
+Icon=%INSTALLDIR%/icon.png
+Categories=Game
+TryExec=%INSTALLDIR%/%LAUNCHER%
+Exec=%INSTALLDIR%/%LAUNCHER%
+Path=%INSTALLDIR%
+Actions=PlayMain;PlayDev;Uninstall
+
+[Desktop Action PlayMain]
+Name=Play Daimonin (main client)
+Exec=%INSTALLDIR%/%LAUNCHER% main
+Icon=%INSTALLDIR%/icon-playmain.png
+
+[Desktop Action PlayDev]
+Name=Play Daimonin (dev client)
+Exec=%INSTALLDIR%/%LAUNCHER% dev
+Icon=%INSTALLDIR%/icon-playdev.png
+
+[Desktop Action Uninstall]
+Name=Uninstall Daimonin
+Exec=%INSTALLDIR%/%LAUNCHER% uninstall
+Icon=%INSTALLDIR%/icon-uninstall.png
