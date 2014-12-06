@@ -22,7 +22,7 @@ MODE="main" # chosen mode
 # $MODES then this becomes $MODE and shift the parameters (ie, throw that
 # one away). Otherwise use the default.
 if [ $# -gt 0 ]; then
-  if $(echo "$MODES" | grep -qw "$1"); then
+  if $(echo "$MODES" | grep -qw "'$1'"); then
     MODE=$1
     shift
   fi
@@ -30,9 +30,9 @@ fi
 # And in we go.
 if [ "$MODE" = "uninstall" ]; then
   rm -iv $0
-  rm -Irv %INSTALLDIR%
+  rm -Irv %INSTALLDIR%/%INSTALLSUFFIX%
   rm -iv %MENUDIR%/%DESKTOPENTRY%
 else
-  cd  %INSTALLDIR%/$MODE
+  cd  %INSTALLDIR%/%INSTALLSUFFIX%/$MODE
   LD_LIBRARY_PATH=../lib ./client.bin "$@"
 fi
