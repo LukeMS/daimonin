@@ -305,17 +305,34 @@ gui_showtext "!" "$WELCOME" || exit 0
 gui_showtext "!" "$LICENSE" "$GUI_ACCEPT" || exit 0
 replace_text "$INSTRUCTIONS" "%MODE%" "$MODE" "%INSTALLDIR%" "$INSTALLDIR" "%INSTALLSUFFIX%" "$INSTALLSUFFIX" "%LAUNCHER%" "$LAUNCHER" "%LAUNCHDIR%" "$LAUNCHDIR" "%MENUDIR%" "$MENUDIR"
 gui_showtext "!" "$INSTRUCTIONS" || exit 0
-if [ "$MODE" = "normal" ]; then
-  INSTALLDIR=$(gui_choosedir "$GUI_INSTALLDIR" "$HOME/") || exit 0
-  INSTALLDIR=${INSTALLDIR/#~/$HOME} # ~/directory -> /home/foo/directory
-  LAUNCHDIR="$INSTALLDIR/$INSTALLSUFFIX"
-fi
-[ -e "$INSTALLDIR" ] || mkdir -p "$INSTALLDIR" 2>/dev/null
-[ -d "$INSTALLDIR" ] || gui_showtext "1" "$GUI_NOTDIR"
-[ -w "$INSTALLDIR" ] || gui_showtext "1" "$GUI_NOWRITE"
-INSTALLDIR="$INSTALLDIR/$INSTALLSUFFIX"
-[ -e "$INSTALLDIR" ] && gui_showtext "1" "$GUI_EXISTS"
-mkdir "$INSTALLDIR"
+# Establish $INSTALLDIR. In normal mode this means allowing the user to choose
+# a dir. If not valid, give a warning and repeat. In root mode the onlt likely
+# problem is an installation already exists. So if not valid, give an error and
+# exit.
+while [ 0 ]; do
+  if [ "$MODE" = "normal" ]; then
+    V=-1 # warning, loop until $INSTALLDIR is valid
+    INSTALLDIR=$(gui_choosedir "$GUI_INSTALLDIR" "$HOME/") || exit 0
+    INSTALLDIR=${INSTALLDIR/#~/$HOME} # ~/directory -> /home/foo/directory
+    LAUNCHDIR="$INSTALLDIR/$INSTALLSUFFIX"
+  elif [ "$MODE" = "root" ]; then
+    V=1 # error, try once, exit on failure
+  fi
+  [ -e "$INSTALLDIR" ] || mkdir -p "$INSTALLDIR" 2>/dev/null
+  if [ ! -d "$INSTALLDIR" ]; then
+    gui_showtext "$V" "$GUI_NOTDIR"
+  elif [ ! -w "$INSTALLDIR" ]; then
+    gui_showtext "$V" "$GUI_NOWRITE"
+  else
+    INSTALLDIR="$INSTALLDIR/$INSTALLSUFFIX"
+    if [ -e "$INSTALLDIR" ]; then
+      gui_showtext "$V" "$GUI_EXISTS"
+    else
+      mkdir "$INSTALLDIR"
+      break
+    fi
+  fi
+done
 #
 [ declare -f gui_progress_start 2>/dev/null ] && gui_progress_start
 # 

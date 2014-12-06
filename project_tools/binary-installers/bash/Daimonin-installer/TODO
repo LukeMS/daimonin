@@ -21,9 +21,6 @@
   accomplish this. Obviously this is only useful if added to the official code,
   so perhaps later I will code a patch and submit to the devs.
 
-* Improve validation of installdir (ie, don't just exit if the user's choice is
-  invalid but let him try again).
-
 * General tidying and finish commenting install.bash.
 
 * Check/patch auto-updater under Linux and include in this package.
