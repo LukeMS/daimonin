@@ -1,5 +1,8 @@
 2014-12-06  Smacky
 
+	* Single-quote grep argument in launcher.
+	* Always be explicit about $INSTALLSUFFIX to prevent uninstall
+	  disasters.
 	* Improve validation of installation directory.
 
 2014-12-04  Smacky
