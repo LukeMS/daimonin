@@ -22,7 +22,7 @@ MODE="main" # chosen mode
 # $MODES then this becomes $MODE and shift the parameters (ie, throw that
 # one away). Otherwise use the default.
 if [ $# -gt 0 ]; then
-  if $(echo "$MODES" | grep -qw "'$1'"); then
+  if $(echo "$MODES" | grep -qw "$1"); then
     MODE=$1
     shift
   fi
