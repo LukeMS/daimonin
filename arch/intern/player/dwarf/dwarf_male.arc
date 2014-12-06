@@ -1,6 +1,6 @@
 Object dwarf_male
 race dwarf
-face dwarf.151
+face dwarf_male.151
 randomitems player_dwarf_male
 layer 6
 can_open_door 1

@@ -12,7 +12,7 @@ terrain_flag 1
 weapon_speed 3.5
 container 110000
 speed 0.95
-face dwarf.151
+face dwarf_female.151
 animation dwarf_female
 is_animated 1
 anim_speed 3
@@ -33,4 +33,5 @@ can_use_weapon 1
 is_player 1
 weight 85000
 food 750
+is_named 1
 end
