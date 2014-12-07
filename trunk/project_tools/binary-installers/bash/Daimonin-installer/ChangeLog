@@ -1,3 +1,8 @@
+2014-12-07  Smacky
+
+	* Ensure installed files have correct permissions.
+	* Fix typo in desktop entry.
+
 2014-12-06  Smacky
 
 	* Always be explicit about $INSTALLSUFFIX to prevent uninstall
