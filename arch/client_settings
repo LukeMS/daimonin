@@ -45,3 +45,15 @@ Some dwarves has joined the human fight against Moroch and their
 skills was very valuable. Some has traveled to the human realms
 but there are also rumors from hidden dwarf cities in the deeps.
 The dwarves itself don't talk much about it...
+char Ogre
+ogre_male.151 8 3 3 0 0 0
+1 ogre_male ogre_male.151
+0 x x
+0 x x
+0 x x
+19 12 15 11 10 10 10
++-----------------------------+
+|   This space intentionally  |
+|         left blank          |
++-----------------------------+
+

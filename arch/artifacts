@@ -10078,6 +10078,19 @@ sp   0
 grace  0
 end
 #
+Allowed none
+chance 1
+artifact age_force_ogre
+def_arch age_force
+editor 0
+Object
+title ogre age force (artifacts generic)
+hp 21
+maxhp 100
+sp   0
+grace  0
+end
+#
 #
 Allowed none
 chance 1
