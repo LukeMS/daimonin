@@ -35,9 +35,9 @@ which elvish blood in the 2nd or 3rd generation. Real half bloods
 are normally counted to the elves. Half-elves are very similiar to
 humans but a bit more focused to power and dexterity.
 char Dwarf
-dwarf_male.151 8 3 3 0 0 0
-1 dwarf_male dwarf_male.151
-1 dwarf_female dwarf_female.151
+dwarf.151 8 3 3 0 0 0
+1 dwarf_male dwarf.151
+1 dwarf_female dwarf.151
 0 x x
 0 x x
 14 12 14 12 13 12 12
@@ -56,4 +56,3 @@ ogre_male.151 8 3 3 0 0 0
 |   This space intentionally  |
 |         left blank          |
 +-----------------------------+
-
