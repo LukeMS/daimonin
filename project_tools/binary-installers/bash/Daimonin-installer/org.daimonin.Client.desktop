@@ -7,7 +7,7 @@ Comment=Free open source MMORPG
 Icon=%INSTALLDIR%/%INSTALLSUFFIX%/icon.png
 Categories=Game
 TryExec=%LAUNCHDIR%/%LAUNCHER%
-exec=%LAUNCHDIR%/%LAUNCHER%
+Exec=%LAUNCHDIR%/%LAUNCHER%
 Actions=PlayMain;PlayDev;Uninstall
 
 [Desktop Action PlayMain]

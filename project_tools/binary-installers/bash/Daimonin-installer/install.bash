@@ -364,9 +364,15 @@ done
     [ -z "$TOS" ] && gui_showtext "1" "$GUI_INTERNAL"
     echo "# Unpacking '$PACK'..."
     for TO in $TOS; do
-      if [ "$PACK" = "$FROM/" ]; then mkdir -p "$INSTALLDIR/$INSTALLSUFFIX/$TO"
-      elif [ -d "$PACK" ]; then mkdir -p "$INSTALLDIR/$INSTALLSUFFIX/$TO/${PACK#$FROM/}"
-      else cp "$PACK" "$INSTALLDIR/$INSTALLSUFFIX/$TO/${PACK#$FROM/}"; fi
+      UNPACK="$INSTALLDIR/$INSTALLSUFFIX/$TO"
+      if [ "$PACK" = "$FROM/" ]; then
+        mkdir -p "$UNPACK"
+      else
+        UNPACK="$UNPACK/${PACK#$FROM/}"
+        if [ -d "$PACK" ]; then mkdir -p "$UNPACK"
+        else cp "$PACK" "$UNPACK"; fi
+      fi
+      if [ -x "$UNPACK" ]; then chmod 755 "$UNPACK"; else chmod 644 "$UNPACK"; fi
     done
     ((NCYCLES++))
     [ $NCYCLES -eq $PACKSPERCYCLE ] && { NCYCLES=0; ((P+=$PROGPERCYCLE)); echo "$P"; }
@@ -375,13 +381,16 @@ done
   echo "# Creating $MODE user mode launcher..."
   replace_text "$LAUNCHER" "%INSTALLDIR%" "$INSTALLDIR" "%INSTALLSUFFIX%" "$INSTALLSUFFIX" "%MENUDIR%" "$MENUDIR" "%DESKTOPENTRY%" "$DESKTOPENTRY"
   cp -t "$LAUNCHDIR" "$LAUNCHER"
+  chmod 755 "$LAUNCHDIR/$LAUNCHER"
   P=98; echo "$P"
   echo "# Creating $MODE user mode menu entry..."
   replace_text "$DESKTOPENTRY" "%INSTALLDIR%" "$INSTALLDIR" "%INSTALLSUFFIX%" "$INSTALLSUFFIX" "%LAUNCHDIR%" "$LAUNCHDIR" "%LAUNCHER%" "$LAUNCHER"
   cp -t "$MENUDIR" "$DESKTOPENTRY"
+  chmod 644 "$MENUDIR/$DESKTOPENTRY"
   P=99; echo "$P"
   echo "# Installing license..."
   cp -t "$INSTALLDIR/$INSTALLSUFFIX" "$LICENSE"
+  chmod 644 "$INSTALLDIR/$INSTALLSUFFIX/$LICENSE"
   P=100;  echo "$P"
   echo "# Finished installation!"
 } | gui_progress
