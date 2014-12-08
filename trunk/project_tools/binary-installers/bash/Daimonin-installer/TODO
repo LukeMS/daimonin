@@ -12,6 +12,10 @@
   solutions to a problem which is not an application writer's responsibility to
   solve. Perhaps wait for DEs to work properly?
 
+* Also, KDE seems to have issues with the desktlop entry (it seems that Kickoff
+  ignores the Categories entry and instead invents a new one called
+  Applications.
+
 * gui_choosedir: I'd prefer a two-step solution: 1) a text entry dialog with a
   browse button; 2) if browse is clicked, open the file-selection dialog. But
   zenity/kdialog do not seem to work like that (no way to specify buttons

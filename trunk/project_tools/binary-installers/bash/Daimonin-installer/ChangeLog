@@ -1,5 +1,8 @@
 2014-12-08  Smacky
 
+	* Some work on the desktop entry file. In particular, KDE seems not to
+	  handle this as I would expect. This should at least make it
+	  functional.
 	* Add closing </p> and </pre> tags in .html files and remove them in
 	  gui_showtext for qt. I omitted these originally because kdialog
 	  (wrongly) prints them as inline text. But without them zenity
