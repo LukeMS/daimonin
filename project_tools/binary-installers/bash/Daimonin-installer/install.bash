@@ -250,11 +250,11 @@ elif [ "$GUI" = "qt" ]; then
       "!")
       if [ -e "$2" ]; then
         # If $2 is a .html, strip the {{gui ...}} markup as appropriate and
-        # HTML comments (because kdialog doesn't seem to recognise them and
-        # displays them in the dialog).
+        # HTML comments, </pre>, and </p> (because kdialog doesn't seem to
+        # recognise them and displays them in the dialog).
         if [ -n "$(expr "$2" : '.*\(\.html\)')" ]; then
           replace_text "$2" "{{gui [a-z,]*$GUI[a-z,]* \([^}]\+\)}}" "\1" "{{gui [a-z,]* [^}]\+}}$" ""
-          replace_text "$2" "<!-- [^>]\+ -->$" ""
+          replace_text "$2" "<!-- [^>]\+ -->$" "" "</pre>" "" "</p>" ""
         fi
         if [ -z "$3" ]; then kdialog --title "$GUI_TITLE" --textbox "$2" $WIDTH $HEIGHT && return
         else kdialog --title "$GUI_TITLE" --textbox "$2" $WIDTH $HEIGHT; return; fi
