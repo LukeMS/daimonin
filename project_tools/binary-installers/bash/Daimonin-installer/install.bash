@@ -385,6 +385,7 @@ done
   P=98; echo "$P"
   echo "# Creating $MODE user mode menu entry..."
   replace_text "$DESKTOPENTRY" "%INSTALLDIR%" "$INSTALLDIR" "%INSTALLSUFFIX%" "$INSTALLSUFFIX" "%LAUNCHDIR%" "$LAUNCHDIR" "%LAUNCHER%" "$LAUNCHER"
+  mkdir -p "$MENUDIR" # KDE seems to miss the $HOME one
   cp -t "$MENUDIR" "$DESKTOPENTRY"
   chmod 644 "$MENUDIR/$DESKTOPENTRY"
   P=99; echo "$P"
