@@ -1,3 +1,11 @@
+2014-12-08  Smacky
+
+	* Add closing </p> and </pre> tags in .html files and remove them in
+	  gui_showtext for qt. I omitted these originally because kdialog
+	  (wrongly) prints them as inline text. But without them zenity
+	  (rightly) does not know where to end the pre section (</p> are
+	  optional anyway.)
+
 2014-12-07  Smacky
 
 	* Ensure installed files have correct permissions.
