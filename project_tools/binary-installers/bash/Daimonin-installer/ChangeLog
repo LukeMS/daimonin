@@ -1,3 +1,7 @@
+2014-12-09  Smacky
+
+	* Replace {{gui ...}} special markup with <!-- GUI=... -->.
+
 2014-12-08  Smacky
 
 	* Some work on the desktop entry file. In particular, KDE seems not to
