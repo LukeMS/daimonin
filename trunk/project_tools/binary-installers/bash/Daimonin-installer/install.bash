@@ -170,10 +170,10 @@ if [ "$GUI" = "cli" ]; then
       [ -z "$REPLY" -o "${REPLY:0:1}" = "y" -o "${REPLY:0:1}" = "Y" ] && return 0 || return 1 ;;
       "!")
       if [ -e "$2" ]; then
-        # If $2 is a .html, strip the {{gui ...}} markup as appropriate and
+        # If $2 is a .html, uncomment the <!-- GUI=... --> markup for $GUI and
         # strip all HTML.
         if [ -n "$(expr "$2" : '.*\(\.html\)')" ]; then
-          replace_text "$2" "{{gui [a-z,]*$GUI[a-z,]* \([^}]\+\)}}" "\1" "{{gui [a-z,]* [^}]\+}}$" ""
+          replace_text "$2" "<!-- GUI=[a-z,]*$GUI[a-z,]* *\([^}]\+\) -->" "\1"
           replace_text "$2" "<!-- [^>]\+ -->$" "" "<hr />" "-- -- -- -- --" "<[^>]\+>" ""
         fi
         cat "$2"
@@ -213,9 +213,9 @@ elif [ "$GUI" = "gtk" ]; then
       $(zenity --question --text "$2" --title "$GUI_TITLE") && return ;;
       "!")
       if [ -e "$2" ]; then
-        # If $2 is a .html, strip the {{gui ...}} markup as appropriate.
+        # If $2 is a .html, uncomment the <!-- GUI=... --> markup for $GUI.
         if [ -n "$(expr "$2" : '.*\(\.html\)')" ]; then
-          replace_text "$2" "{{gui [a-z,]*$GUI[a-z,]* \([^}]\+\)}}" "\1" "{{gui [a-z,]* [^}]\+}}$" ""
+          replace_text "$2" "<!-- GUI=[a-z,]*$GUI[a-z,]* *\([^}]\+\) -->" "\1"
           S="--html"
         else
           S=""
@@ -249,11 +249,11 @@ elif [ "$GUI" = "qt" ]; then
       kdialog --title "$GUI_TITLE" --yesno "$2"; return ;;
       "!")
       if [ -e "$2" ]; then
-        # If $2 is a .html, strip the {{gui ...}} markup as appropriate and
-        # HTML comments, </pre>, and </p> (because kdialog doesn't seem to
-        # recognise them and displays them in the dialog).
+        # If $2 is a .html, uncomment the <!-- GUI=... --> markup for $GUI and
+        # strip HTML comments, </pre>, and </p> (because kdialog doesn't seem
+        # to recognise them and displays them in the dialog).
         if [ -n "$(expr "$2" : '.*\(\.html\)')" ]; then
-          replace_text "$2" "{{gui [a-z,]*$GUI[a-z,]* \([^}]\+\)}}" "\1" "{{gui [a-z,]* [^}]\+}}$" ""
+          replace_text "$2" "<!-- GUI=[a-z,]*$GUI[a-z,]* *\([^}]\+\) -->" "\1"
           replace_text "$2" "<!-- [^>]\+ -->$" "" "</pre>" "" "</p>" ""
         fi
         if [ -z "$3" ]; then kdialog --title "$GUI_TITLE" --textbox "$2" $WIDTH $HEIGHT && return
