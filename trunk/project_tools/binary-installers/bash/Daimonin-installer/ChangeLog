@@ -1,3 +1,8 @@
+2014-12-11  Smacky
+
+	* Use . instead of [^c] regexp in replace_text $2.
+	* Make qt/kdialog progress bar work.
+
 2014-12-09  Smacky
 
 	* Replace {{gui ...}} special markup with <!-- GUI=... -->.
