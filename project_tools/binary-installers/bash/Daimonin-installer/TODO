@@ -1,7 +1,6 @@
-* The qt GUI (uses kdialog) has all sorts of issues. These seem to be cosmetic
-  only so installation does work but ain't pretty.
-
-  In particular, no progress dialog is displayed during installation.
+* The qt GUI (uses kdialog) has all sorts of issues, mainly with HTML display
+  and window buttons. These seem to be cosmetic only so installation does work
+  but ain't as pretty as it should be.
 
 * Not much I can do about this one, but the desktop entry file has several
   actions (PlayMain, PlayDev, and Uninstall). However no DEs seem to support
@@ -14,7 +13,7 @@
 
 * Also, KDE seems to have issues with the desktlop entry (it seems that Kickoff
   ignores the Categories entry and instead invents a new one called
-  Applications.
+  Applications and kbuildsycoca4 complains a lot).
 
 * gui_choosedir: I'd prefer a two-step solution: 1) a text entry dialog with a
   browse button; 2) if browse is clicked, open the file-selection dialog. But

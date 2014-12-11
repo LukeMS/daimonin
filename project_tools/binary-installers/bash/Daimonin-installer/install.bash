@@ -52,6 +52,14 @@ command_exists() {
   echo "$R"
   return $R
 }
+# call_if_exists calls and returns whether or not a function exists.
+# $1: the function
+# $?: non-127 if the function exists (ie, it is called and its exit status is
+#     returned), 127 if it does not
+call_if_exists() {
+  if [ "$(type -t "$1")" = "function" ];then "$1"; R=$?; else R=127; fi
+  return $R
+}
 # replace_text edits the text of a file.
 # $1: filename
 # $2: string to replace (all instances are changed)
@@ -173,8 +181,8 @@ if [ "$GUI" = "cli" ]; then
         # If $2 is a .html, uncomment the <!-- GUI=... --> markup for $GUI and
         # strip all HTML.
         if [ -n "$(expr "$2" : '.*\(\.html\)')" ]; then
-          replace_text "$2" "<!-- GUI=[a-z,]*$GUI[a-z,]* *\([^}]\+\) -->" "\1"
-          replace_text "$2" "<!-- [^>]\+ -->$" "" "<hr />" "-- -- -- -- --" "<[^>]\+>" ""
+          replace_text "$2" "<!-- GUI=[a-z,]*$GUI[a-z,]* *\(.\+\) -->" "\1"
+          replace_text "$2" "<!-- .\+ -->$" "" "<hr />" "-- -- -- -- --" "<.\+>" ""
         fi
         cat "$2"
         if [ -n "$3" ]; then
@@ -215,7 +223,7 @@ elif [ "$GUI" = "gtk" ]; then
       if [ -e "$2" ]; then
         # If $2 is a .html, uncomment the <!-- GUI=... --> markup for $GUI.
         if [ -n "$(expr "$2" : '.*\(\.html\)')" ]; then
-          replace_text "$2" "<!-- GUI=[a-z,]*$GUI[a-z,]* *\([^}]\+\) -->" "\1"
+          replace_text "$2" "<!-- GUI=[a-z,]*$GUI[a-z,]* *\(.\+\) -->" "\1"
           S="--html"
         else
           S=""
@@ -253,8 +261,8 @@ elif [ "$GUI" = "qt" ]; then
         # strip HTML comments, </pre>, and </p> (because kdialog doesn't seem
         # to recognise them and displays them in the dialog).
         if [ -n "$(expr "$2" : '.*\(\.html\)')" ]; then
-          replace_text "$2" "<!-- GUI=[a-z,]*$GUI[a-z,]* *\([^}]\+\) -->" "\1"
-          replace_text "$2" "<!-- [^>]\+ -->$" "" "</pre>" "" "</p>" ""
+          replace_text "$2" "<!-- GUI=[a-z,]*$GUI[a-z,]* *\(.\+\) -->" "\1"
+          replace_text "$2" "<!-- .\+ -->$" "" "</pre>" "" "</p>" ""
         fi
         if [ -z "$3" ]; then kdialog --title "$GUI_TITLE" --textbox "$2" $WIDTH $HEIGHT && return
         else kdialog --title "$GUI_TITLE" --textbox "$2" $WIDTH $HEIGHT; return; fi
@@ -275,9 +283,9 @@ elif [ "$GUI" = "qt" ]; then
   # directly), gui_progress and gui_progress_end use either qdbus or dcop.
   if [ $(command_exists "qdbus") -eq 0 ]; then
     gui_progress() {
-      while read $IN; do
-        if [ "$(expr "$IN" : '\([0-9]\+$\)')" = "$IN" ]; then qdbus $QTPROGRESS set "" value "$IN"
-        elif [ "${IN:0:1}" = "#" ]; then qdbus $QTPROGRESS setLabelText "$IN"; fi
+      while read IN; do
+        if [ "$(expr "$IN" : '\([0-9]\+$\)')" = "$IN" ]; then qdbus $QTPROGRESS Set "" value "$IN"
+        elif [ "${IN:0:1}" = "#" ]; then qdbus $QTPROGRESS setLabelText "${IN:1}"; fi
       done
     }
     gui_progress_end() {
@@ -285,10 +293,9 @@ elif [ "$GUI" = "qt" ]; then
     }
   else
     gui_progress() {
-      while read $IN; do
-        I=expr "$IN" : "\([0-9]\+$\)"
-        if [ "$IN" = "$I" ]; then dcop $QTPROGRESS setProgress "$IN"
-        elif [ "${IN:0:1}" = "#" ]; then dcop $QTPROGRESS setLabel "$IN"; fi
+      while read IN; do
+        if [ "$(expr "$IN" : '\([0-9]\+$\)')" = "$IN" ]; then dcop $QTPROGRESS setProgress "$IN"
+        elif [ "${IN:0:1}" = "#" ]; then dcop $QTPROGRESS setLabel "${IN:1}"; fi
       done
     }
     gui_progress_end() {
@@ -333,7 +340,7 @@ while [ 0 ]; do
   fi
 done
 #
-[ declare -f gui_progress_start 2>/dev/null ] && gui_progress_start
+call_if_exists "gui_progress_start"
 # 
 {
   P=0; echo "$P"
@@ -396,6 +403,6 @@ done
   echo "# Finished installation!"
 } | gui_progress
 # 
-[ declare -f gui_progress_end 2>/dev/null ] && gui_progress_end
+call_if_exists "gui_progress_end"
 # 
 gui_showtext "!" "$GOODBYE"
