@@ -1,5 +1,6 @@
 2014-12-12  Smacky
 
+	* Change $GUI_PROGRESS string to function argument.
 	* Respect $3 where $1 is ! in gui_showtext for qt (means ask do you
 	  accept [y/n]).
 
