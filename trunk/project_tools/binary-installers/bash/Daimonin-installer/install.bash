@@ -54,10 +54,12 @@ command_exists() {
 }
 # call_if_exists calls and returns whether or not a function exists.
 # $1: the function
+# $2 ...: args for $1
 # $?: non-127 if the function exists (ie, it is called and its exit status is
 #     returned), 127 if it does not
 call_if_exists() {
-  if [ "$(type -t "$1")" = "function" ];then "$1"; R=$?; else R=127; fi
+  F="$1"; shift
+  if [ "$(type -t "$F")" = "function" ]; then "$F" "$@"; R=$?; else R=127; fi
   return $R
 }
 # replace_text edits the text of a file.
@@ -132,7 +134,6 @@ GUI_NOTDIR="The requested location is not a directory!"
 GUI_NOWRITE="You do not have write access to the requested location!"
 GUI_EXISTS="'$INSTALLSUFFIX' already exists in the requested location!"
 GUI_INTERNAL="The installer has encountered an internal problem -- your installation may not work properly!"
-GUI_PROGRESS="Installing Daimonin..."
 
 ########
 # Define the various gui_* functions to display info in a manner appropriate to
@@ -242,7 +243,7 @@ elif [ "$GUI" = "gtk" ]; then
     return $R
   }
   gui_progress() {
-    zenity --progress --percentage 0 --auto-close --title "$GUI_TITLE" --text "$GUI_PROGRESS"
+    zenity --progress --percentage 0 --auto-close --title "$GUI_TITLE" --text "$1"
   }
 elif [ "$GUI" = "qt" ]; then
   gui_showtext() {
@@ -282,7 +283,7 @@ elif [ "$GUI" = "qt" ]; then
     return $R
   }
   gui_progress_start() {
-    QTPROGRESS=$(kdialog --title "$GUI_TITLE" --progressbar "$GUI_PROGRESS" 100)
+    QTPROGRESS=$(kdialog --title "$GUI_TITLE" --progressbar "$1" 100)
   }
   # Although gui_progress_start is the same in all cases (it uses kdialog
   # directly), gui_progress and gui_progress_end use either qdbus or dcop.
@@ -345,7 +346,7 @@ while [ 0 ]; do
   fi
 done
 #
-call_if_exists "gui_progress_start"
+call_if_exists "gui_progress_start" "Installing Daimonin..."
 # 
 {
   P=0; echo "$P"
@@ -406,7 +407,7 @@ call_if_exists "gui_progress_start"
   chmod 644 "$INSTALLDIR/$INSTALLSUFFIX/$LICENSE"
   P=100;  echo "$P"
   echo "# Finished installation!"
-} | gui_progress
+} | gui_progress "Installing Daimonin..."
 # 
 call_if_exists "gui_progress_end"
 # 
