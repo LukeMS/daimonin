@@ -264,8 +264,13 @@ elif [ "$GUI" = "qt" ]; then
           replace_text "$2" "<!-- GUI=[a-z,]*$GUI[a-z,]* *\(.\+\) -->" "\1"
           replace_text "$2" "<!-- .\+ -->$" "" "</pre>" "" "</p>" ""
         fi
-        if [ -z "$3" ]; then kdialog --title "$GUI_TITLE" --textbox "$2" $WIDTH $HEIGHT && return
-        else kdialog --title "$GUI_TITLE" --textbox "$2" $WIDTH $HEIGHT; return; fi
+        if [ -n "$3" ]; then
+          kdialog --title "$GUI_TITLE" --textbox "$2" $WIDTH $HEIGHT
+          [ "$?" -eq 0 ] && kdialog --title "$GUI_TITLE" --yesno "$3"
+        else
+          kdialog --title "$GUI_TITLE" --textbox "$2" $WIDTH $HEIGHT
+        fi
+        return
       fi ;;
     esac
     return 255
