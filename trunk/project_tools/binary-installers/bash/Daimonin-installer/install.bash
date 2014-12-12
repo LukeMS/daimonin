@@ -245,6 +245,12 @@ elif [ "$GUI" = "gtk" ]; then
   gui_progress() {
     zenity --progress --percentage 0 --auto-close --title "$GUI_TITLE" --text "$1"
   }
+# FIXME: Unfortunately zenity --notification is bugged -- see
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=716717
+# Not mentioned is the fact that this freezes the script.
+#  gui_progress_end() {
+#    zenity --notification --title "$GUI_TITLE" --text "$1"
+#  }
 elif [ "$GUI" = "qt" ]; then
   gui_showtext() {
     case "$1" in
@@ -296,6 +302,7 @@ elif [ "$GUI" = "qt" ]; then
     }
     gui_progress_end() {
       qdbus $QTPROGRESS close
+      kdialog --title "$GUI_TITLE" --passivepopup "$1" 4
     }
   else
     gui_progress() {
@@ -306,6 +313,7 @@ elif [ "$GUI" = "qt" ]; then
     }
     gui_progress_end() {
       dcop $QTPROGRESS close
+      kdialog --title "$GUI_TITLE" --passivepopup "$1" 4
     }
   fi
 fi
@@ -409,6 +417,6 @@ call_if_exists "gui_progress_start" "Installing Daimonin..."
   echo "# Finished installation!"
 } | gui_progress "Installing Daimonin..."
 # 
-call_if_exists "gui_progress_end"
+call_if_exists "gui_progress_end" "Daimonin client installed in '$INSTALLDIR'"
 # 
 gui_showtext "!" "$GOODBYE"
