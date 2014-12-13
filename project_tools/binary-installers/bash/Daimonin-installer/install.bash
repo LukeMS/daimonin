@@ -362,12 +362,12 @@ call_if_exists "gui_progress_start" "Installing Daimonin..."
   T=97
   shopt -s globstar
   PACKS=""
-  for FROM in $UNPACKS; do
-    FROM="$(expr "$FROM" : '\([^|]\+\)')"
+  for UNPACK in $UNPACKS; do
+    FROM="$(expr "$UNPACK" : '\([^|]\+\)')"
     if [ -z "$FROM" -o ! -d "$FROM" ]; then gui_showtext "-1" "$GUI_INTERNAL"; else PACKS="$PACKS $(ls -d $FROM/**)"; fi
   done
   NPACKS=$(echo "$PACKS" | wc -w)
-  if [ $NPACKS -lt $T ]; then NCYCLES=1; else ((NCYCLES=$NPACKS/$T)); fi
+  if [ $NPACKS -lt $T ]; then NCYCLES=$NPACKS; else NCYCLES=$T; fi
   ((PACKSPERCYCLE=$NPACKS/$NCYCLES))
   ((PROGPERCYCLE=$T/$NCYCLES))
   NCYCLES=0
