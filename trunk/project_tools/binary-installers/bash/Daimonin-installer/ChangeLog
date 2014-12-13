@@ -1,3 +1,7 @@
+2014-12-13  Smacky
+
+	* Improve progress count of file unpacker (it's much smoother).
+
 2014-12-12  Smacky
 
 	* Add notification at 100% progress.
