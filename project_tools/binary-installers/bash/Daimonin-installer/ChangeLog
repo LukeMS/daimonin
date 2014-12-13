@@ -1,5 +1,6 @@
 2014-12-13  Smacky
 
+	* More attractive gui_progress for cli.
 	* Improve progress count of file unpacker (it's much smoother).
 
 2014-12-12  Smacky
