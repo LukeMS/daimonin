@@ -205,8 +205,9 @@ if [ "$GUI" = "cli" ]; then
     if [ -n "$REPLY" ]; then echo "$REPLY"; else echo "$2"; fi
   }
   gui_progress() {
-    while read E; do
-      echo -e "$E"
+    while read IN; do
+      if [ "$(expr "$IN" : '\([0-9]\+$\)')" = "$IN" ]; then PROGRESS=$IN
+      elif [ "${IN:0:1}" = "#" ]; then echo -e "[$PROGRESS%] ${IN:1}"; fi
     done
   }
 elif [ "$GUI" = "gtk" ]; then
