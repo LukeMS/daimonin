@@ -1,3 +1,7 @@
+2014-12-18  Smacky
+
+	* Make line deletion in replace_text work.
+
 2014-12-13  Smacky
 
 	* More attractive gui_progress for cli.
