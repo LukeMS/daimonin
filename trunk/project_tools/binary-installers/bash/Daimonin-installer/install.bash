@@ -71,7 +71,7 @@ call_if_exists() {
 replace_text() {
   F="$1"; shift
   while [ "$#" -gt 1 ]; do
-    if [ -n "$(expr "$1" : '\(\$\)$')" -a -z "$2" ]; then sed -i -e "/$1/d" "$F"
+    if [ -n "$(expr "$1" : '.*\(\$\)$')" -a -z "$2" ]; then sed -i -e "/$1/d" "$F"
     else sed -i -e "s|$1|$2|g" "$F"; fi
     shift 2
   done
