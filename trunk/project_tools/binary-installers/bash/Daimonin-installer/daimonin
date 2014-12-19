@@ -1,5 +1,5 @@
 #!/bin/bash
-# Daimonin
+# daimonin
 # Copyright (C) 2014 Julian Arnold
 #
 # This program is free software; you can redistribute it and/or modify
@@ -29,10 +29,9 @@ if [ $# -gt 0 ]; then
 fi
 # And in we go.
 if [ "$MODE" = "uninstall" ]; then
-  rm -iv $0
-  rm -Irv %INSTALLDIR%/%INSTALLSUFFIX%
-  rm -iv %MENUDIR%/%DESKTOPENTRY%
+  cd %INSTALLDIR%/%INSTALLSUFFIX%
+  ./uninstall.bash "$0" "%INSTALLDIR%/%INSTALLSUFFIX%" "%MENUDIR%/%DESKTOPENTRY%"
 else
-  cd  %INSTALLDIR%/%INSTALLSUFFIX%/$MODE
+  cd %INSTALLDIR%/%INSTALLSUFFIX%/$MODE
   LD_LIBRARY_PATH=../lib ./client.bin "$@"
 fi
