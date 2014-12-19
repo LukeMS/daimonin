@@ -397,7 +397,7 @@ call_if_exists "gui_progress_start" "Installing Daimonin..."
       if [ -x "$UNPACK" ]; then chmod 755 "$UNPACK"; else chmod 644 "$UNPACK"; fi
     done
     ((NCYCLES++))
-    [ $NCYCLES -eq $PACKSPERCYCLE ] && { NCYCLES=0; ((P+=$PROGPERCYCLE)); echo "$P"; }
+    [ $NCYCLES -eq $PACKSPERCYCLE ] && { NCYCLES=0; ((P+=$PROGPERCYCLE)); [ $P -gt $T ] && P=$T; echo "$P"; }
   done
   P=$T; echo "$P"
   echo "# Creating $MODE user mode launcher..."

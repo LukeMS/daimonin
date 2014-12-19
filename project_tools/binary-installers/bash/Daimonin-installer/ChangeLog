@@ -1,5 +1,8 @@
 2014-12-19  Smacky
 
+	* Cap progress at target when copying arbitrary files (point being that
+	  zenity halts the progress pipeline at 100% so if we reach that
+	  prematurely, the installation will be incomplete).
 	* Make licence install automatically.
 
 2014-12-18  Smacky
