@@ -1,5 +1,6 @@
 2014-12-19  Smacky
 
+	* Use [^>} instead of . when removing HTML tags in cli mode.
 	* Cap progress at target when copying arbitrary files (point being that
 	  zenity halts the progress pipeline at 100% so if we reach that
 	  prematurely, the installation will be incomplete).

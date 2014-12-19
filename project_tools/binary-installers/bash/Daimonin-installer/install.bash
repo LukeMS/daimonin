@@ -183,7 +183,7 @@ if [ "$GUI" = "cli" ]; then
         # strip all HTML.
         if [ -n "$(expr "$2" : '.*\(\.html\)')" ]; then
           replace_text "$2" "<!-- GUI=[a-z,]*$GUI[a-z,]* *\(.\+\) -->" "\1"
-          replace_text "$2" "<!-- .\+ -->$" "" "<hr />" "-- -- -- -- --" "<.\+>" ""
+          replace_text "$2" "<!-- .\+ -->$" "" "<hr />" "-- -- -- -- --" "<[^>]\+>" ""
         fi
         cat "$2"
         if [ -n "$3" ]; then
