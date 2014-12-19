@@ -107,7 +107,7 @@ INSTALLSUFFIX="daimonin_client"
 # the installer. $LICENSE is important -- this is the license under which
 # Daimonin exists and must be accepted to install.
 WELCOME="welcome.html"
-LICENSE="gpl-2.0.txt"
+LICENSE="base/gpl-2.0.txt"
 INSTRUCTIONS="instructions.html"
 GOODBYE="goodbye.html"
 # $DESKTOPENTRY is the desktop entry file which will be insitalled -- see
@@ -360,7 +360,7 @@ call_if_exists "gui_progress_start" "Installing Daimonin..."
 {
   P=0; echo "$P"
   echo "# Installing game files..."
-  T=97
+  T=98
   shopt -s globstar
   PACKS=""
   for UNPACK in $UNPACKS; do
@@ -404,16 +404,12 @@ call_if_exists "gui_progress_start" "Installing Daimonin..."
   replace_text "$LAUNCHER" "%INSTALLDIR%" "$INSTALLDIR" "%INSTALLSUFFIX%" "$INSTALLSUFFIX" "%MENUDIR%" "$MENUDIR" "%DESKTOPENTRY%" "$DESKTOPENTRY"
   cp -t "$LAUNCHDIR" "$LAUNCHER"
   chmod 755 "$LAUNCHDIR/$LAUNCHER"
-  P=98; echo "$P"
+  P=99; echo "$P"
   echo "# Creating $MODE user mode menu entry..."
   replace_text "$DESKTOPENTRY" "%INSTALLDIR%" "$INSTALLDIR" "%INSTALLSUFFIX%" "$INSTALLSUFFIX" "%LAUNCHDIR%" "$LAUNCHDIR" "%LAUNCHER%" "$LAUNCHER"
   mkdir -p "$MENUDIR" # KDE seems to miss the $HOME one
   cp -t "$MENUDIR" "$DESKTOPENTRY"
   chmod 644 "$MENUDIR/$DESKTOPENTRY"
-  P=99; echo "$P"
-  echo "# Installing license..."
-  cp -t "$INSTALLDIR/$INSTALLSUFFIX" "$LICENSE"
-  chmod 644 "$INSTALLDIR/$INSTALLSUFFIX/$LICENSE"
   P=100;  echo "$P"
   echo "# Finished installation!"
 } | gui_progress "Installing Daimonin..."
