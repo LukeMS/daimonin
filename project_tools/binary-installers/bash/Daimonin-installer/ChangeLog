@@ -1,3 +1,8 @@
+2014-12-22  Smacky
+
+	* Ask user whether to continue if there is an existing root
+	  installation.
+
 2014-12-19  Smacky
 
 	* Add nice GUI uninstallation script.

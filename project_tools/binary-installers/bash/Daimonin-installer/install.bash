@@ -78,6 +78,7 @@ DESKTOPENTRY="org.daimonin.Client.desktop"
 # installed.
 LAUNCHER="daimonin"
 # $GUI_* are miscellaneous strings shown in GUI windows.
+GUI_ROOTEXISTS="There appears to be a root installation of Daimonin on this system. Are you sure you want to continue with a new installation?"
 GUI_ACCEPT="I have definitely read and accept the terms of this license"
 GUI_INSTALLDIR="In which directory would you like to install Daimonin?"
 GUI_NOTDIR="The requested location is not a directory!"
@@ -95,6 +96,8 @@ source ./base/gui.bash
 ########
 #
 ########
+# Check for existing root installation.
+[ $(command_exists "$LAUNCHER") -ne 0 ] || gui_showtext "?" "$GUI_ROOTEXISTS" || exit 0
 # Welcome the user, get him to accept the license, and give him instructions.
 gui_showtext "!" "$WELCOME" || exit 0
 gui_showtext "!" "$LICENSE" "$GUI_ACCEPT" || exit 0
