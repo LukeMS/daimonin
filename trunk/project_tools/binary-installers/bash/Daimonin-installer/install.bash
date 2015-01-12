@@ -1,6 +1,6 @@
 #!/bin/bash
 # install.bash
-# Copyright (C) 2014 Julian Arnold
+# Copyright (C) 2014-2015 Julian Arnold
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -110,7 +110,7 @@ gui_showtext "!" "$INSTRUCTIONS" || exit 0
 while [ 0 ]; do
   if [ "$MODE" = "normal" ]; then
     V=-1 # warning, loop until $INSTALLDIR is valid
-    INSTALLDIR=$(gui_choosedir "$GUI_INSTALLDIR" "$HOME/") || exit 0
+    INSTALLDIR=$(gui_choosedir "$GUI_INSTALLDIR" "$HOME") || exit 0
     INSTALLDIR=${INSTALLDIR/#~/$HOME} # ~/directory -> /home/foo/directory
     LAUNCHDIR="$INSTALLDIR/$INSTALLSUFFIX"
   elif [ "$MODE" = "root" ]; then
@@ -177,7 +177,7 @@ call_if_exists "gui_progress_start" "Installing Daimonin..."
   done
   P=$T; echo "$P"
   echo "# Creating $MODE user mode launcher..."
-  replace_text "$LAUNCHER" "%INSTALLDIR%" "$INSTALLDIR" "%INSTALLSUFFIX%" "$INSTALLSUFFIX" "%MENUDIR%" "$MENUDIR" "%DESKTOPENTRY%" "$DESKTOPENTRY"
+  replace_text "$LAUNCHER" "%INSTALLDIR%" "$INSTALLDIR" "%INSTALLSUFFIX%" "$INSTALLSUFFIX" "%MENUDIR%" "$MENUDIR" "%DESKTOPENTRY%" "$DESKTOPENTRY" "%LAUNCHDIR%" "$LAUNCHDIR" "%LAUNCHER%" "$LAUNCHER"
   cp -t "$LAUNCHDIR" "$LAUNCHER"
   chmod 755 "$LAUNCHDIR/$LAUNCHER"
   P=99; echo "$P"

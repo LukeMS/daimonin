@@ -1,6 +1,6 @@
 #!/bin/bash
 # daimonin
-# Copyright (C) 2014 Julian Arnold
+# Copyright (C) 2014-2015 Julian Arnold
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,8 +16,15 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+########
+# Pull in some code (essentially function definitions) contained in external
+# files.
+########
+source %INSTALLDIR%/%INSTALLSUFFIX%/general.bash
+source %INSTALLDIR%/%INSTALLSUFFIX%/gui.bash
+
 MODES="main dev uninstall" # possible modes
-MODE="main" # chosen mode
+MODE="" # chosen mode
 # The user may pass a mode as the first script parameter. If this is one of
 # $MODES then this becomes $MODE and shift the parameters (ie, throw that
 # one away). Otherwise use the default.
@@ -27,10 +34,62 @@ if [ $# -gt 0 ]; then
     shift
   fi
 fi
+# User did not specify a mode so ask him.
+while [ -z "$MODE" ]; do
+  if [ -w "%INSTALLDIR%/%INSTALLSUFFIX%" ]; then A="uninstall" D="Remove this installation"; else A="" D=""; fi
+  MODE=$(gui_showlist "-" "Which action would you like to take?" \
+    "Action Description" \
+    "main" "Play the game on a stable client ($(cat "%INSTALLDIR%/%INSTALLSUFFIX%/main/update/version"))" \
+    "dev" "Test a recent development client ($(cat "%INSTALLDIR%/%INSTALLSUFFIX%/dev/update/version"))" \
+    "$A" "$D")
+  [ $? -ne 0 ] && exit
+done
 # And in we go.
 if [ "$MODE" = "uninstall" ]; then
-  cd %INSTALLDIR%/%INSTALLSUFFIX%
-  ./uninstall.bash "$0" "%INSTALLDIR%/%INSTALLSUFFIX%" "%MENUDIR%/%DESKTOPENTRY%"
+  # Initialise some variables.
+  if [ $# -ge 1 ]; then INSTALLDIR="$1"; else INSTALLDIR="%INSTALLDIR%/%INSTALLSUFFIX%"; fi
+  if [ $# -ge 2 ]; then DESKTOPENTRY="$2"; else DESKTOPENTRY="%MENUDIR%/%DESKTOPENTRY%"; fi
+  if [ $# -ge 3 ]; then LAUNCHER="$3"; else LAUNCHER="%LAUNCHDIR%/%LAUNCHER%"; fi
+  WILLDO="$INSTALLDIR/willdo.html"
+  GUI_CONFIRM="I have weighed up the options and I want to proceed"
+  GUI_GOODBYE="Daimonin has been uninstalled. Thank you for playing."
+  #
+  replace_text "$WILLDO" "%1%" "$INSTALLDIR" "%2%" "$DESKTOPENTRY" "%3%" "$LAUNCHER"
+  gui_showtext "!" "$WILLDO" "$GUI_CONFIRM" || exit 0
+  #
+  call_if_exists "gui_progress_start" "Uninstalling Daimonin..."
+  # 
+  {
+    P=0; echo "$P"
+    echo "# Uninstalling game files..."
+    echo "# Uninstalling launcher '$LAUNCHER'..."
+    rm -f  "$LAUNCHER"
+    P=1; echo "$P"
+    T=99
+    shopt -s globstar
+    FILES="$(ls -d $INSTALLDIR/**)"
+    NFILES=$(echo "$FILES" | wc -w)
+    if [ $NFILES -lt $T ]; then NCYCLES=$NFILES; else NCYCLES=$T; fi
+    ((FILESPERCYCLE=$NFILES/$NCYCLES))
+    ((PROGPERCYCLE=$T/$NCYCLES))
+    NCYCLES=0
+    for FILE in $FILES; do
+      echo "# Uninstalling '$FILE'..."
+      [ ! -d "$FILE" ] && rm -f "$FILE"
+      ((NCYCLES++))
+      [ $NCYCLES -eq $FILESPERCYCLE ] && { NCYCLES=0; ((P+=$PROGPERCYCLE)); [ $P -gt $T ] && P=$T; echo "$P"; }
+    done
+    rm -rf "$INSTALLDIR"
+    P=$T; echo "$P"
+    echo "# Uninstalling menu entry '$DESKTOPENTRY'..."
+    rm -f "$DESKTOPENTRY"
+    P=100;  echo "$P"
+    echo "# Finished uninstallation!"
+  } | gui_progress "Uninstalling Daimonin..."
+  # 
+  call_if_exists "gui_progress_end" "Daimonin client uninstalled"
+  # 
+  gui_showtext "0" "$GUI_GOODBYE"
 else
   cd %INSTALLDIR%/%INSTALLSUFFIX%/$MODE
   LD_LIBRARY_PATH=../lib ./client.bin "$@"

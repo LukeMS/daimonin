@@ -1,3 +1,12 @@
+2015-01-12  Smacky
+
+	* Merge uninstall function from separate script/process to launcher.
+	* Add gui_showlist which allows the user to select one or more options
+	  from a list.
+	* Use gui_showlist in launcher to allow user to choose how to
+	  launch/uninstall the client if not specified as a script parameter.
+	* Update licence copyright,
+
 2014-12-22  Smacky
 
 	* Ask user whether to continue if there is an existing root
