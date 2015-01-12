@@ -1,5 +1,5 @@
 # gui.bash
-# Copyright (C) 2014 Julian Arnold
+# Copyright (C) 2014-2015 Julian Arnold
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,12 +45,24 @@ TITLE="Daimonin Client Installer"
 # $3: ONLY IF $1 IS !: acknowledgement text to show (return 0 if yes, 1 if no)
 # $?: see $1 (mode error returns 255)
 #
+# gui_showlist: show list of options in GUI.
+# $1: mode:
+#     +: check list (multiple options may be selected)
+#     *: radio list (single option only may be selected)
+#     -: normal list (single option only may be selected)
+# $2: explanatory text to show
+# $3: list of single-word column names
+# $4 ...: text of options, per column
+# $?: 0 if OK selected; 1 if CANCEL selected
+# The selected option is echoed to stdout (multiple selections are separated
+# with '|')
+#
 # gui_choosedir: show default directory in GUI and allow it or another
 # to be selected.
-# $1: explanatory text to show.
-# $2: default.
-# $?: 0 if OK selected; 1 if CANCEL selected.
-# The selected directory is echoed to stdout.
+# $1: explanatory text to show
+# $2: default
+# $?: 0 if OK selected; 1 if CANCEL selected
+# The selected directory is echoed to stdout
 #
 # gui_progress: show the ongoing progress of the chosen action in the GUI.
 # The function is used at the end of a pipeline (eg,
@@ -93,6 +105,85 @@ if [ "$GUI" = "cli" ]; then
     esac
     return 255
   }
+  gui_showlist() {
+    # $M is the mode.
+    M="$1"
+    # $S indicates a selected option and $U an unselected option.
+    case "$M" in
+    "+") S="[X]" U="[ ]" ;;
+    "*") S="<X>" U="< >" ;;
+    "-") S="" U="" ;;
+    esac
+    # $T is the explanatory text.
+    T="$2"
+    # $N is a count of the number of columns.
+    N=0
+    for E in $3; do ((N++)); done
+    shift 3
+    # Copy the remaining parameters (the list data) to a local array ($P[]).
+    # Each index ($I) is padded by an empty one before it (space for our
+    # mode-dependent column).
+    local P
+    I=1
+    while [ $# -ne 0 ]; do [ -n "$1" ] && { P[I]="$1"; ((I+=2)); }; shift; done
+    # For check/radio lists the first column of data are $U/$S values. For user
+    # simplicity we force all options to $U except the first which is forced to
+    # $S.
+    I=0
+    while [ -n "${P[I+1]}" ]; do P[I]="$U"; ((I=$I+$N*2)); done
+    P[0]="$S"
+    echo -e "$T" >&2
+    # A continuous loop of showing the list of options then getting and acting
+    # on user input (which is how we may break out of the loop).
+    while [ 0 ]; do
+      # Show each row of data (incrementally numbered ($J)).
+      I=0 J=1
+      while [ -n "${P[I+1]}" ]; do
+        echo -en "$J) ${P[I]}" >&2
+        for X in $(seq 1 2 $(($N*2-1))); do echo -en "  ${P[I+X]}" >&2; done
+        echo >&2
+        ((I=$I+$N*2))
+        ((J++))
+      done
+      ((J--))
+      # Check/radio lists also have CANCEL and OK buttons.
+      if [ "$M" != "-" ]; then
+        echo -en "c) cancel  o) ok\n(1-$J/c/O)? " >&2
+        read
+        if [ "$REPLY" = "c" -o "$REPLY" = "C" ]; then R=1 V=""; break
+        elif [ "$REPLY" = "o" -o "$REPLY" = "O" -o "$REPLY" = "" ]; then R=0 V="${V:1}"; break; fi
+      else
+        echo -n "(1-$J)? " >&2
+        read
+      fi
+      # When the user inputs a number in the range 1-$J then depending on mode
+      # do: (for normal lists) select this option and break out of the loop;
+      # (for check lists) select or deselect the option depending on its
+      # previous status; (for radio lists) if the option is currently
+      # unselected, select it and deselect all others.
+      if [ -n "$(expr "$REPLY" : '^\([0-9]\+\)$')" -a $REPLY -ge 1 -a $REPLY -le $J ]; then
+        if [ "$M" = "-" ]; then
+          ((I=($REPLY-1)*$N*2+1))
+          R=0 V="${P[I]}"
+          break
+        else
+          V="" I=0 J=1
+          while [ -n "${P[I+1]}" ]; do
+            if [ "$M" = "+" ]; then
+              [ $J -eq $REPLY ] && if [ "${P[I]}" = "$U" ]; then P[I]="$S"; else P[I]="$U"; fi
+              [ "${P[I]}" = "$S" ] && V="$V|${P[I+1]}"
+            else
+              if [ $J -eq $REPLY ]; then V="|${P[I+1]}" P[I]="$S"; else P[I]="$U"; fi
+            fi
+            ((I=$I+$N*2))
+            ((J++))
+          done
+        fi
+      fi
+    done
+    echo "$V"
+    return $R
+  }
   gui_choosedir() {
     echo -e "$1\n\n(Default: $2)" >&2
     read
@@ -130,6 +221,45 @@ elif [ "$GUI" = "gtk" ]; then
       fi ;;
     esac
     return 255
+  }
+  gui_showlist() {
+    # $M is the mode.
+    # $S indicates a selected option and $U an unselected option.
+    case "$1" in
+    "+") M="--checklist" S="TRUE" U="FALSE" ;;
+    "*") M="--radiolist" S="TRUE" U="FALSE"  ;;
+    "-") M="" S="" U=""  ;;
+    esac
+    # $T is the explanatory text.
+    T="$2"
+    # $N is a count of the number of columns.
+    if [ -z "$M" ]; then L="" N=0; else L="--column Sel" N=1; fi
+    for E in $3; do L="$L --column $E"; ((N++)); done
+    shift 3
+    # Copy the remaining parameters (the list data) to a local array ($P[]).
+    # Each index ($I) is padded by an empty one before it (space for our
+    # mode-dependent column).
+    # For check/radio lists the first column of data are $U/$S values. For user
+    # simplicity we force all options to $U except the first which is forced to
+    # $S.
+    local P
+    if [ -z "$M" ]; then
+      I=0
+      while [ $# -ne 0 ]; do [ -n "$1" ] && { P[I]="$1"; ((I+=1)); }; shift; done
+    else
+      I=1
+      while [ $# -ne 0 ]; do [ -n "$1" ] && { P[I]="$1"; ((I+=2)); }; shift; done
+      I=0
+      while [ -n "${P[I+1]}" ]; do P[I]="$U"; ((I+=($N*2-2))); done
+      P[0]="$S"
+    fi
+    V=$(zenity --list $M --title "$TITLE" --text "$T" $L "${P[@]}")
+    R=$?
+    # A bug in zenity seems to double up the output when choosing with the
+    # keyboard (| is the default separator).
+    [ -z "$M" ] && V="$(expr "$V" : '\([^|]*\)')"
+    echo "$V"
+    return $R
   }
   gui_choosedir() {
     V=$(zenity --file-selection --directory --filename "$2" --title "$TITLE" --text "$1")
@@ -176,6 +306,41 @@ elif [ "$GUI" = "qt" ]; then
       fi ;;
     esac
     return 255
+  }
+  gui_showlist() {
+    # $M is the mode.
+    # $S indicates a selected option and $U an unselected option.
+    case "$1" in
+    "+") M="--checklist" S="on" U="off" ;;
+    "*") M="--radiolist" S="on" U="off" ;;
+    "-") M="--menu" S="" U="" ;;
+    esac
+    # $T is the explanatory text.
+    T="$2"
+    # $N is a count of the number of columns.
+    if [ "$M" = "--menu" ]; then N=0; else N=1; fi
+    for E in $3; do ((N++)); done
+    shift 3
+    # Copy the remaining parameters (the list data) to a local array ($P[]).
+    # Each index ($I) is padded by an empty one before it.
+    # For check/radio lists the last column of data are $U/$S values. For user
+    # simplicity we force all options to $U except the first which is forced to
+    # $S.
+    local P
+    if  [ "$M" = "--menu" ]; then
+      I=0
+      while [ $# -ne 0 ]; do [ -n "$1" ] && { P[I]="$1"; ((I+=1)); }; shift; done
+    else
+      I=0
+      while [ $# -ne 0 ]; do [ -n "$1" ] && { P[I]="$1"; ((I+=2)); }; shift; done
+      I=0
+      while [ -n "${P[I]}" ]; do ((I=$I+$N*2-1)); P[I]="$U"; ((I++)); done
+      P[$N]*2-1="$S"
+    fi
+    V=$(kdialog --title "$TITLE" $M "$T" "${P[@]}")
+    R=$?
+    echo "$V"
+    return $R
   }
   gui_choosedir() {
    V=$(kdialog --title "$TITLE" --getexistingdirectory "$2")

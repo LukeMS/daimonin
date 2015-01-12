@@ -24,7 +24,7 @@
   accomplish this. Obviously this is only useful if added to the official code,
   so perhaps later I will code a patch and submit to the devs.
 
-* General tidying and finish commenting install.bash.
+* General tidying and finish commenting scripts.
 
 * Check/patch auto-updater under Linux and include in this package.
 
