@@ -237,11 +237,10 @@ elif [ "$GUI" = "gtk" ]; then
     for E in $3; do L="$L --column $E"; ((N++)); done
     shift 3
     # Copy the remaining parameters (the list data) to a local array ($P[]).
-    # Each index ($I) is padded by an empty one before it (space for our
-    # mode-dependent column).
-    # For check/radio lists the first column of data are $U/$S values. For user
-    # simplicity we force all options to $U except the first which is forced to
-    # $S.
+    # For normal lists,the indices ($I) are simply incremental. For check/radio
+    # lists, each index ($I) is padded by an empty one before it. The first
+    # column of data are $U/$S values. For user simplicity we force all options
+    # to $U except the first which is forced to $S.
     local P
     if [ -z "$M" ]; then
       I=0
@@ -322,10 +321,10 @@ elif [ "$GUI" = "qt" ]; then
     for E in $3; do ((N++)); done
     shift 3
     # Copy the remaining parameters (the list data) to a local array ($P[]).
-    # Each index ($I) is padded by an empty one before it.
-    # For check/radio lists the last column of data are $U/$S values. For user
-    # simplicity we force all options to $U except the first which is forced to
-    # $S.
+    # For normal lists,the indices ($I) are simply incremental. For check/radio
+    # lists, each index ($I) is padded by an empty one before it. The last
+    # column of data are $U/$S values. For user simplicity we force all options
+    # to $U except the first which is forced to $S.
     local P
     if  [ "$M" = "--menu" ]; then
       I=0
