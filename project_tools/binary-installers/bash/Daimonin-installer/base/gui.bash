@@ -256,6 +256,9 @@ elif [ "$GUI" = "gtk" ]; then
     R=$?
     # A bug in zenity seems to double up the output when choosing with the
     # keyboard (| is the default separator).
+    # This was fixed in 3.9.91 but we should still apply this workaround as the
+    # user may be using an earlier version (and it has no effect on already
+    # fixed versions -- we assume | is never used as a character in lists).
     [ -z "$M" ] && V="$(expr "$V" : '\([^|]*\)')"
     echo "$V"
     return $R
@@ -270,8 +273,7 @@ elif [ "$GUI" = "gtk" ]; then
     zenity --progress --percentage 0 --auto-close --title "$TITLE" --text "$1"
   }
 # FIXME: Unfortunately zenity --notification is bugged -- see
-# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=716717
-# Not mentioned is the fact that this freezes the script.
+# https://bugzilla.gnome.org/show_bug.cgi?id=742963
 #  gui_progress_end() {
 #    zenity --notification --title "$TITLE" --text "$1"
 #  }
