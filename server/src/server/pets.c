@@ -42,12 +42,12 @@
    quest requires a specific pet you could try 1.
    Returns 0 on success, -1 on failure.
 */
-int add_pet(object *owner, object *pet, int force)
+int add_pet(object_t *owner, object_t *pet, int force)
 {
     int nrof_pets = 0, nrof_permapets = 0;
-    objectlink *ol, *next_ol;
+    objectlink_t *ol, *next_ol;
     struct mob_known_obj *tmp;
-    object *spawninfo;
+    object_t *spawninfo;
 
     if(owner == NULL || pet == NULL || owner->type != PLAYER || pet->type != MONSTER)
     {
@@ -62,7 +62,7 @@ int add_pet(object *owner, object *pet, int force)
     if (owner == get_owner(pet) &&
         !force)
     {
-        new_draw_info(NDI_UNIQUE, 0, owner, "%s is already taken",
+        ndi(NDI_UNIQUE, 0, owner, "%s is already taken",
             QUERY_SHORT_NAME(pet, owner));
         return -1;
     }
@@ -83,7 +83,7 @@ int add_pet(object *owner, object *pet, int force)
 
     if((nrof_pets >= MAX_PETS || nrof_permapets >= MAX_PERMAPETS) && !force)
     {
-        new_draw_info(NDI_UNIQUE, 0, owner, "You have too many pets to handle %s.",
+        ndi(NDI_UNIQUE, 0, owner, "You have too many pets to handle %s.",
             QUERY_SHORT_NAME(pet, owner));
         return -1;
     }
@@ -114,7 +114,7 @@ int add_pet(object *owner, object *pet, int force)
     SET_OR_CLEAR_FLAG(pet, FLAG_UNAGGRESSIVE, !CONTR(owner)->combat_mode);
 
     /* Insert link in owner's pet list */
-    ol = get_objectlink(OBJLNK_FLAG_OB);
+    ol = objectlink_get(OBJLNK_FLAG_OB);
     ol->objlink.ob = pet;
     ol->id = pet->count;
     ol->ref_count = 1; /* TODO: How can this be used? */
@@ -139,9 +139,9 @@ int add_pet(object *owner, object *pet, int force)
     return 0;
 }
 
-void update_pets_combat_mode(object *owner)
+void update_pets_combat_mode(object_t *owner)
 {
-    objectlink *ol;
+    objectlink_t *ol;
 
     for(ol = CONTR(owner)->pets; ol; ol = ol->next)
     {
@@ -150,14 +150,14 @@ void update_pets_combat_mode(object *owner)
     }
 }
 
-void save_pet(object *pet)
+void save_pet(object_t *pet)
 {
     if (!QUERY_FLAG(pet, FLAG_REMOVED))
     {
         remove_ob(pet);
         if (check_walk_off(pet, NULL, MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
         {
-            new_draw_info(NDI_UNIQUE, 0, pet->owner, "%s has disappeared!",
+            ndi(NDI_UNIQUE, 0, pet->owner, "%s has disappeared!",
                 QUERY_SHORT_NAME(pet, pet->owner));
             return;
         }
@@ -171,17 +171,18 @@ void save_pet(object *pet)
  * the pet in the owner until there's somewhere to move out */
 /* TODO: the pathfinding system needs to be updated to handle
  * warping/teleporting of mobs */
-void pet_follow_owner(object *pet)
+void pet_follow_owner(object_t *pet)
 {
-    object *tmp;
-    int     dir;
+    msp_t *msp;
+    object_t *tmp;
+    sint8   dir;
 
     if (!QUERY_FLAG(pet, FLAG_REMOVED))
     {
         remove_ob(pet);
         if (check_walk_off(pet, NULL, MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
         {
-            new_draw_info(NDI_UNIQUE, 0, pet->owner, "%s has disappeared!",
+            ndi(NDI_UNIQUE, 0, pet->owner, "%s has disappeared!",
                 QUERY_SHORT_NAME(pet, pet->owner));
             return;
         }
@@ -206,13 +207,14 @@ void pet_follow_owner(object *pet)
         return;
     }
 
-    if (pet->owner->map->in_memory != MAP_ACTIVE)
+    if (pet->owner->map->in_memory != MAP_MEMORY_ACTIVE)
     {
         save_pet(pet);
         return;
     }
 
-    dir = find_free_spot(pet->arch, pet, pet->owner->map, pet->owner->x, pet->owner->y, INS_WITHIN_LOS, 1, SIZEOFFREE);
+    msp = MSP_KNOWN(pet->owner);
+    dir = overlay_find_free(msp, pet, 1, OVERLAY_7X7, OVERLAY_WITHIN_LOS);
 
     if (dir == -1)
     {
@@ -222,36 +224,41 @@ void pet_follow_owner(object *pet)
 
     for (tmp = pet; tmp != NULL; tmp = tmp->more)
     {
-        tmp->x = pet->owner->x + freearr_x[dir] + tmp->arch->clone.x;
-        tmp->y = pet->owner->y + freearr_y[dir] + tmp->arch->clone.y;
+        tmp->x = pet->owner->x + OVERLAY_X(dir) + tmp->arch->clone.x;
+        tmp->y = pet->owner->y + OVERLAY_Y(dir) + tmp->arch->clone.y;
     }
 
     CLEAR_FLAG(pet, FLAG_SYS_OBJECT);
 
     if (!insert_ob_in_map(pet, pet->owner->map, NULL, 0))
-        new_draw_info(NDI_UNIQUE, 0, pet->owner, "%s has disappeared!",
+        ndi(NDI_UNIQUE, 0, pet->owner, "%s has disappeared!",
             QUERY_SHORT_NAME(pet, pet->owner));
     else
-        new_draw_info(NDI_UNIQUE, 0, pet->owner, "%s appears next to you.",
+        ndi(NDI_UNIQUE, 0, pet->owner, "%s appears next to you.",
             QUERY_SHORT_NAME(pet, pet->owner));
 }
 
 /* Warp owner's distant pets towards him */
 /* TODO: this could also be used by a skill or spell "recall pets" */
-void pets_follow_owner(object *owner)
+void pets_follow_owner(object_t *owner)
 {
-    objectlink *ol;
+    objectlink_t *ol;
 
-    for(ol = CONTR(owner)->pets; ol; ol = ol->next)
-        if(PET_VALID(ol, owner) && !on_same_tileset(ol->objlink.ob, owner))
+    for (ol = CONTR(owner)->pets; ol; ol = ol->next)
+    {
+        if (PET_VALID(ol, owner) &&
+            !on_same_tileset(ol->objlink.ob->map, owner->map))
+        {
             pet_follow_owner(ol->objlink.ob);
+        }
+    }
 }
 
 /* Called when a map is swapped out or reloaded. Should warp
  * all pets on a map to their owner */
-void remove_all_pets(mapstruct *map)
+void remove_all_pets(map_t *map)
 {
-    object *tmp, *next_tmp;
+    object_t *tmp, *next_tmp;
 
     /* TODO: with a little better org of the active list (mobs first,
      * then other objects) we can make this a little faster */
@@ -272,9 +279,9 @@ void remove_all_pets(mapstruct *map)
 }
 
 /* Make all pets disappear */
-void terminate_all_pets(object *owner)
+void terminate_all_pets(object_t *owner)
 {
-    objectlink *ol;
+    objectlink_t *ol;
 
     for(ol = CONTR(owner)->pets; ol; ol = ol->next)
     {
@@ -287,15 +294,15 @@ void terminate_all_pets(object *owner)
 }
 
 /* called from save_object for players */
-void save_all_pets(FILE *fp, object *owner, int flag)
+void save_all_pets(FILE *fp, object_t *owner, int flag)
 {
-    objectlink *ol;
+    objectlink_t *ol;
 
     for(ol = CONTR(owner)->pets; ol; ol = ol->next)
     {
         if(PET_VALID(ol, owner))
         {
-            object *pet = ol->objlink.ob;
+            object_t *pet = ol->objlink.ob;
 
             /* Don't save twice */
             if(pet->env == owner)

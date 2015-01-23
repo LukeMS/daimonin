@@ -66,7 +66,7 @@ static int  cs_stat_skillexp[]    =
  *
  ******************************************************************************/
 
-void send_target_command(player *pl)
+void send_target_command(player_t *pl)
 {
     int     aim_self_flag   = FALSE;
     char    tmp[256];
@@ -169,9 +169,9 @@ void send_target_command(player *pl)
     Write_String_To_Socket(&pl->socket, SERVER_CMD_TARGET, tmp, strlen(tmp+3)+3);
 }
 
-void send_spelllist_cmd(object *op, char *spellname, int mode)
+void send_spelllist_cmd(object_t *op, char *spellname, int mode)
 {
-    player *pl;
+    player_t *pl;
     char    tmp[1024 * 10]; /* we should careful set a big enough buffer here */
 
     /* Sanity check. */
@@ -200,7 +200,7 @@ void send_spelllist_cmd(object *op, char *spellname, int mode)
     Write_String_To_Socket(&pl->socket, SERVER_CMD_SPELL_LIST, tmp, strlen(tmp));
 }
 
-static char *MakeListString(object *skill)
+static char *MakeListString(object_t *skill)
 {
     static char buf[SMALL_BUF];
     int         exp;
@@ -223,14 +223,14 @@ static char *MakeListString(object *skill)
     return buf;
 }
 
-void send_skilllist_cmd(player *pl, int snr, int mode)
+void send_skilllist_cmd(player_t *pl, int snr, int mode)
 {
     int  i = MAX(0, MIN(snr, NROFSKILLS - 1));
     char buf[LARGE_BUF] = "";
 
     while (i < NROFSKILLS)
     {
-        object *skill;
+        object_t *skill;
 
         switch (mode)
         {
@@ -287,7 +287,7 @@ void send_skilllist_cmd(player *pl, int snr, int mode)
  * a stack overflow. Doing here some more intelligent is needed. I do this here
  * with sprintf() only for fast beta implementation */
 
-void send_ready_skill(player *pl, shstr *name)
+void send_ready_skill(player_t *pl, shstr_t *name)
 {
     Write_String_To_Socket(&pl->socket, SERVER_CMD_SKILLRDY, name, strlen(name));
 }
@@ -295,7 +295,7 @@ void send_ready_skill(player *pl, shstr *name)
 /* send to the client the golem face & name. Note, that this is only cosmetical
  * information to fill the range menu in the client.
  */
-void send_golem_control(object *golem, int mode)
+void send_golem_control(object_t *golem, int mode)
 {
     char    tmp[MEDIUM_BUF]; /* we should careful set a big enough buffer here */
 
@@ -312,7 +312,7 @@ void send_golem_control(object *golem, int mode)
  * Since this gets sent a lot, this is actually one of the few binary
  * commands for now.
  */
-void esrv_update_stats(player *pl)
+void esrv_update_stats(player_t *pl)
 {
     int         i, group_update = 0; /* set to true when a group update stat has changed */
     sockbuf_struct * AddIf_SOCKBUF_PTR;
@@ -434,7 +434,7 @@ void esrv_update_stats(player *pl)
 }
 
 
-void esrv_new_player(player *pl, uint32 weight)
+void esrv_new_player(player_t *pl, uint32 weight)
 {
     int len;
     sockbuf_struct *sptr;

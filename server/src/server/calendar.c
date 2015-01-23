@@ -24,7 +24,7 @@
 */
 #include <global.h>
 
-static const dayofyear_t calendar[] =
+static const dayofyear_t Calendar[] =
 {
     {0,0,0,0,0,-1,-1}, {0,0,0,0,1,-1,-1}, {0,0,0,0,2,-1,-1},
     {0,0,0,1,0,-1,-1}, {0,0,0,1,1,-1,-1}, {0,0,0,1,2,-1,-1},
@@ -148,7 +148,7 @@ static const dayofyear_t calendar[] =
     {3,-1,-1,-1,-1,-1,11},
 };
 
-static const char *season_name[] =
+static const char *SeasonName[] =
 {
     "Season of Sowing",
     "Season of Toil",
@@ -156,7 +156,7 @@ static const char *season_name[] =
     "Season of Council",
 };
 
-static const char *month_name[] =
+static const char *MonthName[] =
 {
     "Os-Nunnos",
     "Os-Minis",
@@ -172,27 +172,26 @@ static const char *month_name[] =
     "Os-Pwyllo",
 };
 
-static const char *parweek_name[] =
+static const char *ParweekName[] =
 {
     "Dragocas",
     "Myracas",
     "Slocas",
 };
 
-static const char *day_name[] =
+static const char *DayName[] =
 {
     "Alkudein",
     "Metadein",
     "Lappodein",
 };
 
-/*
-static const char *intraholiday_name[] =
+static const char *IntraholidayName[] =
 {
+    "TODO",
 };
-*/
 
-static const char *extraholiday_name[] =
+static const char *ExtraholidayName[] =
 {
     "Heos-Nunnos",
     "Heos-Minis",
@@ -208,83 +207,67 @@ static const char *extraholiday_name[] =
     "Heos-Pwyllo",
 };
 
-/* These are in 7-day periods. */
-static const hourofday_t season_timechange[] =
+/* TODO: ATM one day repeats over entire year. */
+static const sint8 Daylight[] =
 {
-    {{2,2,2,2,2,2,3,4,5,7,7,7,7,7,7,7,7,7,6,5,4,2,2,2}}, {{2,2,2,2,2,2,3,4,5,7,7,7,7,7,7,7,7,7,6,5,4,2,2,2}},
-    {{2,2,2,2,2,2,3,4,5,7,7,7,7,7,7,7,7,7,6,5,4,2,2,2}}, {{2,2,2,2,2,2,3,4,5,7,7,7,7,7,7,7,7,7,6,5,4,2,2,2}},
-
-    {{2,2,2,2,2,2,3,4,5,7,7,7,7,7,7,7,7,7,6,5,4,2,2,2}}, {{2,2,2,2,2,2,3,4,5,7,7,7,7,7,7,7,7,7,6,5,4,2,2,2}},
-    {{2,2,2,2,2,2,3,4,5,7,7,7,7,7,7,7,7,7,6,5,4,2,2,2}}, {{2,2,2,2,2,2,3,4,5,7,7,7,7,7,7,7,7,7,6,5,4,2,2,2}},
-
-    {{2,2,2,2,2,2,3,4,5,7,7,7,7,7,7,7,7,7,6,5,4,2,2,2}}, {{2,2,2,2,2,2,3,4,5,7,7,7,7,7,7,7,7,7,6,5,4,2,2,2}},
-    {{2,2,2,2,2,2,3,4,5,7,7,7,7,7,7,7,7,7,6,5,4,2,2,2}}, {{2,2,2,2,2,2,3,4,5,7,7,7,7,7,7,7,7,7,6,5,4,2,2,2}},
-
-    {{2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,7,7,7,7,6,5,4,3,2}}, {{2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,7,7,7,7,6,5,4,3,2}},
-    {{2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,7,7,7,7,6,5,4,3,2}}, {{2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,7,7,7,7,6,5,4,3,2}},
-
-    {{2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,7,7,7,7,6,5,4,3,2}}, {{2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,7,7,7,7,6,5,4,3,2}},
-    {{2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,7,7,7,7,6,5,4,3,2}}, {{2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,7,7,7,7,6,5,4,3,2}},
-
-    {{2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,7,7,7,7,6,5,4,3,2}}, {{2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,7,7,7,7,6,5,4,3,2}},
-    {{2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,7,7,7,7,6,5,4,3,2}}, {{2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,7,7,7,7,6,5,4,3,2}},
-
-    {{2,2,2,2,2,2,3,4,5,6,7,7,7,7,7,7,7,7,6,5,4,3,2,2}}, {{2,2,2,2,2,2,3,4,5,6,7,7,7,7,7,7,7,7,6,5,4,3,2,2}},
-    {{2,2,2,2,2,2,3,4,5,6,7,7,7,7,7,7,7,7,6,5,4,3,2,2}}, {{2,2,2,2,2,2,3,4,5,6,7,7,7,7,7,7,7,7,6,5,4,3,2,2}},
-
-    {{2,2,2,2,2,2,3,4,5,6,7,7,7,7,7,7,7,7,6,5,4,3,2,2}}, {{2,2,2,2,2,2,3,4,5,6,7,7,7,7,7,7,7,7,6,5,4,3,2,2}},
-    {{2,2,2,2,2,2,3,4,5,6,7,7,7,7,7,7,7,7,6,5,4,3,2,2}}, {{2,2,2,2,2,2,3,4,5,6,7,7,7,7,7,7,7,7,6,5,4,3,2,2}},
-
-    {{2,2,2,2,2,2,3,4,5,6,7,7,7,7,7,7,7,7,6,5,4,3,2,2}}, {{2,2,2,2,2,2,3,4,5,6,7,7,7,7,7,7,7,7,6,5,4,3,2,2}},
-    {{2,2,2,2,2,2,3,4,5,6,7,7,7,7,7,7,7,7,6,5,4,3,2,2}}, {{2,2,2,2,2,2,3,4,5,6,7,7,7,7,7,7,7,7,6,5,4,3,2,2}},
-
-    {{2,2,2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,6,5,4,3,2,2,2}}, {{2,2,2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,6,5,4,3,2,2,2}},
-    {{2,2,2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,6,5,4,3,2,2,2}}, {{2,2,2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,6,5,4,3,2,2,2}},
-
-    {{2,2,2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,6,5,4,3,2,2,2}}, {{2,2,2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,6,5,4,3,2,2,2}},
-    {{2,2,2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,6,5,4,3,2,2,2}}, {{2,2,2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,6,5,4,3,2,2,2}},
-
-    {{2,2,2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,6,5,4,3,2,2,2}}, {{2,2,2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,6,5,4,3,2,2,2}},
-    {{2,2,2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,6,5,4,3,2,2,2}}, {{2,2,2,2,2,2,2,3,4,6,7,7,7,7,7,7,7,6,5,4,3,2,2,2}},
+    2,2,2,2,2,2,3,4,5,7,7,7,7,7,7,7,7,7,6,5,4,2,2,2,
 };
 
-uint64 tadtick; /* time of the day tick counter */
-int    world_darkness; /* daylight value. 0= totally dark. 7= daylight */
+uint16 tadtick; /* time of the day tick counter */
+timeanddate_t tadnow;
 
 /* Updates tad with the current time and date. */
 void get_tad(timeanddate_t *tad, sint32 offset)
 {
-    uint64 hour = tadtick + offset;
-    uint16 day;
+    sint16 hourofyear;
+    uint8  hourofday;
+    uint16 dayofyear;
 
-    memset(tad, 0, sizeof(timeanddate_t));
+    hourofyear = MAX(0 - ARKHE_HRS_PER_YR, MIN(tadtick + offset, ARKHE_HRS_PER_YR));
+
+    if (hourofyear < 0)
+    {
+        hourofyear = ARKHE_HRS_PER_YR + hourofyear;
+    }
+
+    hourofday = hourofyear % ARKHE_HRS_PER_DY;
+    dayofyear = hourofyear / ARKHE_HRS_PER_DY;
+
+    /* Daylight (numbers) */
+    if (hourofday != tad->hour)
+    {
+        sint8 v = Daylight[hourofday];
+
+        tad->daylight_darkness = v;
+        tad->daylight_brightness = brightness[ABS(v)];
+    }
 
     /* Time (numbers) */
-    tad->hour = hour % ARKHE_HRS_PER_DY;
+    tad->hour = hourofday;
     tad->minute = (uint8)((ROUND_TAG % PTICKS_PER_ARKHE_HOUR) /
-                  (PTICKS_PER_ARKHE_HOUR / (ARKHE_MES_PER_HR - 1)));
+        (PTICKS_PER_ARKHE_HOUR / (ARKHE_MES_PER_HR - 1)));
 
     /* Date (numbers) */
-    day = (hour % ARKHE_HRS_PER_YR) / ARKHE_HRS_PER_DY;
-    tad->year = ARKHE_YR; /* constant for now */
-    tad->season = calendar[day].season;
-    tad->month = calendar[day].month;
-    tad->week = calendar[day].week;
-    tad->parweek = calendar[day].parweek;
-    tad->day = calendar[day].day;
-    tad->intraholiday = calendar[day].intraholiday; /* TODO */
-    tad->extraholiday = calendar[day].extraholiday;
+    if (dayofyear != tad->dayofyear)
+    {
+        tad->dayofyear = dayofyear;
+        tad->year = ARKHE_YR; /* constant for now */
+        tad->season = Calendar[dayofyear].season;
+        tad->month = Calendar[dayofyear].month;
+        tad->week = Calendar[dayofyear].week;
+        tad->parweek = Calendar[dayofyear].parweek;
+        tad->day = Calendar[dayofyear].day;
+        tad->intraholiday = Calendar[dayofyear].intraholiday;
+        tad->extraholiday = Calendar[dayofyear].extraholiday;
 
-    /* Date (names) */
-    tad->season_name = (tad->season >= 0) ? season_name[tad->season] : "";
-    tad->month_name = (tad->month >= 0) ? month_name[tad->month] : "";
-    tad->parweek_name = (tad->parweek >= 0) ? parweek_name[tad->parweek] : "";
-    tad->day_name = (tad->day >= 0) ? day_name[tad->day] : "";
-/*    tad->intraholiday_name = (tad->intraholiday >= 0) ?
-                             intraholiday_name[tad->intraholiday] : ""; *//* TODO */
-	tad->intraholiday_name = ""; // hotfix until intraholiday_name[] is declared right
-	tad->extraholiday_name = (tad->extraholiday >= 0) ?
-                             extraholiday_name[tad->extraholiday] : "";
+        /* Date (names) */
+        tad->season_name = (tad->season >= 0) ? SeasonName[tad->season] : "";
+        tad->month_name = (tad->month >= 0) ? MonthName[tad->month] : "";
+        tad->parweek_name = (tad->parweek >= 0) ? ParweekName[tad->parweek] : "";
+        tad->day_name = (tad->day >= 0) ? DayName[tad->day] : "";
+        tad->intraholiday_name = (tad->intraholiday >= 0) ? IntraholidayName[tad->intraholiday] : "";
+        tad->extraholiday_name = (tad->extraholiday >= 0) ? ExtraholidayName[tad->extraholiday] : "";
+    }
 }
 
 /* get_tad_offset_from_string() parses a string for the offset parameter of
@@ -436,22 +419,58 @@ char *print_tad(timeanddate_t *tad, int flags)
     return errmsg;
 }
 
+void init_tadclock(void)
+{
+    char  filename[MEDIUM_BUF];
+    FILE *fp;
+
+    sprintf(filename, "%s/clockdata", settings.localdir);
+    LOG(llevSystem, "Reading clockdata from '%s'... ", filename);
+
+    if (!(fp = fopen(filename, "r")))
+    {
+        LOG(llevSystem, "FAILED (could not open file, tadtick defaults to 0)!\n");
+        tadtick = 0;
+    }
+    else
+    {
+        if (fscanf(fp, "%hu", &tadtick) != 1)
+        {
+            LOG(llevSystem, "FAILED (could not find correct data in file, tadtick defaults to 0)!\n");
+            tadtick = 0;
+        }
+        else
+        {
+            LOG(llevSystem, "OK (tadtick=%hu)!\n", tadtick);
+
+            /* So we don't add an hour every reboot. */
+            if (tadtick > 0)
+            {
+                tadtick--;
+            }
+        }
+
+        fclose(fp);
+    }
+
+    memset(&tadnow, 0, sizeof(timeanddate_t));
+    tick_tadclock();
+}
+
 /* This performs the basic function of advancing the clock one tick forward.
  * Any game-time dependant functions should be called from this function. */
 void tick_tadclock(void)
 {
-    uint16 day,
-           hour;
-
-    tadtick++;
-    day = (tadtick % ARKHE_HRS_PER_YR) / ARKHE_HRS_PER_DY;
-    hour = tadtick % ARKHE_HRS_PER_DY;
+    if (++tadtick > ARKHE_HRS_PER_YR)
+    {
+        tadtick = 0;
+    }
 
     /* save to disk once per game day. */
-    if (hour == 0)
+    if (tadtick % ARKHE_HRS_PER_DY == 0)
+    {
         write_tadclock();
-
-    world_darkness = season_timechange[(int)(day / 7)].hour[hour];
+    }
 }
 
 /* Write out the current time to the file so time does not
@@ -461,22 +480,17 @@ void write_tadclock(void)
     char  filename[MEDIUM_BUF];
     FILE *fp;
 
-    LOG(llevInfo, "write tadclock()...\n");
     sprintf(filename, "%s/clockdata", settings.localdir);
+    LOG(llevSystem, "Write tadclock() to '%s'... ", filename);
 
     if (!(fp = fopen(filename, "w")))
     {
-        LOG(llevBug, "BUG: Cannot open %s for writing\n", filename);
-
-        return;
+        LOG(llevSystem, "FAILED (could not open file)!\n");
     }
-
-#ifdef WIN32
-    fprintf(fp, "%I64u", tadtick);
-#elif SIZEOF_LONG == 8
-    fprintf(fp, "%lu", tadtick);
-#elif SIZEOF_LONG_LONG == 8
-    fprintf(fp, "%llu", tadtick);
-#endif
-    fclose(fp);
+    else
+    {
+        LOG(llevSystem, "OK!\n");
+        fprintf(fp, "%hu", tadtick);
+        fclose(fp);
+    }
 }

@@ -89,15 +89,15 @@ static void fill_artifact_table(void)
 /* first pass artifacts load */
 static void init_artifacts(FILE *fp)
 {
-    archetype      *atemp;
+    archetype_t      *atemp;
     long            old_pos, file_pos;
     char            buf[LARGE_BUF], *cp, *next; // buf must be large so we can have a big Allowed line.
     artifact       *art             = NULL;
-    linked_char    *tmp;
+    shstr_linked_t    *tmp;
     int             lcount, value, none_flag = 0, editor_flag = 0;
     artifactlist   *al;
     char            buf_text[10 * 1024]; /* ok, 10k arch text... if we bug here, we have a design problem */
-    object            *dummy_obj=get_object(), *parse_obj;
+    object_t            *dummy_obj=get_object(), *parse_obj;
 
     /* start read in the artifact list */
     while (fgets(buf, LARGE_BUF, fp) != NULL)
@@ -134,7 +134,7 @@ static void init_artifacts(FILE *fp)
                 nrofallowedstr++;
                 if ((next = strchr(cp, ',')) != NULL)
                     *(next++) = '\0';
-                tmp = (linked_char *) malloc(sizeof(linked_char));
+                tmp = (shstr_linked_t *) malloc(sizeof(shstr_linked_t));
                 tmp->name = NULL;
                 FREE_AND_COPY_HASH(tmp->name, cp);
                 tmp->next = art->allowed;
@@ -178,7 +178,7 @@ static void init_artifacts(FILE *fp)
                  */
                 if ((atemp = find_archetype(art->def_at_name)) == NULL)
                     LOG(llevError, "ERROR: Init_Artifacts: Can't find def_arch %s.\n", art->def_at_name);
-                memcpy(&art->def_at, atemp, sizeof(archetype)); /* copy the default arch */
+                memcpy(&art->def_at, atemp, sizeof(archetype_t)); /* copy the default arch */
                 art->def_at.base_clone = &atemp->clone;
                 ADD_REF_NOT_NULL_HASH(art->def_at.clone.name);
                 ADD_REF_NOT_NULL_HASH(art->def_at.clone.title);
@@ -270,7 +270,7 @@ static void init_artifacts(FILE *fp)
 void second_artifact_pass(FILE *fp)
 {
     char            buf[MEDIUM_BUF], *variable = buf, *argument, *cp;
-    archetype      *at =  NULL, *other;
+    archetype_t      *at =  NULL, *other;
 
     while (fgets(buf, MEDIUM_BUF, fp) != NULL)
     {
@@ -525,7 +525,7 @@ artifact *find_artifact(const char *name)
     return (artifact *)hashtable_find(art_table, name);
 }
 
-void add_artifact_archtype(void)
+void add_artifact_archetype_type(void)
 {
     artifactlist   *al;
     artifact       *art = NULL;
@@ -549,12 +549,12 @@ void add_artifact_archtype(void)
  * Fixes the given object, giving it the abilities and titles
  * it should have due to the second artifact-template.
  */
-void give_artifact_abilities(object *op, artifact *art)
+void give_artifact_abilities(object_t *op, artifact *art)
 {
     sint64 tmp_value   = op->value;
 
     op->value = 0;
-    if (!load_object(art->parse_text, op, NULL, LO_MEMORYMODE, MAP_STATUS_ARTIFACT))
+    if (!load_object(art->parse_text, op, NULL, LO_MEMORYMODE, 0))
         LOG(llevError, "ERROR: give_artifact_abilities(): load_object() error (ob: %s art: %s).\n", op->name, art->name);
 
     /* this will solve the problem to adjust the value for different items
@@ -577,10 +577,10 @@ void give_artifact_abilities(object *op, artifact *art)
     return;
 }
 
-int legal_artifact_combination(object *op, artifact *art)
+int legal_artifact_combination(object_t *op, artifact *art)
 {
     int             neg, success = 0;
-    linked_char    *tmp;
+    shstr_linked_t    *tmp;
     const char     *name;
 
     if (!art->allowed)
@@ -615,7 +615,7 @@ int legal_artifact_combination(object *op, artifact *art)
  * Then calls give_artifact_abilities in order to actually create
  * the artifact.
  */
-int generate_artifact(object *op, int difficulty, int t_style, int a_chance)
+int generate_artifact(object_t *op, int difficulty, int t_style, int a_chance)
 {
     artifactlist   *al;
     artifact       *art;
@@ -700,9 +700,9 @@ int generate_artifact(object *op, int difficulty, int t_style, int a_chance)
     return 1;
 }
 
-static void free_charlinks(linked_char *lc)
+static void free_charlinks(shstr_linked_t *lc)
 {
-    linked_char *tmp, *next;
+    shstr_linked_t *tmp, *next;
     for(tmp = lc; tmp; tmp = next)
     {
         next = tmp->next;
@@ -757,7 +757,7 @@ void dump_artifacts()
 {
     artifactlist   *al;
     artifact       *art;
-    linked_char    *next;
+    shstr_linked_t    *next;
 
     for (al = first_artifactlist; al != NULL; al = al->next)
     {

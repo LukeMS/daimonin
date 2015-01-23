@@ -34,58 +34,82 @@
 #define MAX_STAT        125  /* The maximum legal value of any stat */
 #define MIN_STAT        1   /* The minimum legal value of any stat */
 
-enum
+enum stat_nr_t
 {
-    STR,
-    DEX,
-    CON,
-    INTELLIGENCE,
-    WIS,
-    POW,
-    CHA,
+    STAT_STR,
+    STAT_DEX,
+    STAT_CON,
+    STAT_INT,
+    STAT_WIS,
+    STAT_POW,
+    STAT_CHA,
 
-    NUM_STATS,
+    STAT_NROF,
 
-    /* Changed from NO_STAT to NO_STAT_VAL to fix conlfict on AIX systems */
-    NO_STAT_VAL = 99
+    STAT_NONE = 99
 };
 
-extern const char    *attacks[NROFATTACKS];
-extern const char    *spellpathnames[NRSPELLPATHS];
-extern const float    stats_penalty[10];
-extern const char    *lose_msg[NUM_STATS];
-extern const char    *restore_msg[NUM_STATS];
-extern const char    *stat_name[NUM_STATS];
-extern const char    *short_stat_name[NUM_STATS];
+extern const char  *attacks[NROFATTACKS];
+extern const char  *spellpathnames[NRSPELLPATHS];
+extern const float  stats_penalty[10];
+extern const char  *lose_msg[STAT_NROF];
+extern const char  *restore_msg[STAT_NROF];
+extern const char  *stat_name[STAT_NROF];
+extern const char  *short_stat_name[STAT_NROF];
 
-#ifdef WIN32
-#pragma pack(push,1)
-#endif
-
-typedef struct liv
+/* Unaligned: 37/37
+ * Internal padding: 0/0
+ * Trailing padding: 3/3
+ * A proposal below was to save 2 bytes by changing ac and wc from sint16 to
+ * uint8 which would decrease the footprint to 35 unaligned + 1 trailing = 36
+ * aligned.
+ *
+ * -- Smacky 20140822 */
+struct living_t
 {
-    /* Mostly used by "alive" objects */
-    sint32          exp;        /* Experience. */
-    sint32          hp;         /* Real Hit Points. */
-    sint32          maxhp;      /* max hit points */
-    sint16          sp;         /* Spell points.  Used to cast mage spells. */
-    sint16          maxsp;      /* Max spell points. */
-    sint16          grace;      /* Grace.  Used to invoke clerical prayers. */
-    sint16          maxgrace;   /* Grace.  Used to invoke clerical prayers. */
-    sint16          food;       /* How much food in stomach.  0 = starved. */
-    sint16          dam;        /* How much damage this object does when hitting */
-    /* We can safe here 2 bytes by setting wc/ac to uint8 -
-     * i had tested it for all uses until now.
-     */
-    sint16          wc, ac;     /* Weapon Class and Armour Class */
+    sint32 exp;      // experience
+    sint32 hp;       // current hit points
+    sint32 maxhp;    // max hit points
+    sint16 sp;       // current mana
+    sint16 maxsp;    // max mana
+    sint16 grace;    // current grace
+    sint16 maxgrace; // max grace
+    sint16 food;     // how much food in stomach NOT USED IN THIS WAY
+    sint16 dam;      // how much damage this object does when hitting
+    sint16 wc;       // we can safe here 2 bytes by setting wc/ac to uint8
+    sint16 ac;       // i had tested it for all uses until now.
+    sint8  thac0;    // every roll >= thac0 is a hit, despite of target ac
+    sint8  thacm;    // every roll < thacm is a miss, despite of target ac
+    stat_t Str;
+    stat_t Dex;
+    stat_t Con;
+    stat_t Wis;
+    stat_t Cha;
+    stat_t Int;
+    stat_t Pow;
+};
 
-    sint8           thac0;      /* Every roll >= thac0 is a hit, despite of target ac */
-    sint8           thacm;      /* Every roll < thacm is a miss, despite of target ac */
-    sint8           Str, Dex, Con, Wis, Cha, Int, Pow; /* the stats */
-} living;
-
-#ifdef WIN32
-#pragma pack(pop)
+extern void         set_stat_value(living_t *stats, stat_nr_t stat, sint16 value);
+extern stat_t       get_stat_value(const living_t *const stats, const stat_nr_t stat);
+extern void         check_stat_bounds(living_t *stats);
+extern int          change_abil(object_t *op, object_t *tmp);
+extern object_t    *check_obj_stat_buffs(object_t *ob, object_t *pl);
+extern void         drain_stat(object_t *op);
+extern void         drain_specific_stat(object_t *op, int deplete_stats);
+extern void         drain_level(object_t *op, int level, int mode, int ticks);
+extern float        get_player_stat_bonus(int value);
+extern void         fix_player_weight(object_t *op);
+#ifdef DEBUG_FIX_PLAYER
+extern void         fix_player(object_t *op, char *msg);
+#else
+extern void         fix_player(object_t *op);
 #endif
+extern void         set_dragon_name(object_t *pl, object_t *abil, object_t *skin);
+extern void         dragon_level_gain(object_t *who);
+extern void         fix_monster(object_t *op);
+extern object_t    *insert_base_info_object(object_t *op);
+extern object_t    *find_base_info_object(object_t *op);
+extern void         set_mobile_speed(object_t *op, int factor);
+extern void         leech_hind(object_t *leecher, object_t *leechee, uint8 attack, sint16 plose, sint16 pmod, uint8 chance);
 
 #endif /* ifndef __LIVING_H */

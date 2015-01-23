@@ -37,11 +37,11 @@
 
 /* Get a direction from object op to object target, using precomputed paths
  * if available, and request path finding if needed */
-static int calc_direction_towards(object *op, object *target, mapstruct *map, int x, int y)
+static int calc_direction_towards(object_t *op, object_t *target, map_t *map, int x, int y)
 {
     struct mobdata_pathfinding *pf;
-    mapstruct                  *path_map;
-    rv_vector                   target_rv, segment_rv;
+    map_t                  *path_map;
+    rv_t                   target_rv, segment_rv;
 
     target_rv.direction = 1234543;
     segment_rv.direction = 1234542;
@@ -206,12 +206,12 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
     return segment_rv.direction;
 }
 
-static int calc_direction_towards_coord(object *op, mapstruct *map, int x, int y)
+static int calc_direction_towards_coord(object_t *op, map_t *map, int x, int y)
 {
     return calc_direction_towards(op, NULL, map, x, y);
 }
 
-static int calc_direction_towards_object(object *op, object *target)
+static int calc_direction_towards_object(object_t *op, object_t *target)
 {
     if(op->map == NULL) {
         LOG(llevBug, "BUG: calc_direction_towards_object(): op->map == NULL (%s <->%s)\n",
@@ -232,8 +232,8 @@ static int calc_direction_towards_object(object *op, object *target)
       || target->x != MOB_PATHDATA(op)->goal_x
       || target->y != MOB_PATHDATA(op)->goal_y))
     {
-        rv_vector   rv_goal, rv_target;
-        mapstruct  *goal_map = map_is_ready(MOB_PATHDATA(op)->goal_map);
+        rv_t   rv_goal, rv_target;
+        map_t  *goal_map = map_is_ready(MOB_PATHDATA(op)->goal_map);
 
         /* TODO if we can't see the object, goto its last known position
          * (also have to separate between well-known objects that we can find
@@ -279,11 +279,11 @@ static int calc_direction_towards_object(object *op, object *target)
 
 /* Get a direction towards the target stored in the waypoint object wp
  * tries to use precomputed path if available or request path finding if needed */
-static int calc_direction_towards_waypoint(object *op, object *wp)
+static int calc_direction_towards_waypoint(object_t *op, object_t *wp)
 {
     if(WP_BEACON(wp))
     {
-        object *beacon = locate_beacon(WP_BEACON(wp));
+        object_t *beacon = locate_beacon(WP_BEACON(wp));
         if(beacon)
         {
             while(beacon->env)
@@ -294,7 +294,7 @@ static int calc_direction_towards_waypoint(object *op, object *wp)
             return 0; /* TODO: what to do? */
     } else
     {
-        mapstruct *map;
+        map_t *map;
 
         if(WP_MAP(wp) && *WP_MAP(wp) != '\0')
         {
@@ -322,7 +322,7 @@ static int calc_direction_towards_waypoint(object *op, object *wp)
     }
 }
 
-int choose_direction_from_bitmap(object *op, int bitmap)
+int choose_direction_from_bitmap(object_t *op, int bitmap)
 {
     int numdirs=0, dirs[9], i;
 
@@ -342,7 +342,7 @@ int choose_direction_from_bitmap(object *op, int bitmap)
 }
 
 /* Calculate a movement direction given a movement response */
-static inline int direction_from_response(object *op, move_response *response)
+static inline int direction_from_response(object_t *op, move_response *response)
 {
     switch (response->type)
     {
@@ -370,7 +370,7 @@ static inline int direction_from_response(object *op, move_response *response)
 
 /* Actually move the monster in the specified direction. If there is something blocking,
  * try to go on either side of it */
-static int do_move_monster(object *op, int dir, uint16 forbidden)
+static int do_move_monster(object_t *op, int dir, uint16 forbidden)
 {
     int m;
 
@@ -380,30 +380,42 @@ static int do_move_monster(object *op, int dir, uint16 forbidden)
         forbidden = 0;
     }
 
-	
-	if(!dir && !(forbidden & 1)){ /* Do not move */
-		move_object(op, 0);
-        return TRUE;
-	}
+    /* Attempt to move in direction dir. */
+    if (dir)
+    {
+        /* Can the monster move directly toward waypoint? */
+        if (!(forbidden & (1 << dir)) &&
+            move_ob(op, dir, NULL) == MOVE_RESULT_SUCCESS)
+        {
+            return TRUE;
+        }
 
-    /* NOTE: remember that the monster may die during move_object */
-	if (!(forbidden & (1 << dir)) && move_object(op, dir)){ /* Can the monster move directly toward waypoint? */
-        return TRUE;
-	}
+        m = (RANDOM() & 2) ? 1 : -1;          /* Try left or right first? */
 
-    m = (RANDOM() & 2) ? 1 : -1;          /* Try left or right first? */
-    /* try different detours */
-    if ((!(forbidden & (1 << absdir(dir + m))) && move_object(op, absdir(dir + m)))
-     || (!(forbidden & (1 << absdir(dir - m))) && move_object(op, absdir(dir - m)))
-     || (!(forbidden & (1 << absdir(dir + m * 2))) && move_object(op, absdir(dir + m * 2)))
-     || (!(forbidden & (1 << absdir(dir - m * 2))) && move_object(op, absdir(dir - m * 2))))
-        return TRUE;
+        /* try different detours */
+        if ((!(forbidden & (1 << absdir(dir + m))) &&
+             move_ob(op, absdir(dir + m), NULL) == MOVE_RESULT_SUCCESS) ||
+            (!(forbidden & (1 << absdir(dir - m))) &&
+             move_ob(op, absdir(dir - m), NULL) == MOVE_RESULT_SUCCESS) ||
+            (!(forbidden & (1 << absdir(dir + m * 2))) &&
+             move_ob(op, absdir(dir + m * 2), NULL) == MOVE_RESULT_SUCCESS) ||
+            (!(forbidden & (1 << absdir(dir - m * 2))) &&
+             move_ob(op, absdir(dir - m * 2), NULL) == MOVE_RESULT_SUCCESS))
+        {
+            return TRUE;
+        }
+    }
 
-	/* Do not move */
-	if(!(forbidden & 1)){ /* the monster manages to stand still */
-		move_object(op, 0);
+    /* Stand still or direction dir is forbidden. */
+    if (!(forbidden & 1))
+    {
+        /* FIXME: What's this meant to achieve? If we don't move, just set
+         * ->direction, etc to 0 and return, surely?
+         *
+         * -- Smacky 20140803 */
+        (void)move_ob(op, 0, NULL);
         return TRUE;
-	}
+    }
 
     /* Couldn't move at all nor stand still... */
     return FALSE;
@@ -413,7 +425,7 @@ static int do_move_monster(object *op, int dir, uint16 forbidden)
  */
 
 /* Not really AI related, but here anyway */
-static inline void regenerate_stats(object *op)
+static inline void regenerate_stats(object_t *op)
 {
     /*  generate hp, if applicable */
     if (op->stats.Con && op->stats.hp < op->stats.maxhp)
@@ -459,25 +471,37 @@ static inline void regenerate_stats(object *op)
  */
 
 /** Find a monster's currently active waypoint, if any */
-object * get_active_waypoint(object *op)
+object_t *get_active_waypoint(object_t *op)
 {
-    object *wp  = NULL;
+    object_t *wp,
+           *next;
 
-    for (wp = op->inv; wp != NULL; wp = wp->below)
-        if (wp->type == TYPE_WAYPOINT_OBJECT && QUERY_FLAG(wp, WP_FLAG_ACTIVE))
-            break;
+    FOREACH_OBJECT_IN_OBJECT(wp, op, next)
+    {
+        if (wp->type == TYPE_WAYPOINT_OBJECT &&
+            QUERY_FLAG(wp, WP_FLAG_ACTIVE))
+        {
+            return wp;
+        }
+    }
 
     return wp;
 }
 
 /** Find a monster's current return-home wp, if any */
-object * get_return_waypoint(object *op)
+object_t *get_return_waypoint(object_t *op)
 {
-    object *wp  = NULL;
+    object_t *wp,
+           *next;
 
-    for (wp = op->inv; wp != NULL; wp = wp->below)
-        if (wp->type == TYPE_WAYPOINT_OBJECT && QUERY_FLAG(wp, FLAG_REFLECTING))
-            break;
+    FOREACH_OBJECT_IN_OBJECT(wp, op, next)
+    {
+        if (wp->type == TYPE_WAYPOINT_OBJECT &&
+            QUERY_FLAG(wp, FLAG_REFLECTING))
+        {
+            return wp;
+        }
+    }
 
     return wp;
 }
@@ -485,13 +509,20 @@ object * get_return_waypoint(object *op)
 /** Find a monster's waypoint by name (used for getting the next waypoint).
  * @param op operand mob
  * @param name must be a shared string or NULL to find any waypoint */
-object * find_waypoint(object *op, const char *name)
+object_t *find_waypoint(object_t *op, const char *name)
 {
-    object *wp  = NULL;
+    object_t *wp,
+           *next;
 
-    for (wp = op->inv; wp != NULL; wp = wp->below)
-        if (wp->type == TYPE_WAYPOINT_OBJECT && (name == NULL || wp->name == name))
-            break;
+    FOREACH_OBJECT_IN_OBJECT(wp, op, next)
+    {
+        if (wp->type == TYPE_WAYPOINT_OBJECT &&
+            (!name ||
+             wp->name == name))
+        {
+            return wp;
+        }
+    }
 
     return wp;
 }
@@ -500,25 +531,43 @@ object * find_waypoint(object *op, const char *name)
  * @param op operand mob
  * @param ignore optional waypoint that is guaranteed not to be picked.
  */
-object * get_random_waypoint(object *op, object *ignore)
+object_t *get_random_waypoint(object_t *op, object_t *ignore)
 {
     int count = 0, select;
-    object *wp  = NULL;
-    for (wp = op->inv; wp != NULL; wp = wp->below)
-        if (wp->type == TYPE_WAYPOINT_OBJECT && wp != ignore)
+    object_t *wp,
+           *next;
+
+    FOREACH_OBJECT_IN_OBJECT(wp, op, next)
+    {
+        if (wp->type == TYPE_WAYPOINT_OBJECT &&
+            wp != ignore)
+        {
             count++;
-    if(count == 0)
+        }
+    }
+
+    if (count == 0)
+    {
         return NULL;
+    }
+
     select = RANDOM() % count;
-    for (wp = op->inv; wp != NULL; wp = wp->below)
-        if (wp->type == TYPE_WAYPOINT_OBJECT && wp != ignore)
-            if(select-- == 0)
-                return wp;
+
+    FOREACH_OBJECT_IN_OBJECT(wp, op, next)
+    {
+        if (wp->type == TYPE_WAYPOINT_OBJECT &&
+            wp != ignore &&
+            select-- == 0)
+        {
+            return wp;
+        }
+    }
+
     return NULL;
 }
 
 /** Select the successor to the waypoint wp for the mob op */
-object * get_next_waypoint(object *op, object *wp)
+object_t * get_next_waypoint(object_t *op, object_t *wp)
 {
     if (QUERY_FLAG(wp, WP_FLAG_RANDOM_NEXT))
         return get_random_waypoint(op, wp);
@@ -536,7 +585,7 @@ object * get_next_waypoint(object *op, object *wp)
 * Reasons it can't move: STAND_STILL set, paralyzed, stuck, rooted,
 * mesmerized....
 */
-inline int ai_obj_can_move(object *obj)
+inline int ai_obj_can_move(object_t *obj)
 {
     if(obj->map == NULL || obj->env != NULL)
         return FALSE;
@@ -547,7 +596,7 @@ inline int ai_obj_can_move(object *obj)
 
 
 /**  Move-monster returns 1 if the object has been freed, otherwise 0.  */
-int move_monster(object *op, int mode)
+int move_monster(object_t *op, int mode)
 {
     move_response           response;
     int                     dir;
@@ -620,7 +669,7 @@ int move_monster(object *op, int mode)
     for (behaviour = MOB_DATA(op)->behaviours->behaviours[BEHAVIOURCLASS_PROCESSES];
          behaviour != NULL; behaviour = behaviour->next)
     {
-        ((void(*) (object *, struct mob_behaviour_param *)) behaviour->declaration->func) (op, behaviour->parameters);
+        ((void(*) (object_t *, struct mob_behaviour_param *)) behaviour->declaration->func) (op, behaviour->parameters);
     }
 
     /* Only do movement if we are actually on a map
@@ -639,7 +688,7 @@ int move_monster(object *op, int mode)
                 behaviour != NULL;
                 behaviour = behaviour->next)
         {
-            ((void(*) (object *, struct mob_behaviour_param *, move_response *)) behaviour->declaration->func)
+            ((void(*) (object_t *, struct mob_behaviour_param *, move_response *)) behaviour->declaration->func)
                 (op, behaviour->parameters, & response);
             if (response.type != MOVE_RESPONSE_NONE) {
                 MOB_DATA(op)->last_movement_behaviour = behaviour->declaration;
@@ -648,7 +697,7 @@ int move_monster(object *op, int mode)
         }
 
         /* TODO move_home alternative: move_towards_friend */
-        /* TODO make it possible to move _away_ from waypoint or object */
+        /* TODO make it possible to move _away_ from waypoint or object_t */
 
         /* Calculate direction from response needed and execute movement */
         dir = direction_from_response(op, &response);
@@ -687,7 +736,7 @@ jump_move_monster_action:
          behaviour != NULL;
          behaviour = behaviour->next)
     {
-        if (((int(*) (object *, struct mob_behaviour_param *)) behaviour->declaration->func) (op, behaviour->parameters))
+        if (((int(*) (object_t *, struct mob_behaviour_param *)) behaviour->declaration->func) (op, behaviour->parameters))
         {
             did_action = 1;
             break;
@@ -726,14 +775,14 @@ jump_move_monster_action:
  *   1) where we actually wanted to go, and
  *   2) how to get there.
  */
-void object_accept_path(object *op)
+void object_accept_path(object_t *op)
 {
-    object     *goal_object = NULL;
-    mapstruct  *goal_map = NULL;
+    object_t     *goal_object = NULL;
+    map_t  *goal_map = NULL;
     int         goal_x, goal_y;
     path_node  *path;
-    object     *target;
-    rv_vector v;
+    object_t     *target;
+    rv_t v;
 
     /* make sure we have a valid target obj or map */
     if (op->type != MONSTER
@@ -895,11 +944,11 @@ void object_accept_path(object *op)
  */
 void dump_abilities(void)
 {
-    archetype  *at;
+    archetype_t  *at;
     for (at = first_archetype; at; at = at->next)
     {
         const char *ch, *gen_name = "";
-        archetype  *gen;
+        archetype_t  *gen;
 
         if (!QUERY_FLAG(&at->clone, FLAG_MONSTER))
             continue;
@@ -929,8 +978,8 @@ void dump_abilities(void)
 
 void print_monsters(void)
 {
-    archetype  *at;
-    object     *op;
+    archetype_t  *at;
+    object_t     *op;
     int         i;
 
     LOG(llevInfo,

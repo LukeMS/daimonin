@@ -57,7 +57,7 @@ static struct statistics
 
 struct shared_string {
     uint32 refcount;
-    shstr string[0];    /* Area for storing the actual string */
+    shstr_t string[0];    /* Area for storing the actual string */
 };
 
 /* Our hashtable of shared strings */
@@ -162,7 +162,7 @@ static hashtable_size_t lstring_hash(const hashtable_const_key_t key)
  *      - pointer to string identical to str
  */
 
-shstr *add_lstring(const char *str, int n)
+shstr_t *add_lstring(const char *str, int n)
 {
     struct shared_string  *ss;
 
@@ -218,7 +218,7 @@ shstr *add_lstring(const char *str, int n)
  *      - pointer to string identical to str
  */
 
-shstr *add_string(const char *str)
+shstr_t *add_string(const char *str)
 {
     struct shared_string *ss;
 
@@ -262,7 +262,7 @@ shstr *add_string(const char *str)
  *      - length
  */
 
-int query_refcount(shstr *str)
+int query_refcount(shstr_t *str)
 {
     return SS(str)->refcount;
 }
@@ -299,7 +299,7 @@ const char *find_string(const char *str)
  * Return values:
  *      - str
  */
-shstr* add_refcount(shstr* str)
+shstr_t * add_refcount(shstr_t* str)
 {
 #ifdef SECURE_SHSTR_HASH
     const char *tmp_str = find_string(str);
@@ -324,7 +324,7 @@ shstr* add_refcount(shstr* str)
  *     None
  */
 
-void free_string_shared(shstr *str)
+void free_string_shared(shstr_t *str)
 {
     struct shared_string  *ss;
 

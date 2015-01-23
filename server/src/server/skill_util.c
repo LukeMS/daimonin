@@ -27,12 +27,12 @@
 
 #include <global.h>
 
-archetype *skillgroups[NROFSKILLGROUPS] =
+archetype_t *skillgroups[NROFSKILLGROUPS] =
 {
     NULL, NULL, NULL, NULL, NULL, NULL, NULL,
 };
 
-archetype *skills[NROFSKILLS]  =
+archetype_t *skills[NROFSKILLS]  =
 {
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
@@ -44,7 +44,7 @@ archetype *skills[NROFSKILLS]  =
  * here and halt the server at any sign of trouble. */
 void init_skills(void)
 {
-    archetype *at;
+    archetype_t *at;
     int        i,
                failure = 0;
 
@@ -143,9 +143,10 @@ void init_skills(void)
  * and creating a linked list of skills for later fast access.
  * adjusting exp when needed.
  */
-void link_player_skills(player *pl)
+void link_player_skills(player_t *pl)
 {
-    object *this;
+    object_t *this,
+           *next;
     int     i;
 
 #ifdef DEBUG_SKILL_UTIL
@@ -158,7 +159,7 @@ void link_player_skills(player *pl)
      * sure the object mirrors the arch -- except exp and level -- and put the
      * object in the player pointer shorttcut arrays. If it is not, throw it
      * away. */
-    for (this = pl->ob->inv; this; this = this->below)
+    FOREACH_OBJECT_IN_OBJECT(this, pl->ob, next)
     {
         if (this->type == TYPE_SKILLGROUP)
         {
@@ -248,9 +249,9 @@ void link_player_skills(player *pl)
 /* Ensures the player has all the required skillgroup objects and that the
  * shortcut pointers point to objects actually in his inv. Also calculates the
  * best skill/skillgroup. */
-void validate_skills(player *pl)
+void validate_skills(player_t *pl)
 {
-    object *op;
+    object_t *op;
     int     i,
             chosen_skill = 0;
 
@@ -268,12 +269,12 @@ void validate_skills(player *pl)
 
     for (i = 0; i < NROFSKILLGROUPS; i++)
     {
-        object *this = pl->skillgroup_ptr[i];
+        object_t *this = pl->skillgroup_ptr[i];
 
         if (!this ||
             this->env != op)
         {
-            object *new;
+            object_t *new;
 
 #ifdef DEBUG_SKILL_UTIL
             LOG(llevInfo, "  Adding default skillgroup %s!\n",
@@ -286,7 +287,7 @@ void validate_skills(player *pl)
 
     for (i = 0; i < NROFSKILLS; i++)
     {
-        object *this = pl->skill_ptr[i];
+        object_t *this = pl->skill_ptr[i];
  
         if (this)
         {
@@ -300,7 +301,7 @@ void validate_skills(player *pl)
             }
             else
             {
-                object *best = pl->highest_skill[this->magic];
+                object_t *best = pl->highest_skill[this->magic];
  
                 if ((this->skillgroup = pl->skillgroup_ptr[this->magic]) &&
                     (!best ||
@@ -329,7 +330,7 @@ void validate_skills(player *pl)
 
     for (i = 0; i < NROFSKILLGROUPS; i++)
     {
-        object *best = pl->highest_skill[i];
+        object_t *best = pl->highest_skill[i];
 
         if (best)
         {
@@ -344,7 +345,7 @@ void validate_skills(player *pl)
 /* find_skill()
  * looks for the skill and returns a pointer to it if found
  */
-object * find_skill(object *op, int skillnr)
+object_t * find_skill(object_t *op, int skillnr)
 {
     /* we do some sanity checks - this is called from scripts for example */
     if(op->type != PLAYER || !CONTR(op))
@@ -367,7 +368,7 @@ object * find_skill(object *op, int skillnr)
  *  - b.t.  thomas@astro.psu.edu
  */
 
-int do_skill(object *op, int dir, char *string)
+int do_skill(object_t *op, int dir, char *string)
 {
     int success = 0;        /* needed for monster_skill_use() too */
     int skill   = op->chosen_skill->stats.sp;
@@ -396,17 +397,17 @@ int do_skill(object *op, int dir, char *string)
           success = remove_trap(op, dir, op->chosen_skill->level);
           break;
         case SK_THROWING:
-          new_draw_info(NDI_UNIQUE, 0, op, "This skill is not usable in this way.");
+          ndi(NDI_UNIQUE, 0, op, "This skill is not usable in this way.");
           return success;
           break;
         case SK_MAGIC_DEVICES:
         case SK_RANGE_BOW:
-          new_draw_info(NDI_UNIQUE, 0, op, "There is no special attack for this skill.");
+          ndi(NDI_UNIQUE, 0, op, "There is no special attack for this skill.");
           return success;
           break;
         case SK_WIZARDRY_SPELLS:
         case SK_DIVINE_PRAYERS:
-          new_draw_info(NDI_UNIQUE, 0, op, "This skill is not usable in this way.");
+          ndi(NDI_UNIQUE, 0, op, "This skill is not usable in this way.");
           return success;
           /*success = pray(op);*/
           break;
@@ -437,40 +438,6 @@ int do_skill(object *op, int dir, char *string)
         add_exp(op, success, op->chosen_skill->stats.sp, 1);
 
     return success;
-}
-
-
-/* find relevant stats or a skill then return their weighted sum.
- * I admit the calculation is done in a retarded way.
- * If stat1==NO_STAT_VAL this isnt an associated stat. Returns
- * zero then. -b.t.
- */
-
-int get_weighted_skill_stat_sum(object *who, int sk)
-{
-    float   sum;
-    int     number  = 1;
-
-    if (skills[sk]->clone.enemy_count == NO_STAT_VAL)
-    {
-        return 0;
-    }
-    else
-        sum = get_stat_value(&(who->stats), skills[sk]->clone.enemy_count);
-
-    if (skills[sk]->clone.attacked_by_count != NO_STAT_VAL)
-    {
-        sum += get_stat_value(&(who->stats), skills[sk]->clone.attacked_by_count);
-        number++;
-    }
-
-    if (skills[sk]->clone.owner_count != NO_STAT_VAL)
-    {
-        sum += get_stat_value(&(who->stats), skills[sk]->clone.owner_count);
-        number++;
-    }
-
-    return ((int) sum / number);
 }
 
 void dump_skills()
@@ -545,11 +512,11 @@ int lookup_skill_by_name(char *name)
  * For unapply, only call change_skill(object, NO_SKILL_READY) and fix_player() after it.
  * MT - 4.10.2002
  */
-int check_skill_to_apply(object *who, object *item)
+int check_skill_to_apply(object_t *who, object_t *item)
 {
     int skill = 0, tmp;
     int add_skill   = NO_SKILL_READY; /* perhaps we need a additional skill to use */
-    player *pl;
+    player_t *pl;
 
     if (who->type != PLAYER ||
         !(pl = CONTR(who)))
@@ -565,7 +532,7 @@ int check_skill_to_apply(object *who, object *item)
               pl->guild_force->value &&
               item->item_level > pl->guild_force->value)
           {
-              new_draw_info(NDI_UNIQUE, 0, who, "That weapon is not permitted by your guild.");
+              ndi(NDI_UNIQUE, 0, who, "That weapon is not permitted by your guild.");
 
               return 0;
 
@@ -579,7 +546,7 @@ int check_skill_to_apply(object *who, object *item)
                   pl->guild_force->weight_limit &&
                   (pl->guild_force->weight_limit & GUILD_NO_POLEARM))
               {
-                  new_draw_info(NDI_UNIQUE, 0, who, "That weapon is not permitted by your guild.");
+                  ndi(NDI_UNIQUE, 0, who, "That weapon is not permitted by your guild.");
 
                   return 0;
               }
@@ -593,7 +560,7 @@ int check_skill_to_apply(object *who, object *item)
                   pl->guild_force->weight_limit &&
                   (pl->guild_force->weight_limit & GUILD_NO_2H))
               {
-                  new_draw_info(NDI_UNIQUE, 0, who, "That weapon is not permitted by your guild.");
+                  ndi(NDI_UNIQUE, 0, who, "That weapon is not permitted by your guild.");
 
                  return 0;
               }
@@ -623,7 +590,7 @@ int check_skill_to_apply(object *who, object *item)
               pl->guild_force->weight_limit &&
              (pl->guild_force->weight_limit & GUILD_NO_ARCHERY))
           {
-            new_draw_info(NDI_UNIQUE, 0, who, "That weapon is not permitted by your guild.");
+            ndi(NDI_UNIQUE, 0, who, "That weapon is not permitted by your guild.");
 
             return 0;
           }
@@ -670,7 +637,7 @@ int check_skill_to_apply(object *who, object *item)
     {
         if (!change_skill(who, add_skill))
         {
-            /*new_draw_info(NDI_UNIQUE, 0,who,"You don't have the needed skill '%s'!", skills[add_skill]->clone.name);*/
+            /*ndi(NDI_UNIQUE, 0,who,"You don't have the needed skill '%s'!", skills[add_skill]->clone.name);*/
             return 0;
         }
         change_skill(who, NO_SKILL_READY);
@@ -682,17 +649,17 @@ int check_skill_to_apply(object *who, object *item)
     {
         if (!change_skill(who, skill))
         {
-            /*new_draw_info(NDI_UNIQUE, 0,who,"You don't have the needed skill '%s'!", skills[skill]->clone.name);*/
+            /*ndi(NDI_UNIQUE, 0,who,"You don't have the needed skill '%s'!", skills[skill]->clone.name);*/
             return 0;
         }
     }
     return 1;
 }
 
-int learn_skill(object *pl, int skillnr)
+int learn_skill(object_t *pl, int skillnr)
 {
-    player *p;
-    object *skill = NULL;
+    player_t *p;
+    object_t *skill = NULL;
 
 
     if(pl->type != PLAYER)
@@ -712,7 +679,7 @@ int learn_skill(object *pl, int skillnr)
     if(find_skill(pl,skillnr))
     {
         if(p && (p->state & ST_PLAYING))
-            new_draw_info(NDI_UNIQUE, 0, pl, "You already know the skill '%s'!", skill->name);
+            ndi(NDI_UNIQUE, 0, pl, "You already know the skill '%s'!", skill->name);
         return 0;
     }
 
@@ -723,7 +690,7 @@ int learn_skill(object *pl, int skillnr)
     if(p && (p->state & ST_PLAYING))
     {
         play_sound_player_only(CONTR(pl), SOUND_LEARN_SPELL, SOUND_NORMAL, 0, 0);
-        new_draw_info(NDI_UNIQUE, 0, pl, "You have learned the skill %s!",
+        ndi(NDI_UNIQUE, 0, pl, "You have learned the skill %s!",
             skill->name);
         send_skilllist_cmd(p, skillnr, SPLIST_MODE_ADD);
     }
@@ -737,7 +704,7 @@ int learn_skill(object *pl, int skillnr)
  * -b.t.
  */
 
-int use_skill(object *op, char *string)
+int use_skill(object_t *op, char *string)
 {
     int sknum   = -1;
 
@@ -751,7 +718,7 @@ int use_skill(object *op, char *string)
 
         if (sknum == -1)
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "Unable to find skill by name %s", string);
+            ndi(NDI_UNIQUE, 0, op, "Unable to find skill by name %s", string);
             return 0;
         }
 
@@ -787,7 +754,7 @@ int use_skill(object *op, char *string)
     if (change_skill(op, sknum))
     {
         if (op->chosen_skill->sub_type1 != ST1_SKILL_USE)
-            new_draw_info(NDI_UNIQUE, 0, op, "You can't use this skill in this way.");
+            ndi(NDI_UNIQUE, 0, op, "You can't use this skill in this way.");
         else
         {
             if (!check_skill_action_time(op, op->chosen_skill)) /* are we idle from other action? */
@@ -810,9 +777,9 @@ int use_skill(object *op, char *string)
  */
 /* please note that change skill change set_skill_weapon && set_skill_bow are ONLY
  * set in fix_players() */
-int change_skill(object *who, int sk_index)
+int change_skill(object_t *who, int sk_index)
 {
-    object *tmp;
+    object_t *tmp;
 
     if (who->chosen_skill && who->chosen_skill->stats.sp == sk_index)
         return 1;
@@ -822,7 +789,7 @@ int change_skill(object *who, int sk_index)
 
     if (sk_index >= 0 && sk_index < NROFSKILLS && (tmp = find_skill(who, sk_index)) != NULL)
     {
-        if (apply_special(who, tmp, AP_APPLY))
+        if (apply_equipment(who, tmp, AP_APPLY))
         {
             /*LOG(llevDebug, "BUG: change_skill(): can't apply new skill (%s - %d)\n", who->name, sk_index);*/
             return 0;
@@ -833,12 +800,12 @@ int change_skill(object *who, int sk_index)
     {
     if (who->chosen_skill)
     {
-        if (apply_special(who, who->chosen_skill, AP_UNAPPLY))
+        if (apply_equipment(who, who->chosen_skill, AP_UNAPPLY))
             LOG(llevBug, "BUG: change_skill(): can't unapply old skill (%s - %d)\n", who->name, sk_index);
         FIX_PLAYER(who, "change_skill AP_UNAPPLY");
     }
     else if (sk_index >= 0)
-        new_draw_info(NDI_UNIQUE, 0, who, "You have no knowledge of %s.", skills[sk_index]->clone.name);
+        ndi(NDI_UNIQUE, 0, who, "You have no knowledge of %s.", skills[sk_index]->clone.name);
     return 0;
     }
 
@@ -856,7 +823,7 @@ int change_skill(object *who, int sk_index)
  * return 0 on success, 1 on failure.
  */
 
-int change_skill_to_skill(object *who, object *skl)
+int change_skill_to_skill(object_t *who, object_t *skl)
 {
     if (!skl)
         return 1;       /* Quick sanity check */
@@ -873,7 +840,7 @@ int change_skill_to_skill(object *who, object *skl)
         return 1;
     }
 
-    if (apply_special(who, skl, AP_APPLY))
+    if (apply_equipment(who, skl, AP_APPLY))
     {
         LOG(llevBug, "BUG: change_skill(): can't apply new skill (%s - %s)\n", STRING_OBJ_NAME(who), STRING_OBJ_NAME(skl));
         return 1;
@@ -882,7 +849,7 @@ int change_skill_to_skill(object *who, object *skl)
 }
 
 /* sets the action timer for skills like throwing, archery, casting... */
-void set_action_time(object *op, float t)
+void set_action_time(object_t *op, float t)
 {
     if (op->type != PLAYER)
         return;
@@ -905,7 +872,7 @@ void set_action_time(object *op, float t)
  * if the action is not possible, drop the right message
  * and/or queue the command.
  */
-int check_skill_action_time(object *op, object *skill)
+int check_skill_action_time(object_t *op, object_t *skill)
 {
     if(!skill)
         return FALSE;
@@ -920,55 +887,104 @@ int check_skill_action_time(object *op, object *skill)
     return TRUE;
 }
 
-/* get_skill_stat1() - returns the value of the primary skill
- * stat. Used in various skills code. -b.t.
- */
-
-int get_skill_stat1(object *op)
-{
-    int stat_value = 0, stat = NO_STAT_VAL;
-
-    if ((op->chosen_skill) && ((stat = op->chosen_skill->enemy_count) != NO_STAT_VAL))
-        stat_value = get_stat_value(&(op->stats), stat);
-
-    return stat_value;
-}
-
-/* get_skill_stat2() - returns the value of the secondary skill
- * stat. Used in various skills code. -b.t.
- */
-
-int get_skill_stat2(object *op)
-{
-    int stat_value = 0, stat = NO_STAT_VAL;
-
-    if ((op->chosen_skill) && ((stat = op->chosen_skill->attacked_by_count) != NO_STAT_VAL))
-        stat_value = get_stat_value(&(op->stats), stat);
-
-    return stat_value;
-}
-
-/* get_skill_stat3() - returns the value of the tertiary skill
- * stat. Used in various skills code. -b.t.
- */
-
-int get_skill_stat3(object *op)
-{
-    int stat_value = 0, stat = NO_STAT_VAL;
-
-    if ((op->chosen_skill) && ((stat = op->chosen_skill->owner_count) != NO_STAT_VAL))
-        stat_value = get_stat_value(&(op->stats), stat);
-
-    return stat_value;
-}
-
-/*get_weighted_skill_stats() - */
-
-int get_weighted_skill_stats(object *op)
-{
-    int value   = 0;
-
-    value = (get_skill_stat1(op) / 2) + (get_skill_stat2(op) / 4) + (get_skill_stat3(op) / 4);
-
-    return value;
-}
+/* TODO: The functions below are unused (and unlikely to ever be used?) so
+ * should be removed (or if ever we do use them at least rewritten as macros).
+ *
+ *      -- Smacky 20140821 */
+#if 0
+///* get_skill_stat1() - returns the value of the primary skill
+// * stat. Used in various skills code. -b.t.
+// */
+//
+//int get_skill_stat1(object_t *op)
+//{
+//    stat_t    stat_value = 0,
+//    stat_nr_t stat = STAT_NONE;
+//
+//    if (op->chosen_skill &&
+//        (stat = op->chosen_skill->enemy_count) != STAT_NONE)
+//    {
+//        stat_value = get_stat_value(&(op->stats), stat);
+//    }
+//
+//    return stat_value;
+//}
+//
+///* get_skill_stat2() - returns the value of the secondary skill
+// * stat. Used in various skills code. -b.t.
+// */
+//
+//int get_skill_stat2(object_t *op)
+//{
+//    stat_t    stat_value = 0,
+//    stat_nr_t stat = STAT_NONE;
+//
+//    if (op->chosen_skill &&
+//        (stat = op->chosen_skill->attacked_by_count) != STAT_NONE)
+//    {
+//        stat_value = get_stat_value(&(op->stats), stat);
+//    }
+//
+//    return stat_value;
+//}
+//
+///* get_skill_stat3() - returns the value of the tertiary skill
+// * stat. Used in various skills code. -b.t.
+// */
+//
+//int get_skill_stat3(object_t *op)
+//{
+//    stat_t    stat_value = 0,
+//    stat_nr_t stat = STAT_NONE;
+//
+//    if (op->chosen_skill &&
+//        (stat = op->chosen_skill->owner_count) != STAT_NONE)
+//    {
+//        stat_value = get_stat_value(&(op->stats), stat);
+//    }
+//
+//    return stat_value;
+//}
+//
+///*get_weighted_skill_stats() - */
+//
+//int get_weighted_skill_stats(object_t *op)
+//{
+//    stat_t value = (get_skill_stat1(op) / 2) + (get_skill_stat2(op) / 4) + (get_skill_stat3(op) / 4);
+//
+//    return value;
+//}
+//
+///* find relevant stats or a skill then return their weighted sum.
+// * I admit the calculation is done in a retarded way.
+// * If stat1==STAT_NONE this isnt an associated stat. Returns
+// * zero then. -b.t.
+// */
+//
+//int get_weighted_skill_stat_sum(object_t *who, int sk)
+//{
+//    float   sum;
+//    int     number  = 1;
+//
+//    if (skills[sk]->clone.enemy_count == STAT_NONE)
+//    {
+//        return 0;
+//    }
+//    else
+//        sum = get_stat_value(&(who->stats), skills[sk]->clone.enemy_count);
+//
+//    if (skills[sk]->clone.attacked_by_count != STAT_NONE)
+//    {
+//        sum += get_stat_value(&(who->stats), skills[sk]->clone.attacked_by_count);
+//        number++;
+//    }
+//
+//    if (skills[sk]->clone.owner_count != STAT_NONE)
+//    {
+//        sum += get_stat_value(&(who->stats), skills[sk]->clone.owner_count);
+//        number++;
+//    }
+//
+//    return ((int) sum / number);
+//}
+#endif

@@ -26,10 +26,6 @@
 #ifndef __OBJECT_H
 #define __OBJECT_H
 
-#ifdef WIN32
-#pragma pack(push,1)
-#endif
-
 /* Calculates the weight of _WHAT_ including any contents.
  *
  * _WHAT_ may be a container of holding (containers do not stack) or any other
@@ -67,27 +63,25 @@
      QUERY_FLAG((_WHAT_), FLAG_IS_INVISIBLE) && \
      !QUERY_FLAG((_WHO_), FLAG_SEE_INVISIBLE))
 
-/* move_apply() function call flags */
-#define MOVE_APPLY_DEFAULT  0
-#define MOVE_APPLY_WALK_ON  1
-#define MOVE_APPLY_FLY_ON   2
-#define MOVE_APPLY_WALK_OFF 4
-#define MOVE_APPLY_FLY_OFF  8
-#define MOVE_APPLY_MOVE     16 /* means: our object makes a step in/out of this tile */
-#define MOVE_APPLY_VANISHED 32 /* when a player logs out, the player char not "move" out of a tile
-                                * but it "turns to nothing on the spot". This sounds senseless but for
-                               * example a move out can trigger a teleporter action. This flag prevents
-                               * a loging out/exploding object is teleported after removing it from the spot.
-                               */
-#define MOVE_APPLY_SAVING   64 /* move_apply() called from saving function */
+/* i disabled slow penalty ATM */
+#define SLOW_PENALTY(_O_)   0
+#define SET_SLOW_PENALTY(_O_, _V_)    (_O_)->stats.exp = (sint32)((_V_) * 1000.0)
+#define EXIT_PATH(_O_)         (_O_)->slaying
+#define EXIT_DST_PATH(_O_)     (_O_)->race
+#define EXIT_POS_FIX(_O_)      (_O_)->last_heal
+#define EXIT_POS_RANDOM(_O_)   (_O_)->last_sp
+#define EXIT_POS_FREE(_O_)     (_O_)->last_grace
+#define EXIT_STATUS(_O_)   (_O_)->last_eat
+#define EXIT_LEVEL(_O_)    (_O_)->stats.food
+#define EXIT_X(_O_)        (_O_)->stats.hp
+#define EXIT_Y(_O_)        (_O_)->stats.sp
 
-/* WALK ON/OFF function return flags */
-#define CHECK_WALK_OK        0
-#define CHECK_WALK_DESTROYED 1
-#define CHECK_WALK_MOVED     2
+#define D_LOCK(_O_) (_O_)->contr->freeze_inv=(_O_)->contr->freeze_look=1;
+#define D_UNLOCK(_O_)   (_O_)->contr->freeze_inv=(_O_)->contr->freeze_look=0;
 
+#define ARMOUR_SPEED(_O_)   (_O_)->last_sp
+#define ARMOUR_SPELLS(_O_)  (_O_)->last_heal
 
-#define ARCH_MAX_TYPES       512 /* important - this must be higher as max type number! */
 /* i sorted the members of this struct in 4 byte (32 bit) groups. This will help compiler
  * and cpu to make aligned access of the members, and can (and will) make things smaller
  * and faster - but this depends on compiler & system too.
@@ -122,26 +116,28 @@
     query_name((_WHAT_), (_WHO_), \
         ((_WHAT_)->nrof > 1 || IS_LIVE((_WHAT_))) ? ARTICLE_DEFINITE : ARTICLE_INDEFINITE, 0)
 
-typedef struct obj
+#if 0
+//480
+struct object_t
 {
     /* These variables are not changed by copy_object(): */
-    struct obj     *active_next;    /* Next & previous object in the 'active' */
-    struct obj     *active_prev;    /* List.  This is used in process_events
+    object_t     *active_next;    /* Next & previous object in the 'active' */
+    object_t     *active_prev;    /* List.  This is used in process_events
                                      * so that the entire object list does not
                                      * need to be gone through.
                                      */
-    struct obj     *below;          /* Pointer to the object stacked below this one */
-    struct obj     *above;          /* Pointer to the object stacked above this one
+    object_t     *below;          /* Pointer to the object stacked below this one */
+    object_t     *above;          /* Pointer to the object stacked above this one
                                      * Note: stacked in the *same* environment
                                      */
-    struct obj     *inv;            /* Pointer to the first object in the inventory */
-    struct obj     *env;            /* Pointer to the object which is the environment.
+    object_t     *inv;            /* Pointer to the first object in the inventory */
+    object_t     *env;            /* Pointer to the object which is the environment.
                                      * This is typically the container that the object is in.
                                      * if env == NULL then the object is on a map or in the nirvana.
                                      */
-    struct obj     *more;           /* Pointer to the rest of a large body of objects */
-    struct obj     *head;           /* Points to the main object of a large body */
-    struct mapdef  *map;            /* Pointer to the map in which this object is present */
+    object_t     *more;           /* Pointer to the rest of a large body of objects */
+    object_t     *head;           /* Points to the main object of a large body */
+    map_t  *map;            /* Pointer to the map in which this object is present */
 
     tag_t           count_debug;
     tag_t           count;          /* Which nr. of object created this is. */
@@ -166,18 +162,18 @@ typedef struct obj
     /* here starts copy_object() releated data */
 
     /* these are some internals */
-    struct archt   *arch;           /* Pointer to archetype */
-    struct oblnk   *randomitems;    /* thats now a linked list of treasurelist */
+    archetype_t   *arch;           /* Pointer to archetype */
+    struct objectlink_t   *randomitems;    /* thats now a linked list of treasurelist */
 
     /* we can remove chosen_skill & skillgroup by drop here a uint8 with a list of skill
      * numbers. Mobs has no skill and player can grap it from player struct. For exp,
      * i will use skill numbers in golems/ammo and spell objects. So, this can be removed.
      */
-    struct obj     *chosen_skill;   /* the skill chosen to use */
-    struct obj     *skillgroup;        /* the exp. obj (category) assoc. w/ this object */
+    object_t     *chosen_skill;   /* the skill chosen to use */
+    object_t     *skillgroup;        /* the exp. obj (category) assoc. w/ this object_t */
 
     /* now "real" object releated data */
-    struct archt   *other_arch;     /* Pointer used for various things */
+    archetype_t   *other_arch;     /* Pointer used for various things */
     New_Face       *face;           /* struct ptr to the 'face' - the picture(s) */
     New_Face       *inv_face;       /* struct ptr to the inventory 'face' - the picture(s) */
 
@@ -192,25 +188,25 @@ typedef struct obj
     uint32          flags[NUM_FLAGS_32]; /* various flags */
 
     tag_t           enemy_count;    /* What count the enemy has */
-    struct obj     *enemy;          /* Monster/player to follow even if not closest */
+    object_t     *enemy;          /* Monster/player to follow even if not closest */
     /* (only used by containers now =) */
     tag_t           attacked_by_count;  /* the tag of attacker, so we can be sure */
-    struct obj     *attacked_by;    /* This object start to attack us! only player & monster */
+    object_t     *attacked_by;    /* This object start to attack us! only player & monster */
     tag_t           owner_count;    /* What count the owner had (in case owner has been freed) */
-    struct obj     *owner;          /* Pointer to the object which controls this one
+    object_t     *owner;          /* Pointer to the object which controls this one
                                      * Owner should not be referred to directly
                                      * - get_owner() should be used instead.
                                      */
 
-    struct obj     *original;       /* Used to store the original, unbuffed version of an item. A buffed
+    object_t     *original;       /* Used to store the original, unbuffed version of an item. A buffed
                                      * item will revert to this state when it is saved. */
     uint8           buffed;         // Whether or not the object should contain any BUFF_FORCEs
 
     /* *map is part of "object head" but this not? hmm */
-    sint16          x;              /* X-Position in the map for this object */
-    sint16          y;              /* Y-Position in the map for this object */
+    sint16          x;              /* X-Position in the map for this object_t */
+    sint16          y;              /* Y-Position in the map for this object_t */
 #ifdef USE_TILESTRETCHER
-    sint16          z;              /* Z-Position in the map (in pixels) for this object */
+    sint16          z;              /* Z-Position in the map (in pixels) for this object_t */
 #endif
 
     uint16          path_attuned;   /* Paths the object is attuned to */
@@ -287,25 +283,191 @@ typedef struct obj
 
     uint8           attack[NROFATTACKS];/* our attack values (only positiv ones */
 
-    float           speed;              /* The overall speed of this object */
+    float           speed;              /* The overall speed of this object_t */
     float           speed_left;         /* How much speed is left to spend this round */
     float           weapon_speed;       /* new weapon speed system. swing of weapon */
     float           weapon_speed_left;
 
-    living          stats;              /* object stats like hp, sp, grace ... */
+    living_t          stats;              /* object stats like hp, sp, grace ... */
 
 #ifdef POSITION_DEBUG
     sint16          ox, oy;             /* For debugging: Where it was last inserted */
 #endif
 
     void           *custom_attrset;     /* Type-dependant extra data. */
-} object;
+};
+#else
+//480
+struct object_t
+{
+    /* These variables are not changed by copy_object(): */
+    object_t     *active_next;    /* Next & previous object in the 'active' */
+    object_t     *active_prev;    /* List.  This is used in process_events
+                                     * so that the entire object list does not
+                                     * need to be gone through.
+                                     */
+    object_t     *below;          /* Pointer to the object stacked below this one */
+    object_t     *above;          /* Pointer to the object stacked above this one
+                                     * Note: stacked in the *same* environment
+                                     */
+    object_t     *inv;            /* Pointer to the first object in the inventory */
+    object_t     *env;            /* Pointer to the object which is the environment.
+                                     * This is typically the container that the object is in.
+                                     * if env == NULL then the object is on a map or in the nirvana.
+                                     */
+    object_t     *more;           /* Pointer to the rest of a large body of objects */
+    object_t     *head;           /* Points to the main object of a large body */
+    map_t  *map;            /* Pointer to the map in which this object is present */
 
-#ifdef WIN32
-#pragma pack(pop)
+    tag_t           count_debug;
+    tag_t           count;          /* Which nr. of object created this is. */
+    /* hmmm... unchanged? this count should be new
+     * set every time a freed object is used again
+     * this count refers the logical object. MT.
+     */
+    /* These get an extra add_refcount(), after having been copied by memcpy().
+     * All fields beow this point are automatically copied by memcpy.  If
+     * adding something that needs a refcount updated, make sure you modify
+     * copy_object to do so.  Everything below here also gets cleared
+     * by clear_object()
+    */
+    shstr_t     *name;           /* The name of the object, obviously... */
+    shstr_t     *title;          /* Of foo, etc */
+    shstr_t     *race;           /* human, goblin, dragon, etc */
+    shstr_t     *slaying;        /* Which race to do double damage to
+                                     * If this is an exit, this is the filename */
+    shstr_t     *msg;            /* If this is a book/sign/magic mouth/etc */
+
+    /* here starts copy_object() releated data */
+
+    /* these are some internals */
+    archetype_t   *arch;           /* Pointer to archetype */
+    objectlink_t   *randomitems;    /* thats now a linked list of treasurelist */
+
+    /* we can remove chosen_skill & skillgroup by drop here a uint8 with a list of skill
+     * numbers. Mobs has no skill and player can grap it from player struct. For exp,
+     * i will use skill numbers in golems/ammo and spell objects. So, this can be removed.
+     */
+    object_t     *chosen_skill;   /* the skill chosen to use */
+    object_t     *skillgroup;        /* the exp. obj (category) assoc. w/ this object_t */
+
+    /* now "real" object releated data */
+    archetype_t   *other_arch;     /* Pointer used for various things */
+    New_Face       *face;           /* struct ptr to the 'face' - the picture(s) */
+    New_Face       *inv_face;       /* struct ptr to the inventory 'face' - the picture(s) */
+    void           *custom_attrset;     /* Type-dependant extra data. */
+    sint64          value;          /* How much money it is worth (or contains) */
+    uint32          event_flags;    /* flags matching events of event objects inside object ->inv */
+    sint32          weight;         /* Attributes of the object - the weight */
+    sint32          weight_limit;   /* Weight-limit of object - player and container should have this... perhaps we can substitute it?*/
+    sint32          carrying;       /* How much weight this object contains (of objects in inv) */
+    uint32          nrof;           /* How many of the objects */
+    uint32          damage_round_tag;   /* needed for the damage info for client in map2 */
+    uint32          update_tag;     /* this is used from map2 update! */
+    uint32          flags[NUM_FLAGS_32]; /* various flags */
+
+    tag_t           enemy_count;    /* What count the enemy has */
+    object_t     *enemy;          /* Monster/player to follow even if not closest */
+    /* (only used by containers now =) */
+    tag_t           attacked_by_count;  /* the tag of attacker, so we can be sure */
+    object_t     *attacked_by;    /* This object start to attack us! only player & monster */
+    tag_t           owner_count;    /* What count the owner had (in case owner has been freed) */
+    object_t     *owner;          /* Pointer to the object which controls this one
+                                     * Owner should not be referred to directly
+                                     * - get_owner() should be used instead.
+                                     */
+    object_t     *original;       /* Used to store the original, unbuffed version of an item. A buffed
+                                     * item will revert to this state when it is saved. */
+    uint8           buffed;         // Whether or not the object should contain any BUFF_FORCEs
+
+    /* *map is part of "object head" but this not? hmm */
+    sint16          x;              /* X-Position in the map for this object_t */
+    sint16          y;              /* Y-Position in the map for this object_t */
+#ifdef USE_TILESTRETCHER
+    sint16          z;              /* Z-Position in the map (in pixels) for this object_t */
 #endif
 
-#define CONTR(ob) ((player *)((ob)->custom_attrset))
+    uint16          path_attuned;   /* Paths the object is attuned to */
+    uint16          path_repelled;  /* Paths the object is repelled from */
+    uint16          path_denied;    /* Paths the object is denied access to */
+
+    uint16          last_damage;    /* thats the damage send with map2 */
+
+    uint16          terrain_type;   /* type flags for different enviroment (tile is under water, firewalk,...)
+                                     * A object which can be applied GIVES this terrain flags to his owner
+                                     */
+    uint16          terrain_flag;   /* The object can move over/is unaffected from this terrain type */
+    uint16          block_movement; /* The object blocks objects moving in this direction from it's tile */
+    uint16          material;           /* What materials this object consist of */
+    sint16          material_real;      /* This hold the real material value like what kind of steel */
+
+    sint16          last_heal;          /* Last healed. Depends on constitution */
+    sint16          last_sp;            /* As last_heal, but for spell points */
+
+    sint16          last_grace;         /* as last_sp, except for grace */
+    sint16          last_eat;           /* How long since we last ate */
+
+    uint16          animation_id;       /* An index into the animation array */
+    uint16          inv_animation_id;   /* An index into the animation array for the client inv */
+
+    sint8           glow_radius;        /* object is a light source */
+    /* some stuff for someone coming softscrolling / smooth animations */
+    /*sint8 tile_xoff;*/            /* x-offset of position of an object inside a tile */
+    /*sint8 tile_yoff;*/            /* same for y-offset */
+    sint8           magic;              /* Any magical bonuses to this item */
+    uint8           state;              /* How the object was last drawn (animation) */
+
+    sint8           level;              /* the level of this object (most used for mobs & player) */
+    sint8           direction;          /* Means the object is moving that way. */
+    sint8           facing;             /* Object is oriented/facing that way. */
+    uint8           quick_pos;          /* quick pos is 0 for single arch, xxxx0000 for a head
+                                         * or x/y offset packed to 4 bits for a tail
+                                         * warning: change this when include > 15x15 monster
+                                         */
+
+    sint8           max_buffs;          // How many buffs can this item support?
+
+    uint8           type;               /* PLAYER, BULLET, etc.  See define.h - must be < ARCH_MAX_TYPES */
+    uint8           sub_type1;          /* sub type definition - this will be send to client too */
+    uint8           item_quality;       /* quality of a item in range from 0-100 */
+    uint8           item_condition;     /* condition of repair of an item - from 0 to 100% item_quality */
+
+    uint8           item_race;          /* item crafted from race x. "orcish xxx", "dwarven xxxx" */
+    uint8           item_level;         /* level needed to use or apply this item */
+    uint8           item_skill;         /* if set and item_level, item_level in this skill is needed */
+
+    sint8           anim_enemy_dir;     /**< special shadow variable: show dir to targeted enemy
+                                          for mobs: activate attack animation
+                                          for the given direction unless == -1 */
+    sint8           anim_moving_dir;    /* sic: shows moving dir or -1 when object do something else */
+
+    sint8           anim_enemy_dir_last; /* if we change facing in movement, we must test for update the anim*/
+    sint8           anim_moving_dir_last; /* sic:*/
+    sint8           anim_last_facing;     /* the last direction this monster was facing */
+    sint8           anim_last_facing_last;/* the last direction this monster was facing backbuffer*/
+    uint8           anim_speed;         /* animation speed in ticks */
+    uint8           last_anim;          /* ticks between animation-frames */
+    /* TODO: get rid of this one with AI system change */
+    uint8           run_away;           /* Monster runs away if it's hp goes below this percentage. */
+    uint8           hide;               /* The object is hidden. We don't use a flag here because
+                                         * the range from 0-255 tells us the quality of the hide
+                                         */
+    uint8           layer;              /* the layer in a map, this object will be sorted in */
+    /* TODO: get rid of using attrsets? */
+    sint8           resist[NROFATTACKS];/* Intrinsic resist against damage - range from -125 to +125 */
+    uint8           attack[NROFATTACKS];/* our attack values (only positiv ones */
+    float           speed;              /* The overall speed of this object_t */
+    float           speed_left;         /* How much speed is left to spend this round */
+    float           weapon_speed;       /* new weapon speed system. swing of weapon */
+    float           weapon_speed_left;
+    living_t          stats;              /* object stats like hp, sp, grace ... */
+#ifdef POSITION_DEBUG
+    sint16          ox, oy;             /* For debugging: Where it was last inserted */
+#endif
+};
+#endif
+
+#define CONTR(ob) ((player_t *)((ob)->custom_attrset))
 
 /* Used by update_object to know if the object being passed is
  * being added or removed.
@@ -315,8 +477,8 @@ typedef struct obj
 #define UP_OBJ_FLAGS    3   /* critical object flags has been changed, rebuild tile flags but NOT increase tile counter */
 #define UP_OBJ_FACE     4   /* Only thing that changed was the face */
 #define UP_OBJ_FLAGFACE 5   /* update flags & face (means increase tile update counter */
-#define UP_OBJ_ALL      6   /* force full update */
-#define UP_OBJ_LAYER    7   /* object layer was changed, rebuild layer systen - used from invisible for example */
+#define UP_OBJ_SLICE    6   /* object layer was changed, rebuild layer systen - used from invisible for example */
+#define UP_OBJ_ALL      7   /* force full update */
 
 /* Macro for the often used object validity test (verify an pointer/count pair) */
 #define OBJECT_VALID(_ob_, _count_) ((_ob_) && (_ob_)->count == ((tag_t)_count_) && !QUERY_FLAG((_ob_), FLAG_REMOVED) && !OBJECT_FREE(_ob_))
@@ -330,16 +492,11 @@ typedef struct obj
 /* Test if an object is in the free-list */
 #define OBJECT_FREE(_ob_) ((_ob_)->count==0 && CHUNK_FREE(_ob_))
 
-/* These are flags passed to insert_ob_in_map(), insert_ob_in_ob(),
- * find_free_spot(), and check_insertion_allowed(). Note that not all flags are
- * meaningful for all functions. */
-#define INS_NO_MERGE       0x0001
-#define INS_NO_WALK_ON     0x0002
+/* These are flags passed to insert_ob_in_map() and insert_ob_in_ob(). */
+#define INS_NO_MERGE       (1 << 0)
+#define INS_NO_WALK_ON     (1 << 1)
 /* used intern from insert_xx to track multiarch problems - don't use! */
-#define INS_TAIL_MARKER    0x0004
-#define INS_NO_FORCE       0x0008
-#define INS_WITHIN_LOS     0x0010
-#define INS_IGNORE_TERRAIN 0x0020
+#define INS_TAIL_MARKER    (1 << 2)
 
 /* Waypoint macros */
 #define WP_FLAG_ACTIVE      FLAG_CURSED

@@ -39,27 +39,27 @@
         QUERY_FLAG((_PL_)->ob, FLAG_SEE_INVISIBLE) ||    /* player has the ability to do so or */ \
         (_OP_)->env == (_PL_)->ob))))                    /* they're in his inventory (simulates feel) */
 
-static void            SendInventory(player *pl, object *op);
+static void            SendInventory(player_t *pl, object_t *op);
 static uint8           AddInventory(sockbuf_struct *sb, _server_client_cmd cmd,
-                                    uint8 start, uint8 end, object *first);
+                                    uint8 start, uint8 end, object_t *first);
 static void            AddFakeObject(sockbuf_struct *sb, _server_client_cmd cmd,
                                      uint32 tag, uint32 face, char *name);
 static void            NotifyClients(_server_client_cmd cmd, uint16 flags,
-                                     object *op);
+                                     object_t *op);
 static sockbuf_struct *BroadcastItemCmd(sockbuf_struct *sb, _server_client_cmd cmd,
-                                        uint16 flags, player *pl, object *op);
-static char           *PrepareData(_server_client_cmd cmd, uint16 flags, player *pl,
-                                   object *op, char *data);
-static uint32          ClientFlags(object *op);
-static object         *GetObjFromCount(object *what, tag_t count);
+                                        uint16 flags, player_t *pl, object_t *op);
+static char           *PrepareData(_server_client_cmd cmd, uint16 flags, player_t *pl,
+                                   object_t *op, char *data);
+static uint32          ClientFlags(object_t *op);
+static object_t         *GetObjFromCount(object_t *what, tag_t count);
 
-void esrv_send_below(player *pl)
+void esrv_send_below(player_t *pl)
 {
-    object             *who;
-    mapstruct          *m;
+    object_t             *who;
+    map_t          *m;
     NewSocket          *ns;
     sockbuf_struct     *sb;
-    MapSpace           *msp;
+    msp_t           *msp;
     uint8               sendme;
     _server_client_cmd  cmd = SERVER_CMD_ITEMX;
 
@@ -70,7 +70,7 @@ void esrv_send_below(player *pl)
         !(who = pl->ob) ||
         QUERY_FLAG(who, FLAG_REMOVED) ||
         !(m = who->map) ||
-        m->in_memory != MAP_ACTIVE ||
+        m->in_memory != MAP_MEMORY_ACTIVE ||
         OUT_OF_REAL_MAP(m, who->x, who->y))
     {
         return;
@@ -91,8 +91,8 @@ void esrv_send_below(player *pl)
         sb = ACTIVE_SOCKBUF(ns);
     }
 
-    msp = GET_MAP_SPACE_PTR(m, who->x, who->y);
-    sendme = AddInventory(sb, cmd, 0, 0, GET_MAP_SPACE_LAST(msp));
+    msp = MSP_GET(m, who->x, who->y);
+    sendme = AddInventory(sb, cmd, 0, 0, msp->last);
     sb = ACTIVE_SOCKBUF(ns);
 
     if (sendme)
@@ -105,22 +105,22 @@ void esrv_send_below(player *pl)
     }
 }
 
-void esrv_send_inventory(player *pl, object *op)
+void esrv_send_inventory(player_t *pl, object_t *op)
 {
     SendInventory(pl, op);
 }
 
-void esrv_open_container(player *pl, object *op)
+void esrv_open_container(player_t *pl, object_t *op)
 {
     SendInventory(pl, op);
 }
 
-void esrv_close_container(player *pl)
+void esrv_close_container(player_t *pl)
 {
     SendInventory(pl, NULL);
 }
 
-void esrv_send_item(object *op)
+void esrv_send_item(object_t *op)
 {
     _server_client_cmd cmd = (op->map) ? SERVER_CMD_ITEMX : SERVER_CMD_ITEMY;
     uint16             flags = UPD_FLAGS | UPD_WEIGHT | UPD_FACE |
@@ -130,7 +130,7 @@ void esrv_send_item(object *op)
     NotifyClients(cmd, flags, op);
 }
 
-void esrv_update_item(uint16 flags, object *op)
+void esrv_update_item(uint16 flags, object_t *op)
 {
     /* Due to some buggy code in at least 0.10.6 and earlier clients updates
      * for items in non-player inventories cause the item to appear in the
@@ -151,12 +151,12 @@ void esrv_update_item(uint16 flags, object *op)
     }
 }
 
-void esrv_del_item(object *op)
+void esrv_del_item(object_t *op)
 {
     NotifyClients(SERVER_CMD_DELITEM, 0, op);
 }
 
-void esrv_send_or_del_item(object *op)
+void esrv_send_or_del_item(object_t *op)
 {
     uint16 flags = UPD_FLAGS | UPD_WEIGHT | UPD_FACE | UPD_DIRECTION |
                    UPD_NAME | UPD_ANIM | UPD_ANIMSPEED | UPD_NROF;
@@ -168,7 +168,7 @@ void esrv_send_or_del_item(object *op)
  * circumstances: (1) !op -- the player's container is closed; (2) op ==
  * pl->container the player's contaiiner is opened (and it's inventory sent);
  * (3) otherwise -- the inventory of op is sent. */
-static void SendInventory(player *pl, object *op)
+static void SendInventory(player_t *pl, object_t *op)
 {
     NewSocket          *ns;
     sockbuf_struct     *sb;
@@ -222,11 +222,11 @@ static void SendInventory(player *pl, object *op)
  * get sent sys objects and the full inventories of each object (ie, EVERYTHING
  * below first). */
 static uint8 AddInventory(sockbuf_struct *sb, _server_client_cmd cmd,
-                          uint8 start, uint8 end, object *first)
+                          uint8 start, uint8 end, object_t *first)
 {
     NewSocket *ns = sb->ns;
-    player    *pl = ns->pl;
-    object    *this;
+    player_t    *pl = ns->pl;
+    object_t    *this;
     uint8      sendme = 0;
 
     for (this = first; this; this = this->below)
@@ -316,9 +316,9 @@ static void AddFakeObject(sockbuf_struct *sb, _server_client_cmd cmd,
 
 /* Finds the clients interested in op (which may be on a map or in an env) and
  * attaches a broadcast sockbuf to them. */
-static void NotifyClients(_server_client_cmd cmd, uint16 flags, object *op)
+static void NotifyClients(_server_client_cmd cmd, uint16 flags, object_t *op)
 {
-    object         *who = NULL;
+    object_t         *who = NULL;
     sockbuf_struct *sb = NULL;
 
     /* When no-one is playing, there's nothing to do. */
@@ -329,7 +329,7 @@ static void NotifyClients(_server_client_cmd cmd, uint16 flags, object *op)
 
     if (op->env)
     {
-        object *where = op->env;
+        object_t *where = op->env;
 
         /* Loop through the envs of op, sending cmd to each valid client. */
         while (where &&
@@ -358,10 +358,13 @@ static void NotifyClients(_server_client_cmd cmd, uint16 flags, object *op)
     }
     else if (op->map)
     {
+        msp_t *msp = MSP_KNOWN(op);
+        object_t   *next;
+
         /* Send cmd to each valid client on the square. */
-        for (who = GET_MAP_OB(op->map, op->x, op->y); who; who = who->above)
+        FOREACH_OBJECT_IN_MSP(who, msp, next)
         {
-            player *pl;
+            player_t *pl;
 
             if (who->type != PLAYER)
             {
@@ -387,7 +390,7 @@ static void NotifyClients(_server_client_cmd cmd, uint16 flags, object *op)
 /* First creates if necessary, then attaches a broadcast sockbuf (sb) of
  * cmd/flags/op to the client pl. */
 static sockbuf_struct *BroadcastItemCmd(sockbuf_struct *sb, _server_client_cmd cmd,
-                                        uint16 flags, player *pl, object *op)
+                                        uint16 flags, player_t *pl, object_t *op)
 {
     /* Only send the cmd to a valid client and when filter is passed. */
     if (pl &&
@@ -452,8 +455,8 @@ static sockbuf_struct *BroadcastItemCmd(sockbuf_struct *sb, _server_client_cmd c
  * personalise certain data (currently only if flags & UPD_NAME and op is a
  * corpse). The buffer is suitable to be attached to a working or broadcast
  * sockbuf. */
-static char *PrepareData(_server_client_cmd cmd, uint16 flags, player *pl,
-                         object *op, char *data)
+static char *PrepareData(_server_client_cmd cmd, uint16 flags, player_t *pl,
+                         object_t *op, char *data)
 {
     char *cp = data;
 
@@ -463,7 +466,7 @@ static char *PrepareData(_server_client_cmd cmd, uint16 flags, player *pl,
     /* For DELITEM that's it. For others it depends also on flags. */
     if (cmd != SERVER_CMD_DELITEM)
     {
-        object *where = op->env,
+        object_t *where = op->env,
                *head = (op->head) ? op->head : op;
 
         if ((flags & UPD_LOCATION))
@@ -536,8 +539,8 @@ static char *PrepareData(_server_client_cmd cmd, uint16 flags, player *pl,
 
         if ((flags & UPD_NAME))
         {
-            char    name[MEDIUM_BUF];
-            object *who = (pl) ? pl->ob : NULL;
+            char    name[SMALL_BUF];
+            object_t *who = (pl) ? pl->ob : NULL;
             size_t  len;
 
             sprintf(name, "%s", query_name(op, who, ARTICLE_NONE, 0));
@@ -612,7 +615,7 @@ static char *PrepareData(_server_client_cmd cmd, uint16 flags, player *pl,
 }
 
 /* Returns client-side flags depending on status of object. */
-static uint32 ClientFlags(object *op)
+static uint32 ClientFlags(object_t *op)
 {
     uint32 flags = 0;
 
@@ -726,11 +729,13 @@ static uint32 ClientFlags(object *op)
  * pointer, or NULL if it can't be found or it can't be manipulated (that is,
  * seen) by the player. We account for all forms of invisibility in deciding
  * what can and cannot be manipulated. */
-object *esrv_get_ob_from_count(object *who, tag_t count)
+object_t *esrv_get_ob_from_count(object_t *who, tag_t count)
 {
-    player *pl;
-    object *this,
-           *that;
+    player_t *pl;
+    object_t *this,
+           *next,
+           *that,
+           *next2;
 
     /* Sanity check. */
     if (!(pl = CONTR(who)))
@@ -748,7 +753,7 @@ object *esrv_get_ob_from_count(object *who, tag_t count)
      * even from non containers. */
     if ((pl->gmaster_mode & GMASTER_MODE_SA))
     {
-        for (this = who->inv; this; this = this->below)
+        FOREACH_OBJECT_IN_OBJECT(this, who, next)
         {
             if (this->count == count)
             {
@@ -765,7 +770,9 @@ object *esrv_get_ob_from_count(object *who, tag_t count)
 
         if(who->map)
         {
-            for (this = GET_MAP_OB(who->map, who->x, who->y); this; this = this->above)
+            msp_t *msp = MSP_KNOWN(who);
+
+            FOREACH_OBJECT_IN_MSP(this, msp, next)
             {
                 if (this->count == count)
                 {
@@ -783,7 +790,7 @@ object *esrv_get_ob_from_count(object *who, tag_t count)
     }
     else
     {
-        for (this = who->inv; this; this = this->below)
+        FOREACH_OBJECT_IN_OBJECT(this, who, next)
         {
             /* We know pl is not an SA so cannot manipulate... */
             if (QUERY_FLAG(this, FLAG_SYS_OBJECT))
@@ -798,7 +805,7 @@ object *esrv_get_ob_from_count(object *who, tag_t count)
             else if (this->type == CONTAINER &&
                      pl->container == this)
             {
-                for (that = this->inv; that; that = that->below)
+                FOREACH_OBJECT_IN_OBJECT(that, this, next2)
                 {
                     /* We know pl is not an SA so cannot manipulate... */
                     if (QUERY_FLAG(that, FLAG_SYS_OBJECT))
@@ -814,9 +821,11 @@ object *esrv_get_ob_from_count(object *who, tag_t count)
             }
         }
 
-        if(who->map)
+        if (who->map)
         {
-            for (this = GET_MAP_OB(who->map, who->x, who->y); this; this = this->above)
+            msp_t *msp = MSP_KNOWN(who);
+
+            FOREACH_OBJECT_IN_MSP(this, msp, next)
             {
                 /* We know pl is not an SA so cannot manipulate... */
                 if (QUERY_FLAG(this, FLAG_SYS_OBJECT) ||
@@ -835,7 +844,7 @@ object *esrv_get_ob_from_count(object *who, tag_t count)
                 else if (this->type == CONTAINER &&
                          pl->container == this)
                 {
-                    for (that = this->inv; that; that = that->below)
+                    FOREACH_OBJECT_IN_OBJECT(that, this, next2)
                     {
                         /* We know pl is not an SA so cannot manipulate... */
                         if (QUERY_FLAG(that, FLAG_SYS_OBJECT) ||
@@ -859,9 +868,9 @@ object *esrv_get_ob_from_count(object *who, tag_t count)
 }
 
 /* Recursive function for SA access to non container inventories. */
-static object *GetObjFromCount(object *what, tag_t count)
+static object_t *GetObjFromCount(object_t *what, tag_t count)
 {
-    object *this;
+    object_t *this;
 
     for (this = what; this; this = this->below)
     {
@@ -871,7 +880,7 @@ static object *GetObjFromCount(object *what, tag_t count)
         }
         else if (this->inv)
         {
-            object *that = GetObjFromCount(this->inv, count);
+            object_t *that = GetObjFromCount(this->inv, count);
 
             if (that)
             {

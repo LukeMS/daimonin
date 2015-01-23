@@ -72,9 +72,9 @@
 #define YY_NO_UNISTD_H
 #endif
 
-#define YY_DECL int lex_load(object *op, int map_flags)
+#define YY_DECL int lex_load(object_t *op, int mapflags)
 static char *yval();
-static object *singularity;
+static object_t *singularity;
 static artifact *amask_art;
 
 static void *cur_buffer; /* thats needed to track the used buffers for recursive calling */
@@ -135,7 +135,7 @@ WS	[ \t]*{NL}?
 			  */
 			if (op->arch) {
 				artifact *tmp_art;
-			    object *tmp = NULL;
+			    object_t *tmp = NULL;
 				float old_sleft,old_speed;
 				char *yv = yval();
 
@@ -157,7 +157,7 @@ WS	[ \t]*{NL}?
 
 				old_sleft = tmp->speed_left;
 				old_speed = tmp->speed;
-				lex_load(tmp, map_flags);
+				lex_load(tmp, mapflags);
 
 				/* we set here AND in load_object the material real values.
 				   * we do: If item_quality == 0 AND material defines a base
@@ -204,7 +204,7 @@ WS	[ \t]*{NL}?
 			    insert_ob_in_ob(tmp,op);
 				amask_art = tmp_art;
 
-				if (!(map_flags & MAP_STATUS_STYLE))
+				if (!(mapflags & MAP_STATUS_STYLE))
 				{
 					/* first adjust speed */
 					/* ok - ONLY change something when we
@@ -240,7 +240,7 @@ WS	[ \t]*{NL}?
 					 /* i excluded here only objects inside spawn_points. Add here more
 					  * what you need to exclude at object/map loading time.
 					  */
-					else if(tmp->randomitems && (map_flags & MAP_STATUS_ORIGINAL) &&(op->type != SPAWN_POINT ))
+					else if(tmp->randomitems && (mapflags & MAP_STATUS_ORIGINAL) &&(op->type != SPAWN_POINT ))
 						create_treasure_list(tmp->randomitems, tmp, 0, get_enviroment_level(tmp),ART_CHANCE_UNSET,0);
 
                     if(object_initializers[tmp->type] != NULL)
@@ -474,13 +474,16 @@ op->oz= op->z;
 ^scared{S}  	    SET_OR_CLEAR_FLAG(op, FLAG_SCARED, IVAL);
 ^surrendered{S}  	SET_OR_CLEAR_FLAG(op, FLAG_SURRENDERED, IVAL);
 ^unaggressive{S}    SET_OR_CLEAR_FLAG(op, FLAG_UNAGGRESSIVE, IVAL);
-^reflect_missile{S} SET_OR_CLEAR_FLAG(op, FLAG_REFL_MISSILE, IVAL);
-^can_reflect_missile{S} SET_OR_CLEAR_FLAG(op, FLAG_CAN_REFL_MISSILE, IVAL);
-^reflect_spell{S}   SET_OR_CLEAR_FLAG(op, FLAG_REFL_SPELL, IVAL);
-^can_reflect_spell{S}   SET_OR_CLEAR_FLAG(op, FLAG_CAN_REFL_SPELL, IVAL);
+^reflect_missile{S} SET_OR_CLEAR_FLAG(op, FLAG_REFL_MISSILE, IVAL); // deprecated -- use ^can_reflect_missile(S)
+^can_reflect_missile{S} SET_OR_CLEAR_FLAG(op, FLAG_REFL_MISSILE, IVAL);
+^reflect_spell{S}   SET_OR_CLEAR_FLAG(op, FLAG_REFL_CASTABLE, IVAL); // deprecated -- use ^can_reflect_castable(S)
+^can_reflect_spell{S}   SET_OR_CLEAR_FLAG(op, FLAG_REFL_CASTABLE, IVAL); // deprecated -- use ^can_reflect_castable(S)
+^can_reflect_castable{S}   SET_OR_CLEAR_FLAG(op, FLAG_REFL_CASTABLE, IVAL);
 ^use_dmg_info{S}	SET_OR_CLEAR_FLAG(op, FLAG_USE_DMG_INFO, IVAL);
-^no_magic{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_NO_MAGIC, IVAL);
-^no_cleric{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_NO_CLERIC, IVAL);
+^no_magic{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_NO_SPELLS, IVAL); // deprecated -- use ^no_spells(S)
+^no_spells{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_NO_SPELLS, IVAL);
+^no_cleric{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_NO_PRAYERS, IVAL); // deprecated -- use ^no_prayers`(S)
+^no_prayers{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_NO_PRAYERS, IVAL);
 ^no_fix_player{S}   SET_OR_CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER, IVAL);
 ^tear_down{S}	    SET_OR_CLEAR_FLAG(op, FLAG_TEAR_DOWN, IVAL);
 ^run_away{S}	    op->run_away = IVAL;
@@ -742,7 +745,7 @@ void *create_loader_buffer(void *fp)
  * this will work fine.
  * Note: load_object can be called with fp = FILE * and fp = char * - so we have here void used
  */
-int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flags) {
+int load_object(void *fp, object_t *op, void *mybuffer, int bufstate, int mapflags) {
     int retval = 0;
 	float old_speed, old_sleft;
     char inbuf[MEDIUM_BUF];
@@ -771,7 +774,7 @@ int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flag
 			cur_buffer = mybuffer;
 			yy_switch_to_buffer(mybuffer);
 		}
-	    retval=lex_load(op, map_flags);
+	    retval=lex_load(op, mapflags);
 	}
     else if (bufstate==LO_MEMORYMODE)
 	{
@@ -784,7 +787,7 @@ int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flag
 			strptr +=lcount;
 			lcount = strlen(strptr)+1; /*we can even put this value at string start to save the strlen */
 			yybufstate=yy_scan_string(strptr);
-			retval=lex_load(op, map_flags); /* hopefully we have here a "end" - or we stay in this while a bit */
+			retval=lex_load(op, mapflags); /* hopefully we have here a "end" - or we stay in this while a bit */
 			yy_delete_buffer(yybufstate);
 			if (retval==LL_NORMAL)
 				break;
@@ -798,7 +801,7 @@ int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flag
 		while (fgets(inbuf, MEDIUM_BUF-3, (FILE *)fp))
 		{
 			yybufstate=yy_scan_string(inbuf);
-			retval=lex_load(op, map_flags);
+			retval=lex_load(op, mapflags);
 			yy_delete_buffer(yybufstate);
 			if (retval==LL_NORMAL)
 			{
@@ -847,7 +850,7 @@ int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flag
 
 	/* ok... now we have our old speed values and our new ones.
 	 */
-	if (!(map_flags & MAP_STATUS_STYLE))
+	if (!(mapflags & MAP_STATUS_STYLE))
 	{
 	  /* if set, our old speed values comes from a valid source (arches?) outside. */
 	  if(object_load_flag)
@@ -895,7 +898,7 @@ int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flag
  * This function appears to be used in only 2 places - in crossedit to
  * override values and in c_wiz to mutate values.
  */
-int set_variable(object *op,char *buf) {
+int set_variable(object_t *op,char *buf) {
     YY_BUFFER_STATE  yybufstate,yycurbuf=YY_CURRENT_BUFFER;
     int retval;
 
@@ -914,43 +917,150 @@ int set_variable(object *op,char *buf) {
 /* This is a list of pointers that correspond to the FLAG_.. values.
  * This is a simple 1:1 mapping - if FLAG_FRIENDLY is 15, then
  * the 15'th element of this array should match that name.
- * If an entry is NULL, that is a flag not to loaded/saved.
- */
-static const char *flag_names[NUM_FLAGS+1] = {
-"sleep", "confused", "paralyzed", "scared", NULL /*eating flag */,"is_invisible" , "is_ethereal" ,
-"is_good", "no_pick", "walk_on", "no_pass",		/* 10 */
-"is_animated", NULL /*free*/, "flying", "monster", "friendly",
-NULL /*is_removed*/,"been_applied", NULL /* internal flag: HAS_MOVED */, "treasure", "is_neutral",	/* 20 */
-"see_invisible", "can_roll", NULL, "is_turnable", "walk_off",
-"fly_on", "fly_off", "is_used_up", "identified", "reflecting",	/* 30 */
-"changing", "splitting", "hitback", "startequip", // deprecated -- use no_drop
-"blocksview", "undead", NULL /*fix_player*/, "unaggressive",
-"reflect_missile", "reflect_spell",				/* 40 */
-"no_magic", "no_fix_player", "is_evil", "tear_down", "run_away",
-"pass_thru", "can_pass_thru", "feared", "is_blind", "no_drop",	/* 50 */
- "reg_f", "has_ready_spell", "surrendered", "rooted",
- "slowed", "can_use_armour", "can_use_weapon",
-"can_use_ring", NULL /* in_activlist*/, "has_ready_bow",		/* 60 */
-"xrays", NULL /*no_apply*/, "can_stack", "lifesave", "is_magical", "alive",
-"stand_still", "random_move", "only_attack", "no_send",	/* 70 */
- "stealth", NULL /*is_giving*/, NULL /*linked*/, "cursed", "damned",
-"see_anywhere", "known_magical", "known_cursed", "can_open_door", "is_thrown",				/* 80 */
-NULL /*free*/, NULL /*free*/, "is_male",
-"is_female", "applied",  "inv_locked", "is_wooded",
-"is_hilly", "levitate", "has_ready_weapon",		/* 90 */
-"no_skill_ident","use_dmg_info", "can_see_in_dark", "is_cauldron",
-"is_dust", "no_steal", "one_hit", NULL /*client_sent*/, "berserk", "no_attack",	/* 100 */
-"invulnerable", "quest_item", "is_traped", "proof_phy",  "proof_ele", /* 105 */
-"proof_mag", "proof_sph", "no_inv", "is_donation", "sys_object", /* 110 */
-NULL /*homeless mob*/,"unpaid","is_aged","make_invisible" , "make_ethereal","is_player",
-"is_named",NULL /* spawn mob flag */, "no_teleport", "corpse", "corpse_forced",
-"player_only", "no_cleric", "one_drop", "cursed_perm", "damned_perm", "door_closed",
-"was_reflected", "is_missile","can_reflect_missile","can_reflect_spell","is_assassin",
-"auto_apply", "no_save", "pass_ethereal",
-"ego", "egobound", "egoclan", "egolock"
+ * If an entry is NULL, that is a flag not to loaded/saved. */
+static const char *flag_names[NUM_FLAGS + 1] =
+{
+    /*   0 */ "sleep",
+    /*   1 */ "confused",
+    /*   2 */ "paralyzed",
+    /*   3 */ "scared",
+    /*   4 */ NULL, // FLAG_EATING
+    /*   5 */ "is_invisible",
+    /*   6 */ "is_ethereal",
+    /*   7 */ "is_blind",
+    /*   8 */ "no_pick",
+    /*   9 */ "walk_on",
+    /*  10 */ "no_pass",
+    /*  11 */ "is_animated",
+    /*  12 */ NULL, // FLAG_INITIALIZED
+    /*  13 */ "flying",
+    /*  14 */ "monster",
+    /*  15 */ "friendly",
+    /*  16 */ NULL, // FLAG_REMOVED
+    /*  17 */ "been_applied",
+    /*  18 */ NULL, // FLAG_OBJECT_WAS_MOVED
+    /*  19 */ "treasure",
+    /*  20 */ "is_neutral",
+    /*  21 */ "see_invisible",
+    /*  22 */ "can_roll",
+    /*  23 */ NULL, // free
+    /*  24 */ "is_turnable",
+    /*  25 */ "walk_off",
+    /*  26 */ "fly_on",
+    /*  27 */ "fly_off",
+    /*  28 */ "is_used_up",
+    /*  29 */ "identified",
+    /*  30 */ "reflecting",
+    /*  31 */ "changing",
+    /*  32 */ "splitting",
+    /*  33 */ "hitback",
+    /*  34 */ NULL, // free
+    /*  35 */ "blocksview",
+    /*  36 */ "undead",
+    /*  37 */ NULL, // FLAG_FIX_PLAYER
+    /*  38 */ "unaggressive",
+    /*  39 */ "can_reflect_missile",
+    /*  40 */ "can_reflect_castable",
+    /*  41 */ "no_spells",
+    /*  42 */ "no_fix_player",
+    /*  43 */ "is_evil",
+    /*  44 */ "tear_down",
+    /*  45 */ "run_away",
+    /*  46 */ "pass_thru",
+    /*  47 */ "can_pass_thru",
+    /*  48 */ "feared",
+    /*  49 */ "is_good",
+    /*  50 */ "no_drop",
+    /*  51 */ "reg_f",
+    /*  52 */ "has_ready_spell",
+    /*  53 */ "surrendered",
+    /*  54 */ "rooted",
+    /*  55 */ "slowed",
+    /*  56 */ "can_use_armour",
+    /*  57 */ "can_use_weapon",
+    /*  58 */ "can_use_ring",
+    /*  59 */ NULL, // FLAG_IN_ACTIVELIST
+    /*  60 */ "has_ready_bow",
+    /*  61 */ "xrays",
+    /*  62 */ NULL, // FLAG_NO_APPLY
+    /*  63 */ "can_stack",
+    /*  64 */ "lifesave",
+    /*  65 */ "is_magical",
+    /*  66 */ "alive",
+    /*  67 */ "stand_still",
+    /*  68 */ "random_move",
+    /*  69 */ "only_attack",
+    /*  70 */ "no_send",
+    /*  71 */ "stealth",
+    /*  72 */ NULL, // FLAG_IS_GIVING
+    /*  73 */ NULL, // FLAG_IS_LINKED
+    /*  74 */ "cursed",
+    /*  75 */ "damned",
+    /*  76 */ "see_anywhere",
+    /*  77 */ "known_magical",
+    /*  78 */ "known_cursed",
+    /*  79 */ "can_open_door",
+    /*  80 */ "is_thrown",
+    /*  81 */ NULL, // free
+    /*  82 */ NULL, // free
+    /*  83 */ "is_male",
+    /*  84 */ "is_female",
+    /*  85 */ "applied",
+    /*  86 */ "inv_locked",
+    /*  87 */ "is_wooded",
+    /*  88 */ "is_hilly",
+    /*  89 */ "levitate",
+    /*  90 */ "has_ready_weapon",
+    /*  91 */ "no_skill_ident",
+    /*  92 */ "use_dmg_info",
+    /*  93 */ "can_see_in_dark",
+    /*  94 */ "is_cauldron",
+    /*  95 */ "is_dust",
+    /*  96 */ "no_steal",
+    /*  97 */ "one_hit",
+    /*  98 */ NULL, // FLAG_CLIENT_SENT
+    /*  99 */ "berserk",
+    /* 100 */ "no_attack",
+    /* 101 */ "invulnerable",
+    /* 102 */ "quest_item",
+    /* 103 */ "is_traped",
+    /* 104 */ "proof_phy",
+    /* 105 */ "proof_ele",
+    /* 106 */ "proof_mag",
+    /* 107 */ "proof_sph",
+    /* 108 */ "no_inv",
+    /* 109 */ "is_donation",
+    /* 110 */ "sys_object",
+    /* 111 */ NULL, // FLAG_HOMELESS_MOB
+    /* 112 */ "unpaid",
+    /* 113 */ "is_aged",
+    /* 114 */ "make_invisible" ,
+    /* 115 */ "make_ethereal",
+    /* 116 */ "is_player",
+    /* 117 */ "is_named",
+    /* 118 */ NULL, // FLAG_SPAWN_MOB
+    /* 119 */ "no_teleport",
+    /* 120 */ "corpse",
+    /* 121 */ "corpse_forced",
+    /* 122 */ "player_only",
+    /* 123 */ "no_prayers",
+    /* 124 */ "one_drop",
+    /* 125 */ "cursed_perm",
+    /* 126 */ "damned_perm",
+    /* 127 */ "door_closed",
+    /* 128 */ "was_reflected",
+    /* 129 */ "is_missile",
+    /* 130 */ NULL, // free
+    /* 131 */ NULL, // free
+    /* 132 */ "is_assassin",
+    /* 133 */ "auto_apply",
+    /* 134 */ "no_save",
+    /* 135 */ "pass_ethereal",
+    /* 136 */ "ego",
+    /* 137 */ "egobound",
+    /* 138 */ "egoclan",
+    /* 139 */ "egolock",
 };
-
-
 
 void save_double(char *buf,char *name,double v)
 {
@@ -1029,7 +1139,7 @@ static inline char *append_simple(char *buf, const char *str)
  * (op2 is the objects original archetype)
  */
 
-char *get_ob_diff(const object *op, const object *op2) {
+char *get_ob_diff(const object_t *op, const object_t *op2) {
     /* I plan to optimize this heavily */
     /* TODO: One good optimization would be to keep track of the end of buf
      * instead of using strcat() which must find the end at every call
@@ -1282,8 +1392,8 @@ char *get_ob_diff(const object *op, const object *op2) {
   if(QUERY_FLAG(op,FLAG_IS_LINKED) && op->map)
   {
       /* Generate comma separated list of links */
-      oblinkpt   *obp;
-      objectlink *ol;
+      objectlink_t   *obp;
+      objectlink_t *ol;
       int foundone = 0;
 
       strcpy(buf2, "connected ");
@@ -1310,7 +1420,7 @@ char *get_ob_diff(const object *op, const object *op2) {
 		    strcat(buf2, "none\n");
 		else /* we have different lists - generate the "list1;list2;list3" string */
 		{
-			struct oblnk *ol = op->randomitems;
+			struct objectlink_t *ol = op->randomitems;
 			if(ol->parmlink.tl_tweak) /* tlist with or without '&' parameter list* */
 				strcat(buf2,ol->parmlink.tl_tweak->name); /* save name and '&' tail */
 			else
@@ -1354,18 +1464,15 @@ char *get_ob_diff(const object *op, const object *op2) {
   return buf;
 }
 
-/*
- * Dumps all variables in an object to a file.
+/* Dumps all variables in an object to a file.
  * If bit 0 of flag is set, unpaid objects will be saved.  As of now,
  * the only place this is not set is when saving the player.
  * If bit 1 of flag is set, don't remove the object after save.  As of now,
- * all of the callers are setting this.
- */
-
-void save_object(FILE *fp,object *op, int flag) {
-    archetype *at;
-    char *cp;
-    object *tmp,*old;
+ * all of the callers are setting this. */
+void save_object(FILE *fp, object_t *op, int flag)
+{
+    archetype_t *at;
+    char      *cp;
 
     /* Even if the object does have an owner, it would seem that we should
      * still save it.
@@ -1373,50 +1480,73 @@ void save_object(FILE *fp,object *op, int flag) {
     /*if(op->owner!=NULL || fp == NULL) this will wreck item we throw - they get player as owner*/
 
     /* If it is unpaid and we don't want to save those, just return. */
-    if(!fp || QUERY_FLAG(op, FLAG_NO_SAVE) || (!(flag&1) && (QUERY_FLAG(op, FLAG_UNPAID))))
-		return;
+    if (!fp ||
+        QUERY_FLAG(op, FLAG_NO_SAVE) ||
+        (!(flag & 1) &&
+         (QUERY_FLAG(op, FLAG_UNPAID))))
+    {
+        return;
+    }
 
     revert_buff_stats(op);
 
-    if((at=op->arch)==NULL)
-		at=archetype_global._empty_archetype;
-	fprintf(fp,"arch %s\n",at->name);
+    if (!(at = op->arch))
+    {
+        at = archetype_global._empty_archetype;
+    }
 
-    if((cp=get_ob_diff(op,&at->clone)))
-		fputs(cp,fp);	/* We really should do some status checking on this */
+    fprintf(fp, "arch %s\n", at->name);
 
-    old=NULL;
+    if ((cp = get_ob_diff(op, &at->clone)))
+    {
+        fputs(cp, fp); // really should do some status checking on this
+    }
 
-    if (flag & 2 )
-	{
-		if(!QUERY_FLAG(op, FLAG_NO_INVENTORY) )
-		{
-			for(tmp=op->inv;tmp;tmp=tmp->below)
-				save_object(fp,tmp,flag);
-		}
-	    /* Slightly different logic because tmp/op will be removed by
-		* the save_object we call.  So we just keep looking at op->inv
-		* until there is nothing left.  In theory, the variable old
-		* should not be needed, as recursive loops shouldn't happen.
-		*/
-	}
-    else while ((tmp=op->inv))
-	{
-		if(old==tmp)
-		{
-			LOG(llevError," Recursive loop in inventory\n");
-			break;
-		}
-		save_object(fp,tmp,flag);
-		old=tmp;
+    if ((flag & 2))
+    {
+        object_t *this,
+               *next;
+
+        if (!QUERY_FLAG(op, FLAG_NO_INVENTORY) )
+        {
+            FOREACH_OBJECT_IN_OBJECT(this, op, next)
+            {
+                save_object(fp, this, flag);
+            }
+        }
+    }
+    /* Slightly different logic because this/op will be removed by
+     * the save_object we call.  So we just keep looking at op->inv
+     * until there is nothing left.  In theory, the variable old
+     * should not be needed, as recursive loops shouldn't happen. */
+    else
+    {
+        object_t *old = NULL,
+               *this;
+
+        while ((this = op->inv))
+        {
+            if (old == this)
+            {
+                LOG(llevMapbug," ARCHBUG:: Recursive loop in inventory\n");
+                break;
+            }
+
+            save_object(fp, this, flag);
+            old = this;
+        }
     }
 
     /* Save a player's pets */
-    if(op->type==PLAYER)
+    if (op->type == PLAYER)
+    {
         save_all_pets(fp, op, flag);
+    }
 
-    if (!(flag&2))
-		remove_ob(op);
+    if (!(flag & 2))
+    {
+        remove_ob(op);
+    }
 
-    fprintf(fp,"end\n");
+    fprintf(fp, "end\n");
 }

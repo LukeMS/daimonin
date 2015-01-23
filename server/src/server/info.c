@@ -23,6 +23,9 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
+/* TODO: Rename file as ndi.c -- ndi has historical significance: draw_info
+ * became new_draw_info and is now ndi which is short and unusual/unique
+ * enough to be a good prefix. */
 /* This file is the one and only DRAWINFO output module. All player
  * communication using drawinfo is handled here - except the few
  * messages we send to the client using DRAWINFO before we had setup
@@ -32,10 +35,9 @@
  */
 #include "global.h"
 
-static sockbuf_struct *NewDrawInfo(int flags, const char *const str,
-                                   sockbuf_struct *sb);
+static sockbuf_struct *ComposeSB(int flags, const char *const str, sockbuf_struct *sb);
 
-/* new_draw_info:
+/* ndi() sends the format... string to the specified player object (who).
  *
  * flags is various flags.
  *
@@ -44,15 +46,14 @@ static sockbuf_struct *NewDrawInfo(int flags, const char *const str,
  * value must be less than the listening level that the player has set.
  * Unfortunately, there is no clear guideline on what each level does what.
  *
- * op can be passed as NULL - in fact, this will be done if NDI_ALL is set
+ * who can be passed as NULL - in fact, this will be done if NDI_ALL is set
  * in the flags. */
-void new_draw_info(const int flags, const int pri, const object *const op,
-                   const char *const format, ...)
+void ndi(const int flags, const int pri, const object_t *const who, const char *const format, ...)
 {
     char            buf[HUGE_BUF] = "";
     va_list         ap;
     sockbuf_struct *sb = NULL;
-    player         *pl;
+    player_t         *pl;
 
     /* Don't send empty string. */
     if (!format ||
@@ -68,9 +69,9 @@ void new_draw_info(const int flags, const int pri, const object *const op,
      * players and monsters.
      * -- Smacky 20100619 */
     if (!(flags & NDI_ALL) &&
-        (!op ||
-         op->type != PLAYER ||
-         !CONTR(op)))
+        (!who ||
+         who->type != PLAYER ||
+         !CONTR(who)))
     {
         return;
     }
@@ -79,9 +80,9 @@ void new_draw_info(const int flags, const int pri, const object *const op,
     vsnprintf(buf, sizeof(buf), format, ap);
     va_end(ap);
     buf[sizeof(buf) - 1] = '\0';
-    sb = NewDrawInfo(flags, buf, sb);
+    sb = ComposeSB(flags, buf, sb);
 
-    for (pl = ((flags & NDI_ALL)) ? first_player : CONTR(op); pl;
+    for (pl = ((flags & NDI_ALL)) ? first_player : CONTR(who); pl;
          pl = ((flags & NDI_ALL)) ? pl->next : NULL)
     {
         if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
@@ -95,16 +96,43 @@ void new_draw_info(const int flags, const int pri, const object *const op,
     SOCKBUF_COMPOSE_FREE(sb);
 }
 
-/* write to everyone on the current map in a defined area. */
-void new_info_map(const int flags, const mapstruct *const map, const int x,
-                  const int y, const int dist, const char *const format, ...)
+/* CHECKPLAYERS() is a convenience macro used in ndi_map() to avoid large areas
+ * of repeat code. Essentially it finds all the players within range of the
+ * message and adds the sb to only their sockets. */
+#define CHECKPLAYERS(_O_, _E1_, _E2_, _M_, _X_, _Y_, _D_, _SB_) \
+    for ((_O_) = (_M_)->player_first; (_O_); (_O_) = CONTR((_O_))->map_above) \
+    { \
+        if (!(CONTR((_O_))->state & (ST_DEAD | ST_ZOMBIE)) && \
+            CONTR((_O_))->socket.status != Ns_Dead && \
+            (!(_E1_) || \
+             (_O_) != (_E1_)) && \
+            (!(_E2_) || \
+             (_O_) != (_E2_)) && \
+            ((_D_) == MAP_INFO_ALL || \
+             POW2((_O_)->x - (_X_)) + POW2((_O_)->y - (_Y_)) <= (_D_))) \
+        { \
+            SOCKBUF_ADD_TO_SOCKET(&CONTR((_O_))->socket, (_SB_)); \
+        } \
+    }
+
+/* ndi_map() sends the format... string to every player (that meets certain
+ * criteria) on a map (and up to 8 directly tiled maps) within a given range
+ * centered around msp.
+ *
+ * If except1 or except2 are not NULL, these players are NOT included as
+ * recipients. */
+void ndi_map(const int flags, msp_t *msp, const int dist, const  object_t *const except1, const object_t *const except2, const char *const format, ...)
 {
     char            buf[HUGE_BUF] = "";
     va_list         ap;
     sockbuf_struct *sb = NULL;
-    object         *tmp;
-    int             xt,
-                    yt,
+    object_t       *this;
+    map_t          *m,
+                   *m2;
+    sint16          x,
+                    y,
+                    x2,
+                    y2,
                     d;
 
     /* Don't send empty string. */
@@ -114,481 +142,110 @@ void new_info_map(const int flags, const mapstruct *const map, const int x,
         return;
     }
 
-    /* No map? Quit */
-    if (!map ||
-        map->in_memory != MAP_ACTIVE)
+    /* No msp? Quit */
+    if (!msp ||
+        msp->map->in_memory != MAP_MEMORY_ACTIVE)
     {
         return;
     }
 
+    m = msp->map;
+    x = msp->x;
+    y = msp->y;
     va_start(ap, format);
     vsnprintf(buf, sizeof(buf), format, ap);
     va_end(ap);
     buf[sizeof(buf) - 1] = '\0';
-    sb = NewDrawInfo(flags, buf, sb);
+    sb = ComposeSB(flags, buf, sb);
 
     if (dist == MAP_INFO_ALL)
     {
-        for (tmp = map->player_first; tmp; tmp = CONTR(tmp)->map_above)
-        {
-            player *pl = CONTR(tmp);
-
-            if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
-                pl->socket.status != Ns_Dead)
-            {
-                SOCKBUF_ADD_TO_SOCKET(&pl->socket, sb);
-            }
-        }
-
+        CHECKPLAYERS(this, except1, except2, m, x, y, dist, sb);
         SOCKBUF_COMPOSE_FREE(sb);
-
         return;
     }
 
     d = POW2(dist);
+    CHECKPLAYERS(this, except1, except2, m, x, y, d, sb);
 
-    for (tmp = map->player_first; tmp; tmp = CONTR(tmp)->map_above)
+    if ((m2 = m->tiling.tile_map[TILING_DIRECTION_NORTH]) &&
+        m2->in_memory == MAP_MEMORY_ACTIVE &&
+        m2->player_first)
     {
-        player *pl = CONTR(tmp);
-
-        if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
-            pl->socket.status != Ns_Dead &&
-            (POW2(tmp->x - x) + POW2(tmp->y - y)) <= d)
-        {
-            SOCKBUF_ADD_TO_SOCKET(&pl->socket, sb);
-        }
+        x2 = x;
+        y2 = y + m2->height;
+        CHECKPLAYERS(this, except1, except2, m2, x2, y2, d, sb);
     }
 
-    if (map->tile_map[TILED_MAPS_NORTH] &&
-        map->tile_map[TILED_MAPS_NORTH]->in_memory == MAP_ACTIVE &&
-        map->tile_map[TILED_MAPS_NORTH]->player_first)
+    if ((m2 = m->tiling.tile_map[TILING_DIRECTION_EAST]) &&
+        m2->in_memory == MAP_MEMORY_ACTIVE &&
+        m2->player_first)
     {
-        yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTH]);
-
-        for (tmp = map->tile_map[TILED_MAPS_NORTH]->player_first; tmp;
-             tmp = CONTR(tmp)->map_above)
-        {
-            player *pl = CONTR(tmp);
-
-            if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
-                pl->socket.status != Ns_Dead &&
-                (POW2(tmp->x - x) + POW2(tmp->y - yt)) <= d)
-            {
-                SOCKBUF_ADD_TO_SOCKET(&pl->socket, sb);
-            }
-        }
+        x2 = x - m->width;
+        y2 = y;
+        CHECKPLAYERS(this, except1, except2, m2, x2, y2, d, sb);
     }
 
-    if (map->tile_map[TILED_MAPS_EAST] &&
-        map->tile_map[TILED_MAPS_EAST]->in_memory == MAP_ACTIVE &&
-        map->tile_map[TILED_MAPS_EAST]->player_first)
+    if ((m2 = m->tiling.tile_map[TILING_DIRECTION_SOUTH]) &&
+        m2->in_memory == MAP_MEMORY_ACTIVE &&
+        m2->player_first)
     {
-        xt = x - MAP_WIDTH(map);
-
-        for (tmp = map->tile_map[TILED_MAPS_EAST]->player_first; tmp;
-             tmp = CONTR(tmp)->map_above)
-        {
-            player *pl = CONTR(tmp);
-
-            if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
-                pl->socket.status != Ns_Dead &&
-                (POW2(tmp->x - xt) + POW2(tmp->y - y)) <= d)
-            {
-                SOCKBUF_ADD_TO_SOCKET(&pl->socket, sb);
-            }
-        }
+        x2 = x;
+        y2 = y - m->height;
+        CHECKPLAYERS(this, except1, except2, m2, x2, y2, d, sb);
     }
 
-    if (map->tile_map[TILED_MAPS_SOUTH] &&
-        map->tile_map[TILED_MAPS_SOUTH]->in_memory == MAP_ACTIVE &&
-        map->tile_map[TILED_MAPS_SOUTH]->player_first)
+    if ((m2 = m->tiling.tile_map[TILING_DIRECTION_WEST]) &&
+        m2->in_memory == MAP_MEMORY_ACTIVE &&
+        m2->player_first)
     {
-        yt = y - MAP_HEIGHT(map);
-
-        for (tmp = map->tile_map[TILED_MAPS_SOUTH]->player_first; tmp;
-             tmp = CONTR(tmp)->map_above)
-        {
-            player *pl = CONTR(tmp);
-
-            if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
-                pl->socket.status != Ns_Dead &&
-                (POW2(tmp->x - x) + POW2(tmp->y - yt)) <= d)
-            {
-                SOCKBUF_ADD_TO_SOCKET(&pl->socket, sb);
-            }
-        }
+        x2 = x + m2->width;
+        y2 = y;
+        CHECKPLAYERS(this, except1, except2, m2, x2, y2, d, sb);
     }
 
-    if (map->tile_map[TILED_MAPS_WEST] &&
-        map->tile_map[TILED_MAPS_WEST]->in_memory == MAP_ACTIVE &&
-        map->tile_map[TILED_MAPS_WEST]->player_first)
+    if ((m2 = m->tiling.tile_map[TILING_DIRECTION_NORTHEAST]) &&
+        m2->in_memory == MAP_MEMORY_ACTIVE &&
+        m2->player_first)
     {
-        xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_WEST]);
-
-        for (tmp = map->tile_map[TILED_MAPS_WEST]->player_first; tmp;
-             tmp = CONTR(tmp)->map_above)
-        {
-            player *pl = CONTR(tmp);
-
-            if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
-                pl->socket.status != Ns_Dead &&
-                (POW2(tmp->x - xt) + POW2(tmp->y - y)) <= d)
-            {
-                SOCKBUF_ADD_TO_SOCKET(&pl->socket, sb);
-            }
-        }
+        x2 = x - m->width;
+        y2 = y + m2->height;
+        CHECKPLAYERS(this, except1, except2, m2, x2, y2, d, sb);
     }
 
-    if (map->tile_map[TILED_MAPS_NORTHEAST] &&
-        map->tile_map[TILED_MAPS_NORTHEAST]->in_memory == MAP_ACTIVE &&
-        map->tile_map[TILED_MAPS_NORTHEAST]->player_first)
+    if ((m2 = m->tiling.tile_map[TILING_DIRECTION_SOUTHEAST]) &&
+        m2->in_memory == MAP_MEMORY_ACTIVE &&
+        m2->player_first)
     {
-        yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTHEAST]);
-        xt = x - MAP_WIDTH(map);
-
-        for (tmp = map->tile_map[TILED_MAPS_NORTHEAST]->player_first; tmp;
-             tmp = CONTR(tmp)->map_above)
-        {
-            player *pl = CONTR(tmp);
-
-            if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
-                pl->socket.status != Ns_Dead &&
-                (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
-            {
-                SOCKBUF_ADD_TO_SOCKET(&pl->socket, sb);
-            }
-        }
+        x2 = x - m->width;
+        y2 = y - m->height;
+        CHECKPLAYERS(this, except1, except2, m2, x2, y2, d, sb);
     }
 
-    if (map->tile_map[TILED_MAPS_SOUTHEAST] &&
-        map->tile_map[TILED_MAPS_SOUTHEAST]->in_memory == MAP_ACTIVE &&
-        map->tile_map[TILED_MAPS_SOUTHEAST]->player_first)
+    if ((m2 = m->tiling.tile_map[TILING_DIRECTION_SOUTHWEST]) &&
+        m2->in_memory == MAP_MEMORY_ACTIVE &&
+        m2->player_first)
     {
-        xt = x - MAP_WIDTH(map);
-        yt = y - MAP_HEIGHT(map);
-
-        for (tmp = map->tile_map[TILED_MAPS_SOUTHEAST]->player_first; tmp;
-             tmp = CONTR(tmp)->map_above)
-        {
-            player *pl = CONTR(tmp);
-
-            if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
-                pl->socket.status != Ns_Dead &&
-                (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
-            {
-                SOCKBUF_ADD_TO_SOCKET(&pl->socket, sb);
-            }
-        }
+        x2 = x + m2->width;
+        y2 = y - m->height;
+        CHECKPLAYERS(this, except1, except2, m2, x2, y2, d, sb);
     }
 
-    if (map->tile_map[TILED_MAPS_SOUTHWEST] &&
-        map->tile_map[TILED_MAPS_SOUTHWEST]->in_memory == MAP_ACTIVE &&
-        map->tile_map[TILED_MAPS_SOUTHWEST]->player_first)
+    if ((m2 = m->tiling.tile_map[TILING_DIRECTION_NORTHWEST]) &&
+        m2->in_memory == MAP_MEMORY_ACTIVE &&
+        m2->player_first)
     {
-        xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_SOUTHWEST]);
-        yt = y - MAP_HEIGHT(map);
-
-        for (tmp = map->tile_map[TILED_MAPS_SOUTHWEST]->player_first; tmp;
-             tmp = CONTR(tmp)->map_above)
-        {
-            player *pl = CONTR(tmp);
-
-            if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
-                pl->socket.status != Ns_Dead &&
-                (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
-            {
-                SOCKBUF_ADD_TO_SOCKET(&pl->socket, sb);
-            }
-        }
-    }
-
-    if (map->tile_map[TILED_MAPS_NORTHWEST] &&
-        map->tile_map[TILED_MAPS_NORTHWEST]->in_memory == MAP_ACTIVE &&
-        map->tile_map[TILED_MAPS_NORTHWEST]->player_first)
-    {
-        xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_NORTHWEST]);
-        yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTHWEST]);
-
-        for (tmp = map->tile_map[TILED_MAPS_NORTHWEST]->player_first; tmp;
-             tmp = CONTR(tmp)->map_above)
-        {
-            player *pl = CONTR(tmp);
-
-            if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
-                pl->socket.status != Ns_Dead &&
-                (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
-            {
-                SOCKBUF_ADD_TO_SOCKET(&pl->socket, sb);
-            }
-        }
+        x2 = x + m2->width;
+        y2 = y + m2->height;
+        CHECKPLAYERS(this, except1, except2, m2, x2, y2, d, sb);
     }
 
     SOCKBUF_COMPOSE_FREE(sb);
 }
 
-/* write to everyone on the map *except* op and op1.  This is useful for emotions. */
-void new_info_map_except(const int flags, const mapstruct *const map,
-                         const int x, const int y, const int dist,
-                         const  object *const op1, const object *const op,
-                         const char *const format, ...)
-{
-    char            buf[HUGE_BUF] = "";
-    va_list         ap;
-    sockbuf_struct *sb = NULL;
-    object         *tmp;
-    int             xt,
-                    yt,
-                    d;
+#undef CHECKPLAYERS
 
-    /* Don't send empty string. */
-    if (!format ||
-        !*format)
-    {
-        return;
-    }
-
-    /* No map? Quit */
-    if (!map ||
-        map->in_memory != MAP_ACTIVE)
-    {
-        return;
-    }
-
-    va_start(ap, format);
-    vsnprintf(buf, sizeof(buf), format, ap);
-    va_end(ap);
-    buf[sizeof(buf) - 1] = '\0';
-    sb = NewDrawInfo(flags, buf, sb);
-
-    if (dist != MAP_INFO_ALL)
-    {
-        d = POW2(dist);
-    }
-    else
-    {
-        for (tmp = map->player_first; tmp; tmp = CONTR(tmp)->map_above)
-        {
-            if (tmp != op &&
-                tmp != op1)
-            {
-                player *pl = CONTR(tmp);
-
-                if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
-                    pl->socket.status != Ns_Dead)
-                {
-                    SOCKBUF_ADD_TO_SOCKET(&pl->socket, sb);
-                }
-            }
-        }
-
-        SOCKBUF_COMPOSE_FREE(sb);
-
-        return;
-    }
-
-    if (map->player_first) /* any player on this map? */
-    {
-        for (tmp = map->player_first; tmp; tmp = CONTR(tmp)->map_above)
-        {
-            if (tmp != op &&
-                tmp != op1 &&
-                (POW2(tmp->x - x) + POW2(tmp->y - y)) <= d)
-            {
-                player *pl = CONTR(tmp);
-
-                if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
-                    pl->socket.status != Ns_Dead)
-                {
-                    SOCKBUF_ADD_TO_SOCKET(&pl->socket, sb);
-                }
-            }
-        }
-    }
-
-    if (map->tile_map[TILED_MAPS_NORTH] &&
-        map->tile_map[TILED_MAPS_NORTH]->in_memory == MAP_ACTIVE &&
-        map->tile_map[TILED_MAPS_NORTH]->player_first)
-    {
-        yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTH]);
-
-        for (tmp = map->tile_map[TILED_MAPS_NORTH]->player_first; tmp;
-             tmp = CONTR(tmp)->map_above)
-        {
-            player *pl = CONTR(tmp);
-
-            if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
-                pl->socket.status != Ns_Dead &&
-                tmp != op &&
-                tmp != op1 &&
-                (POW2(tmp->x - x) + POW2(tmp->y - yt)) <= d)
-            {
-                SOCKBUF_ADD_TO_SOCKET(&pl->socket, sb);
-            }
-        }
-    }
-
-    if (map->tile_map[TILED_MAPS_EAST] &&
-        map->tile_map[TILED_MAPS_EAST]->in_memory == MAP_ACTIVE &&
-        map->tile_map[TILED_MAPS_EAST]->player_first)
-    {
-        xt = x - MAP_WIDTH(map);
-
-        for (tmp = map->tile_map[TILED_MAPS_EAST]->player_first; tmp;
-             tmp = CONTR(tmp)->map_above)
-        {
-            player *pl = CONTR(tmp);
-
-            if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
-                pl->socket.status != Ns_Dead &&
-                tmp != op &&
-                tmp != op1 &&
-                (POW2(tmp->x - xt) + POW2(tmp->y - y)) <= d)
-            {
-                SOCKBUF_ADD_TO_SOCKET(&pl->socket, sb);
-            }
-        }
-    }
-
-    if (map->tile_map[TILED_MAPS_SOUTH] &&
-        map->tile_map[TILED_MAPS_SOUTH]->in_memory == MAP_ACTIVE &&
-        map->tile_map[TILED_MAPS_SOUTH]->player_first)
-    {
-        yt = y - MAP_HEIGHT(map);
-
-        for (tmp = map->tile_map[TILED_MAPS_SOUTH]->player_first; tmp;
-             tmp = CONTR(tmp)->map_above)
-        {
-            player *pl = CONTR(tmp);
-
-            if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
-                pl->socket.status != Ns_Dead &&
-                tmp != op &&
-                tmp != op1 &&
-                (POW2(tmp->x - x) + POW2(tmp->y - yt)) <= d)
-            {
-                SOCKBUF_ADD_TO_SOCKET(&pl->socket, sb);
-            }
-        }
-    }
-
-    if (map->tile_map[TILED_MAPS_WEST] &&
-        map->tile_map[TILED_MAPS_WEST]->in_memory == MAP_ACTIVE &&
-        map->tile_map[TILED_MAPS_WEST]->player_first)
-    {
-        xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_WEST]);
-
-        for (tmp = map->tile_map[TILED_MAPS_WEST]->player_first; tmp;
-             tmp = CONTR(tmp)->map_above)
-        {
-            player *pl = CONTR(tmp);
-
-            if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
-                pl->socket.status != Ns_Dead &&
-                tmp != op &&
-                tmp != op1 &&
-                (POW2(tmp->x - xt) + POW2(tmp->y - y)) <= d)
-            {
-                SOCKBUF_ADD_TO_SOCKET(&pl->socket, sb);
-            }
-        }
-    }
-
-    if (map->tile_map[TILED_MAPS_NORTHEAST] &&
-        map->tile_map[TILED_MAPS_NORTHEAST]->in_memory == MAP_ACTIVE &&
-        map->tile_map[TILED_MAPS_NORTHEAST]->player_first)
-    {
-        yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTHEAST]);
-        xt = x - MAP_WIDTH(map);
-
-        for (tmp = map->tile_map[TILED_MAPS_NORTHEAST]->player_first; tmp;
-             tmp = CONTR(tmp)->map_above)
-        {
-            player *pl = CONTR(tmp);
-
-            if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
-                pl->socket.status != Ns_Dead &&
-                tmp != op &&
-                tmp != op1 &&
-                (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
-            {
-                SOCKBUF_ADD_TO_SOCKET(&pl->socket, sb);
-            }
-        }
-    }
-
-    if (map->tile_map[TILED_MAPS_SOUTHEAST] &&
-        map->tile_map[TILED_MAPS_SOUTHEAST]->in_memory == MAP_ACTIVE &&
-        map->tile_map[TILED_MAPS_SOUTHEAST]->player_first)
-    {
-        xt = x - MAP_WIDTH(map);
-        yt = y - MAP_HEIGHT(map);
-
-        for (tmp = map->tile_map[TILED_MAPS_SOUTHEAST]->player_first; tmp;
-             tmp = CONTR(tmp)->map_above)
-        {
-            player *pl = CONTR(tmp);
-
-            if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
-                pl->socket.status != Ns_Dead &&
-                tmp != op &&
-                tmp != op1 &&
-                (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
-            {
-                SOCKBUF_ADD_TO_SOCKET(&pl->socket, sb);
-            }
-        }
-    }
-
-    if (map->tile_map[TILED_MAPS_SOUTHWEST] &&
-        map->tile_map[TILED_MAPS_SOUTHWEST]->in_memory == MAP_ACTIVE &&
-        map->tile_map[TILED_MAPS_SOUTHWEST]->player_first)
-    {
-        xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_SOUTHWEST]);
-        yt = y - MAP_HEIGHT(map);
-
-        for (tmp = map->tile_map[TILED_MAPS_SOUTHWEST]->player_first; tmp;
-             tmp = CONTR(tmp)->map_above)
-        {
-            player *pl = CONTR(tmp);
-
-            if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
-                pl->socket.status != Ns_Dead &&
-                tmp != op &&
-                tmp != op1 &&
-                (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
-            {
-                SOCKBUF_ADD_TO_SOCKET(&pl->socket, sb);
-            }
-        }
-    }
-
-    if (map->tile_map[TILED_MAPS_NORTHWEST] &&
-        map->tile_map[TILED_MAPS_NORTHWEST]->in_memory == MAP_ACTIVE &&
-        map->tile_map[TILED_MAPS_NORTHWEST]->player_first)
-    {
-        xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_NORTHWEST]);
-        yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTHWEST]);
-
-        for (tmp = map->tile_map[TILED_MAPS_NORTHWEST]->player_first; tmp;
-             tmp = CONTR(tmp)->map_above)
-        {
-            player *pl = CONTR(tmp);
-
-            if (!(pl->state & (ST_DEAD | ST_ZOMBIE)) &&
-                pl->socket.status != Ns_Dead &&
-                tmp != op &&
-                tmp != op1 &&
-                (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
-            {
-                SOCKBUF_ADD_TO_SOCKET(&pl->socket, sb);
-            }
-        }
-    }
-
-    SOCKBUF_COMPOSE_FREE(sb);
-}
-
-static sockbuf_struct *NewDrawInfo(int flags, const char *const str, sockbuf_struct *sb)
+static sockbuf_struct *ComposeSB(int flags, const char *const str, sockbuf_struct *sb)
 {
     const int  len = strlen(str);
     char      *buf;

@@ -53,7 +53,7 @@ END_TEST
 /* Track down and test for memleaks in tailor_readable_book() */
 START_TEST (readable_memleak)
 {
-    object * book = arch_to_object(find_archetype("book"));
+    object_t * book = arch_to_object(find_archetype("book"));
     tailor_readable_ob(book, 5);
 
     fail_if(memleak_detected(), "_possible_ memory leak detected");
@@ -71,7 +71,7 @@ END_TEST
 /* Track down and test for memleaks in change_book() */
 START_TEST (readable_change_book_memleak)
 {
-    object * book = arch_to_object(find_archetype("book"));
+    object_t * book = arch_to_object(find_archetype("book"));
     FREE_AND_COPY_HASH(book->msg, "I am a book message");
     change_book(book, 5);
 

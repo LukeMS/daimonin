@@ -33,15 +33,15 @@ account_status  account_create(Account *ac, const char *name, char *pass);
 account_status  account_load(Account *ac, char *name, char *pass);
 void            account_create_msg(NewSocket *ns, int msg);
 void            account_send_client(NewSocket *ns, int stats);
-account_status  account_delete_player(NewSocket *ns, shstr *name);
-Account        *account_get_from_object(object *op);
-int             account_update(Account *ac, object *op);
+account_status  account_delete_player(NewSocket *ns, shstr_t *name);
+Account        *account_get_from_object(object_t *op);
+int             account_update(Account *ac, object_t *op);
 Account        *find_account(char *acname);
 Account        *find_account_hash(const char *acname);
 /* commands.c */
-CommArray_s    *find_command(char *cmd, player *pl);
+CommArray_s    *find_command(char *cmd, player_t *pl);
 CommArray_s    *find_command_element(char *cmd, CommArray_s *commarray, int commsize);
-void            process_command_queue(NewSocket *ns, player *pl);
+void            process_command_queue(NewSocket *ns, player_t *pl);
 void            cs_cmd_ping(char *buf, int len, NewSocket *ns);
 void            cs_cmd_generic(char *buf, int len, NewSocket *ns);
 void            cs_cmd_setup(char *buf, int len, NewSocket *ns);
@@ -69,12 +69,8 @@ void            read_client_images(void);
 int             esrv_send_face(NewSocket *ns, short face_num, int nocache);
 #endif
 /* info.c */
-void            new_draw_info(const int flags, const int pri, const object *const op, const char *const format, ...) DAI_GNUC_PRINTF(4, 5);
-void            new_info_map(const int flags, const mapstruct *const map, const int x, const int y, const
-                             int dist, const char *const format, ...) DAI_GNUC_PRINTF(6, 7);
-void            new_info_map_except(const int flags, const mapstruct *const map, const int x, const int y,
-                                    const int dist, const object *const op1, const object *const op,
-                                    const char *const format, ...) DAI_GNUC_PRINTF(8, 9);
+void            ndi(const int flags, const int pri, const object_t *const op, const char *const format, ...) DAI_GNUC_PRINTF(4, 5);
+void            ndi_map(const int flags, msp_t *msp, const int dist, const object_t *const except1, const object_t *const except2, const char *const format, ...) DAI_GNUC_PRINTF(6, 7);
 /* init.c */
 void            InitConnection(NewSocket *ns, char *str_ip);
 void            init_ericserver(void);
@@ -83,17 +79,17 @@ NewSocket		*socket_get_available(void);
 void            close_newsocket(NewSocket *ns);
 void            free_newsocket(NewSocket *ns);
 /* item.c */
-void            esrv_send_below(player *pl);
-void            esrv_send_inventory(player *pl, object *op);
-void            esrv_open_container(player *pl, object *op);
-void            esrv_close_container(player *pl);
-void            esrv_send_item(object *op);
-void            esrv_update_item(uint16 flags, object *op);
-void            esrv_del_item(object *op);
-void            esrv_send_or_del_item(object *op);
-object         *esrv_get_ob_from_count(object *who, tag_t count);
+void            esrv_send_below(player_t *pl);
+void            esrv_send_inventory(player_t *pl, object_t *op);
+void            esrv_open_container(player_t *pl, object_t *op);
+void            esrv_close_container(player_t *pl);
+void            esrv_send_item(object_t *op);
+void            esrv_update_item(uint16 flags, object_t *op);
+void            esrv_del_item(object_t *op);
+void            esrv_send_or_del_item(object_t *op);
+object_t         *esrv_get_ob_from_count(object_t *who, tag_t count);
 /* loop.c */
-void            remove_ns_dead_player(player *pl);
+void            remove_ns_dead_player(player_t *pl);
 void            doeric_server(int update, struct timeval *timeout);
 /* lowlevel.c */
 void			write_socket_buffer(NewSocket *ns);
@@ -113,21 +109,21 @@ void            initialize_command_buffer256(command_struct *cmdbuf);
 void            initialize_command_buffer1024(command_struct *cmdbuf);
 void            initialize_command_buffer4096(command_struct *cmdbuf);
 /* request.c */
-void            send_target_command(player *pl);
-void            send_spelllist_cmd(object *op, char *spellname, int mode);
-void            send_skilllist_cmd(player *pl, int snr, int mode);
-void            send_ready_skill(player *pl, shstr *name);
-void            send_golem_control(object *golem, int mode);
-void            esrv_update_stats(player *pl);
-void            esrv_new_player(player *pl, uint32 weight);
+void            send_target_command(player_t *pl);
+void            send_spelllist_cmd(object_t *op, char *spellname, int mode);
+void            send_skilllist_cmd(player_t *pl, int snr, int mode);
+void            send_ready_skill(player_t *pl, shstr_t *name);
+void            send_golem_control(object_t *golem, int mode);
+void            esrv_update_stats(player_t *pl);
+void            esrv_new_player(player_t *pl, uint32 weight);
 /* startup.c */
 void            init_srv_files(void);
 /* sounds.c */
 void            init_sounds(void);
 void            free_sounds(void);
 int             lookup_sound(int type_id, const char* soundname);
-void            play_sound_player_only(player *pl, int soundnum, int soundtype, int x, int y);
-void            play_sound_map(mapstruct *map, int x, int y, int sound_num, int sound_type);
+void            play_sound_player_only(player_t *pl, int soundnum, int soundtype, int x, int y);
+void            play_sound_map(msp_t *msp, int sound_num, int sound_type);
 /* write.c */
 char			*socket_buffer_request(NewSocket *ns, int data_len);
 sockbuf_struct	*socket_buffer_adjust(sockbuf_struct *sbuf, int len);

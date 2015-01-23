@@ -48,52 +48,51 @@ extern int      sys_nerr;
         a rune of marking
 
 */
+/* FIXME: This is probably broken. */
 
-int write_rune(object *op, int dir, int inspell, int level, char *runename)
+int write_rune(object_t *op, int dir, int inspell, int level, char *runename)
 {
-    object     *tmp;
-    archetype  *at  = NULL;
-    mapstruct  *mt;
-    char        buf[MEDIUM_BUF];
-
-    int         nx, ny;
+    archetype_t *at = NULL;
+    map_t *m;
+    sint16     x,
+               y;
+    msp_t  *msp;
+    object_t    *this,
+              *next;
+    char       buf[MEDIUM_BUF];
 
     if (!dir)
     {
         dir = 1;
     }
 
-    nx = op->x + freearr_x[dir];
-    ny = op->y + freearr_y[dir];
+    m = op->map;
+    x = op->x + OVERLAY_X(dir);
+    y = op->y + OVERLAY_Y(dir);
 
-    if (!(mt = out_of_map(op->map, &nx, &ny)))
-        return 0;
-
-    if (blocked(op, mt, nx, ny, op->terrain_flag))
+    if (msp_blocked(op, m, x, y))
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "Can't make a rune there!");
+        ndi(NDI_UNIQUE, 0, op, "Can't make a rune there!");
         return 0;
     }
 
-    for (tmp = GET_MAP_OB(mt, nx, ny); tmp != NULL; tmp = tmp->above)
-        if (tmp->type == RUNE)
-            break;
-    if (tmp)
+    msp = MSP_GET(m, x, y);
+
+    FOREACH_OBJECT_IN_MSP(this, msp, next)
     {
-#if 0
-    new_draw_info(NDI_UNIQUE, 0,op,"You only succeed in strengthening that rune.");
-    tmp->stats.hp++;
-    return 1;
-#endif
-        new_draw_info(NDI_UNIQUE, 0, op, "You can't write a rune there.");
-        return 0;
+        if (this->type == RUNE)
+        {
+            ndi(NDI_UNIQUE, 0, op, "You can't write a rune there.");
+            return 0;
+        }
     }
+
     if (inspell)
     {
         /* can't have runes of small fireball!!!  */
         if (inspell == -1)
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "You can't make a rune containing a spell you don't know.");
+            ndi(NDI_UNIQUE, 0, op, "You can't make a rune containing a spell you don't know.");
             return 0;
         }
         at = find_archetype(runename);
@@ -102,7 +101,7 @@ int write_rune(object *op, int dir, int inspell, int level, char *runename)
          * creating a rune of sword should not be allowed. */
         if (at && at->clone.type != RUNE)
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "You can't make a rune of %s", runename);
+            ndi(NDI_UNIQUE, 0, op, "You can't make a rune of %s", runename);
             return 0;
         }
         /* next it attempts to look up a rune_archetype for this spell
@@ -120,19 +119,19 @@ int write_rune(object *op, int dir, int inspell, int level, char *runename)
         }
 
         if (!at)
-            tmp = get_archetype("generic_rune");
+            this = get_archetype("generic_rune");
         else
-            tmp = arch_to_object(at);
+            this = arch_to_object(at);
 
-        tmp->stats.sp = inspell; /* the spell it contains */
+        this->stats.sp = inspell; /* the spell it contains */
 
         sprintf(buf, "You set off a rune of %s", spells[inspell].name);
-        FREE_AND_COPY_HASH(tmp->msg, buf);
+        FREE_AND_COPY_HASH(this->msg, buf);
         at = NULL;
 
 
         /*  the at=find_archetye(runename) is neccessary because
-         * tmp=get_archetype returns a singulirity, not a null,
+         * this=get_archetype returns a singulirity, not a null,
          * when it cannot find the archetype.
          * note: if some smartass
          * cast rune of marking, and gives the exact name
@@ -146,7 +145,7 @@ int write_rune(object *op, int dir, int inspell, int level, char *runename)
         char    rune[HUGE_BUF];
 
         level = 0;
-        tmp = get_archetype("rune_mark"); /* this is a rune of marking */
+        this = get_archetype("rune_mark"); /* this is a rune of marking */
         at = NULL;
         if (runename)
         {
@@ -165,19 +164,19 @@ int write_rune(object *op, int dir, int inspell, int level, char *runename)
             /* Not totally efficient, but keeps code simpler */
             strcpy(rune, "There is no message\n");
         }
-        FREE_AND_COPY_HASH(tmp->msg, rune);
+        FREE_AND_COPY_HASH(this->msg, rune);
     }
     if (at)
-        tmp = get_archetype(runename);
-    tmp->stats.Cha = op->level / 2;  /* the invisibility parameter */
-    tmp->x = nx;
-    tmp->y = ny;
-    tmp->map = op->map;
-    tmp->direction = dir;  /* where any spell will go upon detonation */
-    tmp->level = SK_level(op);  /* what level to cast the spell at */
-    if (inspell || tmp->stats.dam)
-        set_owner(tmp, op); /* runes without need no owner */
-    insert_ob_in_map(tmp, op->map, op, 0);
+        this = get_archetype(runename);
+    this->stats.Cha = op->level / 2;  /* the invisibility parameter */
+    this->x = x;
+    this->y = y;
+    this->map = op->map;
+    this->direction = dir;  /* where any spell will go upon detonation */
+    this->level = SK_level(op);  /* what level to cast the spell at */
+    if (inspell || this->stats.dam)
+        set_owner(this, op); /* runes without need no owner */
+    insert_ob_in_map(this, op->map, op, 0);
     return 1;
 }
 
@@ -189,7 +188,7 @@ int write_rune(object *op, int dir, int inspell, int level, char *runename)
  * so no need for wce.
  * all we need is dam and a attack form
  */
-void rune_attack(object *op, object *victim)
+void rune_attack(object_t *op, object_t *victim)
 {
     int dam = op->stats.dam; /* save damage */
 
@@ -218,7 +217,7 @@ void rune_attack(object *op, object *victim)
             create_treasure_list(op->randomitems, op, 0, op->level ? op->level : victim->map->difficulty, ART_CHANCE_UNSET, 0);
         if (op->inv && op->inv->type == DISEASE)
         {
-            object *disease = op->inv;
+            object_t *disease = op->inv;
             infect_object(victim, disease, 1);
             remove_ob(disease);
             check_walk_off(disease, NULL, MOVE_APPLY_VANISHED);
@@ -234,10 +233,10 @@ void rune_attack(object *op, object *victim)
     it possible for runes to attack from the inventory,
     it'll spring the trap on the victim.  */
 
-void spring_trap(object *trap, object *victim)
+void spring_trap(object_t *trap, object_t *victim)
 {
     int     spell_in_rune;
-    object *env;
+    object_t *env;
     tag_t   trap_tag    = trap->count;
 
     if (!trap->stats.hp ||      // prevents recursion
@@ -266,7 +265,7 @@ void spring_trap(object *trap, object *victim)
         return;
 
     if (victim && victim->type == PLAYER && trap->msg)
-        new_draw_info(NDI_UNIQUE, 0, victim, "%s", trap->msg);
+        ndi(NDI_UNIQUE, 0, victim, "%s", trap->msg);
 
     /* Flash an image of the trap on the map so the poor sod
     *   knows what hit him.
@@ -327,44 +326,54 @@ void spring_trap(object *trap, object *victim)
 and the level of the rune  risk flag, if true, means that there is
 a chance that the trap/rune will detonate */
 
-int dispel_rune(object *op, int dir, int risk)
+int dispel_rune(object_t *op, int dir, int risk)
 {
-    object     *tmp, *tmp2;
-    mapstruct  *m;
-    int         xt, yt, searchflag = 1;
+    map_t *m = op->map;
+    sint16     x = op->x + OVERLAY_X(dir),
+               y = op->y + OVERLAY_Y(dir);
+    msp_t  *msp = MSP_GET(m, x, y);
+    object_t    *this,
+              *next;
 
-    xt = op->x + freearr_x[dir];
-    yt = op->y + freearr_y[dir];
-    if (!(m = out_of_map(op->map, &xt, &yt)))
-        return 0;
-    for (tmp = GET_MAP_OB(m, xt, yt); tmp != NULL; tmp = tmp->above)
+    if (!msp)
     {
-        if (tmp->type == RUNE)
-            break;
-        /* now search tmp's inventory for traps */
-        for (tmp2 = tmp->inv; tmp2 != NULL; tmp2 = tmp2->below)
+        return 0;
+    }
+
+    FOREACH_OBJECT_IN_MSP(this, msp, next)
+    {
+        if (this->type != RUNE)
         {
-            if (tmp2->type == RUNE)
+            object_t *that,
+                   *next2;
+
+            FOREACH_OBJECT_IN_OBJECT(that, this, next2)
             {
-                tmp = tmp2;
-                searchflag = 0;
-                break;
+                if (that->type == RUNE)
+                {
+                    this = that;
+                    break;
+                }
             }
         }
-        if (!searchflag)
+
+        if (this->type == RUNE)
+        {
             break;
+        }
     }
 
-    if (tmp == NULL)               /*no rune there. */
+    if (this)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "There's no trap there!");
-        return 0;
+        trap_disarm(op, this, risk);
+        return 1;
     }
-    trap_disarm(op, tmp, risk);
-    return 1;
+
+    ndi(NDI_UNIQUE, 0, op, "There's no trap there!");
+    return 0;
 }
 
-int trap_see(object *op, object *trap, int level)
+int trap_see(object_t *op, object_t *trap, int level)
 {
     int     chance;
 
@@ -379,7 +388,7 @@ int trap_see(object *op, object *trap, int level)
              MAX(5,
                  ((int) ((float) (op->map->difficulty + trap->level + trap->stats.Cha - op->level) / 10.0 * 50.0))))))
     {
-        // new_draw_info(NDI_UNIQUE, 0, op, "You spot a %s (lvl %d)!", trap->name, trap->level);
+        // ndi(NDI_UNIQUE, 0, op, "You spot a %s (lvl %d)!", trap->name, trap->level);
         return 1;
     }
     return 0;
@@ -391,9 +400,9 @@ int trap_see(object *op, object *trap, int level)
  * also from detection sources - just be sure you set FLAG_IS_USED_UP in
  * your trigger functions as speed when you want start the auto destroy. MT-2003
  */
-int trap_show(object *trap, object *where)
+int trap_show(object_t *trap, object_t *where)
 {
-    object *env;
+    object_t *env;
 
     if (where == NULL)
         return 0;
@@ -408,7 +417,7 @@ int trap_show(object *trap, object *where)
      */
     env = trap->env;
     /* FIXME: Not entirely sure we really need do a full remove/insert any
-     * more, but certainly careful map_set_slayers()/update_ob() OR
+     * more, but certainly careful msp_set_slices()/update_ob() OR
      * esrv_send_item(), depending on if trap->map or trap->env, is needed.
      *
      *
@@ -416,7 +425,7 @@ int trap_show(object *trap, object *where)
     remove_ob(trap); /* we must remove and reinsert it.. */
     CLEAR_FLAG(trap, FLAG_SYS_OBJECT);
     CLEAR_MULTI_FLAG(trap, FLAG_IS_INVISIBLE);
-    trap->layer = 4;
+    trap->layer = MSP_SLAYER_ITEMB;
     trap->stats.Cha = 1; // make it visible
 
     if (env && env->type != PLAYER && env->type != MONSTER && env->type != LOCKED_DOOR && !QUERY_FLAG(env, FLAG_NO_PASS))
@@ -437,9 +446,9 @@ int trap_show(object *trap, object *where)
     return 1;
 }
 
-int trap_disarm(object *disarmer, object *trap, int risk)
+int trap_disarm(object_t *disarmer, object_t *trap, int risk)
 {
-    object *env             = trap->env;
+    object_t *env             = trap->env;
     int     trapworth;  /* need to compute the experience worth of the trap
                            before we kill it */
     int     disarmer_level  = SK_level(disarmer);
@@ -451,7 +460,7 @@ int trap_disarm(object *disarmer, object *trap, int risk)
     if ((trap->level <= disarmer_level && (RANDOM() % 10))
      || !(random_roll(0, (MAX(2, MIN(20, trap->level - disarmer_level + 5 - disarmer->stats.Dex / 2)) - 1))))
     {
-        new_draw_info(NDI_UNIQUE, 0, disarmer, "You successfuly remove the %s (lvl %d)!", trap->name, trap->level);
+        ndi(NDI_UNIQUE, 0, disarmer, "You successfuly remove the %s (lvl %d)!", trap->name, trap->level);
         remove_ob(trap);
         check_walk_off(trap, NULL, MOVE_APPLY_VANISHED);
         set_traped_flag(env);
@@ -465,13 +474,13 @@ int trap_disarm(object *disarmer, object *trap, int risk)
     }
     else
     {
-        new_draw_info(NDI_UNIQUE, 0, disarmer, "You fail to remove the %s (lvl %d).", trap->name, trap->level);
+        ndi(NDI_UNIQUE, 0, disarmer, "You fail to remove the %s (lvl %d).", trap->name, trap->level);
         if ((trap->level > disarmer_level * 1.4f || (RANDOM() % 3)))
         {
             if (!(random_roll(0, (MAX(2, disarmer_level - trap->level + disarmer->stats.Dex / 2 - 6)) - 1))
              && risk)
             {
-                new_draw_info(NDI_UNIQUE, 0, disarmer, "In fact, you set it off!");
+                ndi(NDI_UNIQUE, 0, disarmer, "In fact, you set it off!");
                 spring_trap(trap, disarmer);
             }
         }
@@ -483,7 +492,7 @@ int trap_disarm(object *disarmer, object *trap, int risk)
 default traps are too strong for wimpy level 1 players, and
 unthreatening to anyone of high level */
 
-void trap_adjust(object *trap, int difficulty)
+void trap_adjust(object_t *trap, int difficulty)
 {
     int off;
 

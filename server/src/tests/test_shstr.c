@@ -44,7 +44,7 @@ static void teardown()
 }
 
 /* Test that we can clear the table */
-START_TEST (shstr_init)
+START_TEST (shstr_t_init)
 {
     int entries, refs, links;
     ss_get_totals(&entries, &refs, &links);
@@ -53,7 +53,7 @@ START_TEST (shstr_init)
 END_TEST
 
 /* Test that strings can be inserted and are shared */
-START_TEST (shstr_add_string)
+START_TEST (shstr_t_add_string)
 {
     int entries, refs, links;
     const char *a, *b;
@@ -75,7 +75,7 @@ START_TEST (shstr_add_string)
 END_TEST
 
 /* Test that add_lstring really heeds the length parameter */
-START_TEST (shstr_add_lstring)
+START_TEST (shstr_t_add_lstring)
 {
     int entries, refs, links;
     const char *a, *b;
@@ -97,7 +97,7 @@ START_TEST (shstr_add_lstring)
 END_TEST
 
 /* Test that query_refcount works */
-START_TEST (shstr_query_refcount)
+START_TEST (shstr_t_query_refcount)
 {
     const char *a, *b;
 
@@ -114,7 +114,7 @@ START_TEST (shstr_query_refcount)
 END_TEST
 
 /* Test that find_string works */
-START_TEST (shstr_find_string)
+START_TEST (shstr_t_find_string)
 {
     const char *a, *b;
 
@@ -127,7 +127,7 @@ START_TEST (shstr_find_string)
 END_TEST
 
 /* Test that add_refcount works */
-START_TEST (shstr_add_refcount)
+START_TEST (shstr_t_add_refcount)
 {
     int entries, refs, links;
     const char *a, *b;
@@ -145,7 +145,7 @@ START_TEST (shstr_add_refcount)
 END_TEST
 
 /* Test that free_string_shared works */
-START_TEST (shstr_free_string_shared)
+START_TEST (shstr_t_free_string_shared)
 {
     int entries, refs, links;
     const char *a, *b;

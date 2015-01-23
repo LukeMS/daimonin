@@ -24,7 +24,7 @@
 #include <global.h>
 #include "../3rdparty/zlib/zlib.h"
 
-player_arch_template        player_arch_list[MAX_PLAYER_ARCH];
+player_template_t player_template[MAX_PLAYER_ARCH];
 
 /* as long the server don't have a autoupdate/login server
  * as frontend we must serve our depending client files self.
@@ -103,7 +103,7 @@ static void CreateClientSkills(void)
 
     for (i = 0; i < NROFSKILLS; i++)
     {
-        object *skill = &skills[i]->clone;
+        object_t *skill = &skills[i]->clone;
         char   *start = (char *)skill->msg;
         int j;
 
@@ -183,9 +183,9 @@ static void CreateClientSkills(void)
 /* get the /lib/settings default file and create the
  * /data/client_settings with it.
  */
-static void CreateClientSettings(void)
+static void CreateClientsettings_t(void)
 {
-    archetype   *p_arch;
+    archetype_t   *p_arch;
     char        buf[LARGE_BUF], arch_name[TINY_BUF];
     int         i, line=0, id, race=0, gender = 0;
     FILE        *fset_default, *fset_create;
@@ -193,7 +193,7 @@ static void CreateClientSettings(void)
     LOG(llevSystem, "Creating %s/client_settings...\n", settings.localdir);
 
     /* used by create_player() as default template */
-    memset(player_arch_list, 0 , sizeof(player_arch_template));
+    memset(player_template, 0 , sizeof(player_template_t));
 
     /* open default */
     sprintf(buf, "%s/client_settings", settings.datadir);
@@ -234,15 +234,15 @@ static void CreateClientSettings(void)
                         /* global error will stop the server */
                         LOG(llevError, "Error: invalid player arch in client_settings race %d line %d!\n", race, line);
                     }
-                    player_arch_list[race].p_arch[gender++] = p_arch; /* we just copy the clone here later */
+                    player_template[race].p_arch[gender++] = p_arch; /* we just copy the clone here later */
                 }
             }
             else if (line == 6) /* thats the default start values */
             {
                 sscanf(buf, "%d %d %d %d %d %d %d\n",
-                &player_arch_list[race].str, &player_arch_list[race].dex,
-                &player_arch_list[race].con, &player_arch_list[race].intel,
-                &player_arch_list[race].wis, &player_arch_list[race].pow, &player_arch_list[race].cha);
+                &player_template[race].str, &player_template[race].dex,
+                &player_template[race].con, &player_template[race].intel,
+                &player_template[race].wis, &player_template[race].pow, &player_template[race].cha);
                 race++;
                 gender = 0;
             }
@@ -260,13 +260,13 @@ static void CreateClientSettings(void)
     LOG(llevInfo, "Loaded %d player race templates:\n", settings.player_races);
     for(line=0; line < race;line++)
         LOG(llevInfo, "%s %s %s %s stats: %d %d %d %d %d %d %d\n",
-        player_arch_list[line].p_arch[0]?player_arch_list[line].p_arch[0]->clone.name:"NULL",
-        player_arch_list[line].p_arch[1]?player_arch_list[line].p_arch[1]->clone.name:"NULL",
-        player_arch_list[line].p_arch[2]?player_arch_list[line].p_arch[2]->clone.name:"NULL",
-        player_arch_list[line].p_arch[3]?player_arch_list[line].p_arch[3]->clone.name:"NULL",
-        player_arch_list[line].str, player_arch_list[line].dex,
-        player_arch_list[line].con, player_arch_list[line].intel, player_arch_list[line].wis,
-        player_arch_list[line].pow, player_arch_list[line].cha);
+        player_template[line].p_arch[0]?player_template[line].p_arch[0]->clone.name:"NULL",
+        player_template[line].p_arch[1]?player_template[line].p_arch[1]->clone.name:"NULL",
+        player_template[line].p_arch[2]?player_template[line].p_arch[2]->clone.name:"NULL",
+        player_template[line].p_arch[3]?player_template[line].p_arch[3]->clone.name:"NULL",
+        player_template[line].str, player_template[line].dex,
+        player_template[line].con, player_template[line].intel, player_template[line].wis,
+        player_template[line].pow, player_template[line].cha);
     LOG(llevInfo, "done.\n");
 
     /* now we add the server specific date
@@ -309,7 +309,7 @@ void init_srv_files(void)
     sprintf(buf, "%s/client_spells", settings.datadir);
     LoadSrvFile(buf, SRV_CLIENT_SPELLS, DATA_CMD_SPELL_LIST);
 
-    CreateClientSettings();
+    CreateClientsettings_t();
     sprintf(buf, "%s/client_settings", settings.localdir);
     LoadSrvFile(buf, SRV_CLIENT_SETTINGS, DATA_CMD_SETTINGS_LIST);
 }

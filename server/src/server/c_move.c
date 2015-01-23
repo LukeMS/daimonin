@@ -25,21 +25,13 @@
 
 #include <global.h>
 
-static int push_internal(object *op, char *params, int dir)
+int command_push_object (object_t *op, char *params)
 {
-    push_roll_object(op, dir, TRUE);
-
+    push_roll_object(op, op->direction, 1);
     return 0;
 }
 
-int command_push_object (object *op, char *params)
-{
-    sint8 dir = op->facing;
-
-    return push_internal(op, params, dir);
-}
-
-int command_turn_right (object *op, char *params)
+int command_turn_right (object_t *op, char *params)
 {
     sint8 dir = absdir(op->facing + 1);
 
@@ -48,7 +40,7 @@ int command_turn_right (object *op, char *params)
     return 0;
 }
 
-int command_turn_left (object *op, char *params)
+int command_turn_left (object_t *op, char *params)
 {
     sint8 dir = absdir(op->facing - 1);
 

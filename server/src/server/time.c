@@ -30,16 +30,20 @@
 
 #include <global.h>
 
+static object_t *CheckForDuplicate(object_t *what, msp_t *msp);
+
 /* search op for the needed key to open door.
  * This function does really not more give back a useable key ptr
  * or NULL - it don't open, delete or doing any other action.
  */
-object * find_key(object *op, object *door)
+object_t * find_key(object_t *op, object_t *door)
 {
-    object *tmp, *key;
+    object_t *tmp,
+           *next,
+           *key;
 
     /* First, lets try to find a key in the top level inventory */
-    for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
+    FOREACH_OBJECT_IN_OBJECT(tmp, op, next)
     {
         if (tmp->type == SPECIAL_KEY && tmp->slaying == door->slaying)
             return tmp;
@@ -60,11 +64,12 @@ object * find_key(object *op, object *door)
  * I don't want to mess with find_key.
  * We only need to look in the top level inventory.
  */
-object * find_force(object *op, object *door)
+object_t * find_force(object_t *op, object_t *door)
 {
-	object *tmp;
+    object_t *tmp,
+           *next;
 
-    for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
+    FOREACH_OBJECT_IN_OBJECT(tmp, op, next)
     {
         if ((tmp->type == FORCE) && (tmp->slaying == door->slaying))
             return tmp;
@@ -76,30 +81,35 @@ object * find_force(object *op, object *door)
  * which will auto open/close and/or need a special key. It is
  * used from npc, mobs and players and use the remove_doorX()
  * functions below.
+ * Calling function must QUERY_FLAG(op, FLAG_CAN_OPEN_DOOR).
  * 0:door is NOT opened and not possible to open from op. 1: door was opened.
  * op: object which will open a door on map m, position x,y
  * mode: 0 - check but don't open the door. 1: check and open the door when possible
  */
-int open_door(object *op, mapstruct *m, int x, int y, int mode)
+int open_door(object_t *op, msp_t *msp, int mode)
 {
-    object *tmp, *key = NULL;
-    object *force = NULL;
-
-    /* Make sure a monster/npc actually can open doors */
-    if (op->type != PLAYER && !QUERY_FLAG(op, FLAG_CAN_OPEN_DOOR))
-        return 0;
+    object_t *this,
+           *next,
+           *key = NULL,
+           *force = NULL;
 
     /* Search for door across all layers. */
-    for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above)
+    FOREACH_OBJECT_IN_MSP(this, msp, next)
     {
-        if (tmp->type == LOCKED_DOOR)
+        if (this->type == LOCKED_DOOR)
         {
-            if (tmp->slaying) /* door needs a key? */
+            if (this->slaying) /* door needs a key? */
             {
-                if (!(key = find_key(op, tmp)) && !(force = find_force(op, tmp)))
+                if (!(key = find_key(op, this)) &&
+                    !(force = find_force(op, this)))
                 {
-                    if (op->type == PLAYER && mode)
-                        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "%s", tmp->msg);
+                    if (op->type == PLAYER &&
+                        mode)
+                    {
+                        ndi(NDI_UNIQUE | NDI_NAVY, 0, op, "%s",
+                            this->msg);
+                    }
+
                     return 0; /* we can't open it! */
                 }
             }
@@ -107,17 +117,20 @@ int open_door(object *op, mapstruct *m, int x, int y, int mode)
             /* are we here, the door can be opened 100% */
             if (mode) /* really opening the door? */
             {
-                remove_door2(tmp, op);
+                remove_door2(this, op);
+
                 if (op->type == PLAYER)
                 {
                     if (key)
-                        new_draw_info(NDI_UNIQUE, NDI_BROWN, op, "You open the door with %s.",
+                    {
+                        ndi(NDI_UNIQUE, NDI_BROWN, op, "You open the door with %s.",
                             QUERY_SHORT_NAME(key, op));
+                    }
 
                     /* Remove force message - it's usually inappropriate to say anything
                      * when opening with a hidden marker (one-way doors for example) */
                     /* else if (force)
-                     *    new_draw_info(NDI_UNIQUE, NDI_BROWN, op, "You force the door open.");
+                     *    ndi(NDI_UNIQUE, NDI_BROWN, op, "You force the door open.");
                      */
                 }
             }
@@ -126,12 +139,14 @@ int open_door(object *op, mapstruct *m, int x, int y, int mode)
         }
     }
 
+#if 0
     /* we should not be here... We have a misplaced door_closed flag
      * or a door on a wrong layer... both is not good, so drop a bug msg.
      */
     LOG(llevSystem,
-        "BUG: open_door() - door on wrong layer or misplaced P_DOOR_CLOSED flag - map:%s (%d,%d) (op: %s)\n", m->path,
+        "BUG: open_door() - door on wrong layer or misplaced MSP_FLAG_DOOR_CLOSED flag - map:%s (%d,%d) (op: %s)\n", m->path,
         x, y, STRING_OBJ_NAME(op));
+#endif
     return 0;
 }
 
@@ -154,12 +169,12 @@ int open_door(object *op, mapstruct *m, int x, int y, int mode)
  * i don't want this cascading - but its a nice tricky map manipulation trick which
  * opens some fine fun or map makers.
  */
-void remove_door(object *op)
+void remove_door(object_t *op)
 {
     int     i;
-    object *tmp;
+    object_t *tmp;
     for (i = 1; i < 9; i += 2)
-        if ((tmp = present(DOOR, op->map, op->x + freearr_x[i], op->y + freearr_y[i])) != NULL)
+        if ((tmp = present(DOOR, op->map, op->x + OVERLAY_X(i), op->y + OVERLAY_Y(i))) != NULL)
         {
             tmp->speed = 0.1f;
             update_ob_speed(tmp);
@@ -176,19 +191,17 @@ void remove_door(object *op)
         insert_ob_in_map(tmp, op->map, op, 0);
     }
     if (op->sub_type1 == ST1_DOOR_NORMAL)
-        play_sound_map(op->map, op->x, op->y, SOUND_OPEN_DOOR, SOUND_NORMAL);
+        play_sound_map(MSP_KNOWN(op), SOUND_OPEN_DOOR, SOUND_NORMAL);
     remove_ob(op);
     check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
 }
 
-void remove_door2(object *op, object *opener)
+void remove_door2(object_t *op, object_t *opener)
 {
-    object *tmp, *tmp2;
-
     /* - NO cascading for locked doors!
     int i;
     for(i=1;i<9;i+=2) {
-      tmp=present(LOCKED_DOOR,op->map,op->x+freearr_x[i],op->y+freearr_y[i]);
+      tmp=present(LOCKED_DOOR,op->map,op->x+OVERLAY_X(i),op->y+OVERLAY_Y(i));
       if(tmp && tmp->slaying == op->slaying)
     {
         tmp->speed = 0.1f;
@@ -204,7 +217,8 @@ void remove_door2(object *op, object *opener)
 
     if (op->other_arch) /* if set, just exchange and delete old door */
     {
-        tmp = arch_to_object(op->other_arch);
+        object_t *tmp = arch_to_object(op->other_arch);
+
         tmp->state = 0; /* 0= closed, 1= opened */
         tmp->x = op->x;tmp->y = op->y;tmp->map = op->map;tmp->level = op->level;
         tmp->direction = op->direction;
@@ -212,22 +226,27 @@ void remove_door2(object *op, object *opener)
             SET_ANIMATION(tmp, (NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * tmp->direction + tmp->state);
         insert_ob_in_map(tmp, op->map, op, 0);
         if (op->sub_type1 == ST1_DOOR_NORMAL)
-            play_sound_map(op->map, op->x, op->y, SOUND_OPEN_DOOR, SOUND_NORMAL);
+            play_sound_map(MSP_KNOWN(op), SOUND_OPEN_DOOR, SOUND_NORMAL);
         remove_ob(op);
         check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
     }
     else if (!op->last_eat) /* if set, we are have opened a closed door - now handle autoclose */
     {
+        object_t *this,
+               *next;
+
         remove_ob(op); /* to trigger all the updates/changes on map and for player, we
                          * remove and reinsert it. a bit overhead but its secure and simple
                          */
         check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
-        for (tmp2 = op->inv; tmp2; tmp2 = tmp2->below)
+        FOREACH_OBJECT_IN_OBJECT(this, op, next)
         {
-            if (tmp2 && tmp2->type == RUNE && tmp2->level)
-                spring_trap(tmp2, opener);
+            if (this->type == RUNE &&
+                this->level)
+            {
+                spring_trap(this, opener);
+            }
         }
-
 
         op->last_eat = 1; /* mark this door as "its open" */
         op->speed = 0.1f;       /* put it on active list, so it will close automatically */
@@ -243,13 +262,13 @@ void remove_door2(object *op, object *opener)
         if (QUERY_FLAG(op, FLAG_IS_TURNABLE) || QUERY_FLAG(op, FLAG_ANIMATE))
             SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + op->state);
         if (op->sub_type1 == ST1_DOOR_NORMAL)
-            play_sound_map(op->map, op->x, op->y, SOUND_OPEN_DOOR, SOUND_NORMAL);
+            play_sound_map(MSP_KNOWN(op), SOUND_OPEN_DOOR, SOUND_NORMAL);
         insert_ob_in_map(op, op->map, op, 0);
     }
 }
 
 /* thats called from time.c - here we handle autoclosing doors */
-void remove_door3(object *op)
+void remove_door3(object_t *op)
 {
     if (!op->last_eat) /* thats a bug - active speed but not marked as active */
     {
@@ -276,8 +295,7 @@ void remove_door3(object *op)
      * IF it is blocked - then restart a new "is open" phase.
      */
 
-    /* her we can use or new & shiny blocked() - we simply check the given flags */
-    if (blocked(NULL, op->map, op->x, op->y, TERRAIN_ALL) & (P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER))
+    if (msp_blocked(NULL, op->map, op->x, op->y) & (MSP_FLAG_NO_PASS | MSP_FLAG_ALIVE | MSP_FLAG_PLAYER))
     {
         /* let it open one more round */
         op->last_sp = op->stats.sp; /* reinit "open" counter */
@@ -299,49 +317,12 @@ void remove_door3(object *op)
         if (QUERY_FLAG(op, FLAG_IS_TURNABLE) || QUERY_FLAG(op, FLAG_ANIMATE))
             SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + op->state);
         if (op->sub_type1 == ST1_DOOR_NORMAL)
-            play_sound_map(op->map, op->x, op->y, SOUND_DOOR_CLOSE, SOUND_NORMAL);
+            play_sound_map(MSP_KNOWN(op), SOUND_DOOR_CLOSE, SOUND_NORMAL);
         insert_ob_in_map(op, op->map, op, 0);
     }
 }
 
-void generate_monster(object *gen)
-{
-    int         i;
-    object     *op, *head = NULL, *prev = NULL;
-    archetype  *at  = gen->other_arch;
-
-    if (GENERATE_SPEED(gen) && random_roll(0, GENERATE_SPEED(gen) - 1))
-        return;
-    if (gen->other_arch == NULL)
-    {
-        LOG(llevBug, "BUG: Generator without other_arch: %s\n", STRING_OBJ_NAME(gen));
-        return;
-    }
-    i = find_free_spot(at, NULL, gen->map, gen->x, gen->y, 0, 1, SIZEOFFREE1 + 1);
-    if (i == -1)
-        return;
-    while (at != NULL)
-    {
-        op = arch_to_object(at);
-        op->x = gen->x + freearr_x[i] + at->clone.x;
-        op->y = gen->y + freearr_y[i] + at->clone.y;
-        if (head != NULL)
-            op->head = head,prev->more = op;
-        if (random_roll(0, 9))
-            generate_artifact(op, gen->map->difficulty, 0, 99);
-        if (!insert_ob_in_map(op, gen->map, gen, 0))
-            return;
-        if (op->randomitems != NULL)
-            create_treasure_list(op->randomitems, op, GT_APPLY, (op->level ? op->level : gen->map->difficulty),
-                                 ART_CHANCE_UNSET, 0);
-        if (head == NULL)
-            head = op;
-        prev = op;
-        at = at->more;
-    }
-}
-
-void regenerate_rod(object *rod)
+void regenerate_rod(object_t *rod)
 {
     if (++rod->stats.food > rod->stats.hp / 10 || rod->type == HORN)
     {
@@ -361,9 +342,9 @@ void regenerate_rod(object *rod)
  * the removals then calc/send any messages in one.
  *
  * -- Smacy 20140408 */
-void remove_force(object *op)
+void remove_force(object_t *op)
 {
-    object *env = op->env;
+    object_t *env = op->env;
 
     if (!env)
     {
@@ -381,111 +362,111 @@ void remove_force(object *op)
         switch (op->sub_type1)
         {
             case ST1_FORCE_DEPLETE:
-                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x, env->y, MAP_INFO_NORMAL, env, env, "%s recovers depleted stats.",
+                ndi_map(NDI_UNIQUE | NDI_GREY, MSP_KNOWN(env), MAP_INFO_NORMAL, env, NULL, "%s recovers depleted stats.",
                     QUERY_SHORT_NAME(env, NULL));
 
                 if (env->type == PLAYER)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, env, "You recover depleted stats!");
+                    ndi(NDI_UNIQUE, 0, env, "You recover depleted stats!");
                 }
 
                 break;
 
             case ST1_FORCE_DRAIN:
-                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x, env->y, MAP_INFO_NORMAL, env, env, "%s recovers drained levels.",
+                ndi_map(NDI_UNIQUE | NDI_GREY, MSP_KNOWN(env), MAP_INFO_NORMAL, env, NULL, "%s recovers drained levels.",
                     QUERY_SHORT_NAME(env, NULL));
 
                 if (env->type == PLAYER)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, env, "You recover drained levels!");
+                    ndi(NDI_UNIQUE, 0, env, "You recover drained levels!");
                 }
 
                 break;
 
             case ST1_FORCE_SLOWED:
-                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x, env->y, MAP_INFO_NORMAL, env, env, "%s suddenly moves faster.",
+                ndi_map(NDI_UNIQUE | NDI_GREY, MSP_KNOWN(env), MAP_INFO_NORMAL, env, NULL, "%s suddenly moves faster.",
                     QUERY_SHORT_NAME(env, NULL));
 
                 if (env->type == PLAYER)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, env, "The world suddenly moves slower!");
+                    ndi(NDI_UNIQUE, 0, env, "The world suddenly moves slower!");
                 }
 
                 break;
 
             case ST1_FORCE_FEAR:
-                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x, env->y, MAP_INFO_NORMAL, env, env, "%s suddenly looks braver.",
+                ndi_map(NDI_UNIQUE | NDI_GREY, MSP_KNOWN(env), MAP_INFO_NORMAL, env, NULL, "%s suddenly looks braver.",
                     QUERY_SHORT_NAME(env, NULL));
 
                 if (env->type == PLAYER)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, env, "You suddenly feel braver!");
+                    ndi(NDI_UNIQUE, 0, env, "You suddenly feel braver!");
                 }
 
                 break;
 
             case ST1_FORCE_SNARE:
-                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x, env->y, MAP_INFO_NORMAL, env, env, "%s suddenly walks faster.",
+                ndi_map(NDI_UNIQUE | NDI_GREY, MSP_KNOWN(env), MAP_INFO_NORMAL, env, NULL, "%s suddenly walks faster.",
                     QUERY_SHORT_NAME(env, NULL));
 
                 if (env->type == PLAYER)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, env, "You suddenly walk faster!");
+                    ndi(NDI_UNIQUE, 0, env, "You suddenly walk faster!");
                 }
 
                 break;
 
             case ST1_FORCE_PARALYZE:
-                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x, env->y, MAP_INFO_NORMAL, env, env, "%s suddenly moves again.",
+                ndi_map(NDI_UNIQUE | NDI_GREY, MSP_KNOWN(env), MAP_INFO_NORMAL, env, NULL, "%s suddenly moves again.",
                     QUERY_SHORT_NAME(env, NULL));
 
                 if (env->type == PLAYER)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, env, "You suddenly can move again!");
+                    ndi(NDI_UNIQUE, 0, env, "You suddenly can move again!");
                 }
 
                 break;
 
             case ST1_FORCE_CONFUSED:
-                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x, env->y, MAP_INFO_NORMAL, env, env, "%s suddenly regain his senses.",
+                ndi_map(NDI_UNIQUE | NDI_GREY, MSP_KNOWN(env), MAP_INFO_NORMAL, env, NULL, "%s suddenly regain his senses.",
                     QUERY_SHORT_NAME(env, NULL));
 
                 if (env->type == PLAYER)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, env, "You suddenly regain your senses!");
+                    ndi(NDI_UNIQUE, 0, env, "You suddenly regain your senses!");
                 }
 
                 break;
 
             case ST1_FORCE_BLIND:
-                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x, env->y, MAP_INFO_NORMAL, env, env, "%s suddenly can see again.",
+                ndi_map(NDI_UNIQUE | NDI_GREY, MSP_KNOWN(env), MAP_INFO_NORMAL, env, NULL, "%s suddenly can see again.",
                     QUERY_SHORT_NAME(env, NULL));
 
                 if (env->type == PLAYER)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, env, "You suddenly can see again!");
+                    ndi(NDI_UNIQUE, 0, env, "You suddenly can see again!");
                 }
 
                 break;
 
             case ST1_FORCE_POISON:
-                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x, env->y, MAP_INFO_NORMAL, env, env, "%s's body seems cleansed.",
+                ndi_map(NDI_UNIQUE | NDI_GREY, MSP_KNOWN(env), MAP_INFO_NORMAL, env, NULL, "%s's body seems cleansed.",
                     QUERY_SHORT_NAME(env, NULL));
 
                 if (env->type == PLAYER)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, env, "Your body seems cleansed!");
+                    ndi(NDI_UNIQUE, 0, env, "Your body seems cleansed!");
                 }
 
                 break;
 
             case ST1_FORCE_DEATHSICK:
-                new_info_map_except(NDI_UNIQUE | NDI_GREY, env->map, env->x, env->y, MAP_INFO_NORMAL, env, env, "%s seems to no longer suffer from death sickness.",
+                ndi_map(NDI_UNIQUE | NDI_GREY, MSP_KNOWN(env), MAP_INFO_NORMAL, env, NULL, "%s seems to no longer suffer from death sickness.",
                     QUERY_SHORT_NAME(env, NULL));
 
                 if (env->type == PLAYER)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, env, "You no longer suffer from death sickness!");
+                    ndi(NDI_UNIQUE, 0, env, "You no longer suffer from death sickness!");
                 }
 
                 break;
@@ -507,9 +488,9 @@ void remove_force(object *op)
     check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
 }
 
-void poison_more(object *op)
+void poison_more(object_t *op)
 {
-    object     *tmp;
+    object_t     *tmp;
     if (op->env == NULL || !IS_LIVE(op->env) || op->env->stats.hp < 0)
     {
         remove_ob(op);
@@ -525,7 +506,7 @@ void poison_more(object *op)
         {
             CLEAR_FLAG(op, FLAG_APPLIED);
             FIX_PLAYER(op->env ,"poison more");
-            new_draw_info(NDI_UNIQUE, 0, op->env, "You feel much better now.");
+            ndi(NDI_UNIQUE, 0, op->env, "You feel much better now.");
         }
         remove_ob(op);
         check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
@@ -546,7 +527,7 @@ void poison_more(object *op)
             return;
         }
         op->env->stats.food--;
-        new_draw_info(NDI_UNIQUE, 0, op->env, "You feel very sick...");
+        ndi(NDI_UNIQUE, 0, op->env, "You feel very sick...");
     }
 
     damage_ob(op->env, op->stats.dam, op, ENV_ATTACK_CHECK);
@@ -570,53 +551,65 @@ void poison_more(object *op)
  * food:         1=gate is temporary going down after crushing something
  * maxsp:        1=gate is reversed, 0=gate is normal
  */
-void move_gate(object *op)
+void move_gate(object_t *op)
 {
-    int     update  = UP_OBJ_FACE; /* default update is only face */
-    int     reached_end = 0;
+    int n = NUM_ANIMATIONS(op) / NUM_FACINGS(op);
+    int update  = UP_OBJ_FACE; /* default update is only face */
+    int reached_end = 0;
 
-    if (op->stats.wc < 0 || (int) op->stats.wc >= (NUM_ANIMATIONS(op) / NUM_FACINGS(op)))
+    if (op->stats.wc < 0 ||
+        (int)op->stats.wc >= n)
     {
         dump_object(op);
-        LOG(llevBug, "BUG: Gate error: animation was %d, max=%d\n:%s\n", op->stats.wc,
-            (NUM_ANIMATIONS(op) / NUM_FACINGS(op)), errmsg);
+        LOG(llevBug, "BUG:i: %s/move_gate(): animation was %d, max=%d\n:%s\n",
+            __FILE__, op->stats.wc, n, errmsg);
         op->stats.wc = 0;
     }
 
     /* Check for crushing when closing the gate */
-    if(op->weight_limit == 0 && (int) op->stats.wc >= (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) / 2)
+    if(op->weight_limit == 0 &&
+       (int)op->stats.wc >= n / 2)
     {
-        MapSpace *msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
-        object *tmp;
+        map_t *m = op->map;
+        msp_t  *msp = MSP_KNOWN(op);
+        object_t    *this,
+                  *next;
 
-        for (tmp = GET_MAP_SPACE_FIRST(msp); tmp; tmp = tmp->above)
+        FOREACH_OBJECT_IN_MSP(this, msp, next)
         {
-            if (IS_LIVE(tmp))
+            if (IS_LIVE(this))
             {
-                int dam = (op->level > 0) ? op->level : op->map->difficulty;
+                int dam = (op->level > 0) ? op->level : MAP_DIFFICULTY(m);
 
-                dam = dam * 3 + (tmp->level - dam) + 1;
-                damage_ob(tmp, dam, op, ENV_ATTACK_CHECK);
-                if (tmp->type == PLAYER)
-                    new_draw_info(NDI_UNIQUE, 0, tmp, "You are crushed by %s!",
-                        query_name(op, tmp, ARTICLE_DEFINITE, 0));
+                dam = dam * 3 + (this->level - dam) + 1;
+                damage_ob(this, dam, op, ENV_ATTACK_CHECK);
+
+                if (this->type == PLAYER)
+                {
+                    ndi(NDI_UNIQUE, 0, this, "You are crushed by %s!",
+                        query_name(op, this, ARTICLE_DEFINITE, 0));
+                }
             }
 
             /* If the object is alive, or the object either can
              * be picked up or the object rolls, move the object
              * off the gate. */
-            if (op->map == tmp->map && (IS_LIVE(tmp) || !QUERY_FLAG(tmp, FLAG_NO_PICK) || QUERY_FLAG(tmp, FLAG_CAN_ROLL)))
+            if (m == this->map &&
+                (IS_LIVE(this) ||
+                 !QUERY_FLAG(this, FLAG_NO_PICK) ||
+                 QUERY_FLAG(this, FLAG_CAN_ROLL)))
             {
                 /* If it has speed, it should move itself, otherwise: */
-                int i   = find_free_spot(tmp->arch, tmp, op->map, op->x, op->y, 0, 1, SIZEOFFREE1 + 1);
+                sint8 i = overlay_find_free(msp, this, 1, OVERLAY_3X3, 0);
 
                 /* If there is a free spot, move the object someplace */
                 if (i != -1)
                 {
-                    remove_ob(tmp);
-                    check_walk_off(tmp, NULL, MOVE_APPLY_VANISHED);
-                    tmp->x += freearr_x[i],tmp->y += freearr_y[i];
-                    insert_ob_in_map(tmp, op->map, op, 0);
+                    remove_ob(this);
+                    check_walk_off(this, NULL, MOVE_APPLY_VANISHED);
+                    this->x += OVERLAY_X(i);
+                    this->y += OVERLAY_Y(i);
+                    insert_ob_in_map(this, m, op, 0);
                 }
 
                 break; /* Only remove one object for now... */
@@ -624,9 +617,11 @@ void move_gate(object *op)
         }
 
         /* Still anything blocking? */
-        for(tmp = GET_MAP_SPACE_FIRST(msp); tmp; tmp = tmp->above)
+        FOREACH_OBJECT_IN_MSP(this, msp, next)
         {
-            if (IS_LIVE(tmp) || !QUERY_FLAG(tmp, FLAG_NO_PICK) || QUERY_FLAG(tmp, FLAG_CAN_ROLL))
+            if (IS_LIVE(this) ||
+                !QUERY_FLAG(this, FLAG_NO_PICK) ||
+                QUERY_FLAG(this, FLAG_CAN_ROLL))
             {
                 op->stats.food = 1;
                 break;
@@ -654,9 +649,9 @@ void move_gate(object *op)
     }
     else
     {
-        if ((int)++op->stats.wc >= ((NUM_ANIMATIONS(op) / NUM_FACINGS(op))))
+        if ((int)++op->stats.wc >= n)
         {
-            op->stats.wc = (signed char) (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) - 1;
+            op->stats.wc = (signed char)n - 1;
             reached_end = 1;
         }
     }
@@ -665,7 +660,7 @@ void move_gate(object *op)
      * if we don't change the object settings here, just change the face but
      * don't rebuild the flag tiles.
      */
-    if ((int) op->stats.wc < ((NUM_ANIMATIONS(op) / NUM_FACINGS(op)) / 2 + 1))
+    if ((int)op->stats.wc < (n / 2 + 1))
     {
         /* Less than half open. Always make passable + non-block view */
         if (QUERY_FLAG(op, FLAG_NO_PASS))
@@ -700,15 +695,18 @@ void move_gate(object *op)
     if(reached_end)
     {
         if(op->type == TIMED_GATE)
+        {
             op->weight_limit = !op->weight_limit;
+        }
         else
         {
             op->speed = 0;
             update_ob_speed(op); /* Reached top, let's stop */
         }
     }
-    op->state = (uint8) op->stats.wc;
-    SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + op->state);
+
+    op->state = (uint8)op->stats.wc;
+    SET_ANIMATION(op, n * op->direction + op->state);
     update_object(op, update);
 }
 
@@ -717,7 +715,7 @@ void move_gate(object *op)
  *  maxhp   : initial value for hp
  *  sp      : 1 = triggered, 0 = sleeping or resetting
  */
-void move_timed_gate(object *op)
+void move_timed_gate(object_t *op)
 {
     sint32 v = op->weight_limit;
 
@@ -747,70 +745,70 @@ void move_timed_gate(object *op)
  *   speed:      frequency of 'glances'
  *   connected:  connected value of detector
  *  sp:         1 if detection sets buttons
- *              -1 if detection unsets buttons
- */
-
-void move_detector(object *op)
+ *              -1 if detection unsets buttons */
+void move_detector(object_t *op)
 {
-    object *tmp;
-    MapSpace *msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
-    int     last    = op->weight_limit;
-    int     detected;
-    detected = 0;
+    msp_t  *msp = MSP_KNOWN(op);
+    object_t    *this,
+              *next;
+    int        last = op->weight_limit;
+    int        detected = 0;
 
-    for (tmp = GET_MAP_SPACE_FIRST(msp); tmp && !detected; tmp = tmp->above)
+    FOREACH_OBJECT_IN_MSP(this, msp, next)
     {
-        object *tmp2;
         if (op->stats.hp)
         {
-            for (tmp2 = tmp->inv; tmp2; tmp2 = tmp2->below)
+            object_t *that,
+                   *next2;
+
+            FOREACH_OBJECT_IN_OBJECT(that, this, next2)
             {
-                if (op->slaying && op->slaying==tmp->name)
+                if (op->slaying &&
+                    op->slaying == that->name)
+                {
                     detected = 1;
-                if (tmp2->type == FORCE && tmp2->slaying && tmp2->slaying == op->slaying)
+                }
+                else if (that->type == FORCE &&
+                         that->slaying &&
+                         that->slaying == op->slaying)
+                {
                     detected = 1;
+                }
             }
         }
-        if (op->slaying && op->slaying == tmp->name)
+
+        if (op->slaying &&
+            op->slaying == this->name)
         {
             detected = 1;
         }
-        else if (tmp->type == SPECIAL_KEY && tmp->slaying == op->slaying)
+        else if (this->type == SPECIAL_KEY &&
+                 this->slaying == op->slaying)
+        {
             detected = 1;
+        }
+
+        if (detected)
+        {
+            break;
+        }
     }
 
-    /* the detector sets the button if detection is found */
-    if (op->stats.sp == 1)
+    if (detected &&
+        last == !op->stats.sp)
     {
-        if (detected && last == 0)
-        {
-            op->weight_limit = 1;
-            signal_connection(op, tmp, NULL, op->map);
-        }
-        if (!detected && last == 1)
-        {
-            op->weight_limit = 0;
-            signal_connection(op, NULL, NULL, op->map);
-        }
+        op->weight_limit = op->stats.sp;
+        signal_connection(op, this, NULL, op->map);
     }
-    else
+    else if (!detected &&
+             last == op->stats.sp)
     {
-        /* in this case, we unset buttons */
-        if (detected && last == 1)
-        {
-            op->weight_limit = 0;
-            signal_connection(op, tmp, NULL, op->map);
-        }
-        if (!detected && last == 0)
-        {
-            op->weight_limit = 1;
-            signal_connection(op, NULL, NULL, op->map);
-        }
+        op->weight_limit = !op->stats.sp;
+        signal_connection(op, NULL, NULL, op->map);
     }
 }
 
-
-void animate_trigger(object *op)
+void animate_trigger(object_t *op)
 {
     if ((unsigned char)++op->stats.wc >= NUM_ANIMATIONS(op) / NUM_FACINGS(op))
     {
@@ -828,9 +826,9 @@ void animate_trigger(object *op)
 /* close or open pit. op->value is set when something connected to the pit
  * is triggered.
  */
-void move_pit(object *op)
+void move_pit(object_t *op)
 {
-    object *next, *tmp;
+    object_t *next, *tmp;
 
     if (op->weight_limit)
     {
@@ -874,11 +872,12 @@ void move_pit(object *op)
  * are being carried, ie a held torch leaps from your hands!.
  * Modified this routine to allow held objects. b.t.
  */
-void change_object(object *op)
+void change_object(object_t *op)
 {
     /* Doesn`t handle linked objs yet */
 
-    object *tmp, *env ;
+    object_t *tmp, *env ;
+    msp_t *msp = MSP_KNOWN(op);
     int     i, j;
 
     /* In non-living items only change when food value is 0 */
@@ -916,7 +915,7 @@ void change_object(object *op)
                     {
                         if (op->env->type == PLAYER) /* inside player char? */
                         {
-                            new_draw_info(NDI_UNIQUE, 0, op->env, "%s burnt out.",
+                            ndi(NDI_UNIQUE, 0, op->env, "%s burnt out.",
                                 query_name(op, op->env, ARTICLE_DEFINITE, 0));
                             op->glow_radius = 0;
                             FIX_PLAYER(op->env ,"change object");
@@ -932,7 +931,7 @@ void change_object(object *op)
                     else /* object is on map */
                     {
                         /* remove light mask from map */
-                        adjust_light_source(op->map, op->x, op->y, -(op->glow_radius));
+                        adjust_light_source(msp, -(op->glow_radius));
                         update_object(op, UP_OBJ_FACE); /* tell map update we have something changed */
                         op->glow_radius = 0;
                     }
@@ -942,7 +941,7 @@ void change_object(object *op)
                 {
                     /* but give the player a note about it too */
                     if (op->env && op->env->type == PLAYER)
-                        new_draw_info(NDI_UNIQUE, 0, op->env, "%s burnt out.",
+                        ndi(NDI_UNIQUE, 0, op->env, "%s burnt out.",
                             query_name(op, op->env, ARTICLE_DEFINITE, 0));
                 }
             }
@@ -958,7 +957,8 @@ void change_object(object *op)
     env = op->env;
     remove_ob(op);
     check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
-    for (i = 0; i < 1; i++) /* atm we only generate per change tick *ONE* object */
+
+    for (i = 0; i < 1; i++) /* atm we only generate per change tick *ONE* object_t */
     {
         tmp = arch_to_object(op->other_arch);
         tmp->stats.hp = op->stats.hp; /* The only variable it keeps. */
@@ -977,17 +977,17 @@ void change_object(object *op)
              * changed status) is that the object jumps about for no
              * player-obvious reason if, eg, it is on the same square as a
              * player during the change -- Smacky 20080704 */
-            j = find_first_free_spot(tmp->arch, tmp, op->map, op->x, op->y);
+            j = overlay_find_free(msp, tmp, 1, OVERLAY_7X7, OVERLAY_FIRST_AVAILABLE);
             if (j != -1)  /* Found a free spot */
             {
                 if (op->type == TYPE_LIGHT_APPLY && tmp->other_arch)
                 {
                     /* remove light mask from map */
-                    adjust_light_source(op->map, op->x, op->y, -(tmp->glow_radius));
+                    adjust_light_source(msp, -(tmp->glow_radius));
                     update_object(op, UP_OBJ_FACE); /* tell map update we have something changed */
                     op->glow_radius = 0;
                 }
-                tmp->x = op->x + freearr_x[j],tmp->y = op->y + freearr_y[j];
+                tmp->x = op->x + OVERLAY_X(j),tmp->y = op->y + OVERLAY_Y(j);
                 insert_ob_in_map(tmp, op->map, op, 0);
                 if (tmp->type == TYPE_LIGHT_APPLY)
                     turn_on_light(tmp);
@@ -1005,55 +1005,63 @@ void change_object(object *op)
  * WARNING: Also system objects will be teleported when they don't
  * have a "no_teleport" flag.
  * Because we can teleport multi arch monster now with a single tile
- * teleporter, i removed multi arch teleporters.
- */
-
-void move_teleporter(object *op)
+ * teleporter, i removed multi arch teleporters. */
+void move_teleporter(object_t *op)
 {
-    MapSpace *msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
-    object *tmp, *next;
+    msp_t  *msp = MSP_KNOWN(op);
+    object_t    *this,
+              *next;
 
-    /* get first object of this map node */
-    for (tmp = GET_MAP_SPACE_FIRST(msp); tmp; tmp = next)
+    FOREACH_OBJECT_IN_MSP(this, msp, next)
     {
-        next = tmp->above;
-        if (QUERY_FLAG(tmp, FLAG_NO_TELEPORT))
+        if (QUERY_FLAG(this, FLAG_NO_TELEPORT))
+        {
             continue;
+        }
 
         /* teleport to different map */
         if (EXIT_PATH(op))
         {
-            if(trigger_object_plugin_event(EVENT_TRIGGER,
-                        op, tmp, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
-                    continue;
+            if (trigger_object_plugin_event(EVENT_TRIGGER, op, this, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
+            {
+                continue;
+            }
 
-            enter_map_by_exit(tmp, op);
+            (void)enter_map_by_exit(this, op);
         }
-        else if (EXIT_X(op) != -1 && EXIT_Y(op) != -1) /* teleport inside this map */
+        else if (EXIT_X(op) != -1 &&
+                 EXIT_Y(op) != -1) /* teleport inside this map */
         {
+            map_t *m2 = op->map;
+            sint16     x2 = EXIT_X(op),
+                       y2 = EXIT_Y(op);
+
             /* use OUT_OF_REAL_MAP() - we want be truly on THIS map */
-            if(OUT_OF_REAL_MAP(op->map, EXIT_X(op), EXIT_Y(op)))
+            if (OUT_OF_REAL_MAP(m2, x2, y2))
             {
                 LOG(llevMapbug, "MAPBUG:: Removed illegal teleporter [%s %d %d] (destination out of map = %d %d)!\n",
-                    STRING_MAP_PATH(op->map), op->x, op->y, EXIT_X(op),
-                    EXIT_Y(op));
+                    STRING_MAP_PATH(m2), op->x, op->y, x2, y2);
                 remove_ob(op);
                 check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
                 return;
             }
 
-            if(trigger_object_plugin_event(EVENT_TRIGGER,
-                        op, tmp, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
-                    continue;
-            enter_map(tmp, op, tmp->map, EXIT_X(op), EXIT_Y(op), 0, INS_NO_FORCE | INS_WITHIN_LOS);
+            if (trigger_object_plugin_event(EVENT_TRIGGER, op, this, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
+            {
+                continue;
+            }
+
+            (void)enter_map(this, MSP_RAW(m2, x2, y2), op, OVERLAY_FIRST_AVAILABLE | OVERLAY_SPECIAL, 0);
         }
         else
         {
             /* Random teleporter */
-            if(trigger_object_plugin_event(EVENT_TRIGGER,
-                        op, tmp, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
-                    continue;
-            teleport(op, TELEPORTER, tmp);
+            if (trigger_object_plugin_event(EVENT_TRIGGER, op, this, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
+            {
+                continue;
+            }
+
+            teleport(op, this);
         }
     }
 }
@@ -1066,7 +1074,7 @@ void move_teleporter(object *op)
  * advanced spell selection and full turnable by connected and
  * autoturn. MT-2003
  */
-void move_firewall(object *op)
+void move_firewall(object_t *op)
 {
     if (!op->map || !op->last_eat || op->stats.dam == -1) /* last_eat 0 = off */
         return;   /* dm has created a firewall in his inventory or no legal spell selected */
@@ -1074,14 +1082,13 @@ void move_firewall(object *op)
 }
 
 #if 0
-//void move_firechest(object *op)
+//void move_firechest(object_t *op)
 //{
 //    if (!op->map)
 //        return;   /* dm has created a firechest in his inventory */
 //    fire_a_ball(op, random_roll(1, 8), 7);
 //}
 #endif
-
 
 /*  move_player_mover:  this function takes a "player mover" as an
  * argument, and performs the function of a player mover, which is:
@@ -1093,71 +1100,103 @@ void move_firewall(object *op)
  * it'll paralyze the victim for hp*his speed/op->speed
 
 */
-void move_player_mover(object *op)
+void move_player_mover(object_t *op)
 {
-    MapSpace *msp;
-    object     *victim, *nextmover;
-    mapstruct  *mt;
-    int         xt, yt, dir = op->direction;
+    map_t *m;
+    sint16     x,
+               y;
+    msp_t  *msp;
+    object_t    *this,
+              *next;
+    int        dir;
 
     /* e.g. mover is inside a creator */
-    if(op->map == NULL)
+    if (!op->map)
+    {
         return;
+    }
 
-    if (!(blocked(NULL, op->map, op->x, op->y, TERRAIN_NOTHING) & (P_IS_ALIVE | P_IS_PLAYER)))
+    m = op->map;
+    x = op->x;
+    y = op->y;
+
+    if (!(msp_blocked(NULL, m, x, y) & (MSP_FLAG_ALIVE | MSP_FLAG_PLAYER)))
+    {
         return;
-
-    msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
+    }
 
     /* Determine direction now for random movers so we do the right thing */
-    if (!dir)
-        dir = random_roll(1, 8);
-    for (victim = GET_MAP_SPACE_FIRST(msp); victim; victim = victim->above)
+    if (!(dir = op->direction))
     {
+        dir = random_roll(1, 8);
+    }
+
+    msp = MSP_KNOWN(op);
+
+    FOREACH_OBJECT_IN_MSP(this, msp, next)
+    {
+        map_t *mt;
+        sint16     xt,
+                   yt;
+        msp_t  *mspt;
+        object_t    *that,
+                  *next2;
+
         /* Not convinced this is entirely correct. I think may it should be:
-         *   if (op->stats.maxhp && IS_LIVE(victim) && !IS_AIRBORNE(victim))
+         *   if (op->stats.maxhp && IS_LIVE(this) && !IS_AIRBORNE(this))
          * -- Smacky 20090220 */
-        if ((IS_LIVE(victim) && !IS_AIRBORNE(victim)) || op->stats.maxhp)
+        if ((IS_LIVE(this) &&
+             !IS_AIRBORNE(this)) ||
+            op->stats.maxhp)
         {
-            if (QUERY_FLAG(op, FLAG_LIFESAVE) && op->stats.hp-- < 0)
+            if (QUERY_FLAG(op, FLAG_LIFESAVE) &&
+                op->stats.hp-- < 0)
             {
                 destruct_ob(op);
                 return;
             }
 
-            xt = op->x + freearr_x[dir];
-            yt = op->y + freearr_y[dir];
-            if (!(mt = out_of_map(op->map, &xt, &yt)))
-                return;
+            mt = m;
+            xt = x + OVERLAY_X(dir);
+            yt = y + OVERLAY_Y(dir);
+            mspt = MSP_GET(mt, xt, yt);
 
-            for (nextmover = GET_MAP_OB(mt, xt, yt); nextmover != NULL; nextmover = nextmover->above)
+            if (!mspt)
             {
-                if (nextmover->type == PLAYERMOVER)
-                    nextmover->speed_left = -0.99f;
-                if (IS_LIVE(nextmover))
+                return;
+            }
+
+            FOREACH_OBJECT_IN_MSP(that, mspt, next2)
+            {
+                if (that->type == PLAYERMOVER)
                 {
-                    op->speed_left = -1.1f;  /* wait until the next thing gets out of the way */
+                    that->speed_left = -0.99;
+                }
+                else if (IS_LIVE(that))
+                {
+                    op->speed_left = -1.1;  /* wait until the next thing gets out of the way */
                 }
             }
 
-            if (victim->type == PLAYER)
+            if (this->type == PLAYER)
             {
                 /*  only level >=1 movers move people */
-                if (op->level)
+                if (!op->level)
                 {
-                    /* Following is a bit of hack.  We need to make sure it
-                         * is cleared, otherwise the player will get stuck in
-                         * place.  This can happen if the player used a spell to
-                         * get to this space.
-                         */
-                    victim->speed_left = -FABS(victim->speed);
-                    move_player(victim, dir, TRUE);
-                }
-                else
                     return;
+                }
+
+                /* Following is a bit of hack.  We need to make sure it
+                 * is cleared, otherwise the player will get stuck in
+                 * place.  This can happen if the player used a spell to
+                 * get to this space. */
+                this->speed_left = -FABS(this->speed);
+                move_player(this, dir, 1);
             }
             else
-                move_object(victim, dir);
+            {
+                (void)move_ob(this, dir, op);
+            }
 
             /* flag to paralyze the player */
             /* ATM disabled when i removed attacktype - when needed move to better attribute
@@ -1165,27 +1204,10 @@ void move_player_mover(object *op)
             if (!op->stats.maxsp && op->attacktype)
                 op->stats.maxsp = 2;
             if (op->attacktype)
-                victim->speed_left = -FABS(op->stats.maxsp * victim->speed / op->speed);
+                this->speed_left = -FABS(op->stats.maxsp * this->speed / op->speed);
              */
         }
     }
-}
-
-/** Search a single map square for duplicates of op.
- * A duplicate is anything with the same type, name and arch
- */
-static int check_for_duplicate_ob(object *op, mapstruct *map, int x, int y)
-{
-    object *tmp;
-    for(tmp = GET_MAP_OB(map, x, y); tmp != NULL; tmp = tmp->above)
-    {
-        if(tmp->name == op->name &&
-                tmp->type == op->type &&
-                tmp->arch == op->arch &&
-                tmp != op)
-            return 1;
-    }
-    return 0;
 }
 
 /*  move_creator (by peterm)
@@ -1199,78 +1221,159 @@ static int check_for_duplicate_ob(object *op, mapstruct *map, int x, int y)
   inv: objects to clone (if other_arch == NULL)
 */
 /* not multi arch fixed, i think MT */
-void move_creator(object *op)
+void move_creator(object_t *op)
 {
-    if (op->stats.hp <= 0 && !QUERY_FLAG(op, FLAG_LIFESAVE))
-        return;
+    msp_t *msp;
+    object_t   *creation;
 
+    if (op->stats.hp <= 0 &&
+        !QUERY_FLAG(op, FLAG_LIFESAVE))
+    {
+        return;
+    }
+
+    msp = MSP_KNOWN(op);
+
+    /* Create from other_arch */
     if(op->other_arch)
     {
-        /* Create from other_arch */
-        object *tmp = arch_to_object(op->other_arch);
+        creation = arch_to_object(op->other_arch);
+
         if (op->slaying)
         {
-            FREE_AND_ADD_REF_HASH(tmp->name, op->slaying);
-            FREE_AND_ADD_REF_HASH(tmp->title, op->slaying);
+            FREE_AND_ADD_REF_HASH(creation->name, op->slaying);
+            FREE_AND_ADD_REF_HASH(creation->title, op->slaying);
         }
-        tmp->x = op->x;
-        tmp->y = op->y;
-        tmp->level = op->level;
 
         if(QUERY_FLAG(op, FLAG_ONE_DROP) &&
-                check_for_duplicate_ob(tmp, op->map, op->x, op->y))
+           CheckForDuplicate(creation, msp))
+        {
             return;
+        }
 
+        creation->x = op->x;
+        creation->y = op->y;
+        insert_ob_in_map(creation, op->map, op, 0);
         op->stats.hp--;
-        insert_ob_in_map(tmp, op->map, op, 0);
+        creation->level = op->level;
     }
+    /* Clone from inventory. */
     else
     {
-        /* Clone from inventory
-         * sys objects won't be copied, with an exception for player movers */
-        object *source, *tmp;
-        int didit = 0;
-        int cloneindex = 0;
+        object_t *this,
+               *next;
+        int     n = 0;
+        uint8   didit = 0;
 
         /* Create single random item from inventory? */
-        if(QUERY_FLAG(op, FLAG_SPLITTING))
+        if (QUERY_FLAG(op, FLAG_SPLITTING))
         {
-            int numobs = 0;
             /* Count applicable items */
-            for(tmp = op->inv; tmp != NULL; tmp = tmp->below)
-                if(! QUERY_FLAG(tmp, FLAG_SYS_OBJECT) || tmp->type == PLAYERMOVER)
-                    numobs++;
-            if(numobs == 0)
+            FOREACH_OBJECT_IN_OBJECT(this, op, next)
+            {
+                if (QUERY_FLAG(this, FLAG_SYS_OBJECT) &&
+                    this->type != PLAYERMOVER)
+                {
+                    continue;
+                }
+
+                n++;
+            }
+
+            if (n == 0)
+            {
                 return; /* Avoid div by zero */
-            cloneindex = RANDOM()%numobs;
+            }
+
+            n = RANDOM() % n;
         }
 
-        for(source = op->inv; source != NULL && cloneindex >= 0; source = source->below)
+        FOREACH_OBJECT_IN_OBJECT(this, op, next)
         {
-            /* Don't clone sys objects */
-            if(QUERY_FLAG(source, FLAG_SYS_OBJECT) && source->type != PLAYERMOVER)
+            if (QUERY_FLAG(this, FLAG_SYS_OBJECT) &&
+                this->type != PLAYERMOVER)
+            {
                 continue;
+            }
+
+            /* FIXME: This is plainly broken. This will create every object at
+             * or below the 0 index.
+             *
+             * -- Smacky 20140426 */
+#if 0
+            /* Count down to target if creating a single random item */
+            if (QUERY_FLAG(op, FLAG_SPLITTING) &&
+                 --n >= 0)
+            {
+                continue;
+            }
+
+            creation = clone_object(this, MODE_INVENTORY);
+
+            if (QUERY_FLAG(op, FLAG_ONE_DROP) &&
+                CheckForDuplicate(creation, msp))
+            {
+                continue;
+            }
+
+            creation->x = op->x;
+            creation->y = op->y;
+            insert_ob_in_map(creation, op->map, op, 0);
+            didit = 1;
+#else
+            if (n == 0)
+            {
+                creation = clone_object(this, MODE_INVENTORY);
+
+                if (QUERY_FLAG(op, FLAG_ONE_DROP) &&
+                    CheckForDuplicate(creation, msp))
+                {
+                    continue;
+                }
+
+                creation->x = op->x;
+                creation->y = op->y;
+                insert_ob_in_map(creation, op->map, op, 0);
+                didit = 1;
+            }
 
             /* Count down to target if creating a single random item */
-            if(QUERY_FLAG(op, FLAG_SPLITTING) && --cloneindex >= 0)
-                continue;
-
-            tmp = clone_object(source, MODE_INVENTORY);
-            tmp->x = op->x;
-            tmp->y = op->y;
-
-            if(QUERY_FLAG(op, FLAG_ONE_DROP) &&
-                    check_for_duplicate_ob(tmp, op->map, op->x, op->y))
-                continue;
-
-            insert_ob_in_map(tmp, op->map, op, 0);
-            didit = 1;
+            if (QUERY_FLAG(op, FLAG_SPLITTING))
+            {
+                if (--n < 0)
+                {
+                    break;
+                }
+            }
+#endif
         }
 
-        /* Reduce count if we cloned any object from inventory */
-        if(didit)
+        if (didit)
+        {
             op->stats.hp--;
+        }
     }
+}
+
+/** Search a single map square for duplicates of op.
+ * A duplicate is anything with the same type, name and arch
+ */
+static object_t *CheckForDuplicate(object_t *what, msp_t *msp)
+{
+    object_t *this,
+           *next;
+
+    FOREACH_OBJECT_IN_MSP(this, msp, next)
+    {
+        if (this->name == what->name &&
+            this->type == what->type &&
+            this->arch == what->arch)
+        {
+            return this;
+        }
+    }
+
+    return NULL;
 }
 
 /* hp = time left
@@ -1278,7 +1381,7 @@ void move_creator(object *op)
  * FLAG_CURSED - reset when triggered
  * value = connection state
  */
-void move_timer(object *op)
+void move_timer(object_t *op)
 {
     if(op->stats.hp >= 0)
     {
@@ -1298,37 +1401,48 @@ void move_timer(object *op)
     }
 }
 
-void move_environment_sensor(object *op)
+void move_environment_sensor(object_t *op)
 {
-    int trig_tad = 0, trig_dow = 0, trig_bright = 0;
-    timeanddate_t tad;
+    map_t *m;
+    int        trig_tad = 0,
+               trig_dow = 0,
+               trig_bright = 0;
 
-    if (op->slaying ||
-        op->last_heal)
+    m = parent_map(op);
+    get_tad(m->tadnow, m->tadoffset);
+
+    /* Time of day triggered */
+    if (!op->slaying)
     {
-        get_tad(&tad, 0);
-    }
-
-    /* Time of day triggered? */
-    if(op->slaying == NULL)
         trig_tad = 1;
+    }
     else
     {
-        int hh1,mm1,hh2,mm2;
-        if(sscanf(op->slaying, "%2d:%2d-%2d:%2d", &hh1, &mm1, &hh2, &mm2) == 4)
+        int hh1,
+            mm1,
+            hh2,
+            mm2;
+
+        if (sscanf(op->slaying, "%2d:%2d-%2d:%2d", &hh1, &mm1, &hh2, &mm2) == 4)
         {
-            /* Simplify time comparisons */
-            int t1 = CLAMP(hh1, 0, 23) * 60 + CLAMP(mm1, 0, 59);
-            int t2 = CLAMP(hh2, 0, 23) * 60 + CLAMP(mm2, 0, 59);
-            int tnow = tad.hour*60 + tad.minute;
+            int t1 = CLAMP(hh1, 0, ARKHE_HRS_PER_DY - 1) * ARKHE_MES_PER_HR +
+                CLAMP(mm1, 0, ARKHE_MES_PER_HR - 1),
+                t2 = CLAMP(hh2, 0, ARKHE_HRS_PER_DY - 1) * ARKHE_MES_PER_HR +
+                CLAMP(mm2, 0, ARKHE_MES_PER_HR - 1);
+            int tnow = m->tadnow->hour * ARKHE_MES_PER_HR + m->tadnow->minute;
 
             /* Two cases: interval either spans midnight or not */
-            if( (t1 > t2 && (tnow >= t1 || tnow <= t2)) ||
-                    (t1 <= t2 && (tnow >= t1 && tnow <= t2)))
-                    trig_tad = 1;
-
-//            LOG(llevDebug, "tad: %02d:%02d, trig (%s): %d\n", tad.hour, tad.minute, op->slaying, trig_tad);
-        } else
+            if ((t1 > t2 &&
+                 (tnow >= t1 ||
+                  tnow <= t2)) ||
+                (t1 <= t2 &&
+                 (tnow >= t1 &&
+                  tnow <= t2)))
+            {
+                trig_tad = 1;
+            }
+        }
+        else
         {
             /* Interval is obviously invalid, drop it */
             FREE_AND_CLEAR_HASH(op->slaying);
@@ -1336,14 +1450,10 @@ void move_environment_sensor(object *op)
     }
 
     /* Day of Week triggered? */
-    if(op->last_heal == 0)
-        trig_dow = 1;
-    else
+    if (!op->last_heal ||
+        (op->last_heal & (1 << m->tadnow->day))) // FIXME
     {
-        if(op->last_heal & (1 << tad.day)) // FIXME
-            trig_dow = 1;
-
-        // LOG(llevDebug, "Weekday %d, trig (%d): %d\n", tad.dayofweek, op->last_grace, trig_dow);
+        trig_dow = 1;
     }
 
     /* Brightness triggered? */
@@ -1351,7 +1461,7 @@ void move_environment_sensor(object *op)
         trig_bright = 1;
     else
     {
-        object *tmp;
+        object_t *tmp;
 
         op->last_grace = CLAMP(op->last_grace, -MAX_DARKNESS, MAX_DARKNESS);
 
@@ -1360,34 +1470,45 @@ void move_environment_sensor(object *op)
             ;
 
         /* If sensor can't see through closed containers */
-        if(!QUERY_FLAG(op, FLAG_SEE_INVISIBLE) && op->env) {
-            if((op->type != TYPE_QUEST_CONTAINER && op->type != CONTAINER) ||
-                    !QUERY_FLAG(op, FLAG_APPLIED))
+        if (!QUERY_FLAG(op, FLAG_SEE_INVISIBLE) &&
+            op->env)
+        {
+            if ((op->type != TYPE_QUEST_CONTAINER &&
+                 op->type != CONTAINER) ||
+                !QUERY_FLAG(op, FLAG_APPLIED))
+            {
                 tmp = NULL;
-        }
+            }
+       }
 
         if(tmp)
         {
-            int light_level = map_brightness(tmp->map, tmp->x, tmp->y);
-            if ((op->last_grace < 0 && light_level < global_darkness_table[ABS(op->last_grace)]) ||
-                    (op->last_grace > 0 && light_level > global_darkness_table[ABS(op->last_grace)]))
+            int light_level = MSP_GET_REAL_BRIGHTNESS(MSP_RAW(m, op->x, op->y));
+
+            if ((op->last_grace < 0 &&
+                 light_level < ABS(op->last_grace)) ||
+                (op->last_grace > 0 &&
+                 light_level > op->last_grace))
+            {
                 trig_bright = 1;
-//            LOG(llevDebug, "env_sensor: trig_lvl = %d, real=%d, trig: %d\n", global_darkness_table[ABS(op->last_grace)], light_level, trig_bright);
+            }
         }
     }
 
     /* Trigger if sensor status changes (or when not initialized) */
-    if(
-            ( (trig_tad && trig_dow && trig_bright) && op->weight_limit == 0) ||
-            (!(trig_tad && trig_dow && trig_bright) && op->weight_limit == 1) ||
-            !QUERY_FLAG(op, FLAG_INITIALIZED))
+    if ((trig_tad &&
+         trig_dow &&
+         trig_bright &&
+         op->weight_limit == 0) ||
+         (!trig_tad &&
+          !trig_dow &&
+          !trig_bright &&
+          op->weight_limit == 1) ||
+         !QUERY_FLAG(op, FLAG_INITIALIZED))
     {
         SET_FLAG(op, FLAG_INITIALIZED);
-//        LOG(llevDebug, "env_sensor toggled from %d to %d\n", op->value, !op->value);
-
         op->weight_limit = (trig_tad && trig_dow && trig_bright) ? 1 : 0;
-
-        signal_connection(op, NULL, NULL, op->map);
+        signal_connection(op, NULL, NULL, m);
     }
 }
 
@@ -1398,13 +1519,13 @@ void move_environment_sensor(object *op)
  */
 /* TODO: I want to add forwarding of connections to other maps to this
  * type too. */
-void move_conn_sensor(object *op)
+void move_conn_sensor(object_t *op)
 {
     sint32 newvalue = 0;
     int numinputs = 0, numactive = 0;
 
-    oblinkpt   *obp;
-    objectlink *ol;
+    objectlink_t   *obp;
+    objectlink_t *ol;
 
     if(op->map == NULL)
         return;
@@ -1505,65 +1626,93 @@ void move_conn_sensor(object *op)
    0 and then delete itself every time it grants a mark.
    unless hp was zero to start with, in which case it is infinite.*/
 
-void move_marker(object *op)
+void move_marker(object_t *op)
 {
-    MapSpace *msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
-    object *tmp, *tmp2;
+    msp_t  *msp = MSP_KNOWN(op);
+    object_t    *this,
+              *next;
 
-    for (tmp = GET_MAP_SPACE_FIRST(msp); tmp; tmp = tmp->above)
+    if (!msp)
     {
-        if (tmp->type == PLAYER)
+        return;
+    }
+
+    FOREACH_OBJECT_IN_MSP(this, msp, next)
+    {
+        /* we've got someone to MARK */
+        if (this->type == PLAYER)
         {
-            /* we've got someone to MARK */
+            object_t *that,
+                   *next2,
+                   *old = NULL,
+                   *current = NULL;
 
             /* remove an old force with a slaying field == op->name */
-            for (tmp2 = tmp->inv; tmp2 != NULL; tmp2 = tmp2->below)
+            FOREACH_OBJECT_IN_OBJECT(that, this, next2)
             {
-                if (tmp2->type == FORCE && tmp2->slaying == op->name)
-                    break;
-            }
-            if (tmp2)
-                remove_ob(tmp2);
+                if (that->type == FORCE)
+                {
+                    if (that->slaying == op->name)
+                    {
+                        old = that;
+                    }
+                    else if (that->slaying == op->slaying)
+                    {
+                        current = that;
+                    }
+                }
 
-            /* cycle through his inventory to look for the MARK we want to place */
-            for (tmp2 = tmp->inv; tmp2 != NULL; tmp2 = tmp2->below)
-            {
-                if (tmp2->type == FORCE && tmp2->slaying == op->slaying)
+                if (old &&
+                    current)
+                {
                     break;
+                }
+            }
+
+            if (old)
+            {
+                remove_ob(old);
             }
 
             /* if we didn't find our own MARK */
-            if (tmp2 == NULL)
+            if (!current)
             {
-                object *force   = get_archetype("force");
-                force->speed = 0;
+                current = get_archetype("force");
+
                 if (op->stats.food)
                 {
-                    force->speed = 0.01f;
-                    force->speed_left = (float) - op->stats.food;
+                    current->speed = 0.01;
+                    current->speed_left = (float)-op->stats.food;
                 }
-                update_ob_speed(force);
-                /* put in the lock code */
-                FREE_AND_COPY_HASH(force->slaying, op->slaying);
-                insert_ob_in_ob(force, tmp);
-                if (op->msg)
-                    new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, tmp, "%s", op->msg);
-                if (op->stats.hp > 0)
+                else
                 {
-                    op->stats.hp--;
-                    if (op->stats.hp == 0)
-                    {
-                        /* marker expires--granted mark number limit */
-                        destruct_ob(op);
-                        return;
-                    }
+                    current->speed = current->speed_left = 0.0;
+                }
+
+                update_ob_speed(current);
+
+                /* put in the lock code */
+                FREE_AND_COPY_HASH(current->slaying, op->slaying);
+                insert_ob_in_ob(current, this);
+
+                if (op->msg)
+                {
+                    ndi(NDI_UNIQUE | NDI_NAVY, 0, this, "%s",
+                        op->msg);
+                }
+
+                /* marker expires--granted mark number limit */
+                if (--op->stats.hp <= 0)
+                {
+                    destruct_ob(op);
+                    return;
                 }
             }
         }
     }
 }
 
-int process_object(object *op)
+int process_object(object_t *op)
 {
     if (OBJECT_FREE(op))
         return 1;
@@ -1584,7 +1733,7 @@ int process_object(object *op)
         {
             CLEAR_FLAG(op->env, FLAG_EATING);
             CONTR(op->env)->food_status = 0;
-            new_draw_info(NDI_UNIQUE| NDI_NAVY, 0, op->env, "You finish digesting your meal.");
+            ndi(NDI_UNIQUE| NDI_NAVY, 0, op->env, "You finish digesting your meal.");
         }
 
         if (QUERY_FLAG(op, FLAG_APPLIED) && op->type != CONTAINER)
@@ -1764,12 +1913,12 @@ int process_object(object *op)
 //        case FIRECHEST:
 //          move_firechest(op);
 //          return 0;
-//        case WORD_OF_RECALL:
-//          execute_wor(op);
-//          return 0;
 //        case FBALL:
 //        case POISONCLOUD:
 //          explosion(op);
+//          return 0;
+//        case WORD_OF_RECALL:
+//          execute_wor(op);
 //          return 0;
 //        case BOMB:
 //          animate_bomb(op);

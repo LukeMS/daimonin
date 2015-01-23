@@ -89,8 +89,11 @@ typedef struct _hourofday
 
 typedef struct _timeanddate
 {
+    sint8       daylight_darkness;
+    sint16      daylight_brightness;
     uint8       hour;
     uint8       minute;
+    uint16      dayofyear;
     sint16      year;
     sint8       season;
     sint8       month;
@@ -107,7 +110,14 @@ typedef struct _timeanddate
     const char *extraholiday_name;
 } timeanddate_t;
 
-extern uint64 tadtick; /* time of the year tick counter: 1 tick = 1 game hour */
-extern int    world_darkness; /* daylight value. 0= totally dark. 7= daylight */
+extern uint16 tadtick;
+extern timeanddate_t tadnow;
+
+extern void    get_tad(timeanddate_t *tad, sint32 offset);
+extern sint32  get_tad_offset_from_string(const char *string);
+extern char   *print_tad(timeanddate_t *tad, int flags);
+extern void    init_tadclock(void);
+extern void    tick_tadclock(void);
+extern void    write_tadclock(void);
 
 #endif /* ifndef __CALENDAR_H */

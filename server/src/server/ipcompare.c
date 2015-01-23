@@ -35,8 +35,8 @@
 
 /* #define DEBUG_IPCOMPARE */
 
-static objectlink *add_ip_list(player *pl, objectlink *ip_list);
-static void        free_iplist_node(objectlink *ol);
+static objectlink_t *add_ip_list(player_t *pl, objectlink_t *ip_list);
+static void        free_iplist_node(objectlink_t *ol);
 
 /* Parse a single IP address
  * Updated by Torchwood, Aug 2012 */
@@ -348,10 +348,10 @@ int ip_compare(const char * ip1, const char * ip2)
     return TRUE;
 }
 
-objectlink *find_players_on_ip(char *ipmask)
+objectlink_t *find_players_on_ip(char *ipmask)
 {
-    player     *pl;
-    objectlink *ip_list = NULL;
+    player_t     *pl;
+    objectlink_t *ip_list = NULL;
 
     if(!ipmask)
         return NULL;
@@ -365,14 +365,14 @@ objectlink *find_players_on_ip(char *ipmask)
     return ip_list;
 }
 
-static objectlink *add_ip_list(player *pl, objectlink *ip_list)
+static objectlink_t *add_ip_list(player_t *pl, objectlink_t *ip_list)
 {
-    objectlink *ol;
+    objectlink_t *ol;
 
     if(!pl)
         return NULL;
 
-    ol = get_objectlink(OBJLNK_FLAG_OB);
+    ol = objectlink_get(OBJLNK_FLAG_OB);
     ol->objlink.ob = pl->ob;
 
     objectlink_link(&ip_list, NULL, NULL, ip_list, ol);
@@ -382,9 +382,9 @@ static objectlink *add_ip_list(player *pl, objectlink *ip_list)
 
 /* Free the whole ip_list list
  */
-void free_iplist(objectlink *ip_list)
+void free_iplist(objectlink_t *ip_list)
 {
-    objectlink *ol = ip_list;
+    objectlink_t *ol = ip_list;
 
     LOG(llevDebug, "Freeing all ip-list entries\n");
 
@@ -396,7 +396,7 @@ void free_iplist(objectlink *ip_list)
 
 /* free the the used objectlink
  */
-static void free_iplist_node(objectlink *ol)
+static void free_iplist_node(objectlink_t *ol)
 {
     return_poolchunk(ol, pool_objectlink);
 }

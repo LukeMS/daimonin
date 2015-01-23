@@ -82,7 +82,7 @@ static char * cleanup_chat_string(char *ustring)
  * Of course it don't can handle language or other abuses - for that we have
  * the mute command itself.
  */
-static int check_mute(object *op, int mode)
+static int check_mute(object_t *op, int mode)
 {
     if(op->type != PLAYER || CONTR(op)==NULL)
         return TRUE;
@@ -93,7 +93,7 @@ static int check_mute(object *op, int mode)
         op->level < settings.mutelevel &&
         !(CONTR(op)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL)))
     {
-        new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, op, "You need to be level %d or higher for shout/tell!",
+        ndi(NDI_UNIQUE | NDI_ORANGE, 0, op, "You need to be level %d or higher for shout/tell!",
                       settings.mutelevel);
 
         return FALSE;
@@ -109,7 +109,7 @@ static int check_mute(object *op, int mode)
             {
                 unsigned long tmp = (CONTR(op)->mute_counter-pticks)/(1000000/MAX_TIME);
 
-                new_draw_info( NDI_UNIQUE, 0, op, "You are still muted for %d second(s).", (int)(tmp?tmp:1));
+                ndi( NDI_UNIQUE, 0, op, "You are still muted for %d second(s).", (int)(tmp?tmp:1));
                 CONTR(op)->mute_msg_count = pticks+MUTE_MSG_FREQ;
             }
             return FALSE;
@@ -129,19 +129,19 @@ static int check_mute(object *op, int mode)
             {
                 if(!(CONTR(op)->mute_flags & MUTE_FLAG_SHOUT)) /* friendly message not to spam */
                 {
-                    new_draw_info( NDI_UNIQUE, 0, op, "Please wait 2 seconds between shout like commands.");
+                    ndi( NDI_UNIQUE, 0, op, "Please wait 2 seconds between shout like commands.");
                     CONTR(op)->mute_flags |= MUTE_FLAG_SHOUT;
                     return FALSE;
                 }
                 else if(!(CONTR(op)->mute_flags & MUTE_FLAG_SHOUT_WARNING)) /* first & last warning */
                 {
-                    new_draw_info( NDI_UNIQUE|NDI_ORANGE, 0, op, "Auto-Mute Warning: Please wait 2 seconds!");
+                    ndi( NDI_UNIQUE|NDI_ORANGE, 0, op, "Auto-Mute Warning: Please wait 2 seconds!");
                     CONTR(op)->mute_flags |= MUTE_FLAG_SHOUT_WARNING;
                     return FALSE;
                 }
                 else /* mute him */
                 {
-                    new_draw_info( NDI_UNIQUE|NDI_RED, 0, op, "Auto-Mute: Don't spam! You are muted for %d seconds!",(int)(MUTE_AUTO_NORMAL/(1000000/MAX_TIME)));
+                    ndi( NDI_UNIQUE|NDI_RED, 0, op, "Auto-Mute: Don't spam! You are muted for %d seconds!",(int)(MUTE_AUTO_NORMAL/(1000000/MAX_TIME)));
                     CONTR(op)->mute_counter = pticks+MUTE_AUTO_NORMAL;
                     return FALSE;
                 }
@@ -159,19 +159,19 @@ static int check_mute(object *op, int mode)
             {
                 if(!(CONTR(op)->mute_flags & MUTE_FLAG_SAY)) /* friendly message not to spam */
                 {
-                    new_draw_info( NDI_UNIQUE, 0, op, "Please wait 2 seconds between say like commands.");
+                    ndi( NDI_UNIQUE, 0, op, "Please wait 2 seconds between say like commands.");
                     CONTR(op)->mute_flags |= MUTE_FLAG_SAY;
                     return FALSE;
                 }
                 else if(!(CONTR(op)->mute_flags & MUTE_FLAG_SAY_WARNING)) /* first & last warning */
                 {
-                    new_draw_info( NDI_UNIQUE|NDI_ORANGE, 0, op, "Auto-Mute Warning: Please wait 2 seconds!");
+                    ndi( NDI_UNIQUE|NDI_ORANGE, 0, op, "Auto-Mute Warning: Please wait 2 seconds!");
                     CONTR(op)->mute_flags |= MUTE_FLAG_SAY_WARNING;
                     return FALSE;
                 }
                 else /* mute him */
                 {
-                    new_draw_info( NDI_UNIQUE|NDI_RED, 0, op, "Auto-Mute: Don't spam! You are muted for %d seconds!",(int)(MUTE_AUTO_NORMAL/(1000000/MAX_TIME)));
+                    ndi( NDI_UNIQUE|NDI_RED, 0, op, "Auto-Mute: Don't spam! You are muted for %d seconds!",(int)(MUTE_AUTO_NORMAL/(1000000/MAX_TIME)));
                     CONTR(op)->mute_counter = pticks+MUTE_AUTO_NORMAL;
                     return FALSE;
                 }
@@ -183,7 +183,7 @@ static int check_mute(object *op, int mode)
 }
 
 
-int command_say(object *op, char *params)
+int command_say(object_t *op, char *params)
 {
     if(!check_mute(op, MUTE_MODE_SAY))
         return 0;
@@ -199,11 +199,11 @@ int command_say(object *op, char *params)
 }
 
 
-int command_gsay(object *op, char *params)
+int command_gsay(object_t *op, char *params)
 {
     char            buf[MEDIUM_BUF],
                    *cp;
-    object         *member;
+    object_t         *member;
 #if 0 // def USE_CHANNELS
     sockbuf_struct *sb;
 #endif
@@ -239,7 +239,7 @@ int command_gsay(object *op, char *params)
 
     for(member = CONTR(op)->group_leader; member; member = CONTR(member)->group_next)
     {
-        new_draw_info(NDI_GSAY | NDI_PLAYER | NDI_UNIQUE | NDI_YELLOW, 0, member, "%s %s",
+        ndi(NDI_GSAY | NDI_PLAYER | NDI_UNIQUE | NDI_YELLOW, 0, member, "%s %s",
             QUERY_SHORT_NAME(op, member), buf);
     }
 #endif
@@ -251,7 +251,7 @@ int command_gsay(object *op, char *params)
 }
 
 #ifndef USE_CHANNELS
-int command_shout(object *op, char *params)
+int command_shout(object_t *op, char *params)
 {
 #ifdef PLUGINS
     int     evtid;
@@ -268,7 +268,7 @@ int command_shout(object *op, char *params)
     /* moved down, cause if whitespace is shouted, then no need to log it */
     CHATLOG("SHOUT:%s >%s<\n", STRING_OBJ_NAME(op), params);
 
-    new_draw_info(NDI_SHOUT | NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_ORANGE, 1, NULL, "%s shouts: %s",
+    ndi(NDI_SHOUT | NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_ORANGE, 1, NULL, "%s shouts: %s",
         QUERY_SHORT_NAME(op, NULL), params);
 
 #ifdef PLUGINS
@@ -284,7 +284,7 @@ int command_shout(object *op, char *params)
 }
 #else
 // Redirect /shouts to the new B5 channel system.
-int command_shout(object *op, char *params)
+int command_shout(object_t *op, char *params)
 {
     char *newparams;
 
@@ -305,7 +305,7 @@ int command_shout(object *op, char *params)
 #endif
 
 #ifndef USE_CHANNELS
-int command_describe(object *op, char *params)
+int command_describe(object_t *op, char *params)
 {
     /* TODO: Make this support channels, like "/describe tell XYZ", "/describe auction".
      * ATM shout is all that's supported.
@@ -314,12 +314,12 @@ int command_describe(object *op, char *params)
     if(!check_mute(op, MUTE_MODE_SHOUT))
         return 0;
 
-    object *targetob = CONTR(op)->mark;
+    object_t *targetob = CONTR(op)->mark;
 
     if (!targetob) // Don't do anything if there is no marked item.
         return 0;
 
-    new_draw_info(NDI_SHOUT | NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_ORANGE, 1, NULL, "%s describes: %s (examine worth: %s)",
+    ndi(NDI_SHOUT | NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_ORANGE, 1, NULL, "%s describes: %s (examine worth: %s)",
         QUERY_SHORT_NAME(op, NULL),
         query_name(targetob, op, targetob->nrof, 1),
         cost_string_from_value(targetob->value, COSTSTRING_SHORT));
@@ -328,10 +328,10 @@ int command_describe(object *op, char *params)
 }
 #endif
 
-int command_tell(object *op, char *params)
+int command_tell(object_t *op, char *params)
 {
     char   *msg;
-    player *pl;
+    player_t *pl;
 
     if (!check_mute(op, MUTE_MODE_SHOUT))
     {
@@ -348,11 +348,11 @@ int command_tell(object *op, char *params)
 
     if (!(pl = find_player(params)))
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
+        ndi(NDI_UNIQUE, 0, op, "No such player.");
     }
     else if (pl->ob == op)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "You tell yourself the news. Very smart.");
+        ndi(NDI_UNIQUE, 0, op, "You tell yourself the news. Very smart.");
     }
     else
     {
@@ -366,22 +366,22 @@ int command_tell(object *op, char *params)
                 (!(pl->gmaster_mode & GMASTER_MODE_SA) &&
                  (CONTR(op)->gmaster_mode & (GMASTER_MODE_GM | GMASTER_MODE_VOL))))
             {
-                new_draw_info(NDI_PLAYER | NDI_UNIQUE, 0, op, "You tell |%s| (~privacy mode~): %s",
+                ndi(NDI_PLAYER | NDI_UNIQUE, 0, op, "You tell |%s| (~privacy mode~): %s",
                     pl->quick_name, msg);
             }
             else
             {
-                new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
+                ndi(NDI_UNIQUE, 0, op, "No such player.");
             }
 
-            new_draw_info(NDI_TELL | NDI_PLAYER | NDI_UNIQUE | NDI_NAVY, 0, pl->ob, "%s tells you (~privacy mode~): %s",
+            ndi(NDI_TELL | NDI_PLAYER | NDI_UNIQUE | NDI_NAVY, 0, pl->ob, "%s tells you (~privacy mode~): %s",
                 QUERY_SHORT_NAME(op, pl->ob), msg);
         }
         else
         {
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE, 0, op, "You tell |%s|: %s",
+            ndi(NDI_PLAYER | NDI_UNIQUE, 0, op, "You tell |%s|: %s",
                 pl->quick_name, msg);
-            new_draw_info(NDI_TELL | NDI_PLAYER | NDI_UNIQUE | NDI_NAVY, 0, pl->ob, "%s tells you: %s",
+            ndi(NDI_TELL | NDI_PLAYER | NDI_UNIQUE | NDI_NAVY, 0, pl->ob, "%s tells you: %s",
                 QUERY_SHORT_NAME(op, pl->ob), msg);
         }
 
@@ -393,7 +393,7 @@ int command_tell(object *op, char *params)
     return 0;
 }
 
-static void emote_other(object *op, object *target, char *str, char *buf, char *buf2, char *buf3, int emotion)
+static void emote_other(object_t *op, object_t *target, char *str, char *buf, char *buf2, char *buf3, int emotion)
 {
     const char *name = str;
     char *who, *own;
@@ -433,7 +433,7 @@ static void emote_other(object *op, object *target, char *str, char *buf, char *
          CONTR(op) &&
          (CONTR(op)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM))))
        {
-          new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
+          ndi(NDI_UNIQUE, 0, op, "No such player.");
           return;
        }
 #endif
@@ -593,7 +593,7 @@ static void emote_other(object *op, object *target, char *str, char *buf, char *
     }
 }
 
-static void emote_self(object *op, char *buf, char *buf2, int emotion)
+static void emote_self(object_t *op, char *buf, char *buf2, int emotion)
 {
     char *self, *own, *who;
     if(QUERY_FLAG(op, FLAG_IS_MALE) == QUERY_FLAG(op, FLAG_IS_FEMALE))
@@ -726,10 +726,10 @@ static void emote_self(object *op, char *buf, char *buf2, int emotion)
  * [garbled 09-25-2001]
  */
 
-static int basic_emote(object *op, char *params, int emotion)
+static int basic_emote(object_t *op, char *params, int emotion)
 {
     char    buf[HUGE_BUF] = "", buf2[HUGE_BUF] = "", buf3[HUGE_BUF] = "";
-    player *pl;
+    player_t *pl;
     char *self, *own;
 
     if(!check_mute(op, MUTE_MODE_SAY))
@@ -761,22 +761,20 @@ static int basic_emote(object *op, char *params, int emotion)
          && OBJECT_VALID(CONTR(op)->target_object, CONTR(op)->target_object_count)
          && CONTR(op)->target_object->name)
         {
-            rv_vector   rv;
+            rv_t   rv;
             get_rangevector(op, CONTR(op)->target_object, &rv, 0);
 
             if (rv.distance <= 4)
             {
                 emote_other(op, CONTR(op)->target_object, NULL, buf, buf2, buf3, emotion);
-                new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
+                ndi(NDI_UNIQUE, 0, op, "%s", buf);
                 if (CONTR(op)->target_object->type == PLAYER)
-                    new_draw_info(NDI_EMOTE | NDI_PLAYER | NDI_UNIQUE | NDI_YELLOW,
+                    ndi(NDI_EMOTE | NDI_PLAYER | NDI_UNIQUE | NDI_YELLOW,
                                   0, CONTR(op)->target_object, "%s", buf2);
-                new_info_map_except(NDI_EMOTE | NDI_PLAYER | NDI_YELLOW,
-                                    op->map, op->x, op->y, MAP_INFO_NORMAL, op,
-                                    CONTR(op)->target_object, "%s", buf3);
+                ndi_map(NDI_EMOTE | NDI_PLAYER | NDI_YELLOW, MSP_KNOWN(op), MAP_INFO_NORMAL, op, CONTR(op)->target_object, "%s", buf3);
                 return 0;
             }
-            new_draw_info(NDI_UNIQUE, 0, op, "The target is not in range for this emote action.");
+            ndi(NDI_UNIQUE, 0, op, "The target is not in range for this emote action.");
             return 0;
         }
 
@@ -993,7 +991,7 @@ static int basic_emote(object *op, char *params, int emotion)
             case EMOTE_ME:
 //              sprintf(buf2, "usage: /me <emote to display>");
 //              if (op->type == PLAYER)
-//                  new_draw_info(NDI_UNIQUE, 0, op, "%s", buf2);
+//                  ndi(NDI_UNIQUE, 0, op, "%s", buf2);
                 /* do nothing, since we specified nothing to do */
               return 1;
             default:
@@ -1002,10 +1000,9 @@ static int basic_emote(object *op, char *params, int emotion)
               sprintf(buf2, "You are a nut.");
               break;
         } /*case*/
-        new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL,
-                            op, op, "%s", buf);
+        ndi_map(NDI_YELLOW, MSP_KNOWN(op), MAP_INFO_NORMAL, op, op, "%s", buf);
         if (op->type == PLAYER)
-            new_draw_info(NDI_UNIQUE, 0, op, "%s", buf2);
+            ndi(NDI_UNIQUE, 0, op, "%s", buf2);
         return 0;
     }
     else /* we have params */
@@ -1013,7 +1010,7 @@ static int basic_emote(object *op, char *params, int emotion)
         if (emotion == EMOTE_ME)        /* catch special case emote /me */
         {
             CHATLOG("EMOTE:%s >%s<\n", STRING_OBJ_NAME(op), params);
-            new_info_map(NDI_EMOTE | NDI_PLAYER | NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, "%s %s",
+            ndi_map(NDI_EMOTE | NDI_PLAYER | NDI_YELLOW, MSP_KNOWN(op), MAP_INFO_NORMAL, NULL, NULL, "%s %s",
                 QUERY_SHORT_NAME(op, NULL), params);
 
             return 0;
@@ -1025,10 +1022,8 @@ static int basic_emote(object *op, char *params, int emotion)
             if (op->type == PLAYER && op->name == name_hash) /* targeting ourself */
             {
                 emote_self(op, buf, buf2, emotion);
-                new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
-                new_info_map_except(NDI_EMOTE | NDI_PLAYER | NDI_YELLOW,
-                                    op->map, op->x, op->y, MAP_INFO_NORMAL, op,
-                                    op, "%s", buf2);
+                ndi(NDI_UNIQUE, 0, op, "%s", buf);
+                ndi_map(NDI_EMOTE | NDI_PLAYER | NDI_YELLOW, MSP_KNOWN(op), MAP_INFO_NORMAL, op, op, "%s", buf2);
                 return 0;
             }
 
@@ -1040,7 +1035,7 @@ static int basic_emote(object *op, char *params, int emotion)
                         QUERY_FLAG(pl->ob,FLAG_REMOVED) &&
                         !pl->privacy) // FIXME: same deal as tells
                     {
-                        rv_vector   rv; /* lets check range */
+                        rv_t   rv; /* lets check range */
                         get_rangevector(op, pl->ob, &rv, 0);
 
                         emote_other(op, NULL, params, buf, buf2, buf3, emotion);
@@ -1050,25 +1045,20 @@ static int basic_emote(object *op, char *params, int emotion)
                             if (op->type == PLAYER)
                             {
                                 emote_other(op, pl->ob, NULL, buf, buf2, buf3, emotion);
-                                new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
-                                new_draw_info(NDI_EMOTE | NDI_PLAYER |NDI_UNIQUE | NDI_YELLOW,
+                                ndi(NDI_UNIQUE, 0, op, "%s", buf);
+                                ndi(NDI_EMOTE | NDI_PLAYER |NDI_UNIQUE | NDI_YELLOW,
                                               0, pl->ob, "%s", buf2);
-                                new_info_map_except(NDI_EMOTE | NDI_PLAYER |NDI_YELLOW,
-                                                    op->map, op->x, op->y,
-                                                    MAP_INFO_NORMAL, op,
-                                                    pl->ob, "%s", buf3);
+                                ndi_map(NDI_EMOTE | NDI_PLAYER |NDI_YELLOW, MSP_KNOWN(op), MAP_INFO_NORMAL, op, pl->ob, "%s", buf3);
                             }
                             else /* npc */
                             {
-                                new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0,
+                                ndi(NDI_UNIQUE | NDI_YELLOW, 0,
                                               pl->ob, "%s", buf2);
-                                new_info_map_except(NDI_YELLOW, op->map, op->x,
-                                                    op->y, MAP_INFO_NORMAL,
-                                                    NULL, pl->ob, "%s", buf3);
+                                ndi_map(NDI_YELLOW, MSP_KNOWN(op), MAP_INFO_NORMAL, NULL, pl->ob, "%s", buf3);
                             }
                         }
                         else if (op->type == PLAYER)
-                            new_draw_info(NDI_UNIQUE, 0, op, "The target is not in range for this emote action.");
+                            ndi(NDI_UNIQUE, 0, op, "The target is not in range for this emote action.");
 
                         return 0;
                     }
@@ -1085,17 +1075,14 @@ static int basic_emote(object *op, char *params, int emotion)
             if (op->type == PLAYER)
             {
                 emote_self(op, buf, buf2, -1); /* force neutral default emote */
-                new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
-                new_info_map_except(NDI_EMOTE | NDI_PLAYER | NDI_YELLOW,
-                                    op->map, op->x, op->y, MAP_INFO_NORMAL,
-                                    op, op, "%s", buf2);
+                ndi(NDI_UNIQUE, 0, op, "%s", buf);
+                ndi_map(NDI_EMOTE | NDI_PLAYER | NDI_YELLOW, MSP_KNOWN(op), MAP_INFO_NORMAL, op, op, "%s", buf2);
             }
             else
             {
                 /* our target is perhaps a npc or whatever */
                 emote_other(op, NULL, params, buf, buf2, buf3, emotion);
-                new_info_map_except(NDI_YELLOW, op->map, op->x, op->y,
-                                    MAP_INFO_NORMAL, NULL, NULL, "%s", buf3);
+                ndi_map(NDI_YELLOW, MSP_KNOWN(op), MAP_INFO_NORMAL, NULL, NULL, "%s", buf3);
             }
         }
     }
@@ -1107,277 +1094,277 @@ static int basic_emote(object *op, char *params, int emotion)
  * everything from here on out are just wrapper calls to basic_emote
  */
 
-int command_nod(object *op, char *params)
+int command_nod(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_NOD));
 }
 
-int command_dance(object *op, char *params)
+int command_dance(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_DANCE));
 }
 
-int command_kiss(object *op, char *params)
+int command_kiss(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_KISS));
 }
 
-int command_bounce(object *op, char *params)
+int command_bounce(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_BOUNCE));
 }
 
-int command_smile(object *op, char *params)
+int command_smile(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SMILE));
 }
 
-int command_cackle(object *op, char *params)
+int command_cackle(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_CACKLE));
 }
 
-int command_laugh(object *op, char *params)
+int command_laugh(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_LAUGH));
 }
 
-int command_giggle(object *op, char *params)
+int command_giggle(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_GIGGLE));
 }
 
-int command_shake(object *op, char *params)
+int command_shake(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SHAKE));
 }
 
-int command_puke(object *op, char *params)
+int command_puke(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_PUKE));
 }
 
-int command_growl(object *op, char *params)
+int command_growl(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_GROWL));
 }
 
-int command_scream(object *op, char *params)
+int command_scream(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SCREAM));
 }
 
-int command_sigh(object *op, char *params)
+int command_sigh(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SIGH));
 }
 
-int command_sulk(object *op, char *params)
+int command_sulk(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SULK));
 }
 
-int command_hug(object *op, char *params)
+int command_hug(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_HUG));
 }
 
-int command_cry(object *op, char *params)
+int command_cry(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_CRY));
 }
 
-int command_poke(object *op, char *params)
+int command_poke(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_POKE));
 }
 
-int command_accuse(object *op, char *params)
+int command_accuse(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_ACCUSE));
 }
 
-int command_grin(object *op, char *params)
+int command_grin(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_GRIN));
 }
 
-int command_bow(object *op, char *params)
+int command_bow(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_BOW));
 }
 
-int command_clap(object *op, char *params)
+int command_clap(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_CLAP));
 }
 
-int command_blush(object *op, char *params)
+int command_blush(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_BLUSH));
 }
 
-int command_burp(object *op, char *params)
+int command_burp(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_BURP));
 }
 
-int command_chuckle(object *op, char *params)
+int command_chuckle(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_CHUCKLE));
 }
 
-int command_cough(object *op, char *params)
+int command_cough(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_COUGH));
 }
 
-int command_flip(object *op, char *params)
+int command_flip(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_FLIP));
 }
 
-int command_frown(object *op, char *params)
+int command_frown(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_FROWN));
 }
 
-int command_gasp(object *op, char *params)
+int command_gasp(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_GASP));
 }
 
-int command_glare(object *op, char *params)
+int command_glare(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_GLARE));
 }
 
-int command_groan(object *op, char *params)
+int command_groan(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_GROAN));
 }
 
-int command_hiccup(object *op, char *params)
+int command_hiccup(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_HICCUP));
 }
 
-int command_lick(object *op, char *params)
+int command_lick(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_LICK));
 }
 
-int command_pout(object *op, char *params)
+int command_pout(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_POUT));
 }
 
-int command_shiver(object *op, char *params)
+int command_shiver(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SHIVER));
 }
 
-int command_shrug(object *op, char *params)
+int command_shrug(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SHRUG));
 }
 
-int command_slap(object *op, char *params)
+int command_slap(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SLAP));
 }
 
-int command_smirk(object *op, char *params)
+int command_smirk(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SMIRK));
 }
 
-int command_snap(object *op, char *params)
+int command_snap(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SNAP));
 }
 
-int command_sneeze(object *op, char *params)
+int command_sneeze(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SNEEZE));
 }
 
-int command_snicker(object *op, char *params)
+int command_snicker(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SNICKER));
 }
 
-int command_sniff(object *op, char *params)
+int command_sniff(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SNIFF));
 }
 
-int command_snore(object *op, char *params)
+int command_snore(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SNORE));
 }
 
-int command_spit(object *op, char *params)
+int command_spit(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SPIT));
 }
 
-int command_strut(object *op, char *params)
+int command_strut(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_STRUT));
 }
 
-int command_thank(object *op, char *params)
+int command_thank(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_THANK));
 }
 
-int command_twiddle(object *op, char *params)
+int command_twiddle(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_TWIDDLE));
 }
 
-int command_wave(object *op, char *params)
+int command_wave(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_WAVE));
 }
 
-int command_whistle(object *op, char *params)
+int command_whistle(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_WHISTLE));
 }
 
-int command_wink(object *op, char *params)
+int command_wink(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_WINK));
 }
 
-int command_yawn(object *op, char *params)
+int command_yawn(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_YAWN));
 }
 
-int command_beg(object *op, char *params)
+int command_beg(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_BEG));
 }
 
-int command_bleed(object *op, char *params)
+int command_bleed(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_BLEED));
 }
 
-int command_cringe(object *op, char *params)
+int command_cringe(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_CRINGE));
 }
 
-int command_think(object *op, char *params)
+int command_think(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_THINK));
 }
 
-int command_me(object *op, char *params)
+int command_me(object_t *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_ME));
 }

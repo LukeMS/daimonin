@@ -48,19 +48,21 @@ static struct method_decl Map_methods[] =
 
 static struct attribute_decl Map_attributes[] =
 {
-    {"name",           FIELDTYPE_CSTR,   offsetof(mapstruct, name),          FIELDFLAG_READONLY, 0},
-    {"message",        FIELDTYPE_CSTR,   offsetof(mapstruct, msg),           FIELDFLAG_READONLY, 0},
-    {"reset_interval", FIELDTYPE_UINT32, offsetof(mapstruct, reset_timeout), FIELDFLAG_READONLY, 0},
-    {"difficulty",     FIELDTYPE_UINT16, offsetof(mapstruct, difficulty),    FIELDFLAG_READONLY, 0},
-    {"height",         FIELDTYPE_UINT16, offsetof(mapstruct, height),        FIELDFLAG_READONLY, 0},
-    {"width",          FIELDTYPE_UINT16, offsetof(mapstruct, width),         FIELDFLAG_READONLY, 0},
-    {"enter_x",        FIELDTYPE_UINT16, offsetof(mapstruct, enter_x),       FIELDFLAG_READONLY, 0},
-    {"enter_y",        FIELDTYPE_UINT16, offsetof(mapstruct, enter_y),       FIELDFLAG_READONLY, 0},
-    {"darkness",       FIELDTYPE_SINT32, offsetof(mapstruct, darkness),      FIELDFLAG_READONLY, 0},
-    {"light_value",    FIELDTYPE_SINT32, offsetof(mapstruct, light_value),   FIELDFLAG_READONLY, 0},
-    {"path",           FIELDTYPE_SHSTR,  offsetof(mapstruct, path),          FIELDFLAG_READONLY, 0},
-    {"orig_path",      FIELDTYPE_SHSTR,  offsetof(mapstruct, orig_path),     FIELDFLAG_READONLY, 0},
-    {"map_status",     FIELDTYPE_UINT32, offsetof(mapstruct, map_status),    FIELDFLAG_READONLY, 0},
+    {"name",               FIELDTYPE_CSTR,   offsetof(map_t, name),               FIELDFLAG_READONLY, 0},
+    {"message",            FIELDTYPE_CSTR,   offsetof(map_t, msg),                FIELDFLAG_READONLY, 0},
+    {"reset_interval",     FIELDTYPE_UINT32, offsetof(map_t, reset_timeout),      FIELDFLAG_READONLY, 0},
+    {"difficulty",         FIELDTYPE_UINT16, offsetof(map_t, difficulty),         FIELDFLAG_READONLY, 0},
+    {"height",             FIELDTYPE_UINT16, offsetof(map_t, height),             FIELDFLAG_READONLY, 0},
+    {"width",              FIELDTYPE_UINT16, offsetof(map_t, width),              FIELDFLAG_READONLY, 0},
+    {"enter_x",            FIELDTYPE_UINT16, offsetof(map_t, enter_x),            FIELDFLAG_READONLY, 0},
+    {"enter_y",            FIELDTYPE_UINT16, offsetof(map_t, enter_y),            FIELDFLAG_READONLY, 0},
+    {"darkness",           FIELDTYPE_SINT8,  offsetof(map_t, ambient_darkness),   FIELDFLAG_READONLY, 0}, // deprecated
+    {"light_value",        FIELDTYPE_SINT32, offsetof(map_t, ambient_brightness), FIELDFLAG_READONLY, 0}, // deprecated
+    {"ambient_darkness",   FIELDTYPE_SINT8,  offsetof(map_t, ambient_darkness),   FIELDFLAG_READONLY, 0},
+    {"ambient_brightness", FIELDTYPE_SINT16, offsetof(map_t, ambient_brightness), FIELDFLAG_READONLY, 0},
+    {"path",               FIELDTYPE_SHSTR,  offsetof(map_t, path),               FIELDFLAG_READONLY, 0},
+    {"orig_path",          FIELDTYPE_SHSTR,  offsetof(map_t, orig_path),          FIELDFLAG_READONLY, 0},
+    {"status",             FIELDTYPE_UINT32, offsetof(map_t, status),             FIELDFLAG_READONLY, 0},
 
     {NULL, 0, 0, 0, 0}
 };
@@ -86,7 +88,7 @@ static const char *Map_flags[] =
 /* pushes flag value on top of stack */
 static int Map_getFlag(lua_State *L, lua_object *obj, uint32 flagno)
 {
-    lua_pushboolean(L, (obj->data.map->map_flags & (1 << flagno)));
+    lua_pushboolean(L, (obj->data.map->flags & (1 << flagno)));
     return 1;
 }
 
@@ -94,7 +96,7 @@ static int Map_getFlag(lua_State *L, lua_object *obj, uint32 flagno)
 static int Map_setFlag(lua_State *L, lua_object *obj, uint32 flagno, int before)
 {
     int value = lua_toboolean(L, -1);
-    mapstruct *m = obj->data.map;
+    map_t *m = obj->data.map;
 
     if (before)
     {
@@ -103,11 +105,11 @@ static int Map_setFlag(lua_State *L, lua_object *obj, uint32 flagno, int before)
     {
         if (value)
         {
-            m->map_flags |= (1 << flagno);
+            m->flags |= (1 << flagno);
         }
         else
         {
-            m->map_flags &= ~(1 << flagno);
+            m->flags &= ~(1 << flagno);
         }
     }
 
@@ -222,13 +224,13 @@ static int Map_ReadyInheritedMap(lua_State *L)
     lua_object *self;
     const char *path;
     int         mode = 0;
-    shstr      *orig_path_sh = NULL,
+    shstr_t      *orig_path_sh = NULL,
                *path_sh = NULL;
-    mapstruct  *m = NULL;
+    map_t  *m = NULL;
 
     get_lua_args(L, "Ms|i", &self, &path, &mode);
 
-    if (!MAP_STATUS_TYPE(WHERE->map_status))
+    if (!MAP_STATUS_TYPE(WHERE->status))
     {
         return luaL_error(L, "map:ReadyInheritedMap(): Self must have a status!");
     }
@@ -267,7 +269,7 @@ static int Map_ReadyInheritedMap(lua_State *L)
                           STRING_SAFE(path));
     }
 
-    if ((WHERE->map_status & (MAP_STATUS_UNIQUE | MAP_STATUS_INSTANCE)))
+    if ((WHERE->status & (MAP_STATUS_UNIQUE | MAP_STATUS_INSTANCE)))
     {
         char path[MAXPATHLEN];
 
@@ -280,18 +282,18 @@ static int Map_ReadyInheritedMap(lua_State *L)
     if (mode == PLUGIN_MAP_NEW &&
         m)
     {
-        m->map_flags |= MAP_FLAG_MANUAL_RESET | MAP_FLAG_RELOAD;
+        m->status |= MAP_STATUS_MANUAL_RESET | MAP_STATUS_RELOAD;
         MAP_SET_WHEN_RESET(m, -1);
         hooks->map_check_in_memory(m);
     }
     else if (mode != PLUGIN_MAP_CHECK &&
              (!m ||
-              (m->in_memory != MAP_LOADING &&
-               m->in_memory != MAP_ACTIVE)))
+              (m->in_memory != MAP_MEMORY_LOADING &&
+               m->in_memory != MAP_MEMORY_ACTIVE)))
     {
         m = hooks->ready_map_name((path_sh) ? path_sh : orig_path_sh,
                                   orig_path_sh,
-                                  MAP_STATUS_TYPE(WHERE->map_status),
+                                  MAP_STATUS_TYPE(WHERE->status),
                                   WHERE->reference);
     }
 
@@ -326,15 +328,15 @@ static int Map_Delete(lua_State *L)
                 reload = 0;
 
     get_lua_args(L, "M|ib", &self, &secs, &reload);
-    WHERE->map_flags |= MAP_FLAG_MANUAL_RESET;
+    WHERE->status |= MAP_STATUS_MANUAL_RESET;
 
     if (reload)
     {
-        WHERE->map_flags |= MAP_FLAG_RELOAD;
+        WHERE->status |= MAP_STATUS_RELOAD;
     }
     else
     {
-        WHERE->map_flags &= ~MAP_FLAG_RELOAD;
+        WHERE->status &= ~MAP_STATUS_RELOAD;
     }
 
     if (secs > 0) // delay X secs
@@ -365,7 +367,7 @@ static int Map_GetFirstObjectOnSquare(lua_State *L)
     lua_object *self;
     int         x,
                 y;
-    object     *val;
+    object_t     *val;
     CFParm     *CFR,
                 CFP;
 
@@ -375,7 +377,7 @@ static int Map_GetFirstObjectOnSquare(lua_State *L)
     CFP.Value[1] = (void *) (&x);
     CFP.Value[2] = (void *) (&y);
     CFR = (PlugHooks[HOOK_GETMAPOBJECT]) (&CFP);
-    val = (object *) (CFR->Value[0]);
+    val = (object_t *) (CFR->Value[0]);
 
     return push_object(L, &GameObject, val);
 }
@@ -395,32 +397,43 @@ static int Map_GetFirstObjectOnSquare(lua_State *L)
 static int Map_GetBrightnessOnSquare(lua_State *L)
 {
     lua_object *self;
-    int         x,
+    sint16      x,
                 y,
-                mode = 0,
-                brightness,
-                i;
+                mode = 0;
+    map_t  *m;
+    msp_t   *msp;
+    uint16      n = 0;
 
     get_lua_args(L, "Mii|i", &self, &x, &y, &mode);
+    m = WHERE;
 
-    brightness = hooks->map_brightness(WHERE, x, y);
-
-    if(mode == 0)
+    if ((msp = MSP_GET(m, x, y)))
     {
-        /* Convert brightness to 0-MAX_DARKNESS scale */
-        for(i=0; i<MAX_DARKNESS; i++)
+        hooks->get_tad(m->tadnow, m->tadoffset);
+        n = MSP_GET_REAL_BRIGHTNESS(msp);
+
+        if (mode == 0)
         {
-            if(brightness < hooks->global_darkness_table[i]) {
-                brightness = MAX(0,i-1);
-                break;
+            uint8 i;
+
+            /* Convert brightness to 0-MAX_DARKNESS scale */
+            for(i = 0; i < MAX_DARKNESS; i++)
+            {
+                if (n < hooks->brightness[i])
+                {
+                    n = MAX(0, i - 1);
+                    break;
+                }
+            }
+
+            if (i == MAX_DARKNESS) /* Didn't find it? */
+            {
+                n = i;
             }
         }
-        if(i==MAX_DARKNESS) /* Didn't find it? */
-            brightness = i;
     }
 
-    lua_pushnumber(L, brightness);
-
+    lua_pushnumber(L, (lua_Number)n);
     return 1;
 }
 
@@ -435,10 +448,26 @@ static int Map_IsWallOnSquare(lua_State *L)
     lua_object *self;
     int         x,
                 y;
+    map_t  *mt;
+    sint16      xt,
+                yt;
+    msp_t   *msp;
 
     get_lua_args(L, "Mii", &self, &x, &y);
+    mt = WHERE;
+    xt = x;
+    yt = y;
+    msp = MSP_GET(mt, xt, yt);
 
-    lua_pushboolean(L, hooks->wall(WHERE, x, y));
+    if (!msp ||
+        MSP_IS_RESTRICTED(msp))
+    {
+        lua_pushboolean(L, 1);
+    }
+    else
+    {
+        lua_pushboolean(L, 0);
+    }
 
     return 1;
 }
@@ -470,10 +499,10 @@ static int Map_IsAnyPlayerOnMap(lua_State *L)
     isthere = (WHERE->player_first) ? 1 : 0;
 
     if (!isthere && tiling)
-        for (i = 0; i < TILED_MAPS; i++)
+        for (i = 0; i < TILING_DIRECTION_NROF; i++)
         {
-            isthere = (WHERE->tile_map[i] &&
-                       WHERE->tile_map[i]->player_first) ? 1 : 0;
+            isthere = (WHERE->tiling.tile_map[i] &&
+                       WHERE->tiling.tile_map[i]->player_first) ? 1 : 0;
 
             /* We only care if there is *any* player on the tiles, so at the
              * first positive quit the loop. */
@@ -490,26 +519,20 @@ static int Map_IsAnyPlayerOnMap(lua_State *L)
 /* Name   : Map_MapTileAt                                                    */
 /* Lua    : map:MapTileAt(x, y)                                              */
 /* Status : Tested/Stable                                                    */
-/* TODO   : do someting about the new modified coordinates too?              */
 /*****************************************************************************/
 static int Map_MapTileAt(lua_State *L)
 {
     lua_object *self;
-    int         x,
+    sint16      x,
                 y;
-    CFParm     *CFR,
-                CFP;
-    mapstruct  *result;
+    map_t      *m;
 
     get_lua_args(L, "Mii", &self, &x, &y);
-
-    CFP.Value[0] = WHERE;
-    CFP.Value[1] = (void *) (&x);
-    CFP.Value[2] = (void *) (&y);
-    CFR = (PlugHooks[HOOK_OUTOFMAP]) (&CFP);
-    result = (mapstruct *) (CFR->Value[0]);
-
-    return push_object(L, &Map, result);
+    m = OUT_OF_MAP(WHERE, x, y);
+    push_object(L, &Map, m);
+    lua_pushnumber(L, x);
+    lua_pushnumber(L, y);
+    return 3;
 }
 
 /*****************************************************************************/
@@ -530,7 +553,7 @@ static int Map_Save(lua_State *L)
         return luaL_error(L, "MapSave(): failed!");
     }
 
-    WHERE->in_memory = MAP_ACTIVE;
+    WHERE->in_memory = MAP_MEMORY_ACTIVE;
 
     return 0;
 }
@@ -555,8 +578,7 @@ static int Map_PlaySound(lua_State *L)
                 soundtype = SOUND_NORMAL;
 
     get_lua_args(L, "Miii|i", &self, &x, &y, &soundnumber, &soundtype);
-
-    hooks->play_sound_map(WHERE, x, y, soundnumber, soundtype);
+    hooks->play_sound_map(MSP_RAW(WHERE, x, y), soundnumber, soundtype);
 
     return 0;
 }
@@ -592,10 +614,10 @@ static int Map_Message(lua_State *L)
     /* No point mucking about with an empty message. */
     if (*message)
     {
-        hooks->new_info_map_except(NDI_UNIQUE | color, WHERE, x, y, d,
-                                   (except1) ? except1->data.object : NULL,
-                                   (except2) ? except2->data.object : NULL,
-                                   "%s", message);
+        hooks->ndi_map(NDI_UNIQUE | color, MSP_RAW(WHERE, x, y), d,
+            (except1) ? except1->data.object : NULL,
+            (except2) ? except2->data.object : NULL,
+            "%s", message);
     }
 
     return 0;
@@ -615,7 +637,7 @@ static int Map_CreateObject(lua_State *L)
                 y;
     CFParm     *CFR,
                 CFP;
-    object     *new_ob;
+    object_t     *new_ob;
 
     get_lua_args(L, "Msii", &self, &txt, &x, &y);
 
@@ -624,7 +646,7 @@ static int Map_CreateObject(lua_State *L)
     CFP.Value[2] = (void *) (&x);
     CFP.Value[3] = (void *) (&y);
     CFR = (PlugHooks[HOOK_CREATEOBJECT]) (&CFP);
-    new_ob =  (object *) (CFR->Value[0]);
+    new_ob =  (object_t *) (CFR->Value[0]);
     free(CFR);
 
     return push_object(L, &GameObject, new_ob);
@@ -639,7 +661,7 @@ static int Map_CreateObject(lua_State *L)
 static int Map_PlayersOnMap(lua_State *L)
 {
     lua_object *self;
-    object     *ob;
+    object_t     *ob;
     int         i;
 
     get_lua_args(L, "M", &self);
@@ -664,8 +686,7 @@ static int Map_PlayersOnMap(lua_State *L)
 /*****************************************************************************/
 /* Name   : Map_SetDarkness                                                  */
 /* Lua    : map:SetDarkness()                                                */
-/* Info   : Sets the map-wide 'illumination' to value, normalised to the     */
-/*          range 0 <= value <= MAX_DARKNESS).                               */
+/* Info   : Sets the map-wide darkness to value.                             */
 /*          value should be one of the game.MAP_DARKNESS_* constants, where: */
 /*            game.MAP_DARKNESS_TOTAL : 'true' darkness. Info about parts of */
 /*                                      the map the player cannot see is not */
@@ -679,9 +700,9 @@ static int Map_PlayersOnMap(lua_State *L)
 /*            game.MAP_DARKNESS_MAX : the brightest map darkness (full       */
 /*                                    daylight).                             */
 /* Status : Untested/Stable                                                  */
-/* TODO   : Decide how to handle outdoors maps (currently we just ignore the */
-/*          flag, meaning the darkness will be set and becomes the new       */
-/*          maximum 'illumination' for variable lighting according to tad).  */
+/* TODO   : This needs an overhaul. Probably it should be Mi|ii: where 2 args*/
+/*          sets the map's ambient light levels (as now) and 4 args sets the */
+/*          msp's floor light levels.                                        */
 /*****************************************************************************/
 static int Map_SetDarkness(lua_State *L)
 {
@@ -690,8 +711,14 @@ static int Map_SetDarkness(lua_State *L)
 
     get_lua_args(L, "Mi", &self, &value);
 
-    hooks->set_map_darkness(WHERE, value);
+    if (value < 0||
+        value > MAX_DARKNESS)
+    {
+        value = MAX_DARKNESS;
+    }
 
+    WHERE->ambient_darkness = value;
+    WHERE->ambient_brightness = hooks->brightness[value];
     return 0;
 }
 
@@ -729,7 +756,7 @@ static int Map_ActivateConnection(lua_State *L)
         return luaL_error(L, "map:ActivateConnection(): Arg #1 must be connected!");
     else
     {
-        oblinkpt *oblp;
+        objectlink_t *oblp;
         int       flag;
 
         for (oblp = WHERE->buttons, flag = FALSE; oblp;
@@ -768,7 +795,7 @@ static int Map_HasConnection(lua_State *L)
 {
     lua_object *self;
     int         connection;
-    oblinkpt   *oblp;
+    objectlink_t   *oblp;
 
     get_lua_args(L, "Mi", &self, &connection);
 
@@ -776,7 +803,7 @@ static int Map_HasConnection(lua_State *L)
     {
         if (oblp->value == connection)
         {
-            objectlink *olp;
+            objectlink_t *olp;
             int         i;
 
             lua_newtable(L);

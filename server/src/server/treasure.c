@@ -37,11 +37,11 @@
 
 /* static functions */
 static treasure        *load_treasure(FILE *fp, int *t_style, int *a_chance);
-static void             change_treasure(struct _change_arch *ca, object *op); /* overrule default values */
+static void             change_treasure(struct _change_arch *ca, object_t *op); /* overrule default values */
 static treasurelist    *get_empty_treasurelist(void);
 static treasure        *get_empty_treasure(void);
-static void             put_treasure(object *op, object *creator, int flags);
-static inline void      set_material_real(object *op, struct _change_arch *change_arch);
+static void             put_treasure(object_t *op, object_t *creator, int flags);
+static inline void      set_material_real(object_t *op, struct _change_arch *change_arch);
 static void             create_money_table(void);
 static void             postparse_treasurelist(treasure *t, treasurelist *tl);
 
@@ -292,7 +292,7 @@ static void postparse_treasurelist(treasure *t, treasurelist *tl)
 }
 
 /* to generate from a value a set of coins (like 3 gold, 4 silver and 19 copper)
- * we collect the archt for it out of the arch name for faster access.
+ * we collect the archetype_t for it out of the arch name for faster access.
  */
 static void create_money_table(void)
 {
@@ -656,14 +656,14 @@ static inline void parse_tlist_parm(tlist_tweak *tweak, char *parm)
 /* link_treasurelists will generate a linked lists of treasure list
  * using a string in format "listname1;listname2;listname3;..." as
  * argument.
- * Return: objectlink * to list of treasurelist
+ * Return: objectlink_t * to list of treasurelist
  */
-objectlink * link_treasurelists(char *liststring, uint32 flags)
+objectlink_t * link_treasurelists(char *liststring, uint32 flags)
 {
     char               *tmp, *parm;
     const char         *name;
     treasurelist       *tl;
-    objectlink*list =   NULL, *list_start = NULL;
+    objectlink_t*list =   NULL, *list_start = NULL;
 
     if (!first_treasurelist)
         return NULL;
@@ -699,13 +699,13 @@ objectlink * link_treasurelists(char *liststring, uint32 flags)
                 {
                     if (list)
                     {
-                        list->next = get_objectlink(OBJLNK_FLAG_TL);
+                        list->next = objectlink_get(OBJLNK_FLAG_TL);
                         list->next->prev = list;
                         list = list->next;
                     }
                     else
                     {
-                        list_start = list = get_objectlink(OBJLNK_FLAG_TL);
+                        list_start = list = objectlink_get(OBJLNK_FLAG_TL);
                         /* important: we only mark the first list node with
                                          * static or refcount flag.
                                          */
@@ -751,7 +751,7 @@ objectlink * link_treasurelists(char *liststring, uint32 flags)
 /* unlink a treasure list.
  * if flag is set to TRUE, ignore (delete) the OBJLNK_FLAG_STATIC flag
  */
-void unlink_treasurelists(objectlink *list, int flag)
+void unlink_treasurelists(objectlink_t *list, int flag)
 {
     /*LOG(llevNoLog,"unlink list: %s (%x - %d)\n",list->objlink.tl->listname, list->flags, list->ref_count );*/
     if (list && (list->flags & OBJLNK_FLAG_REF))
@@ -774,7 +774,7 @@ void unlink_treasurelists(objectlink *list, int flag)
             FREE_ONLY_HASH(list->parmlink.tl_tweak->name);
             return_poolchunk(list->parmlink.tl_tweak, pool_tlist_tweak);
         }
-        free_objectlink_simple(list);
+        return_poolchunk(list, pool_objectlink);
         /* hm, this should work... return_poolchunk() should not effect the objectlink itself */
         list = list->next;
     }
@@ -788,11 +788,11 @@ void unlink_treasurelists(objectlink *list, int flag)
  * We break if we have a item or we are at the end of the list.
  * MT-2005
  */
-object * generate_treasure(struct oblnk *t, int difficulty)
+object_t * generate_treasure(struct objectlink_t *t, int difficulty)
 {
     struct _change_arch *captr;
     int t_style, a_chance, flag, magic, magic_chance;
-    object*ob =     get_object(), *tmp = NULL;
+    object_t*ob =     get_object(), *tmp = NULL;
 
     while (t)
     {
@@ -864,7 +864,7 @@ object * generate_treasure(struct oblnk *t, int difficulty)
  */
 /* help function to call a objectlink linked list of treasure lists */
 
-void create_treasure_list(struct oblnk *t, object *op, int flag, int difficulty, int art_chance, int tries)
+void create_treasure_list(struct objectlink_t *t, object_t *op, int flag, int difficulty, int art_chance, int tries)
 {
     struct _change_arch *captr;
     int t_style, a_chance, magic, magic_chance;
@@ -923,7 +923,7 @@ void create_treasure_list(struct oblnk *t, object *op, int flag, int difficulty,
     }
 }
 
-int create_treasure(treasurelist *t, object *op, int flag, int difficulty, int t_style, int a_chance,
+int create_treasure(treasurelist *t, object_t *op, int flag, int difficulty, int t_style, int a_chance,
         int magic, int magic_chance, int tries, struct _change_arch *arch_change)
 {
     int ret = FALSE;
@@ -960,11 +960,11 @@ int create_treasure(treasurelist *t, object *op, int flag, int difficulty, int t
  * start with equipment, but only their abilities).
  */
 
-int create_all_treasures(treasure *t, object *op, int flag, int difficulty, int t_style, int a_chance,
+int create_all_treasures(treasure *t, object_t *op, int flag, int difficulty, int t_style, int a_chance,
                           int magic, int magic_chance, int tries, struct _change_arch *change_arch)
 {
     int     ret = FALSE;
-    object *tmp;
+    object_t *tmp;
 
     /*  LOG(llevNoLog,"-CAT-: %s (%d)\n", STRING_SAFE(t->name),change_arch?t->change_arch.material_quality:9999); */
     /* LOG(llevNoLog,"CAT: cs: %d (%d)(%s)\n", t->chance_fix, t->chance, t->name); */
@@ -1068,12 +1068,12 @@ int create_all_treasures(treasure *t, object *op, int flag, int difficulty, int 
     return ret;
 }
 
-int create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, int t_style, int a_chance,
+int create_one_treasure(treasurelist *tl, object_t *op, int flag, int difficulty, int t_style, int a_chance,
                          int magic, int magic_chance,int tries,struct _change_arch *change_arch)
 {
     int         ret = FALSE, value, diff_tries = 0;
     treasure   *t;
-    object     *tmp;
+    object_t     *tmp;
 
     /*LOG(llevNoLog,"-COT-: %s (%d)\n", tl->name,change_arch?tl->items->change_arch.material_quality:9999); */
     /*LOG(llevNoLog,"COT: cs: %d (%s)\n", tl->chance_fix, tl->name );*/
@@ -1215,7 +1215,7 @@ int create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, 
 }
 
 
-static void put_treasure(object *op, object *creator, int flags)
+static void put_treasure(object_t *op, object_t *creator, int flags)
 {
     if (flags & GT_ENVIRONMENT)
     {
@@ -1249,7 +1249,7 @@ static void put_treasure(object *op, object *creator, int flags)
 /* if there are change_xxx commands in the treasure, we include the changes
  * in the generated object
  */
-static void change_treasure(struct _change_arch *ca, object *op)
+static void change_treasure(struct _change_arch *ca, object_t *op)
 {
     if(ca->face_id != -1)
         op->face = ca->face;
@@ -1290,7 +1290,7 @@ static void change_treasure(struct _change_arch *ca, object *op)
  * of same kind one +2.
  */
 
-static void set_magic(int difficulty, object *op, int max_magic, int fix_magic, int chance_magic, int flags)
+static void set_magic(int difficulty, object_t *op, int max_magic, int fix_magic, int chance_magic, int flags)
 {
     int i;
 
@@ -1327,7 +1327,7 @@ static void set_magic(int difficulty, object *op, int max_magic, int fix_magic, 
  * to make it truly absolute.
  */
 
-void set_abs_magic(object *op, int magic)
+void set_abs_magic(object_t *op, int magic)
 {
     if (!magic)
         return;
@@ -1419,7 +1419,7 @@ int roll_ring_bonus_stat(int current, int level, int bonus) {
 }
 
 
-void set_ring_bonus_value_calc(object *op)
+void set_ring_bonus_value_calc(object_t *op)
 {
     /*    here we can easy adjust values for each stat and to annoy
     players cursed rings will be in material price as stats
@@ -1457,7 +1457,7 @@ void set_ring_bonus_value_calc(object *op)
 
     if(op->type == AMULET) {
         if(QUERY_FLAG(op, FLAG_REFL_MISSILE)) op->value += (sint64)(20000 * (op->item_quality / 100.0f));
-        if(QUERY_FLAG(op, FLAG_REFL_SPELL)) op->value += (sint64)(60000 * (op->item_quality / 100.0f));
+        if(QUERY_FLAG(op, FLAG_REFL_CASTABLE)) op->value += (sint64)(60000 * (op->item_quality / 100.0f));
     }
 
 
@@ -1474,7 +1474,7 @@ void set_ring_bonus_value_calc(object *op)
  * 2) Add code to deal with new PR method.
  * return 0: no special added. 1: something added.
  */
-int set_ring_bonus(object *op, int bonus, int level)
+int set_ring_bonus(object_t *op, int bonus, int level)
 {
 /*    int tmp, r, off;*/
     int tmp, off, roll, r;
@@ -1706,7 +1706,7 @@ int set_ring_bonus(object *op, int bonus, int level)
         case 3:
           if (op->type == AMULET)
           {
-              SET_FLAG(op, FLAG_REFL_SPELL);
+              SET_FLAG(op, FLAG_REFL_CASTABLE);
           if(bonus < 0) {
             op->item_quality -= random_roll(1,30), op->item_condition = op->item_quality;
         }
@@ -1869,10 +1869,10 @@ static int get_random_spell(int level, int flags)
  *     Sets FLAG_NO_DROP on item if appropriate, or clears the item's
  *     value.
  */
-int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_chance, int t_style, int max_magic,
+int fix_generated_item(object_t **op_ptr, object_t *creator, int difficulty, int a_chance, int t_style, int max_magic,
                        int chance_magic, int flags)
 {
-    object *op  = *op_ptr; /* just to make things easy */
+    object_t *op  = *op_ptr; /* just to make things easy */
     int     temp, retval = 0, was_magic = op->magic;
     int     too_many_tries = 0, is_special = 0;
     int     fix_magic = 0;
@@ -2243,7 +2243,7 @@ void dump_monster_treasure_rec(const char *name, treasure *t, int depth)
  * based on the original owner (or 'donor' if you like). -b.t.
  */
 
-void fix_flesh_item(object *item, object *donor)
+void fix_flesh_item(object_t *item, object_t *donor)
 {
     char    tmpbuf[MEDIUM_BUF];
     int     i;
@@ -2318,7 +2318,7 @@ void free_all_treasures()
 
 /* set material_real... use fixed number when start == end or random range
  */
-static inline void set_material_real(object *op, struct _change_arch *change_arch)
+static inline void set_material_real(object_t *op, struct _change_arch *change_arch)
 {
     if (change_arch->item_race != -1)
         op->item_race = (uint8) change_arch->item_race;
@@ -2480,7 +2480,7 @@ static inline void set_material_real(object *op, struct _change_arch *change_arc
 
 void dump_monster_treasure(const char *name)
 {
-    archetype  *at;
+    archetype_t  *at;
     int         found;
 
     found = 0;
@@ -2493,7 +2493,7 @@ void dump_monster_treasure(const char *name)
 
             if (at->clone.randomitems != NULL)
             {
-                struct oblnk   *ol;
+                struct objectlink_t   *ol;
 
                 for (ol = at->clone.randomitems; ol; ol = ol->next)
                     dump_monster_treasure_rec(at->clone.name, ol->objlink.tl->items, 1);
@@ -2519,9 +2519,9 @@ void dump_monster_treasure(const char *name)
  * That gives us always a valid level.
  * This function never returns a value <1 !
  */
-int get_enviroment_level(object *op)
+int get_enviroment_level(object_t *op)
 {
-    object *env;
+    object_t *env;
 
     if (!op)
     {

@@ -118,8 +118,8 @@ typedef enum
 #define INDIRECT    1
 #define DIRECT      2
 
-extern archetype *skillgroups[NROFSKILLGROUPS];
-extern archetype *skills[NROFSKILLS];
+extern archetype_t *skillgroups[NROFSKILLGROUPS];
+extern archetype_t *skills[NROFSKILLS];
 
 /* yet more convenience macros. */
 

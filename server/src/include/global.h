@@ -169,7 +169,7 @@
 /* merge_ob(): object.c */
 /*#define DEBUG_MERGE_OB*/
 
-/*#define DEBUG_CALENDAR*/
+#define DEBUG_CALENDAR
 
 /*#define DEBUG_IPCOMPARE*/
 
@@ -229,6 +229,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 #include <setjmp.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <limits.h>
+#include <math.h>
 
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h>
@@ -317,43 +319,140 @@ time_t  mktime(struct tm *);
 #endif
 #endif
 
-/* Type defines for specific signed/unsigned variables of a certain number
+/* Here we typedef *all* the data types used in the non-3rd party server code.
+ * TODO: There are a lot of unupdated typedefs yet.
+ *
+ * By doing it here this means we can use the alias *anywhere* in the code.
+ * This is particularly useful for the complex types such as structs as it
+ * means that we can declare self-referential members like this:
+ *   struct object_t
+ *   {
+ *       object_t *next; // no explicit struct keyword
+ *       ...
+ *   };
+ *
+ * And more importantly we can declare functions with a struct parameter or
+ * return again without explicit keywords or worrying about whether the actual
+ * struct has been declared yet (which means we can declare functions in
+ * specific headers and include those headers in any order and therefore not
+ * need unwieldy ...proto.h headers. */
+#ifndef __TYPEDEFS_H
+#   define __TYPEDEFS_H
+
+/* SCALAR TYPES (integers of specific byte sizes, etc):
+ *
+ * Type defines for specific signed/unsigned variables of a certain number
  * of bits.  If a certain number of bits is required, these type defines
  * should then be used.  This will make porting to systems that have different
  * sized data types easier.
  *
- * Note: The type defines should just mean that the data type has at
- * least that many bits.  if a uint16 is actually 32 bits, no big deal,
- * it is just a waste of space.
- *
- * Note2:  When using something that is normally stored in a character
- * (ie strings), don't use the uint8/sint8 typdefs, use 'char' instead.
- * The signedness for char is probably not universal, and using char
- * will probably be more portable than sint8/unit8.
+ * Note:  When using something that is normally stored in a character (ie,
+ * strings), don't use the uint8/sint8 typdefs, use 'char' instead. The
+ * signedness for char is probably not universal, and using char will
+ * probably be more portable than sint8/unit8.
  *
  * TODO: Change these to eg int8_t/uint8_t and only define if stdint.h (C99) is
- * unavailable. */
+ * unavailable. Although it might be easier/better to just forget about C99
+ * entirely (still not sure how well supported it is on Windows) and just
+ * suffix these with _t. */
 typedef signed char        sint8;
 typedef unsigned char      uint8;
 typedef signed short       sint16;
 typedef unsigned short     uint16;
 typedef signed int         sint32;
 typedef unsigned int       uint32;
-typedef uint32             tag_t;
-
-/* 64bit definition */
-#ifdef WIN32
+#   ifdef WIN32
 typedef __int64            sint64;
 typedef unsigned __int64   uint64;
-#elif SIZEOF_LONG == 8
+#   elif SIZEOF_LONG == 8
 typedef unsigned long      uint64;
 typedef signed long        sint64;
-#elif SIZEOF_LONG_LONG == 8
+#   elif SIZEOF_LONG_LONG == 8
 typedef unsigned long long uint64;
 typedef signed long long   sint64;
-#else
-#error Your compiler misses 64-bit support
-#endif
+#   else
+#       error Your compiler misses 64-bit support
+#   endif
+
+typedef const char         shstr_t;
+typedef sint8              stat_t;
+typedef uint32             tag_t;
+
+/* ENUM TYPES:
+ *
+ * Unfortunately typedefs don't work quite so smoothly with enums in C, so eg
+ * 'typedef enum log_t log_t;' here with 'enum log_t { ... };' later in a
+ * specific header (treating enums as directly analogous to structs, see below,
+ * does not work as expected). So instead we typedef the alias as an int (C
+ * stores enums internally as ints) here and declare the enum later.
+ *
+ * In theory I think this should prevent the useful behaviour of the compiler
+ * choking on variables of the enum type being assigned values not declared in
+ * the enumeration. In practice this doesn't seem to work anyway (GCC bug or me
+ * bug?), so no big loss. */
+typedef int attack_envmode_t;
+typedef int attack_nr_t;
+typedef int log_t;
+typedef int map_memory_t;
+typedef int msp_slice_t;
+typedef int msp_clayer_t;
+typedef int msp_slayer_t;
+typedef int stat_nr_t;
+typedef int tiling_direction_t;
+
+/* NON-SCALAR TYPES (structs and unions):
+ *
+ * We use the _t suffix for both struct, etc declarator and typedef identifier
+ * for ease of use. There is no conflict as they use different namespaces.
+ *
+ * Note: While this is actually relevant tooo the struct declarationss, not the
+ * typedefs, this is a nice central place to mention it.
+ *
+ * Use (at least) basic structure packing techniques to squeeze structures into
+ * as small a memory foo;;tprint as possible. Here is a very readable resource
+ * on this subject: http://www.catb.org/esr/structure-packing/
+ *
+ * I think two things about this are important to stress.
+ *
+ * Firstly, while it is definitely worthwhile to remove/reduce unnecessary
+ * padding on very often-used structures (such as map_t, msp_t, and object_t),
+ * the saving per structure is only going to be a few bytes and this may seem
+ * pointless when a new feature (such as msp_t being able to back reference its
+ * map, x, y in 0.10.7) can add this and more, but that's useful, padding
+ * isn't.
+ *
+ * Secondly, structure packing is an art, not a science. A very tightly packed
+ * structure that is totally unreadable/unmaintainable as a result is of
+ * dubious benefit. Also, keep in mind the memory cache. This is a complex
+ * subject in detail but the basics seem simple enough: when a program first
+ * accesses a specific address in memory (ie, a struct), a given block of that
+ * memory -- the cache line, allegedly usually 32 or 64 bytes, depending on
+ * architecture -- is copied into the cache. Subsequent operations work on this
+ * cache, if available, first. Therefore it improves access times to put the
+ * most commonly accessed members within the cache line.
+ *
+ * Older code tended (inconsistently) to use #pragma pack (on Windows). Don't
+ * do this. */
+typedef struct archetype_t       archetype_t;
+typedef struct attack_name_t     attack_name_t;
+typedef struct ban_t             ban_t;
+typedef struct living_t          living_t;
+typedef struct map_t             map_t;
+typedef struct moneyblock_t      moneyblock_t;
+typedef struct msp_t             msp_t;
+typedef struct object_t          object_t;
+typedef struct objectlink_t      objectlink_t;
+typedef struct player_t          player_t;
+typedef struct player_template_t player_template_t;
+typedef struct rv_t              rv_t;
+typedef struct rv_cache_t        rv_cache_t;
+typedef struct settings_t        settings_t;
+typedef struct shstr_linked_t    shstr_linked_t;
+typedef struct tiling_t          tiling_t;
+typedef struct view_map_t        view_map_t;
+typedef struct view_msp_t        view_msp_t;
+
+#endif /* ifndef  __TYPEDEFS_H */
 
 /* porting stuff for file handle function names. */
 #ifndef _fstat
@@ -507,7 +606,7 @@ enum
 
 #define STRING_MAP_PATH(__map__) PTR_STRING_SAFE((__map__), path)
 #define STRING_MAP_ORIG_PATH(__map__) PTR_STRING_SAFE((__map__), orig_path)
-#define STRING_MAP_TILE_PATH(__map__, __id__) ((__map__)!=NULL?PTR_STRING_SAFE((__map__), tile_path[(__id__)]):">NULL MAP<")
+#define STRING_MAP_TILE_PATH(__map__, __id__) ((__map__)!=NULL?PTR_STRING_SAFE((__map__), tiling.tile_path[(__id__)]):">NULL MAP<")
 #define STRING_MAP_NAME(__map__) PTR_STRING_SAFE((__map__), name)
 #define STRING_MAP_TMPNAME(__map__) PTR_STRING_SAFE((__map__), tmpname)
 #define STRING_MAP_MSG(__map__) PTR_STRING_SAFE((__map__), msg)
@@ -623,20 +722,6 @@ enum
 #define MAP_INFO_NORMAL          12
 #define MAP_INFO_ALL           9999
 
-/* number of connected maps from a tiled map */
-typedef enum
-{
-    TILED_MAPS_NORTH,
-    TILED_MAPS_EAST,
-    TILED_MAPS_SOUTH,
-    TILED_MAPS_WEST,
-    TILED_MAPS_NORTHEAST,
-    TILED_MAPS_SOUTHEAST,
-    TILED_MAPS_SOUTHWEST,
-    TILED_MAPS_NORTHWEST,
-    TILED_MAPS
-} ENUM_TILED_MAPS;
-
 typedef enum
 {
     BANTYPE_PLAYER,
@@ -660,35 +745,102 @@ typedef enum
 #define SCRIPT_FIX_NOTHING       0
 
 #define special_potion(__op_sp) (__op_sp)->last_eat
-#define move_object(__op, __dir) move_ob(__op,__dir,__op)
-
 #define is_magical(__op_) QUERY_FLAG(__op_,FLAG_IS_MAGICAL)
 #define is_cursed_or_damned(__op_) (QUERY_FLAG(__op_, FLAG_CURSED) || QUERY_FLAG(__op_, FLAG_DAMNED))
 
 #define NUM_COLORS          13
 
 /** number of darkness levels. 0 means total darkness. */
-#define MAX_DARKNESS         7
+#define MAX_DARKNESS   7
+#define MAX_BRIGHTNESS 1280
+
+extern sint16 brightness[MAX_DARKNESS + 1];
 
 /* define from shstr.h - hash table dump */
 #define SS_DUMP_TOTALS       1
 
+/* The FOREACH macros provide a convenient and understandable way to write a
+ * code block which steps through each object in a given context.
+ *
+ * FOREACH_OBJECT_IN_OBJECT() will go through every object in the inventory of
+ * another.
+ *
+ * FOREACH_OBJECT_IN_MSP() will go through every object in a map square. Note
+ * that this begins the loop at the real object (that is not system object) end
+ * of the list. (Almost?) Always when looking for a system object on a map
+ * square, you're only interested in if there is a specific one or not and it
+ * is better to use MSP_GET_SYS_OBJECT().
+ *
+ * FOREACH_PART_OF_OBJECT() will go through each part of a multipart object
+ * (working its way towards the tail).
+ *
+ * All macros take 3 arguments. The 1st, _OC_, and 3rd, _ON_, are object_t *. 
+ * These values will be overwritten each loop, with _OC_ pointing to the
+ * child object under consideration or NULL and _ON_ pointing to the next one
+ * or NULL. Note that it is fine to remove_ob() the child object each iteration
+ * (but do not destroy the heirarchy further than the current child or the loop
+ * will fail).
+ *
+ * The 2nd argument of FOREACH_OBJECT_IN_OBJECT(), _OP_, is also object_t *.
+ * This is the parent object whose inventory we are looping through. Note that
+ * the macro is not recursive; if _OC_ has an inventory we do not loop through
+ * it (such behaviour is very easy to write in specific situations though).
+ *
+ * The 2nd argument of FOREACH_OBJECT_IN_MSP(), _MSP_, is msp_t *. This is
+ * the map square whose contents we are looping through. Note that _OC_/_ON_
+ * point to actual objects in _MSP_ and do not determine if they are singlepart
+ * or part of a multipart. This is very easy to write in specific situations
+ * though.
+ *
+ * The 2nd argument of FOREACH_PART_OF_OBJECT(), _OP_, is an object_t *. This
+ * is the part (usually the head) from which we start browsing.
+ *
+ * So you will often find code like this (where what is a preset object_t *):
+ *
+ * object_t *this,
+ *          *next;
+ *
+ * FOREACH_OBJECT_IN_OBJECT(this, what, next)
+ * {
+ *     ...
+ * }
+ *
+ * Or this (where msp is a preset msp_t *):
+ *
+ * object_t *this,
+ *          *next;
+ *
+ * FOREACH_OBJECT_IN_MSP(this, msp, next)
+ * {
+ *     ...
+ * }
+ *
+ * Or this (where what is a preset object_t *):
+ *
+ * object_t *this,
+ *          *next;
+ *
+ * FOREACH_PART_OF_OBJECT(this, what, next)
+ * {
+ *     ...
+ * }
+ * */
+#define FOREACH_OBJECT_IN_OBJECT(_OC_, _OP_, _ON_) \
+    for ((_OC_) = (_OP_)->inv, (_ON_) = (_OC_) ? (_OC_)->below : NULL; \
+        (_OC_); \
+        (_OC_) = (_ON_), (_ON_) = (_OC_) ? (_OC_)->below : NULL)
+#define FOREACH_OBJECT_IN_MSP(_OC_, _MSP_, _ON_) \
+    for ((_OC_) = (_MSP_)->last, (_ON_) = (_OC_) ? (_OC_)->below : NULL; \
+        (_OC_); \
+        (_OC_) = (_ON_), (_ON_) = (_OC_) ? (_OC_)->below : NULL)
+#define FOREACH_PART_OF_OBJECT(_OC_, _OP_, _ON_) \
+    for ((_OC_) = (_OP_), (_ON_) = (_OC_) ? (_OC_)->more : NULL; \
+        (_OC_); \
+        (_OC_) = (_ON_), (_ON_) = (_OC_) ? (_OC_)->more : NULL)
+
 /* global typedefs.
  * which needs defined before header loading.
  */
-
-/**
- * So far only used when dealing with artifacts.
- * (now used by alchemy and other code too. Nov 95 b.t).
- * This is used in readable.c, recipe.c and treasure.c .
- * its used in statical structures loaded at startup.
- * NEVER use this in dynamical way.
- */
-typedef struct linked_char
-{
-    const char         *name;
-    struct linked_char *next;
-} linked_char;
 
 #include "hashtable.h"
 #include "hashfunc.h"
@@ -709,8 +861,8 @@ typedef struct linked_char
 #include "links.h"
 #include "arch.h"
 #include "spells.h"
-#include "map.h"
 #include "calendar.h"
+#include "map.h"
 #include "pathfinder.h"
 #include "gmaster.h"
 #include "timeutils.h"
@@ -758,27 +910,14 @@ typedef struct linked_char
 #include "channel.h"
 #endif
 
-typedef struct _money_block
-{
-    uint8  mode;
-    uint32 mithril;
-    uint32 gold;
-    uint32 silver;
-    uint32 copper;
-}_money_block;
+/* increase when you add more as 12 player races to client_settings */
+#define MAX_PLAYER_ARCH     (12*4)
 
-/** ban node - see ban.c */
-typedef struct ban_struct
-{
-    const char  *name;       /* if != NULL, we have banned an name */
-    const char  *account;
-    int          ticks_init; /* how long is the ban */
-    int          ticks_left; /* how long left */
-    uint32       ticks;     /* (starting) pticks + ticks_left */
-    char        *ip;        /* if name is == NULL, we have a ip */
-} _ban_struct;
-
-typedef struct Settings
+/*****************************************************************************
+ * GLOBAL VARIABLES:                                                         *
+ *****************************************************************************/
+/* TODO: need init.h. */
+struct settings_t
 {
     int                             max_cons_from_one_ip; /* Maximum number of concurrent connections from a single IP address, default = 2 */
     int                             player_races;       /* number of player race arches in client_settings */
@@ -788,7 +927,7 @@ typedef struct Settings
     char                           *tlogfilename;       /* tlogfile to use */
     char                           *clogfilename;       /* clogfile to use */
     uint16                          csport;             /* port for new client/server */
-    LogLevel                        debug;              /* Default debugging level */
+    log_t                        debug;              /* Default debugging level */
     uint8                           dumpvalues;         /* Set to dump various values/tables */
     char                           *dumparg;            /* additional argument for some dump functions */
     uint8                           daemonmode;         /* If true, detach and become daemon */
@@ -824,37 +963,44 @@ typedef struct Settings
     uint32                          worldmaptilesizex;  /* number of squares wide in a wm tile */
     uint32                          worldmaptilesizey;  /* number of squares high in a wm tile */
     uint16                          dynamiclevel;       /* how dynamic is the world? */
-} Settings;
+};
 
-typedef struct _player_arch_template
+extern settings_t settings;
+
+struct player_template_t
 {
-    archetype   *p_arch[4];
-    int   str;  /* these stats points overrule the arch settings for easy player customizing */
-    int   dex;
-    int   con;
-    int   intel;
-    int   wis;
-    int   pow;
-    int   cha;
-} player_arch_template;
+    archetype_t *p_arch[4];
+    int          str;   // overrules the arch settings for easy customisation
+    int          dex;   // overrules the arch settings for easy customisation
+    int          con;   // overrules the arch settings for easy customisation
+    int          intel; // overrules the arch settings for easy customisation
+    int          wis;   // overrules the arch settings for easy customisation
+    int          pow;   // overrules the arch settings for easy customisation
+    int          cha;   // overrules the arch settings for easy customisation
+};
 
-/* increase when you add more as 12 player races to client_settings */
-#define MAX_PLAYER_ARCH     (12*4)
+extern player_template_t player_template[MAX_PLAYER_ARCH];
 
-/*****************************************************************************
- * GLOBAL VARIABLES:                                                         *
- *****************************************************************************/
-/* these variables are direct initialized in their modules. So we
- * can't use EXTERN.
- */
-extern int                      freearr_x[SIZEOFFREE];
-extern int                      freearr_y[SIZEOFFREE];
-extern int                      maxfree[SIZEOFFREE];
-extern int                      freedir[SIZEOFFREE];
-extern int                      freeback[SIZEOFFREE];
-extern int                      freeback2[SIZEOFFREE];
-extern Settings                 settings;
-extern player_arch_template     player_arch_list[MAX_PLAYER_ARCH];
+/* TODO: need money.h. */
+struct moneyblock_t
+{
+    uint8  mode;
+    uint32 mithril;
+    uint32 gold;
+    uint32 silver;
+    uint32 copper;
+};
+
+/* TODO: Need ban.h. */
+struct ban_t
+{
+    shstr_t  *name;       /* if != NULL, we have banned an name */
+    shstr_t  *account;
+    int     ticks_init; /* how long is the ban */
+    int     ticks_left; /* how long left */
+    uint32  ticks;     /* (starting) pticks + ticks_left */
+    char   *ip;        /* if name is == NULL, we have a ip */
+};
 
 extern spell                    spells[NROFREALSPELLS];
 
@@ -863,19 +1009,19 @@ extern spell                    spells[NROFREALSPELLS];
  * defined as #define EXTERN extern.
  */
 
-EXTERN objectlink               *ban_list_player;   /* see ban.c */
-EXTERN objectlink               *ban_list_ip;       /* see ban.c */
-EXTERN objectlink               *ban_list_account;  /* see ban.c */
+EXTERN objectlink_t               *ban_list_player;   /* see ban.c */
+EXTERN objectlink_t               *ban_list_ip;       /* see ban.c */
+EXTERN objectlink_t               *ban_list_account;  /* see ban.c */
 
-EXTERN object                  *active_objects; /* List of active objects that need to be processed */
-EXTERN object                  *inserted_active_objects; /* List of active objects that will be inserted into active_objects */
-EXTERN object                  *next_active_object; /* Loop index for process_events(), might be modified during the loop */
+EXTERN object_t                  *active_objects; /* List of active objects that need to be processed */
+EXTERN object_t                  *inserted_active_objects; /* List of active objects that will be inserted into active_objects */
+EXTERN object_t                  *next_active_object; /* Loop index for process_events(), might be modified during the loop */
 EXTERN struct mempool_chunk    *removed_objects; /* List of objects that have been removed
                                                   * during the last server timestep
                                                   */
 
 /** Intialization functions for the different object types */
-EXTERN void (*object_initializers[256])(object *);
+EXTERN void (*object_initializers[256])(object_t *);
 
 EXTERN _srv_client_files        SrvClientFiles[SRV_CLIENT_FILES];
 EXTERN Socket_Info              socket_info;
@@ -885,7 +1031,7 @@ EXTERN int                      global_instance_num; /* every instance has an un
 EXTERN uint32                   global_group_tag; /* every group gets an unique group tag identifier */
 EXTERN uint32                   global_map_tag; /* our global map_tag value for the server (map.c)*/
 EXTERN New_Face                *new_faces;
-EXTERN archetype               *coins_arch[NUM_COINS+1];
+EXTERN archetype_t               *coins_arch[NUM_COINS+1];
 EXTERN char                     global_version_msg[32];
 
 /* arch.c - sysinfo for lowlevel */
@@ -895,11 +1041,11 @@ EXTERN int                      arch_search;    /* How many searches */
 /*
 * These are the beginnings of linked lists:
 */
-EXTERN player                  *first_player;
-EXTERN player                  *last_player;
+EXTERN player_t                  *first_player;
+EXTERN player_t                  *last_player;
 EXTERN int                      player_active;
 EXTERN int                      player_active_meta;
-EXTERN mapstruct               *first_map;
+EXTERN map_t               *first_map;
 EXTERN treasurelist            *first_treasurelist;
 EXTERN artifactlist            *first_artifactlist;
 EXTERN godlink                 *first_god;
@@ -927,7 +1073,7 @@ EXTERN long                     nroftreasures;      /* Only used in malloc_info(
 EXTERN long                     nrofartifacts;      /* Only used in malloc_info() */
 EXTERN long                     nrofallowedstr;     /* Only used in malloc_info() */
 
-EXTERN object                   void_container; /* Container for objects without env or map */
+EXTERN object_t                   void_container; /* Container for objects without env or map */
 
 EXTERN char                     global_string_buf4096[HUGE_BUF];
 EXTERN char                     errmsg[HUGE_BUF*6]; /* Must be at least as large as buf in get_ob_dif JRG 13-May-2009 */
@@ -941,51 +1087,50 @@ EXTERN struct timeval           last_time;        /* Used for main loop timing *
 /* constant shared string pointers */
 EXTERN struct shstr_constants
 {
-    shstr *undead;
-    shstr *none;
-    shstr *NONE;
-    shstr *quarterstaff;
-    shstr *battleground;
-    shstr *clawing;
-    shstr *dragon_skin_force;
-    shstr *dragon_ability_force;
-    shstr *dragon;
-    shstr *town_portal_destination;
-    shstr *existing_town_portal;
-    shstr *player;
-    shstr *money;
-    shstr *RANK_FORCE;
-    shstr *rank_force;
-    shstr *ALIGNMENT_FORCE;
-    shstr *GUILD_FORCE;
-    shstr *stat_strength;
-    shstr *stat_dexterity;
-    shstr *stat_constitution;
-    shstr *stat_intelligence;
-    shstr *stat_wisdom;
-    shstr *stat_power;
-    shstr *stat_charisma;
-    shstr *special_prayer;
-    shstr *grace_limit;
-    shstr *restore_grace;
-    shstr *restore_hitpoints;
-    shstr *restore_spellpoints;
-    shstr *heal_spell;
-    shstr *remove_curse;
-    shstr *remove_damnation;
-    shstr *heal_depletion;
-    shstr *message;
-    shstr *enchant_weapon;
-    shstr *Eldath;
-    shstr *the_Tabernacle;
-    shstr *poisonous_food;
-    shstr *starvation;
-    shstr *drowning;
-    shstr *emergency_mappath;
-    shstr *start_mappath;
-    shstr *bind_mappath;
-    shstr *nopass;
-    shstr *beacon_default;
+    shstr_t *undead;
+    shstr_t *none;
+    shstr_t *NONE;
+    shstr_t *quarterstaff;
+    shstr_t *clawing;
+    shstr_t *dragon_skin_force;
+    shstr_t *dragon_ability_force;
+    shstr_t *dragon;
+    shstr_t *town_portal_destination;
+    shstr_t *existing_town_portal;
+    shstr_t *player;
+    shstr_t *money;
+    shstr_t *RANK_FORCE;
+    shstr_t *rank_force;
+    shstr_t *ALIGNMENT_FORCE;
+    shstr_t *GUILD_FORCE;
+    shstr_t *stat_strength;
+    shstr_t *stat_dexterity;
+    shstr_t *stat_constitution;
+    shstr_t *stat_intelligence;
+    shstr_t *stat_wisdom;
+    shstr_t *stat_power;
+    shstr_t *stat_charisma;
+    shstr_t *special_prayer;
+    shstr_t *grace_limit;
+    shstr_t *restore_grace;
+    shstr_t *restore_hitpoints;
+    shstr_t *restore_spellpoints;
+    shstr_t *heal_spell;
+    shstr_t *remove_curse;
+    shstr_t *remove_damnation;
+    shstr_t *heal_depletion;
+    shstr_t *message;
+    shstr_t *enchant_weapon;
+    shstr_t *Eldath;
+    shstr_t *the_Tabernacle;
+    shstr_t *poisonous_food;
+    shstr_t *starvation;
+    shstr_t *drowning;
+    shstr_t *emergency_mappath;
+    shstr_t *start_mappath;
+    shstr_t *bind_mappath;
+    shstr_t *nopass;
+    shstr_t *beacon_default;
 } shstr_cons;
 
 EXTERN Animations              *animations;

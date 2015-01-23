@@ -30,7 +30,7 @@ typedef struct glnk
 {
     /* Used to link together the gods */
     const char     *name;           /* name of this god */
-    struct archt   *arch;       /* pointer to the archetype of this god */
+    archetype_t   *arch;       /* pointer to the archetype of this god */
     int             id;                 /* id of the god */
     char           *pantheon;           /* the name of the group this god belongs to */
     struct glnk    *next;

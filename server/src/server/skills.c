@@ -25,6 +25,8 @@
 
 #include "global.h"
 
+static object_t *IsValidTarget(object_t *what, object_t*who);
+
 /* attack_melee_weapon() - this handles melee weapon attacks -b.t.
  * For now we are just checking to see if we have a ready weapon here.
  * But there is a real neato possible feature of this scheme which
@@ -35,12 +37,12 @@
  * weapon type.
  */
 
-int attack_melee_weapon(object *op, int dir, char *string)
+int attack_melee_weapon(object_t *op, int dir, char *string)
 {
     if (!QUERY_FLAG(op, FLAG_READY_WEAPON))
     {
         if (op->type == PLAYER)
-            new_draw_info(NDI_UNIQUE, 0, op, "You have no ready weapon to attack with!");
+            ndi(NDI_UNIQUE, 0, op, "You have no ready weapon to attack with!");
         return 0;
     }
 
@@ -54,23 +56,31 @@ int attack_melee_weapon(object *op, int dir, char *string)
  * function skill_attack() we actually attack.
  */
 
-int attack_hth(object *pl, int dir, char *string)
+int attack_hth(object_t *pl, int dir, char *string)
 {
-    object*enemy =  NULL, *weapon;
+    object_t *enemy = NULL;
 
     if (QUERY_FLAG(pl, FLAG_READY_WEAPON))
-        for (weapon = pl->inv; weapon; weapon = weapon->below)
+    {
+        object_t *weapon,
+               *next;
+
+        FOREACH_OBJECT_IN_OBJECT(weapon, pl, next)
         {
-            if (weapon->type != WEAPON || !QUERY_FLAG(weapon, FLAG_APPLIED))
+            if (weapon->type != WEAPON ||
+                !QUERY_FLAG(weapon, FLAG_APPLIED))
+            {
                 continue;
+            }
+
             CLEAR_FLAG(weapon, FLAG_APPLIED);
             CLEAR_FLAG(pl, FLAG_READY_WEAPON);
             FIX_PLAYER(pl ,"attack hth");
-            new_draw_info(NDI_UNIQUE, 0, pl, "You unwield your weapon in order to attack.");
+            ndi(NDI_UNIQUE, 0, pl, "You unwield your weapon in order to attack.");
             esrv_update_item(UPD_FLAGS, weapon);
-
             break;
         }
+    }
 
     return skill_attack(enemy, pl, dir, string);
 }
@@ -85,48 +95,82 @@ int attack_hth(object *pl, int dir, char *string)
  *
  * This is called by move_player() and attack_hth()
  *
- * Initial implementation by -bt thomas@astro.psu.edu
- */
-
-int skill_attack(object *tmp, object *pl, int dir, char *string)
+ * Initial implementation by -bt thomas@astro.psu.edu */
+int skill_attack(object_t *tmp, object_t *pl, int dir, char *string)
 {
-    int         xt, yt;
-    mapstruct  *m;
-
     if (!dir)
+    {
         dir = pl->facing;
+    }
 
     /* If we don't yet have an opponent, find if one exists, and attack.
-     * Legal opponents are the same as outlined in move_player()
-     */
-
-    if (tmp == NULL)
+     * Legal opponents are the same as outlined in move_player(). */
+    if (!tmp)
     {
-        xt = pl->x + freearr_x[dir];
-        yt = pl->y + freearr_y[dir];
-        if (!(m = out_of_map(pl->map, &xt, &yt)))
-            return 0;
+        map_t *m = pl->map;
+        sint16     x = pl->x + OVERLAY_X(dir),
+                   y = pl->y + OVERLAY_Y(dir);
+        msp_t  *msp = MSP_GET(m, x, y);
+        object_t    *this,
+                  *next;
 
-        /* rewrite this for new "head only" multi arches and battlegrounds. MT. */
-        for (tmp = GET_MAP_OB(m, xt, yt); tmp; tmp = tmp->above)
+        if (!msp)
         {
-            if ((IS_LIVE(tmp) && (tmp->head == NULL ? tmp->stats.hp > 0 : tmp->head->stats.hp > 0))
-             || QUERY_FLAG(tmp, FLAG_CAN_ROLL) || tmp->type == LOCKED_DOOR)
+            return 0;
+        }
+
+        FOREACH_OBJECT_IN_MSP(this, msp, next)
+        {
+            object_t *head = (this->head) ? this->head : this;
+
+            if ((tmp = IsValidTarget(head, pl)))
             {
-                /* lets skip pvp outside battleground (pvp area) */
-                if (pl->type == PLAYER && tmp->type == PLAYER && !op_on_battleground(tmp, NULL, NULL))
-                    continue;
                 break;
             }
         }
     }
-    if (tmp != NULL)
-        return do_skill_attack(tmp, pl, string);
+    else
+    {
+        tmp = IsValidTarget(tmp, pl);
+    }
 
-    if (pl->type == PLAYER)
-        new_draw_info(NDI_UNIQUE, 0, pl, "There is nothing to attack!");
+    if (tmp)
+    {
+        return do_skill_attack(tmp, pl, string);
+    }
+    else if (pl->type == PLAYER)
+    {
+        ndi(NDI_UNIQUE, 0, pl, "There is nothing to attack!");
+    }
 
     return 0;
+}
+
+/* IsValidTarget() returns what if what is attackable by who or NULL. */
+static object_t *IsValidTarget(object_t *what, object_t*who)
+{
+    /* PvP is not available unless both players are in PvP msps. */
+    if (who->type == PLAYER &&
+        what->type == PLAYER &&
+        !pvp_area(who, what))
+    {
+        return NULL;
+    }
+
+    /* We make no judgment on whether who should be attacking what based on
+     * relative alignments, powers, etc (that should have been caught long
+     * before this stage), just on whether it is technically possible for what
+     * to be attacked. */
+    /* TODO: Not sure the FLAG_CAN_ROLL/LOCKED_DOOR stuff is implemented. */
+    if ((IS_LIVE(what) &&
+         what->stats.hp > 0) ||
+        QUERY_FLAG(what, FLAG_CAN_ROLL) ||
+        what->type == LOCKED_DOOR)
+    {
+        return what;
+    }
+
+    return NULL;
 }
 
 /* do_skill_attack() - We have got an appropriate opponent from either
@@ -136,7 +180,7 @@ int skill_attack(object *tmp, object *pl, int dir, char *string)
  * -b.t. thomas@astro.psu.edu
  */
 
-int do_skill_attack(object *tmp, object *op, char *string)
+int do_skill_attack(object_t *tmp, object_t *op, char *string)
 {
     int     success;
     float   ticks = 0.0f;
@@ -178,12 +222,12 @@ int do_skill_attack(object *tmp, object *op, char *string)
     {
         if (op->type == PLAYER)
          {
-            new_draw_info(NDI_UNIQUE, 0, op, "You %s %s!",
+            ndi(NDI_UNIQUE, 0, op, "You %s %s!",
                 string, QUERY_SHORT_NAME(tmp, op));
         }
         else if (tmp->type == PLAYER)
         {          
-            new_draw_info(NDI_UNIQUE, 0, tmp, "%s %s you!",
+            ndi(NDI_UNIQUE, 0, tmp, "%s %s you!",
                 QUERY_SHORT_NAME(op, tmp), string);
         }
     }
@@ -204,9 +248,9 @@ int do_skill_attack(object *tmp, object *op, char *string)
  * it should be used anytime a function needs to check the user's
  * level.
  */
-int SK_level(object *op)
+int SK_level(object_t *op)
 {
-    object *head    = op->head ? op->head : op;
+    object_t *head    = op->head ? op->head : op;
     int     level;
 
     if (head->type == PLAYER && head->chosen_skill && head->chosen_skill->level != 0)
@@ -232,7 +276,7 @@ int SK_level(object *op)
  * rather than overhaul the existing code - this makes sure things
  * still work for those people who don't want to have skill code
  * implemented. */
-int find_traps(object *op, int level)
+int find_traps(object_t *op, int level)
 {
     uint8 i,
           found = 0,
@@ -241,28 +285,35 @@ int find_traps(object *op, int level)
     /* Search the squares in the 8 directions. */
     for (i = 0; i < 9; i++)
     {
-        int         xt = op->x + freearr_x[i],
-                    yt = op->y + freearr_y[i];
-        mapstruct  *m;
-        object     *next,
+        map_t  *m = op->map;
+        sint16      x = op->x + OVERLAY_X(i),
+                    y = op->y + OVERLAY_Y(i);
+        msp_t   *msp = MSP_GET(m, x, y);
+        object_t     *next,
                    *this;
 
         /* Ensure the square isn't out of bounds. */
-        if (!(m = out_of_map(op->map, &xt, &yt)))
+        if (!msp)
+        {
             continue;
+        }
  
-        next = GET_MAP_OB(m, xt, yt);
+        next = msp->last;
+
         while ((this = next))
         {
             /* this is the object on the map, that is the current object under
              * consideration. */
-            object *that = this;
+            object_t *that = this;
 
-            next = this->above;
+            next = this->below;
 
             /* op, players, and monsters are opaque to find traps. */
-            if (that == op || that->type == PLAYER || that->type == MONSTER)
+            if (that == op ||
+                IS_LIVE(that))
+            {
                 continue;
+            }
 
             /* Otherwise, check that and (if necessary) inventory of that. */
             while (that)
@@ -274,30 +325,31 @@ int find_traps(object *op, int level)
                         trap_show(that, this);
                         found++;
                     }
-                    else
-                        if (that->level <= (level * 1.8f))
-                            aware = 1;
+                    else if (that->level <= (level * 1.8f))
+                    {
+                        aware = 1;
+                    }
                 }
+
                 that = find_next_object(that, RUNE, FNO_MODE_CONTAINERS, that);
             }
         }
     }
 
    /* Only players get messages. */
-    if (op->type == PLAYER && CONTR(op))
+    if (op->type == PLAYER &&
+        CONTR(op))
     {
         if (!found)
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "You find no new traps this time...");
-            if (aware)
-                new_draw_info(NDI_UNIQUE, 0, op, "But you find signs of traps hidden beyond your skill...");
+            ndi(NDI_UNIQUE, 0, op, "You find no new traps this time%s...",
+                (aware) ? ", but you find signs of traps hidden beyond your skill" : "");
         }
         else
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "You find %d new traps!",
-                                                      found);
-            if (aware)
-                new_draw_info(NDI_UNIQUE, 0, op, "You also find signs of more traps hidden beyond your skill...");
+            ndi(NDI_UNIQUE, 0, op, "You find %d new traps%s!",
+                found,
+                (aware) ? " and signs of more traps hidden beyond your skill" : "");
         }
     }
 
@@ -308,45 +360,55 @@ int find_traps(object *op, int level)
  * the algorithm is based (almost totally) on the old command_disarm() - b.t.
  */
 
-int remove_trap(object *op, int dir, int level)
+int remove_trap(object_t *op, int dir, int level)
 {
-    object     *tmp, *tmp2;
-    mapstruct  *m;
-    int         i, x, y;
+    uint8 i;
 
     for (i = 0; i < 9; i++)
     {
-        x = op->x + freearr_x[i];
-        y = op->y + freearr_y[i];
-        if (!(m = out_of_map(op->map, &x, &y)))
-            continue;
+        map_t *m = op->map;
+        sint16     x = op->x + OVERLAY_X(i),
+                   y = op->y + OVERLAY_Y(i);
+        msp_t  *msp = MSP_GET(m, x, y);
+        object_t    *this,
+                  *next;
 
-        /*  Check everything in the square for trapness */
-        for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above)
+        if (!msp)
         {
-            /* And now we'd better do an inventory traversal of each
-                       * of these objects' inventory */
+            continue;
+        }
 
-            for (tmp2 = tmp->inv; tmp2 != NULL; tmp2 = tmp2->below)
+        FOREACH_OBJECT_IN_MSP(this, msp, next)
+        {
+            object_t *that,
+                   *next2;
+
+            FOREACH_OBJECT_IN_OBJECT(that, this, next2)
             {
-                if (tmp2->type == RUNE && tmp2->stats.Cha <= 1)
+                if (that->type == RUNE &&
+                    that->stats.Cha <= 1)
                 {
-                    if (QUERY_FLAG(tmp2, FLAG_SYS_OBJECT) || QUERY_FLAG(tmp2, FLAG_IS_INVISIBLE))
-                        trap_show(tmp2, tmp);
-                    trap_disarm(op, tmp2, 1);
-                    return 0;
+                    this = that;
+                    break;
                 }
             }
-            if (tmp->type == RUNE && tmp->stats.Cha <= 1)
+
+            if (this->type == RUNE &&
+                this->stats.Cha <= 1)
             {
-                if (QUERY_FLAG(tmp, FLAG_SYS_OBJECT) || QUERY_FLAG(tmp, FLAG_IS_INVISIBLE))
-                    trap_show(tmp, tmp);
-                trap_disarm(op, tmp, 1);
+                if (QUERY_FLAG(this, FLAG_SYS_OBJECT) ||
+                    QUERY_FLAG(this, FLAG_IS_INVISIBLE))
+                {
+                    trap_show(this, this);
+                }
+
+                trap_disarm(op, this, 1);
                 return 0;
             }
         }
     }
-    new_draw_info(NDI_UNIQUE, 0, op, "You have found no nearby traps to remove yet!");
+
+    ndi(NDI_UNIQUE, 0, op, "You have found no nearby traps to remove yet!");
     return 0;
 }
 

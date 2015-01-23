@@ -32,8 +32,8 @@ typedef struct ralnk
     /* Used to link the race lists together */
     const char                       *name;       /* name of this race entry */
     int                               nrof;       /* nrof things belonging to this race */
-    struct archt                     *corpse; /* thats the default corpse of this race */
-    struct oblnk                     *member; /* linked object list of things belonging to this race */
+    archetype_t                     *corpse; /* thats the default corpse of this race */
+    struct objectlink_t                     *member; /* linked object list of things belonging to this race */
     struct ralnk                     *next;
     struct mob_behaviourset          *ai; /* That is the default ai for this race */
 

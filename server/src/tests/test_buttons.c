@@ -43,45 +43,45 @@ static void teardown()
 /* Bah, this shouldn't be in this file, perhaps */
 START_TEST (buttons_check_blocked_tile)
 {
-    shstr *path = add_string("/dev/unit_tests/test_check_inv");
-    mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
+    shstr_t *path = add_string("/dev/unit_tests/test_check_inv");
+    map_t *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
 
-    object *c1 = locate_beacon(find_string("c2_1"))->env;
-    object *c2 = locate_beacon(find_string("c2_2"))->env;
-    object *c3 = locate_beacon(find_string("c2_3"))->env;
-    object *c4 = locate_beacon(find_string("c2_4"))->env;
-    object *c5 = locate_beacon(find_string("c2_5"))->env;
-    object *c6 = locate_beacon(find_string("c2_6"))->env;
-    object *c7 = locate_beacon(find_string("c2_7"))->env;
-    object *c8 = locate_beacon(find_string("c2_8"))->env;
+    object_t *c1 = locate_beacon(find_string("c2_1"))->env;
+    object_t *c2 = locate_beacon(find_string("c2_2"))->env;
+    object_t *c3 = locate_beacon(find_string("c2_3"))->env;
+    object_t *c4 = locate_beacon(find_string("c2_4"))->env;
+    object_t *c5 = locate_beacon(find_string("c2_5"))->env;
+    object_t *c6 = locate_beacon(find_string("c2_6"))->env;
+    object_t *c7 = locate_beacon(find_string("c2_7"))->env;
+    object_t *c8 = locate_beacon(find_string("c2_8"))->env;
 
-    object *sword = locate_beacon(find_string("shortsword"))->env;
+    object_t *sword = locate_beacon(find_string("shortsword"))->env;
 
-    object *cont1 = arch_to_object(find_archetype("chest")); /* "player" with sword */
-    object *cont2 = arch_to_object(find_archetype("chest")); /* "player" without sword */
+    object_t *cont1 = arch_to_object(find_archetype("chest")); /* "player" with sword */
+    object_t *cont2 = arch_to_object(find_archetype("chest")); /* "player" without sword */
 
     cont1->type = cont2->type = PLAYER;
 
     remove_ob(sword);
     sword = insert_ob_in_ob(sword, cont1);
 
-    fail_if( blocked_tile(cont1, map, c1->x, c1->y), "checker 1 blocked cont with sword");
-    fail_if(!blocked_tile(cont1, map, c2->x, c2->y), "checker 2 didn't block cont with sword");
-    fail_if( blocked_tile(cont1, map, c3->x, c3->y), "checker 3 blocked cont with sword");
-    fail_if(!blocked_tile(cont1, map, c4->x, c4->y), "checker 4 didn't block cont with sword");
-    fail_if( blocked_tile(cont1, map, c5->x, c5->y), "checker 5 blocked cont with sword");
-    fail_if(!blocked_tile(cont1, map, c6->x, c6->y), "checker 6 didn't block cont with sword");
-    fail_if( blocked_tile(cont1, map, c7->x, c7->y), "checker 7 blocked cont with sword");
-    fail_if(!blocked_tile(cont1, map, c8->x, c8->y), "checker 8 didn't block cont with sword");
+    fail_if( blocked_tile(cont1, NULL, map, c1->x, c1->y), "checker 1 blocked cont with sword");
+    fail_if(!blocked_tile(cont1, NULL, map, c2->x, c2->y), "checker 2 didn't block cont with sword");
+    fail_if( blocked_tile(cont1, NULL, map, c3->x, c3->y), "checker 3 blocked cont with sword");
+    fail_if(!blocked_tile(cont1, NULL, map, c4->x, c4->y), "checker 4 didn't block cont with sword");
+    fail_if( blocked_tile(cont1, NULL, map, c5->x, c5->y), "checker 5 blocked cont with sword");
+    fail_if(!blocked_tile(cont1, NULL, map, c6->x, c6->y), "checker 6 didn't block cont with sword");
+    fail_if( blocked_tile(cont1, NULL, map, c7->x, c7->y), "checker 7 blocked cont with sword");
+    fail_if(!blocked_tile(cont1, NULL, map, c8->x, c8->y), "checker 8 didn't block cont with sword");
     
-    fail_if(!blocked_tile(cont2, map, c1->x, c1->y), "checker 1 didn't block cont without sword");
-    fail_if( blocked_tile(cont2, map, c2->x, c2->y), "checker 2 blocked cont without sword");
-    fail_if(!blocked_tile(cont2, map, c3->x, c3->y), "checker 3 didn't block cont without sword");
-    fail_if( blocked_tile(cont2, map, c4->x, c4->y), "checker 4 blocked cont without sword");
-    fail_if(!blocked_tile(cont2, map, c5->x, c5->y), "checker 5 didn't block cont without sword");
-    fail_if( blocked_tile(cont2, map, c6->x, c6->y), "checker 6 blocked cont without sword");
-    fail_if(!blocked_tile(cont2, map, c7->x, c7->y), "checker 7 didn't block cont without sword");
-    fail_if( blocked_tile(cont2, map, c8->x, c8->y), "checker 8 blocked cont without sword");
+    fail_if(!blocked_tile(cont2, NULL, map, c1->x, c1->y), "checker 1 didn't block cont without sword");
+    fail_if( blocked_tile(cont2, NULL, map, c2->x, c2->y), "checker 2 blocked cont without sword");
+    fail_if(!blocked_tile(cont2, NULL, map, c3->x, c3->y), "checker 3 didn't block cont without sword");
+    fail_if( blocked_tile(cont2, NULL, map, c4->x, c4->y), "checker 4 blocked cont without sword");
+    fail_if(!blocked_tile(cont2, NULL, map, c5->x, c5->y), "checker 5 didn't block cont without sword");
+    fail_if( blocked_tile(cont2, NULL, map, c6->x, c6->y), "checker 6 blocked cont without sword");
+    fail_if(!blocked_tile(cont2, NULL, map, c7->x, c7->y), "checker 7 didn't block cont without sword");
+    fail_if( blocked_tile(cont2, NULL, map, c8->x, c8->y), "checker 8 blocked cont without sword");
     
     cont1->type = cont2->type = CONTAINER;
 }
@@ -90,17 +90,17 @@ END_TEST
 /* Bah, this shouldn't be in this file, perhaps */
 START_TEST (buttons_move_apply_check_inv)
 {
-    shstr *path = add_string("/dev/unit_tests/test_check_inv");
-    mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
+    shstr_t *path = add_string("/dev/unit_tests/test_check_inv");
+    map_t *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
 
-    object *c7 = locate_beacon(find_string("c2_7"))->env;
-    object *c8 = locate_beacon(find_string("c2_8"))->env;
+    object_t *c7 = locate_beacon(find_string("c2_7"))->env;
+    object_t *c8 = locate_beacon(find_string("c2_8"))->env;
 
-    object *sword = locate_beacon(find_string("shortsword"))->env;
+    object_t *sword = locate_beacon(find_string("shortsword"))->env;
 
     /* Create a fake player (yes, this is dangerous...) */
-    object *cont1 = arch_to_object(find_archetype("chest")); /* "player" with sword */
-    player *fake_contr = calloc(1, sizeof(player));
+    object_t *cont1 = arch_to_object(find_archetype("chest")); /* "player" with sword */
+    player_t *fake_contr = calloc(1, sizeof(player));
     cont1->type = PLAYER;
     cont1->arch->clone.terrain_flag = 127;
     cont1->custom_attrset = fake_contr;
@@ -116,7 +116,7 @@ START_TEST (buttons_move_apply_check_inv)
     insert_ob_in_map(cont1, map, NULL, 0);
     fail_if(cont1->x != c7->x+1 || cont1->y != c7->y, "insertion missed");
     fail_if(sword->nrof != 10, "sword nrof wrong before test");
-    fail_if(move_ob(cont1, 7, cont1) != 1, "checker 7 blocked cont with sword");
+    fail_if(move_ob(cont1, 7, NULL) != MOVE_RESULT_SUCCESS, "checker 7 blocked cont with sword");
     fail_if(sword->nrof > 9, "sword nrof not reduced"); 
     fail_if(sword->nrof < 9, "sword nrof reduced too much (got %d, expected 9)",sword->nrof); 
     remove_ob(cont1);
@@ -129,7 +129,7 @@ START_TEST (buttons_move_apply_check_inv)
     insert_ob_in_map(cont1, map, NULL, 0);
     fail_if(cont1->x != c8->x+1 || cont1->y != c8->y+1, "insertion missed");
     fail_if(sword->nrof != 8, "sword nrof changed (got %d)", sword->nrof); 
-    fail_if(move_ob(cont1, 8, cont1) != 0, "checker 8 didn't block cont with sword");
+    fail_if(move_ob(cont1, 8, NULL) != MOVE_RESULT_INSERTION_FAILED, "checker 8 didn't block cont with sword");
     fail_if(sword->nrof != 8, "sword nrof changed (got %d)", sword->nrof); 
     remove_ob(cont1);
     check_walk_off(cont1, cont1, 0);
@@ -142,26 +142,26 @@ END_TEST
 
 START_TEST (buttons_check_inv_recursive)
 {
-    shstr *path = add_string("/dev/unit_tests/test_check_inv");
-    mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
+    shstr_t *path = add_string("/dev/unit_tests/test_check_inv");
+    map_t *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
 
-    object *check1 = locate_beacon(find_string("check1"))->env;
-    object *check2 = locate_beacon(find_string("check2"))->env;
-    object *check3 = locate_beacon(find_string("check3"))->env;
-    object *check4 = locate_beacon(find_string("check4"))->env;
-    object *check5 = locate_beacon(find_string("check5"))->env;
-    object *check8 = locate_beacon(find_string("check8"))->env;
-    object *check9 = locate_beacon(find_string("check9"))->env;
+    object_t *check1 = locate_beacon(find_string("check1"))->env;
+    object_t *check2 = locate_beacon(find_string("check2"))->env;
+    object_t *check3 = locate_beacon(find_string("check3"))->env;
+    object_t *check4 = locate_beacon(find_string("check4"))->env;
+    object_t *check5 = locate_beacon(find_string("check5"))->env;
+    object_t *check8 = locate_beacon(find_string("check8"))->env;
+    object_t *check9 = locate_beacon(find_string("check9"))->env;
 
-    object *key1 = locate_beacon(find_string("key1"))->env;
-    object *key2 = locate_beacon(find_string("key2"))->env;
-    object *key3 = locate_beacon(find_string("key3"))->env;
-    object *key4 = locate_beacon(find_string("key4"))->env;
+    object_t *key1 = locate_beacon(find_string("key1"))->env;
+    object_t *key2 = locate_beacon(find_string("key2"))->env;
+    object_t *key3 = locate_beacon(find_string("key3"))->env;
+    object_t *key4 = locate_beacon(find_string("key4"))->env;
 
-    object *cont1 = arch_to_object(find_archetype("chest"));
-    object *cont2 = arch_to_object(find_archetype("chest"));
-    object *cont3 = arch_to_object(find_archetype("chest"));
-    object *cont4 = arch_to_object(find_archetype("chest"));
+    object_t *cont1 = arch_to_object(find_archetype("chest"));
+    object_t *cont2 = arch_to_object(find_archetype("chest"));
+    object_t *cont3 = arch_to_object(find_archetype("chest"));
+    object_t *cont4 = arch_to_object(find_archetype("chest"));
 
     remove_ob(key1);
     key1 = insert_ob_in_ob(key1, cont1);
@@ -209,27 +209,27 @@ END_TEST
 /* Test mapload initialization */
 START_TEST (buttons_check_mapload)
 {
-    shstr *path = add_string("/dev/unit_tests/test_connections");
-    mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
+    shstr_t *path = add_string("/dev/unit_tests/test_connections");
+    map_t *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
 
-    object *lever = locate_beacon(find_string("lever"))->env;
+    object_t *lever = locate_beacon(find_string("lever"))->env;
 
-    object *creator1 = locate_beacon(find_string("creator1"))->env;
-    object *creator2 = locate_beacon(find_string("creator2"))->env;
-    object *creator3 = locate_beacon(find_string("creator3"))->env;
-    object *creator4 = locate_beacon(find_string("creator4"))->env;
-    object *creator5 = locate_beacon(find_string("creator5"))->env;
+    object_t *creator1 = locate_beacon(find_string("creator1"))->env;
+    object_t *creator2 = locate_beacon(find_string("creator2"))->env;
+    object_t *creator3 = locate_beacon(find_string("creator3"))->env;
+    object_t *creator4 = locate_beacon(find_string("creator4"))->env;
+    object_t *creator5 = locate_beacon(find_string("creator5"))->env;
 
-    object *fire1a = locate_beacon(find_string("fire1a"))->env;
-    object *fire1b = locate_beacon(find_string("fire1b"))->env;
-    object *fire2a = locate_beacon(find_string("fire2a"))->env;
-    object *fire2b = locate_beacon(find_string("fire2b"))->env;
-    object *fire3a = locate_beacon(find_string("fire3a"))->env;
-    object *fire3b = locate_beacon(find_string("fire3b"))->env;
-    object *fire4a = locate_beacon(find_string("fire4a"))->env;
-    object *fire4b = locate_beacon(find_string("fire4b"))->env;
-    object *fire5a = locate_beacon(find_string("fire5a"))->env;
-    object *fire5b = locate_beacon(find_string("fire5b"))->env;
+    object_t *fire1a = locate_beacon(find_string("fire1a"))->env;
+    object_t *fire1b = locate_beacon(find_string("fire1b"))->env;
+    object_t *fire2a = locate_beacon(find_string("fire2a"))->env;
+    object_t *fire2b = locate_beacon(find_string("fire2b"))->env;
+    object_t *fire3a = locate_beacon(find_string("fire3a"))->env;
+    object_t *fire3b = locate_beacon(find_string("fire3b"))->env;
+    object_t *fire4a = locate_beacon(find_string("fire4a"))->env;
+    object_t *fire4b = locate_beacon(find_string("fire4b"))->env;
+    object_t *fire5a = locate_beacon(find_string("fire5a"))->env;
+    object_t *fire5b = locate_beacon(find_string("fire5b"))->env;
 
     /* 1. Make sure nothing is created at mapload */
     fail_if(creator1->above || creator1->below, "creator1 created something");
@@ -275,14 +275,14 @@ END_TEST
 /* Test environment sensors */
 START_TEST (buttons_check_env_sensor)
 {
-    shstr *path = add_string("/dev/unit_tests/test_env_sensor");
-    mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
+    shstr_t *path = add_string("/dev/unit_tests/test_env_sensor");
+    map_t *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
 
-    object *lever = locate_beacon(find_string("lever_beacon"))->env; // Lever controlling light3
-    object *sensor = locate_beacon(find_string("sensor_beacon"))->env; // Sensor activated by light3
-    object *light1 = locate_beacon(find_string("gravelight_beacon"))->env; // applyable light connected to sensor
-    object *light2 = locate_beacon(find_string("light_beacon"))->env; // light source connected to sensor
-    object *light3 = locate_beacon(find_string("light_beacon_2"))->env;
+    object_t *lever = locate_beacon(find_string("lever_beacon"))->env; // Lever controlling light3
+    object_t *sensor = locate_beacon(find_string("sensor_beacon"))->env; // Sensor activated by light3
+    object_t *light1 = locate_beacon(find_string("gravelight_beacon"))->env; // applyable light connected to sensor
+    object_t *light2 = locate_beacon(find_string("light_beacon"))->env; // light source connected to sensor
+    object_t *light3 = locate_beacon(find_string("light_beacon_2"))->env;
 
     /* Give the env sensor a chance to sense */
     process_events();
@@ -323,16 +323,16 @@ END_TEST
  */
 START_TEST (buttons_check_pedestal)
 {
-    shstr *path = add_string("/dev/unit_tests/test_pedestal");
-    mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
+    shstr_t *path = add_string("/dev/unit_tests/test_pedestal");
+    map_t *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
 
-    object *lever = locate_beacon(find_string("lever"))->env;
-    object *pedestal1 = locate_beacon(find_string("visible_pedestal"))->env;
-    object *pedestal2 = locate_beacon(find_string("invisible_pedestal"))->env;
-    object *pedestal3 = locate_beacon(find_string("sys_invisible_pedestal"))->env;
-    object *pedestal4 = locate_beacon(find_string("visible_pedestal_2"))->env;
-    object *pedestal5 = locate_beacon(find_string("invisible_pedestal_2"))->env;
-    object *pedestal6 = locate_beacon(find_string("sys_invisible_pedestal_2"))->env;
+    object_t *lever = locate_beacon(find_string("lever"))->env;
+    object_t *pedestal1 = locate_beacon(find_string("visible_pedestal"))->env;
+    object_t *pedestal2 = locate_beacon(find_string("invisible_pedestal"))->env;
+    object_t *pedestal3 = locate_beacon(find_string("sys_invisible_pedestal"))->env;
+    object_t *pedestal4 = locate_beacon(find_string("visible_pedestal_2"))->env;
+    object_t *pedestal5 = locate_beacon(find_string("invisible_pedestal_2"))->env;
+    object_t *pedestal6 = locate_beacon(find_string("sys_invisible_pedestal_2"))->env;
 
     fail_if(pedestal1->weight_limit, "visible pedestal 1 is triggered");
     fail_if(pedestal2->weight_limit, "invisible pedestal 1 is triggered");
@@ -359,18 +359,18 @@ END_TEST
  */
 START_TEST (buttons_creator_with_mover)
 {
-    shstr     *path = add_string("/dev/unit_tests/test_creator");
-    mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
-    object    *lever = locate_beacon(find_string("lever"))->env,
+    shstr_t     *path = add_string("/dev/unit_tests/test_creator");
+    map_t *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
+    object_t    *lever = locate_beacon(find_string("lever"))->env,
               *beacon = locate_beacon(find_string("beacon_square")),
               *mover;
-    MapStruct *msp = GET_MAP_SPACE_PTR(beacon->map, beacon->x, beacon->y);
+    MapStruct *msp = MSP_KNOWN(beacon);
 
     process_events();
     process_events(); /* Bug 000482 crashes here */
     manual_apply(lever, lever, 0);
 
-    for(mover = GET_MAP_SPACE_FIRST(msp); mover; mover = mover->above)
+    for(mover = MSP_GET_FIRST(msp); mover; mover = mover->above)
     {
         if (mover->type == PLAYERMOVER)
         {

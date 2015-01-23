@@ -109,7 +109,7 @@ typedef struct _tlist_tweak
 
 typedef struct treasurestruct
 {
-    struct archt               *item;           /* Which item this link can be */
+    archetype_t               *item;           /* Which item this link can be */
     const char                 *name;               /* If non null, name of list to use instead */
     struct treasureliststruct  *tlist; /* this list */
     struct treasurestruct      *next;       /* Next treasure-item in a linked list */

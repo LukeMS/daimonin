@@ -134,7 +134,7 @@ void init_formulae()
     char            filename[MEDIUM_BUF], buf[MEDIUM_BUF], *cp, *next;
     recipe         *formula         = NULL;
     recipelist     *fl              = init_recipelist();
-    linked_char    *tmp;
+    shstr_linked_t    *tmp;
     int             value;
 
     if (!formulalist)
@@ -196,7 +196,7 @@ void init_formulae()
                 {
                     *(next++) = '\0'; numb_ingred++;
                 }
-                tmp = (linked_char *) malloc(sizeof(linked_char));
+                tmp = (shstr_linked_t *) malloc(sizeof(shstr_linked_t));
                 tmp->name = NULL;
                 FREE_AND_COPY_HASH(tmp->name, cp);
                 tmp->next = formula->ingred;
@@ -273,7 +273,7 @@ void dump_alchemy(void)
 {
     recipelist     *fl          = formulalist;
     recipe         *formula     = NULL;
-    linked_char    *next;
+    shstr_linked_t    *next;
     int             num_ingred  = 1;
 
     LOG(llevInfo, "\n");
@@ -335,10 +335,10 @@ void dump_alchemy(void)
 /* Find a treasure with a matching name.  The 'depth' parameter is
  * only there to prevent infinite loops in treasure lists (a list
  * referencing another list pointing back to the first one). */
-archetype * find_treasure_by_name(treasure *t, char *name, int depth)
+archetype_t * find_treasure_by_name(treasure *t, char *name, int depth)
 {
     treasurelist   *tl;
-    archetype      *at;
+    archetype_t      *at;
 
     if (depth > 10)
         return NULL;
@@ -383,8 +383,8 @@ archetype * find_treasure_by_name(treasure *t, char *name, int depth)
  * big_dragon_worthless). */
 sint64 find_ingred_cost(const char *name)
 {
-    archetype      *at;
-    /*  archetype    *at2;*/
+    archetype_t      *at;
+    /*  archetype_t    *at2;*/
     artifactlist   *al;
     artifact       *art;
     long            mult;
@@ -476,7 +476,7 @@ void dump_alchemy_costs(void)
     sint64          cost;
     recipelist     *fl          = formulalist;
     recipe         *formula     = NULL;
-    linked_char    *next;
+    shstr_linked_t    *next;
     int             num_ingred  = 1;
     int             num_errors  = 0;
 
@@ -488,7 +488,7 @@ void dump_alchemy_costs(void)
         for (formula = fl->items; formula != NULL; formula = formula->next)
         {
             artifact   *art = NULL;
-            archetype  *at  = NULL;
+            archetype_t  *at  = NULL;
             char        buf[MEDIUM_BUF], tmpbuf[MEDIUM_BUF], *string;
 
             strncpy(tmpbuf, formula->arch_name, MEDIUM_BUF - 1);
@@ -623,7 +623,7 @@ int strtoint(const char *buf)
 
 artifact * locate_recipe_artifact(recipe *rp)
 {
-    object         *item    = get_archetype(rp->arch_name);
+    object_t         *item    = get_archetype(rp->arch_name);
     artifactlist   *at      = NULL;
     artifact       *art     = NULL;
 
@@ -706,7 +706,7 @@ void free_all_recipes()
 {
     recipelist*fl =     formulalist, *flnext;
     recipe*formula =    NULL, *next;
-    linked_char        *lchar, *charnext;
+    shstr_linked_t        *lchar, *charnext;
 
     LOG(llevDebug, "Freeing all the recipes\n");
     for (fl = formulalist; fl != NULL; fl = flnext)

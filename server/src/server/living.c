@@ -82,7 +82,7 @@ static int MobACWC[MAXMOBLEVEL + 1] =
 /* for stat values 0 to 9 */
 const float stats_penalty[10] = {0.1f, 0.15f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f};
 
-static const char *drain_msg[NUM_STATS] =
+static const char *drain_msg[STAT_NROF] =
 {
     "Oh no! You are weakened!",
     "You're feeling clumsy!",
@@ -93,7 +93,7 @@ static const char *drain_msg[NUM_STATS] =
     "Your face gets distorted!",
 };
 
-static const char *gain_msg[NUM_STATS] =
+static const char *gain_msg[STAT_NROF] =
 {
     "You feel stronger.",
     "You feel more agile.",
@@ -104,7 +104,7 @@ static const char *gain_msg[NUM_STATS] =
     "You seem to look better.",
 };
 
-const char *lose_msg[NUM_STATS] =
+const char *lose_msg[STAT_NROF] =
 {
     "You feel weaker!",
     "You feel clumsy!",
@@ -115,7 +115,7 @@ const char *lose_msg[NUM_STATS] =
     "You look ugly!",
 };
 
-const char *restore_msg[NUM_STATS] =
+const char *restore_msg[STAT_NROF] =
 {
     "You feel your strength return.",
     "You feel your agility return.",
@@ -126,7 +126,7 @@ const char *restore_msg[NUM_STATS] =
     "You feel your charisma return.",
 };
 
-const char *stat_name[NUM_STATS]  =
+const char *stat_name[STAT_NROF]  =
 {
     "strength",
     "dexterity",
@@ -137,7 +137,7 @@ const char *stat_name[NUM_STATS]  =
     "charisma",
 };
 
-const char *short_stat_name[NUM_STATS] =
+const char *short_stat_name[STAT_NROF] =
 {
     "Str",
     "Dex",
@@ -148,106 +148,81 @@ const char *short_stat_name[NUM_STATS] =
     "Cha",
 };
 
-/*
- * sets stats to value, depending on what stat is (STR, DEX, CON, INTELLIGENCE,
- * WIS, POW, CHA).
- */
-
-void set_stat_value(living *stats, int stat, signed char value)
-{
-    switch (stat)
-    {
-        case STR:
-          stats->Str = value;
-          break;
-        case DEX:
-          stats->Dex = value;
-          break;
-        case CON:
-          stats->Con = value;
-          break;
-        case INTELLIGENCE:
-          stats->Int = value;
-          break;
-        case WIS:
-          stats->Wis = value;
-          break;
-        case POW:
-          stats->Pow = value;
-          break;
-        case CHA:
-          stats->Cha = value;
-          break;
-        default:
-          LOG(llevBug, "BUG:: %s/set_stat_value(): Unknown stat (%d)!\n",
-              __FILE__, stat);
-    }
-}
-
-/*
- * Like set_stat_value(), but instead the value (which can be negative)
- * is added to the specified stat.
- */
-
-void change_stat_value(living *stats, int stat, signed char value)
+/*The value (which can be negative) is added to the specified stat. */
+void set_stat_value(living_t *stats, stat_nr_t stat, sint16 value)
 {
     if (value == 0)
+    {
         return;
+    }
+
     switch (stat)
     {
-        case STR:
-          stats->Str += value;
-          break;
-        case DEX:
-          stats->Dex += value;
-          break;
-        case CON:
-          stats->Con += value;
-          break;
-        case INTELLIGENCE:
-          stats->Int += value;
-          break;
-        case WIS:
-          stats->Wis += value;
-          break;
-        case POW:
-          stats->Pow += value;
-          break;
-        case CHA:
-          stats->Cha += value;
-          break;
+        case STAT_STR:
+        stats->Str += value;
+        break;
+
+        case STAT_DEX:
+        stats->Dex += value;
+        break;
+
+        case STAT_CON:
+        stats->Con += value;
+        break;
+
+        case STAT_INT:
+        stats->Int += value;
+        break;
+
+        case STAT_WIS:
+        stats->Wis += value;
+        break;
+
+        case STAT_POW:
+        stats->Pow += value;
+        break;
+
+        case STAT_CHA:
+        stats->Cha += value;
+        break;
+
         default:
-          LOG(llevBug, "BUG:: %s/change_stat_value(): Unknown stat (%d)!\n",
-              __FILE__, stat);
+        LOG(llevBug, "BUG:: %s/set_stat_value(): Unknown stat (%d)!\n",
+            __FILE__, stat);
     }
 }
 
-/*
- * returns the specified stat.  See also set_stat_value().
- */
-
-signed char get_stat_value(const living *const stats, const int stat)
+/* returns the specified stat.  See also set_stat_value(). */
+stat_t get_stat_value(const living_t *const stats, const stat_nr_t stat)
 {
     switch (stat)
     {
-        case STR:
-          return(stats->Str);
-        case DEX:
-          return(stats->Dex);
-        case CON:
-          return(stats->Con);
-        case INTELLIGENCE:
-          return(stats->Int);
-        case WIS:
-          return(stats->Wis);
-        case POW:
-          return(stats->Pow);
-        case CHA:
-          return(stats->Cha);
+        case STAT_STR:
+        return(stats->Str);
+
+        case STAT_DEX:
+        return(stats->Dex);
+
+        case STAT_CON:
+        return(stats->Con);
+
+        case STAT_INT:
+        return(stats->Int);
+
+        case STAT_WIS:
+        return(stats->Wis);
+
+        case STAT_POW:
+        return(stats->Pow);
+
+        case STAT_CHA:
+        return(stats->Cha);
+
         default:
-          LOG(llevBug, "BUG:: %s/get_stat_value(): Unknown stat (%d)!\n",
-              __FILE__, stat);
+        LOG(llevBug, "BUG:: %s/get_stat_value(): Unknown stat (%d)!\n",
+            __FILE__, stat);
     }
+
     return 0;
 }
 
@@ -258,8 +233,9 @@ signed char get_stat_value(const living *const stats, const int stat)
  * MT-2004
  */
 
-void check_stat_bounds(living *stats)
+void check_stat_bounds(living_t *stats)
 {
+#if 0
     if (stats->Str > MAX_STAT)
         stats->Str = MAX_STAT;
     else if (stats->Str < MIN_STAT)
@@ -294,6 +270,24 @@ void check_stat_bounds(living *stats)
         stats->Cha = MAX_STAT;
     else if (stats->Cha < MIN_STAT)
         stats->Cha = MIN_STAT;
+#else
+    stat_t *stat;
+
+    stat = &stats->Str;
+    *stat = MAX(MIN_STAT, MIN(*stat, MAX_STAT));
+    stat = &stats->Dex;
+    *stat = MAX(MIN_STAT, MIN(*stat, MAX_STAT));
+    stat = &stats->Con;
+    *stat = MAX(MIN_STAT, MIN(*stat, MAX_STAT));
+    stat = &stats->Int;
+    *stat = MAX(MIN_STAT, MIN(*stat, MAX_STAT));
+    stat = &stats->Wis;
+    *stat = MAX(MIN_STAT, MIN(*stat, MAX_STAT));
+    stat = &stats->Pow;
+    *stat = MAX(MIN_STAT, MIN(*stat, MAX_STAT));
+    stat = &stats->Cha;
+    *stat = MAX(MIN_STAT, MIN(*stat, MAX_STAT));
+#endif
 }
 
 /*
@@ -301,7 +295,7 @@ void check_stat_bounds(living *stats)
  * It's here to make sure the force doesn't make the player stats go out of range (< 1 or > MAX_STAT).
  */
 
-object * check_obj_stat_buffs(object *ob, object *pl)
+object_t * check_obj_stat_buffs(object_t *ob, object_t *pl)
 {
     if (ob->stats.Str <= -pl->stats.Str)
         ob->stats.Str = -(pl->stats.Str - 1);
@@ -347,25 +341,25 @@ object * check_obj_stat_buffs(object *ob, object *pl)
  * It is the calling functions responsibilty to check to see if the object
  * can be applied or not.
  */
-int change_abil(object *op, object *tmp)
+int change_abil(object_t *op, object_t *tmp)
 {
     int    applied = (QUERY_FLAG(tmp, FLAG_APPLIED)) ? 1 : -1,
            i,
            j,
            success = 0;
-    object refop;
+    object_t refop;
     int    potion_max  = 0;
 
     /* remember what object was like before it was changed.  note that
      * refop is a local copy of op only to be used for detecting changes
-     * found by fix_player.  refop is not a real object */
-    memcpy(&refop, op, sizeof(object));
+     * found by fix_player.  refop is not a real object_t */
+    memcpy(&refop, op, sizeof(object_t));
 
     if (op->type == PLAYER)
     {
         if (tmp->type == POTION)
         {
-            for (j = 0; j < NUM_STATS; j++)
+            for (j = 0; j < STAT_NROF; j++)
             {
                 i = get_stat_value(&(CONTR(op)->orig_stats), j);
 
@@ -377,7 +371,7 @@ int change_abil(object *op, object *tmp)
                  && i
                   > 0)
                 {
-                    change_stat_value(&(CONTR(op)->orig_stats), j,
+                    set_stat_value(&(CONTR(op)->orig_stats), j,
                                       (signed char) (applied * get_stat_value(&(tmp->stats), j)));
                     tmp->stats.sp = 0;/* Fix it up for super potions */
                 }
@@ -391,8 +385,8 @@ int change_abil(object *op, object *tmp)
              * sure if this is strictly necessary, being that fix_player probably
              * recalculates this anyway.
              */
-            for (j = 0; j < NUM_STATS; j++)
-                change_stat_value(&(op->stats), j, (signed char) (applied * get_stat_value(&(tmp->stats), j)));
+            for (j = 0; j < STAT_NROF; j++)
+                set_stat_value(&(op->stats), j, (signed char) (applied * get_stat_value(&(tmp->stats), j)));
             check_stat_bounds(&(op->stats));
         } /* end of potion handling code */
     }
@@ -415,44 +409,44 @@ int change_abil(object *op, object *tmp)
     {
         success = 1;
         if (applied > 0)
-            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "Your hands begin to glow red.");
+            ndi(NDI_UNIQUE | NDI_WHITE, 0, op, "Your hands begin to glow red.");
         else
-            new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "Your hands stop glowing red.");
+            ndi(NDI_UNIQUE | NDI_GREY, 0, op, "Your hands stop glowing red.");
     }
     if (QUERY_FLAG(op, FLAG_LIFESAVE) != QUERY_FLAG(&refop, FLAG_LIFESAVE))
     {
         success = 1;
         if (applied > 0)
         {
-            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel very protected.");
+            ndi(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel very protected.");
         }
         else
         {
-            new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You don't feel protected anymore.");
+            ndi(NDI_UNIQUE | NDI_GREY, 0, op, "You don't feel protected anymore.");
         }
     }
-    if (QUERY_FLAG(op, FLAG_CAN_REFL_MISSILE) != QUERY_FLAG(&refop, FLAG_CAN_REFL_MISSILE))
+    if (QUERY_FLAG(op, FLAG_REFL_MISSILE) != QUERY_FLAG(&refop, FLAG_REFL_MISSILE))
     {
         success = 1;
         if (applied > 0)
         {
-            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "A magic force shimmers around you.");
+            ndi(NDI_UNIQUE | NDI_WHITE, 0, op, "A magic force shimmers around you.");
         }
         else
         {
-            new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "The magic force fades away.");
+            ndi(NDI_UNIQUE | NDI_GREY, 0, op, "The magic force fades away.");
         }
     }
-    if (QUERY_FLAG(op, FLAG_CAN_REFL_SPELL) != QUERY_FLAG(&refop, FLAG_CAN_REFL_SPELL))
+    if (QUERY_FLAG(op, FLAG_REFL_CASTABLE) != QUERY_FLAG(&refop, FLAG_REFL_CASTABLE))
     {
         success = 1;
         if (applied > 0)
         {
-            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel more safe now, somehow.");
+            ndi(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel more safe now, somehow.");
         }
         else
         {
-            new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "Suddenly you feel less safe, somehow.");
+            ndi(NDI_UNIQUE | NDI_GREY, 0, op, "Suddenly you feel less safe, somehow.");
         }
     }
 
@@ -466,10 +460,10 @@ int change_abil(object *op, object *tmp)
             success = 1;
 
             if (IS_AIRBORNE(&refop))
-                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You are airborne. You feel a little more stable.");
+                ndi(NDI_UNIQUE | NDI_WHITE, 0, op, "You are airborne. You feel a little more stable.");
             else
             {
-                new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You become airborne!");
+                ndi(NDI_UNIQUE | NDI_GREY, 0, op, "You become airborne!");
 
                 if (op->speed > 1) // why? and shouldn't we call update_ob_speed() too?
                     op->speed = 1; // also, why not do this when you stop flying too? -- Smacky 20080926
@@ -482,10 +476,10 @@ int change_abil(object *op, object *tmp)
             success = 1;
 
             if (IS_AIRBORNE(op))
-                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You are airborne. You feel a little less stable.");
+                ndi(NDI_UNIQUE | NDI_WHITE, 0, op, "You are airborne. You feel a little less stable.");
             else
             {
-                new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You are no longer airborne.");
+                ndi(NDI_UNIQUE | NDI_GREY, 0, op, "You are no longer airborne.");
 
                 check_walk_on(op, op, 0);
             }
@@ -501,14 +495,14 @@ int change_abil(object *op, object *tmp)
             if (applied > 0)
             {
                 FREE_AND_COPY_HASH(op->race, "undead");
-                new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "Your lifeforce drains away!");
+                ndi(NDI_UNIQUE | NDI_GREY, 0, op, "Your lifeforce drains away!");
             }
             else
             {
                 FREE_AND_CLEAR_HASH(op->race);
                 if (op->arch->clone.race)
                     FREE_AND_COPY_HASH(op->race, op->arch->clone.race);
-                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "Your lifeforce returns!");
+                ndi(NDI_UNIQUE | NDI_WHITE, 0, op, "Your lifeforce returns!");
             }
         }
 
@@ -517,11 +511,11 @@ int change_abil(object *op, object *tmp)
         success = 1;
         if (applied > 0)
         {
-            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You walk more quietly.");
+            ndi(NDI_UNIQUE | NDI_WHITE, 0, op, "You walk more quietly.");
         }
         else
         {
-            new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You walk more noisily.");
+            ndi(NDI_UNIQUE | NDI_GREY, 0, op, "You walk more noisily.");
         }
     }
     if (QUERY_FLAG(op, FLAG_SEE_INVISIBLE) != QUERY_FLAG(&refop, FLAG_SEE_INVISIBLE))
@@ -529,11 +523,11 @@ int change_abil(object *op, object *tmp)
         success = 1;
         if (applied > 0)
         {
-            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You see invisible things.");
+            ndi(NDI_UNIQUE | NDI_WHITE, 0, op, "You see invisible things.");
         }
         else
         {
-            new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "Your vision becomes less clear.");
+            ndi(NDI_UNIQUE | NDI_GREY, 0, op, "Your vision becomes less clear.");
         }
     }
     if (QUERY_FLAG(op, FLAG_IS_INVISIBLE) != QUERY_FLAG(&refop, FLAG_IS_INVISIBLE))
@@ -541,11 +535,11 @@ int change_abil(object *op, object *tmp)
         success = 1;
         if (applied > 0)
         {
-            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You become transparent.");
+            ndi(NDI_UNIQUE | NDI_WHITE, 0, op, "You become transparent.");
         }
         else
         {
-            new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You can see yourself.");
+            ndi(NDI_UNIQUE | NDI_GREY, 0, op, "You can see yourself.");
         }
     }
     /* blinded you can tell if more blinded since blinded player has minimal
@@ -556,14 +550,14 @@ int change_abil(object *op, object *tmp)
 
         if (applied)
         {
-            new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You are blinded.");
+            ndi(NDI_UNIQUE | NDI_GREY, 0, op, "You are blinded.");
             SET_FLAG(op, FLAG_BLIND);
             if (op->type == PLAYER)
                 CONTR(op)->update_los = 1;
         }
         else
         {
-            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "Your vision returns.");
+            ndi(NDI_UNIQUE | NDI_WHITE, 0, op, "Your vision returns.");
             CLEAR_FLAG(op, FLAG_BLIND);
             if (op->type == PLAYER)
                 CONTR(op)->update_los = 1;
@@ -575,11 +569,11 @@ int change_abil(object *op, object *tmp)
         success = 1;
         if (applied > 0)
         {
-            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "Your vision is better in the dark.");
+            ndi(NDI_UNIQUE | NDI_WHITE, 0, op, "Your vision is better in the dark.");
         }
         else
         {
-            new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You see less well in the dark.");
+            ndi(NDI_UNIQUE | NDI_GREY, 0, op, "You see less well in the dark.");
         }
     }
 
@@ -589,13 +583,13 @@ int change_abil(object *op, object *tmp)
 
         if (applied)
         {
-            new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "Everything becomes transparent.");
+            ndi(NDI_UNIQUE | NDI_GREY, 0, op, "Everything becomes transparent.");
             if (op->type == PLAYER)
                 CONTR(op)->update_los = 1;
         }
         else
         {
-            new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "Everything suddenly looks very solid.");
+            ndi(NDI_UNIQUE | NDI_GREY, 0, op, "Everything suddenly looks very solid.");
             if (op->type == PLAYER)
                 CONTR(op)->update_los = 1;
         }
@@ -608,27 +602,27 @@ int change_abil(object *op, object *tmp)
         {
             success = 1;
             if (applied * tmp->stats.hp > 0 || applied * tmp->stats.maxhp > 0)
-                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel much more healthy!");
+                ndi(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel much more healthy!");
             else
-                new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You feel much less healthy!");
+                ndi(NDI_UNIQUE | NDI_GREY, 0, op, "You feel much less healthy!");
         }
 
         if ((tmp->stats.sp || tmp->stats.maxsp) && tmp->type != TYPE_SKILL)
         {
             success = 1;
             if (applied * tmp->stats.sp > 0 || applied * tmp->stats.maxsp > 0)
-                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel one with the powers of magic!");
+                ndi(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel one with the powers of magic!");
             else
-                new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You suddenly feel very mundane.");
+                ndi(NDI_UNIQUE | NDI_GREY, 0, op, "You suddenly feel very mundane.");
         }
 
         if ((tmp->stats.grace || tmp->stats.maxgrace))
         {
             success = 1;
             if (applied * tmp->stats.grace > 0 || applied * tmp->stats.maxgrace)
-                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel closer to your deity!");
+                ndi(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel closer to your deity!");
             else
-                new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You suddenly feel less holy.");
+                ndi(NDI_UNIQUE | NDI_GREY, 0, op, "You suddenly feel less holy.");
         }
     }
 
@@ -640,12 +634,12 @@ int change_abil(object *op, object *tmp)
             success = 1;
             if (op->resist[i] > refop.resist[i])
             {
-                new_draw_info(NDI_UNIQUE | NDI_GREEN, 0, op, "Your resistance to %s rises to %d%%.",
+                ndi(NDI_UNIQUE | NDI_GREEN, 0, op, "Your resistance to %s rises to %d%%.",
                               attack_name[i].name, op->resist[i]);
             }
             else
             {
-                new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, op, "Your resistance to %s drops to %d%%.",
+                ndi(NDI_UNIQUE | NDI_BLUE, 0, op, "Your resistance to %s drops to %d%%.",
                               attack_name[i].name, op->resist[i]);
             }
         }
@@ -653,15 +647,15 @@ int change_abil(object *op, object *tmp)
 
     if (tmp->type != TYPE_SKILLGROUP && !potion_max)
     {
-        for (j = 0; j < NUM_STATS; j++)
+        for (j = 0; j < STAT_NROF; j++)
         {
             if ((i = get_stat_value(&(tmp->stats), j)) != 0)
             {
                 success = 1;
                 if (i * applied > 0)
-                    new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "%s", gain_msg[j]);
+                    ndi(NDI_UNIQUE | NDI_WHITE, 0, op, "%s", gain_msg[j]);
                 else
-                    new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "%s", lose_msg[j]);
+                    ndi(NDI_UNIQUE | NDI_GREY, 0, op, "%s", lose_msg[j]);
             }
         }
     }
@@ -673,15 +667,15 @@ int change_abil(object *op, object *tmp)
  * (Feeling evil, I made it work as well now.  -Frank 8)
  */
 
-void drain_stat(object *op)
+void drain_stat(object_t *op)
 {
-    drain_specific_stat(op, RANDOM() % NUM_STATS);
+    drain_specific_stat(op, RANDOM() % STAT_NROF);
 }
 
-void drain_specific_stat(object *op, int deplete_stats)
+void drain_specific_stat(object_t *op, int deplete_stats)
 {
-    object     *tmp;
-    static archetype  *at = NULL;
+    object_t     *tmp;
+    static archetype_t  *at = NULL;
 
     if (!at)
     {
@@ -709,9 +703,9 @@ void drain_specific_stat(object *op, int deplete_stats)
         }
     }
 
-    change_stat_value(&tmp->stats, deplete_stats, -1);
+    set_stat_value(&tmp->stats, deplete_stats, -1);
     if(op->type == PLAYER)
-        new_draw_info(NDI_UNIQUE, 0, op, "%s", drain_msg[deplete_stats]);
+        ndi(NDI_UNIQUE, 0, op, "%s", drain_msg[deplete_stats]);
 
     FIX_PLAYER(op, "drain_specific_stat");
 }
@@ -722,9 +716,9 @@ void drain_specific_stat(object *op, int deplete_stats)
  * mode: 0 means permanent(until active removed), 1 means temporary,
  * then the effect removes itself.
  */
-void drain_level(object *op, int level, int mode, int ticks)
+void drain_level(object_t *op, int level, int mode, int ticks)
 {
-    object *force;
+    object_t *force;
     int original_level = op->level;
 
     if (op->level <= 1) /* level 1 mobs can't get drained any further */
@@ -756,7 +750,7 @@ void drain_level(object *op, int level, int mode, int ticks)
         force->level = original_level - 1; /* cap force->level at one below the mob's original undrained level */
     FIX_PLAYER(op, "drain_level"); /* will redirect to fix_monster() automatically */
     if(op->type == PLAYER)
-        new_draw_info(NDI_UNIQUE, 0, op, "You lose a level!");
+        ndi(NDI_UNIQUE, 0, op, "You lose a level!");
 }
 
 /* Calculate the weight limit.
@@ -764,7 +758,7 @@ void drain_level(object *op, int level, int mode, int ticks)
  * Will allow to calculate the limit pre fix_player()
  * when applying an item for example.
  */
-static inline uint32 get_player_weight_limit(object *op, int num)
+static inline uint32 get_player_weight_limit(object_t *op, int num)
 {
     uint32 w = op->weight_limit; /* we get the max weight from the player arch */
     int tmp;
@@ -791,7 +785,7 @@ float get_player_stat_bonus(int value)
 }
 
 /* helper function to catch double applied items from same type (like 2 helms at once for example) */
-static inline int set_player_equipment(player *pl, object *optr, int num)
+static inline int set_player_equipment(player_t *pl, object_t *optr, int num)
 {
     /* this should not happen ... */
     if(pl->equipment[num])
@@ -810,7 +804,7 @@ static inline int set_player_equipment(player *pl, object *optr, int num)
 /* calculate speed through carrying, weight & encumbrance for fix_player() and fix_player_weight()
  * ignore some unlogical glitches. This code is in preparing for smooth/pixelwise moving and animation
  */
-static inline void set_speed_encumbrance(object *op, player *pl)
+static inline void set_speed_encumbrance(object_t *op, player_t *pl)
 {
     int tmp_speed_enc = pl->speed_enc;
 
@@ -870,7 +864,7 @@ static inline void set_speed_encumbrance(object *op, player *pl)
  * changed as the player carrying value.
  * We adjust speed and send the new values to the client.
  */
-void fix_player_weight(object *op)
+void fix_player_weight(object_t *op)
 {
     if(!op || !CONTR(op) || op->carrying == CONTR(op)->carrying_last)
         return;
@@ -892,9 +886,9 @@ void fix_player_weight(object *op)
  * is a lot of abuse and redundant call of this function, so it is worth to monitor it. MT
  */
 #ifdef DEBUG_FIX_PLAYER
-void fix_player(object *op, char *debug_msg)
+void fix_player(object_t *op, char *debug_msg)
 #else
-void fix_player(object *op)
+void fix_player(object_t *op)
 #endif
 {
     int                 snare_penalty = 0,slow_penalty = 0, ring_count = 0, skill_level_drain=0, skill_level_max = 1;
@@ -903,9 +897,10 @@ void fix_player(object *op)
     int                 thac0=0, thacm=0, temp_fumble=0;
     int                 resists_boni[NROFATTACKS], resists_mali[NROFATTACKS];
     int                 potion_resist_boni[NROFATTACKS], potion_resist_mali[NROFATTACKS], potion_attack[NROFATTACKS];
-    object             *tmp, *tmp_ptr, *skill_weapon = NULL, *applied_skill = NULL;
-    player             *pl;
+    object_t             *tmp, *tmp_ptr, *skill_weapon = NULL, *applied_skill = NULL;
+    player_t             *pl;
     float               f;
+    msp_t           *msp = MSP_KNOWN(op);
     uint32              opflags[NUM_FLAGS_32];
 
     /*LOG(llevDebug,"FIX_PLAYER called (%s} %s\n", STRING_OBJ_NAME(op), QUERY_FLAG(op, FLAG_NO_FIX_PLAYER)?"IGNORED":"");*/
@@ -1040,7 +1035,7 @@ void fix_player(object *op)
 
     /* HOTFIX: we parted refl_xxx from can_refl_xxx */
     CLEAR_FLAG(op, FLAG_REFL_MISSILE);
-    CLEAR_FLAG(op, FLAG_REFL_SPELL);
+    CLEAR_FLAG(op, FLAG_REFL_CASTABLE);
 
     CLEAR_FLAG(op, FLAG_EATING);
 
@@ -1079,10 +1074,10 @@ void fix_player(object *op)
         CLEAR_MULTI_FLAG(op, FLAG_FLYING);
     if (!QUERY_FLAG(&op->arch->clone, FLAG_LEVITATE))
         CLEAR_MULTI_FLAG(op, FLAG_LEVITATE);
-    if (!QUERY_FLAG(&op->arch->clone, FLAG_CAN_REFL_SPELL))
-        CLEAR_FLAG(op, FLAG_CAN_REFL_SPELL);
-    if (!QUERY_FLAG(&op->arch->clone, FLAG_CAN_REFL_MISSILE))
-        CLEAR_FLAG(op, FLAG_CAN_REFL_MISSILE);
+    if (!QUERY_FLAG(&op->arch->clone, FLAG_REFL_CASTABLE))
+        CLEAR_FLAG(op, FLAG_REFL_CASTABLE);
+    if (!QUERY_FLAG(&op->arch->clone, FLAG_REFL_MISSILE))
+        CLEAR_FLAG(op, FLAG_REFL_MISSILE);
     if (!QUERY_FLAG(&op->arch->clone, FLAG_UNDEAD))
         CLEAR_FLAG(op, FLAG_UNDEAD);
     if (!QUERY_FLAG(&op->arch->clone, FLAG_SEE_IN_DARK))
@@ -1250,8 +1245,8 @@ void fix_player(object *op)
                     if(!set_player_equipment(pl, tmp, PLAYER_EQUIP_BOW))
                         continue;
 
-                    for (i = 0; i < NUM_STATS; i++)
-                        change_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
+                    for (i = 0; i < STAT_NROF; i++)
+                        set_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
                     break;
 
                 /* throw/arrow dam & wc are dynmically calculated in the do_throw() function */
@@ -1279,8 +1274,8 @@ void fix_player(object *op)
                     else
                         pl->set_skill_archery = SK_RANGE_SLING;
 
-                    for (i = 0; i < NUM_STATS; i++)
-                        change_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
+                    for (i = 0; i < STAT_NROF; i++)
+                        set_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
 
                     break;
 
@@ -1293,8 +1288,8 @@ void fix_player(object *op)
                   {
                       LOG(llevBug, "BUG:: %s:fix_player(): %s applied weapon %s[%d] without weapon speed -- unapplying!\n",
                           __FILE__, STRING_OBJ_NAME(op), STRING_OBJ_NAME(tmp), TAG(tmp));
-                      new_draw_info(NDI_UNIQUE | NDI_RED, 0, op, "You sense that your weapon is bugged so you unapply it!");
-                      (void)apply_special(op, tmp, AP_UNAPPLY | AP_IGNORE_CURSE);
+                      ndi(NDI_UNIQUE | NDI_RED, 0, op, "You sense that your weapon is bugged so you unapply it!");
+                      (void)apply_equipment(op, tmp, AP_UNAPPLY | AP_IGNORE_CURSE);
                       pl->equipment[PLAYER_EQUIP_WEAPON1] = NULL;
 
                       continue;
@@ -1341,9 +1336,9 @@ void fix_player(object *op)
                       thac0 += tmp->stats.thac0;
                       thacm += tmp->stats.thacm;
 
-                      for (i = 0; i < NUM_STATS; i++)
+                      for (i = 0; i < STAT_NROF; i++)
                       {
-                          change_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
+                          set_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
                       }
                   }
 
@@ -1439,8 +1434,8 @@ void fix_player(object *op)
                   thac0 += tmp->stats.thac0;
                   thacm += tmp->stats.thacm;
 
-                  for (i = 0; i < NUM_STATS; i++)
-                      change_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
+                  for (i = 0; i < STAT_NROF; i++)
+                      set_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
 
                   if (tmp->stats.wc)
                       pl->wc_bonus += (tmp->stats.wc + tmp->magic);
@@ -1454,8 +1449,8 @@ void fix_player(object *op)
 
                 case POTION_EFFECT:
                   /* no protection from potion effect -resist only! */
-                  for (i = 0; i < NUM_STATS; i++)
-                      change_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
+                  for (i = 0; i < STAT_NROF; i++)
+                      set_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
                   /* collect highest boni & malus - only highest one count,
                              * no adding potion effects of same resist!
                              */
@@ -1523,15 +1518,15 @@ void fix_player(object *op)
                     }
                     else if(tmp->sub_type1 == ST1_FORCE_POISON) /* applied poison  */
                     {
-                        for (i = 0; i < NUM_STATS; i++)
-                            change_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
+                        for (i = 0; i < STAT_NROF; i++)
+                            set_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
                     }
                     else
                     {
                         pl->speed_enc_base += ARMOUR_SPEED(tmp);
 
-                        for (i = 0; i < NUM_STATS; i++)
-                            change_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
+                        for (i = 0; i < STAT_NROF; i++)
+                            set_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
                         if (tmp->stats.wc)
                             pl->wc_bonus += (tmp->stats.wc + tmp->magic);
                         /* force effects goes to damage before calculation */
@@ -1551,8 +1546,8 @@ void fix_player(object *op)
                 case DISEASE:
                 case SYMPTOM:
                   pl->speed_reduce_from_disease = tmp->last_sp;
-                  for (i = 0; i < NUM_STATS; i++)
-                      change_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
+                  for (i = 0; i < STAT_NROF; i++)
+                      set_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
 
                 fix_player_jump_resi:
 
@@ -1607,10 +1602,10 @@ void fix_player(object *op)
             op->path_denied |= tmp->path_denied;
             if (QUERY_FLAG(tmp, FLAG_LIFESAVE))
                 SET_FLAG(op, FLAG_LIFESAVE);
-            if (QUERY_FLAG(tmp, FLAG_REFL_SPELL))
-                SET_FLAG(op, FLAG_CAN_REFL_SPELL);
+            if (QUERY_FLAG(tmp, FLAG_REFL_CASTABLE))
+                SET_FLAG(op, FLAG_REFL_CASTABLE);
             if (QUERY_FLAG(tmp, FLAG_REFL_MISSILE))
-                SET_FLAG(op, FLAG_CAN_REFL_MISSILE);
+                SET_FLAG(op, FLAG_REFL_MISSILE);
             if (QUERY_FLAG(tmp, FLAG_STEALTH))
                 SET_FLAG(op, FLAG_STEALTH);
             if (QUERY_FLAG(tmp, FLAG_UNDEAD) && !QUERY_FLAG(&op->arch->clone, FLAG_UNDEAD))
@@ -1673,7 +1668,7 @@ void fix_player(object *op)
     {
         if(pl->equipment[PLAYER_EQUIP_BOW]->type == BOW || pl->equipment[PLAYER_EQUIP_BOW]->type == ARROW)
         {
-            object *skill_ptr;
+            object_t *skill_ptr;
             int tmp_dam, tmp_wc, tmp_time;
 
             if((tmp = pl->equipment[PLAYER_EQUIP_BOW])->type == ARROW)
@@ -1812,7 +1807,7 @@ void fix_player(object *op)
         {
             LOG(llevBug, "BUG: fix_player(): player %s has weapon selected but not the skill #%d!!!\n",
                 STRING_OBJ_NAME(op),   pl->set_skill_weapon);
-           (void)apply_special(op, pl->equipment[PLAYER_EQUIP_WEAPON1],
+           (void)apply_equipment(op, pl->equipment[PLAYER_EQUIP_WEAPON1],
                AP_UNAPPLY | AP_IGNORE_CURSE);
            pl->equipment[PLAYER_EQUIP_WEAPON1] = NULL;
         }
@@ -1948,8 +1943,10 @@ void fix_player(object *op)
     op->glow_radius = light;
 
     /* we must do -old_gow + light */
-    if (op->map && old_glow != light)
-        adjust_light_source(op->map, op->x, op->y, light - old_glow);
+    if (old_glow != light)
+    {
+        adjust_light_source(msp, light - old_glow);
+    }
 
     /* for player, max hp depend on general level, sp on magic exp, grace on wisdom exp level
      * NOTE: all values are adjusted from clone at function start.
@@ -2035,17 +2032,17 @@ void fix_player(object *op)
     /* adjust swing speed and move speed by slow penalty */
     if(QUERY_FLAG(op,FLAG_FEARED))
     {
-        int m;
+        int malus;
 
-        m = op->stats.wc/8; /* 15% mali wc */
-        if(!m)
-            m=1;
-        op->stats.wc -= m;
+        malus = op->stats.wc/8; /* 15% mali wc */
+        if(!malus)
+            malus=1;
+        op->stats.wc -= malus;
 
-        m = op->stats.ac/8; /* 15% mali ac */
-        if(!m)
-            m=1;
-        op->stats.ac -= m;
+        malus = op->stats.ac/8; /* 15% mali ac */
+        if(!malus)
+            malus=1;
+        op->stats.ac -= malus;
 
         slow_penalty +=15; /* add a 15% slowness factor to swing & movement */
     }
@@ -2118,17 +2115,19 @@ void fix_player(object *op)
         QUERY_FLAG(op, FLAG_IS_INVISIBLE))
     {
         CLEAR_FLAG(op, FLAG_IS_INVISIBLE);
-        map_set_slayers(GET_MAP_SPACE_PTR(op->map, op->x, op->y), op, 0);
+        msp_rebuild_slices_without(msp, op);
         SET_FLAG(op, FLAG_IS_INVISIBLE);
-        update_object(op, UP_OBJ_LAYER);
+        msp_rebuild_slices_with(msp, op);
+        update_object(op, UP_OBJ_SLICE);
     }
     else if (inv_flag &&
              !QUERY_FLAG(op, FLAG_IS_INVISIBLE))
     {
         SET_FLAG(op, FLAG_IS_INVISIBLE);
-        map_set_slayers(GET_MAP_SPACE_PTR(op->map, op->x, op->y), op, 0);
+        msp_rebuild_slices_without(msp, op);
         CLEAR_FLAG(op, FLAG_IS_INVISIBLE);
-        update_object(op, UP_OBJ_LAYER);
+        msp_rebuild_slices_with(msp, op);
+        update_object(op, UP_OBJ_SLICE);
     }
 
     /* If op couldn't see invisible and now can, or could and now can't, send a
@@ -2166,7 +2165,7 @@ void fix_player(object *op)
  * Please, anyone, write support for 'ext_title'.
  */
 #if 0
-void set_dragon_name(object *pl, object *abil, object *skin)
+void set_dragon_name(object_t *pl, object_t *abil, object_t *skin)
 {
     int atnr    = -1;  /* attacknumber of highest level */
     int level   = 0;  /* highest level */
@@ -2218,14 +2217,15 @@ void set_dragon_name(object *pl, object *abil, object *skin)
  * an overall level. Here, the dragon might gain new abilities
  * or change the ability-focus.
  */
-void dragon_level_gain(object *who)
+void dragon_level_gain(object_t *who)
 {
-    object *abil    = NULL;    /* pointer to dragon ability force*/
-    object *skin    = NULL;    /* pointer to dragon skin force*/
-    object *tmp     = NULL;     /* tmp. object */
+    object_t *abil    = NULL;    /* pointer to dragon ability force*/
+    object_t *skin    = NULL;    /* pointer to dragon skin force*/
+    object_t *tmp,
+           *next;
 
     /* now grab the 'dragon_ability'-forces from the player's inventory */
-    for (tmp = who->inv; tmp != NULL; tmp = tmp->below)
+    FOREACH_OBJECT_IN_OBJECT(tmp, who, next)
     {
         if (tmp->type == FORCE)
         {
@@ -2255,7 +2255,7 @@ void dragon_level_gain(object *who)
         if (abil->last_eat > 0 && atnr_is_dragon_enabled(abil->last_eat))
         {
             /* apply new ability focus */
-            new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, "Your metabolism now focuses on %s!",
+            ndi(NDI_UNIQUE | NDI_BLUE, 0, who, "Your metabolism now focuses on %s!",
                           attack_name[abil->last_eat].name);
 
             abil->stats.exp = abil->last_eat;
@@ -2273,10 +2273,10 @@ void dragon_level_gain(object *who)
 /** Adjust the monster's datas for level, map settings and game settings
  * when put in play.
  */
-void fix_monster(object *op)
+void fix_monster(object_t *op)
 {
     int wc_mali=0, ac_mali=0, snare_penalty=0, slow_penalty=0;
-    object *base, *tmp, *spawn_info=NULL, *bow=NULL, *wc_tmp;
+    object_t *base, *tmp, *next, *spawn_info=NULL, *bow=NULL, *wc_tmp;
     float   tmp_add;
 
     if (op->head) /* don't adjust tails or player - only single objects or heads */
@@ -2305,7 +2305,8 @@ void fix_monster(object *op)
 
     CLEAR_FLAG(op, FLAG_READY_BOW);
     CLEAR_FLAG(op, FLAG_READY_SPELL);
-    for (tmp = op->inv; tmp; tmp = tmp->below)
+
+    FOREACH_OBJECT_IN_OBJECT(tmp, op, next)
     {
         /* handle forces */
         if(tmp->type == FORCE)
@@ -2361,7 +2362,7 @@ void fix_monster(object *op)
      */
     if(bow)
     {
-        object *tmp2;
+        object_t *tmp2;
 
         for (tmp = op->inv; tmp; tmp = tmp2)
         {
@@ -2426,17 +2427,17 @@ void fix_monster(object *op)
     /* adjust swing speed and move speed by slow penalty */
     if(QUERY_FLAG(op,FLAG_FEARED))
     {
-        int m;
+        int malus;
 
-        m = op->stats.wc/8; /* 15% mali wc */
-        if(!m)
-            m=1;
-        op->stats.wc -= m;
+        malus = op->stats.wc/8; /* 15% mali wc */
+        if(!malus)
+            malus=1;
+        op->stats.wc -= malus;
 
-        m = op->stats.ac/8; /* 15% mali ac */
-        if(!m)
-            m=1;
-        op->stats.ac -= m;
+        malus = op->stats.ac/8; /* 15% mali ac */
+        if(!malus)
+            malus=1;
+        op->stats.ac -= malus;
 
         slow_penalty +=15; /* add a 15% slowness factor to swing & movement */
     }
@@ -2511,11 +2512,11 @@ void fix_monster(object *op)
 /* insert and initialize base info object in object op
  * Return: ptr to inserted base_info
  */
-object * insert_base_info_object(object *op)
+object_t * insert_base_info_object(object_t *op)
 {
-    object     *tmp, *head;
-    objectlink *ol;
-    object     *outermost;
+    object_t     *tmp, *head;
+    objectlink_t *ol;
+    object_t     *outermost;
 
     op->head != NULL ? (head = op->head) : (head = op);
 
@@ -2575,11 +2576,12 @@ object * insert_base_info_object(object *op)
 /* find base_info in *op
  * Return: ptr to inserted base_info
  */
-object * find_base_info_object(object *op)
+object_t * find_base_info_object(object_t *op)
 {
-    object *tmp;
+    object_t *tmp,
+           *next;
 
-    for (tmp = op->inv; tmp; tmp = tmp->below)
+    FOREACH_OBJECT_IN_OBJECT(tmp, op, next)
     {
         if (tmp->type == TYPE_BASE_INFO)
             return tmp;
@@ -2604,9 +2606,9 @@ object * find_base_info_object(object *op)
  * @input factor a speed factor for forcing a speed, or 0 to automatically
  * compute a factor based on the AI state, spells etc.
  */
-void set_mobile_speed(object *op, int factor)
+void set_mobile_speed(object_t *op, int factor)
 {
-    object *base;
+    object_t *base;
     float   old_speed;
     int actual_factor;
 
@@ -2638,7 +2640,7 @@ void set_mobile_speed(object *op, int factor)
 
 /* Leeches a health indicator (that is takes some off leechee and gives a
  * proportion to leecher). */
-void leech_hind(object *leecher, object *leechee, uint8 attack, sint16 plose,
+void leech_hind(object_t *leecher, object_t *leechee, uint8 attack, sint16 plose,
                 sint16 pmod, uint8 chance)
 {
     sint16 pgain = 0;
@@ -2733,7 +2735,7 @@ void leech_hind(object *leecher, object *leechee, uint8 attack, sint16 plose,
 
     if (leechee->type == PLAYER)
     {
-        new_draw_info(NDI_PURPLE, 0, leechee, "%s hits you for %d (%d) %s. It is a leech attack!",
+        ndi(NDI_PURPLE, 0, leechee, "%s hits you for %d (%d) %s. It is a leech attack!",
                       leecher->name, (int)plose, ((int)plose) - pmod, buf);
     }
 
@@ -2742,7 +2744,7 @@ void leech_hind(object *leecher, object *leechee, uint8 attack, sint16 plose,
          ((leecher = get_owner(leecher)) &&
          leecher->type == PLAYER)))
     {
-        new_draw_info(NDI_ORANGE, 0, leecher, "You hit %s for %d (%d) %s with %s. It is a leech attack!",
+        ndi(NDI_ORANGE, 0, leecher, "You hit %s for %d (%d) %s with %s. It is a leech attack!",
                       leechee->name, (int)plose, ((int)plose) - pmod, buf,
                       attack_name[attack].name);
     }

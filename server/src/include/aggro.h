@@ -37,9 +37,9 @@
  * @param hitter Hitter.
  * @return damage info object for hitter or <code>NULL</code>
  */
-extern struct obj *aggro_get_damage(struct obj *target, struct obj *hitter);
+extern object_t *aggro_get_damage(object_t *target, object_t *hitter);
 
-extern struct obj *aggro_insert_damage(struct obj *target, struct obj *hitter);
+extern object_t *aggro_insert_damage(object_t *target, object_t *hitter);
 
 /** Updates the damage and aggro marker for a target after the aggro and damage is done from the hitter to the target.
  * @param target Target to update.
@@ -48,7 +48,7 @@ extern struct obj *aggro_insert_damage(struct obj *target, struct obj *hitter);
  * @param dmg Damage that was done.
  * @return aggro or <code>NULL</code> if not available.
  */
-extern struct obj *aggro_update_info(struct obj *target, struct obj *hitter, struct obj *hitter_object, int dmg);
+extern object_t *aggro_update_info(object_t *target, object_t *hitter, object_t *hitter_object, int dmg);
 
 /** Calculates the experience for an aggro.
  * Analyzes all aggro info in the supplied object and gives the player experience based on this information.
@@ -57,6 +57,6 @@ extern struct obj *aggro_update_info(struct obj *target, struct obj *hitter, str
  * @param kill_msg
  * @return
  */
-extern struct obj *aggro_calculate_exp(struct obj *victim, struct obj *slayer, char *kill_msg);
+extern object_t *aggro_calculate_exp(object_t *victim, object_t *slayer, char *kill_msg);
 
 #endif /* ifndef __AGGRO_H */

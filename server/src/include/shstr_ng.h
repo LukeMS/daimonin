@@ -48,7 +48,16 @@
 #define SS_DUMP_TOTALS  1
 #endif
 
-/* This should be used to differentiate shared strings from normal strings */
-typedef const char shstr;
+/* So far only used when dealing with artifacts.
+ * (now used by alchemy and other code too. Nov 95 b.t).
+ * This is used in readable.c, recipe.c and treasure.c .
+ * its used in statical structures loaded at startup.
+ * NEVER use this in dynamical way. */
+struct shstr_linked_t
+{
+    shstr_linked_t *next;
+
+    shstr_t *name;
+};
 
 #endif /* ifndef SHSTR_NG_H */

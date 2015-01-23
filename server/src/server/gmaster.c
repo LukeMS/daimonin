@@ -37,19 +37,19 @@
 #include <global.h>
 
 /* lists of the active ingame gmasters */
-objectlink *gmaster_list;
-objectlink *gmaster_list_VOL;
-objectlink *gmaster_list_GM;
-objectlink *gmaster_list_MW;
-objectlink *gmaster_list_MM;
-objectlink *gmaster_list_SA;
+objectlink_t *gmaster_list;
+objectlink_t *gmaster_list_VOL;
+objectlink_t *gmaster_list_GM;
+objectlink_t *gmaster_list_MW;
+objectlink_t *gmaster_list_MM;
+objectlink_t *gmaster_list_SA;
 
 /* returns a objectlink with gmaster_struct
  * we use for both the memorypool system
  */
-static objectlink *get_gmaster_node(void)
+static objectlink_t *get_gmaster_node(void)
 {
-    objectlink        *ol   = get_objectlink(OBJLNK_FLAG_GM);
+    objectlink_t        *ol   = objectlink_get(OBJLNK_FLAG_GM);
     struct _gmaster_struct  *gptr = (struct _gmaster_struct *) get_poolchunk(pool_gmasters);
 
     memset(gptr, 0, sizeof(gmaster_struct));
@@ -60,7 +60,7 @@ static objectlink *get_gmaster_node(void)
 
 /* free the gmaster node and the used objectlink
  */
-static void free_gmaster_node(objectlink *ol)
+static void free_gmaster_node(objectlink_t *ol)
 {
     return_poolchunk(ol->objlink.gm, pool_gmasters);
     return_poolchunk(ol, pool_objectlink);
@@ -69,14 +69,14 @@ static void free_gmaster_node(objectlink *ol)
 
 /* add a player with a activated gmaster mode to the global lists
  */
-static struct oblnk *add_gmaster_list(player *pl)
+static struct objectlink_t *add_gmaster_list(player_t *pl)
 {
-    objectlink *ol;
+    objectlink_t *ol;
 
     if(pl->gmaster_mode == GMASTER_MODE_NO)
         return NULL;
 
-    ol = get_objectlink(OBJLNK_FLAG_OB);
+    ol = objectlink_get(OBJLNK_FLAG_OB);
     ol->objlink.ob = pl->ob;
 
     if ((pl->gmaster_mode & GMASTER_MODE_SA))
@@ -109,7 +109,7 @@ static struct oblnk *add_gmaster_list(player *pl)
 
 /* remove a player from global gmaster lists
  */
-void remove_gmaster_list(player *pl)
+void remove_gmaster_list(player_t *pl)
 {
     if (pl->gmaster_mode == GMASTER_MODE_NO)
         return;
@@ -244,7 +244,7 @@ int load_gmaster_file(void)
  */
 void add_gmaster_file_entry(char *name, char *host, int mode_id)
 {
-    objectlink *ol;
+    objectlink_t *ol;
 
     ol = get_gmaster_node();
 
@@ -277,7 +277,7 @@ void add_gmaster_file_entry(char *name, char *host, int mode_id)
     objectlink_link(&gmaster_list, NULL, NULL, gmaster_list, ol);
 }
 
-void remove_gmaster_file_entry(objectlink *ol)
+void remove_gmaster_file_entry(objectlink_t *ol)
 {
     objectlink_unlink(&gmaster_list, NULL, ol);
 }
@@ -286,9 +286,9 @@ void remove_gmaster_file_entry(objectlink *ol)
  * Check the gmaster list its allowed.
  * return: 1 = allowed, 0 = disallowed
  */
-int check_gmaster_list(player *pl, int mode_id)
+int check_gmaster_list(player_t *pl, int mode_id)
 {
-    objectlink *ol = gmaster_list;
+    objectlink_t *ol = gmaster_list;
 
     for (; ol; ol = ol->next)
     {
@@ -316,7 +316,7 @@ int check_gmaster_list(player *pl, int mode_id)
  */
 void free_gmaster_list()
 {
-    objectlink *ol = gmaster_list;
+    objectlink_t *ol = gmaster_list;
 
     LOG(llevDebug, "Freeing all gmaster entries\n");
 
@@ -328,7 +328,7 @@ void free_gmaster_list()
 
 /* set a gmaster mode to a player: SA, MM, MW, GM, or VOL
  */
-void set_gmaster_mode(player *pl, int mode_id)
+void set_gmaster_mode(player_t *pl, int mode_id)
 {
     int                     mode = GMASTER_MODE_NO;
 #ifdef USE_CHANNELS
@@ -339,7 +339,7 @@ void set_gmaster_mode(player *pl, int mode_id)
     /* Check if the player is allowed in this mode in gmaster_file. */
     if (!check_gmaster_list(pl, mode_id))
     {
-        new_draw_info(NDI_UNIQUE, 0, pl->ob, "Sorry, you have insufficient gmaster permissions.");
+        ndi(NDI_UNIQUE, 0, pl->ob, "Sorry, you have insufficient gmaster permissions.");
 
         return;
     }
@@ -405,29 +405,29 @@ void set_gmaster_mode(player *pl, int mode_id)
     {
         esrv_send_inventory(pl, pl->ob);
         esrv_send_below(pl);
-        new_draw_info(NDI_UNIQUE, 0, pl->ob, "SA mode activated.");
+        ndi(NDI_UNIQUE, 0, pl->ob, "SA mode activated.");
     }
     else if ((mode & GMASTER_MODE_MM))
     {
-        new_draw_info(NDI_UNIQUE, 0, pl->ob, "MM mode activated.");
+        ndi(NDI_UNIQUE, 0, pl->ob, "MM mode activated.");
     }
     else if ((mode & GMASTER_MODE_MW))
     {
-        new_draw_info(NDI_UNIQUE, 0, pl->ob, "MW mode activated.");
+        ndi(NDI_UNIQUE, 0, pl->ob, "MW mode activated.");
     }
     else if ((mode & GMASTER_MODE_GM))
     {
-        new_draw_info(NDI_UNIQUE, 0, pl->ob, "GM mode activated.");
+        ndi(NDI_UNIQUE, 0, pl->ob, "GM mode activated.");
     }
     else if ((mode & GMASTER_MODE_VOL))
     {
-        new_draw_info(NDI_UNIQUE, 0, pl->ob, "VOL mode activated.");
+        ndi(NDI_UNIQUE, 0, pl->ob, "VOL mode activated.");
     }
 }
 
 /* remove the current gmaster mode
  */
-void remove_gmaster_mode(player *pl)
+void remove_gmaster_mode(player_t *pl)
 {
     int                     mode;
 #ifdef USE_CHANNELS
@@ -439,7 +439,7 @@ void remove_gmaster_mode(player *pl)
         return;
     }
 
-    new_draw_info(NDI_UNIQUE, 0, pl->ob, "Gmaster_mode deactivated.");
+    ndi(NDI_UNIQUE, 0, pl->ob, "Gmaster_mode deactivated.");
     remove_gmaster_list(pl);
     pl->gmaster_mode = GMASTER_MODE_NO;
 
@@ -463,16 +463,17 @@ void remove_gmaster_mode(player *pl)
     if ((mode & (GMASTER_MODE_SA | GMASTER_MODE_MM)))
 #endif
     {
-        object *who = pl->ob;
+        object_t *who = pl->ob;
 
         if (pl->gmaster_invis)
         {
-            map_set_slayers(GET_MAP_SPACE_PTR(who->map, who->x, who->y), who,
-                            0);
+            msp_rebuild_slices_without(MSP_KNOWN(who), who);
+            pl->gmaster_invis = 0;
+            msp_rebuild_slices_with(MSP_KNOWN(who), who);
+            update_object(who, UP_OBJ_SLICE);
         }
 
-        pl->gmaster_wizpass = pl->gmaster_matrix = pl->gmaster_stealth = pl->gmaster_invis = 0;
-        update_object(who, UP_OBJ_LAYER);
+        pl->gmaster_wizpass = pl->gmaster_matrix = pl->gmaster_stealth = 0;
         pl->update_los = 1;
 
         if ((mode & GMASTER_MODE_SA))
@@ -491,7 +492,7 @@ void remove_gmaster_mode(player *pl)
 void write_gmaster_file(void)
 {
     char        filename[MEDIUM_BUF];
-    objectlink *ol;
+    objectlink_t *ol;
     FILE       *fp;
 
     sprintf(filename, "%s/%s", settings.localdir, GMASTER_FILE);
@@ -580,12 +581,12 @@ int compare_gmaster_mode(int t, int p)
  * (triggered after a /gmasterfile add/remove command). */
 void update_gmaster_file(void)
 {
-    objectlink *ol,
+    objectlink_t *ol,
                *ol_tmp;
 
     for(ol = gmaster_list_SA; ol; ol = ol_tmp)
     {
-        player *pl = CONTR(ol->objlink.ob);
+        player_t *pl = CONTR(ol->objlink.ob);
 
         ol_tmp = ol->next;
 
@@ -597,7 +598,7 @@ void update_gmaster_file(void)
 
     for(ol = gmaster_list_MM; ol; ol = ol_tmp)
     {
-        player *pl = CONTR(ol->objlink.ob);
+        player_t *pl = CONTR(ol->objlink.ob);
 
         ol_tmp = ol->next;
 
@@ -609,7 +610,7 @@ void update_gmaster_file(void)
 
     for(ol = gmaster_list_MW; ol; ol = ol_tmp)
     {
-        player *pl = CONTR(ol->objlink.ob);
+        player_t *pl = CONTR(ol->objlink.ob);
 
         ol_tmp = ol->next;
 
@@ -621,7 +622,7 @@ void update_gmaster_file(void)
 
     for(ol = gmaster_list_GM; ol; ol = ol_tmp)
     {
-        player *pl = CONTR(ol->objlink.ob);
+        player_t *pl = CONTR(ol->objlink.ob);
 
         ol_tmp = ol->next;
 
@@ -633,7 +634,7 @@ void update_gmaster_file(void)
 
     for(ol = gmaster_list_VOL; ol; ol = ol_tmp)
     {
-        player *pl = CONTR(ol->objlink.ob);
+        player_t *pl = CONTR(ol->objlink.ob);
 
         ol_tmp = ol->next;
 

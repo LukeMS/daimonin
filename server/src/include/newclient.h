@@ -68,7 +68,7 @@
 #define SF_XRAYS            8
 #define SF_INFRAVISION      16
 
-/* The following are the color flags passed to new_draw_info.
+/* The following are the color flags passed to ndi.
  *
  * We also set up some control flags
  *

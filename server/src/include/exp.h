@@ -41,6 +41,6 @@ typedef struct _level_color
 
 extern sint32       new_levels[MAXLEVEL + 2];
 extern _level_color level_color[MAXMOBLEVEL + 1];
-extern int exp_from_base_skill(player *pl, int base_exp, int sk);
+extern int exp_from_base_skill(player_t *pl, int base_exp, int sk);
 
 #endif /* ifndef __EXP_H */

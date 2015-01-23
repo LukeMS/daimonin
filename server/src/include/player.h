@@ -88,23 +88,18 @@ enum
 #define PLAYER_SAVE(_PL_) \
     (void)player_save((_PL_)->ob); \
     if ((_PL_)->ob->map && \
-        MAP_INSTANCE((_PL_)->ob->map) || \
-        MAP_UNIQUE((_PL_)->ob->map)) \
+        ((_PL_)->ob->map->status & (MAP_STATUS_INSTANCE | MAP_STATUS_UNIQUE))) \
     { \
         (void)map_save((_PL_)->ob->map); \
     }
 
-#ifdef WIN32
-#pragma pack(push,1)
-#endif
-
 /* slowly reworking this struct - some old values in - MT2003 */
-typedef struct pl_player
+struct player_t
 {
     /* this is not cleared with memset - seek for offsetof((....,maplevel) */
 
-    struct pl_player   *prev;               /* Pointer to the prev player. if NULL, this is the first one */
-    struct pl_player   *next;               /* Pointer to next player, NULL if this is last */
+    player_t   *prev;               /* Pointer to the prev player. if NULL, this is the first one */
+    player_t   *next;               /* Pointer to next player, NULL if this is last */
 
     NewSocket           socket;             /* Socket information for this player */
 
@@ -147,42 +142,42 @@ typedef struct pl_player
 
     int                 map_update_cmd;         /* for server->client protocol */
     int                 map_update_tile;        /* for server->client protocol */
-    struct mapdef      *last_update;            /* when moving on tiled maps, player can change
+    map_t      *last_update;            /* when moving on tiled maps, player can change
                                                  * map without triggering mapevents and new_map_cmd.
                                                  * This will break client cache and script events.
                                                  * This value will used as control value.*/
 
-    object             *ob;                     /* The object representing the player */
-    object             *golem;                  /* Which golem is controlled */
-    object             *anim_enemy;             /* which enemy we hack. needed to skip extra swing animation */
+    object_t             *ob;                     /* The object representing the player */
+    object_t             *golem;                  /* Which golem is controlled */
+    object_t             *anim_enemy;             /* which enemy we hack. needed to skip extra swing animation */
 
-    object             *selected_weapon;        /* thats the weapon in our hand */
-    object             *skill_weapon;           /* thats the hth skill we use when we not use a weapon (like karate) */
-    object             *target_object;          /* our target */
+    object_t             *selected_weapon;        /* thats the weapon in our hand */
+    object_t             *skill_weapon;           /* thats the hth skill we use when we not use a weapon (like karate) */
+    object_t             *target_object;          /* our target */
 
-    object             *equipment[PLAYER_EQUIP_MAX]; /* pointers to applied items in the players inventory */
-    object             *skill_ptr[NROFSKILLS];       /* quick jump table to skill objects in the players inv. */
+    object_t             *equipment[PLAYER_EQUIP_MAX]; /* pointers to applied items in the players inventory */
+    object_t             *skill_ptr[NROFSKILLS];       /* quick jump table to skill objects in the players inv. */
 
     int                 base_skill_group[3];            /* guild/base exp skill groups for default exp gain */
     int                 base_skill_group_exp[3];        /* % adjustment for exp gain */
-    object             *guild_force;
-    object             *highest_skill[NROFSKILLGROUPS]; /* highest skill of every skill group */
+    object_t             *guild_force;
+    object_t             *highest_skill[NROFSKILLGROUPS]; /* highest skill of every skill group */
 
-    object             *skillgroup_ptr[NROFSKILLGROUPS];       /* skill exp groups ptr (agility, mental,..) */
+    object_t             *skillgroup_ptr[NROFSKILLGROUPS];       /* skill exp groups ptr (agility, mental,..) */
     int                 last_skillgroup_exp[NROFSKILLGROUPS];   /* shadow variables for client updating */
     int                 last_skillgroup_level[NROFSKILLGROUPS]; /* sic */
 
-    object             *mark;       /* marked object */
-    object             *age_force;  /* quick jump to our age force */
+    object_t             *mark;       /* marked object_t */
+    object_t             *age_force;  /* quick jump to our age force */
 
-    object             *map_below;  /* ptr used from local map player chain */
-    object             *map_above;
-    object             *container;          /* Current container being used. */
+    object_t             *map_below;  /* ptr used from local map player chain */
+    object_t             *map_above;
+    object_t             *container;          /* Current container being used. */
     uint32              container_count;        /* the count of the container */
-    object             *container_above;    /* that points to a PLAYER ob, accessing this container too!
+    object_t             *container_above;    /* that points to a PLAYER ob, accessing this container too!
                                                   * if this is NULL, we are the "last" one looking in ->container.
                                                   */
-    object             *container_below;    /* same as above - if this is NULl, we are "last" looking the container */
+    object_t             *container_below;    /* same as above - if this is NULl, we are "last" looking the container */
 
 
     int                    state;                /* player system state... PLAYING, LOGIN IN... */
@@ -213,7 +208,7 @@ typedef struct pl_player
     uint32              golem_count;                /* Which golem is controlled - the id count */
 
     int                  gmaster_mode;
-    struct oblnk        *gmaster_node;
+    struct objectlink_t        *gmaster_node;
 
     /* mute and "communication" frequency control */
     uint32              mute_flags;
@@ -227,10 +222,10 @@ typedef struct pl_player
     int                 action_timer;               /* weapon_speed_left * 1000 and cast from float to int for client */
     int                 last_action_timer;          /* previous value sent to the client */
     int                 guild_updated;                   /* See login.c */
-    object               *quest_one_drop;
-    object               *quests_done;
-    object               *quests_type_normal;
-    object               *quests_type_kill;
+    object_t               *quest_one_drop;
+    object_t               *quests_done;
+    object_t               *quests_type_normal;
+    object_t               *quests_type_kill;
 
     tag_t                quest_one_drop_count;
     tag_t                quests_done_count;
@@ -238,8 +233,8 @@ typedef struct pl_player
     tag_t                quests_type_kill_count;
 
     uint32              exp_calc_tag;               /* used from aggro.c/exp.c */
-    object             *exp_calc_obj;
-    uint32              mark_count;                 /* count or mark object */
+    object_t             *exp_calc_obj;
+    uint32              mark_count;                 /* count or mark object_t */
     sint32              skill_exp[NROFSKILLS];      /* shadow register for updating skill values to client */
     uint32              target_object_count;        /* count of target - NOTE: if we target ourself, this count it 0
                                                     * this will kick us out of enemy target routines - all functions
@@ -268,10 +263,10 @@ typedef struct pl_player
      * link/unlink party members when their player object change.
      * exception is group leader - its only used to confirm a invite
      */
-    object             *group_leader;               /* pointer to group leader or invite */
+    object_t             *group_leader;               /* pointer to group leader or invite */
     uint32              group_leader_count;         /* for invite... */
-    object             *group_prev;                 /* previous member of group */
-    object             *group_next;                 /* next member of group */
+    object_t             *group_prev;                 /* previous member of group */
+    object_t             *group_next;                 /* next member of group */
 
     uint32              update_ticker;              /* global_round tick where player was updated */
     float               speed;                      /* shadow speed value, set in fix_player() to cover flag effects */
@@ -308,7 +303,7 @@ typedef struct pl_player
     int                 food_status;                /* show regeneration status to client */
     int                 last_food_status;
 
-    sint16              map_status;                     /* type of map we have saved */
+    sint16              status;                     /* type of map we have saved */
 
     uint8               bed_status;
     uint8               group_mode;                    /* group mode use GROUP_MODE_XX */
@@ -338,8 +333,8 @@ typedef struct pl_player
 
     unsigned char       run_on;
     uint32              last_weight_limit;  /* Last weight limit transmitted to client */
-    living              orig_stats;       /* Can be less in case of poisoning */
-    living              last_stats;       /* Last stats drawn with draw_stats() */
+    living_t              orig_stats;       /* Can be less in case of poisoning */
+    living_t              last_stats;       /* Last stats drawn with draw_stats() */
     long                last_weight;
     unsigned char       last_level;        /* client data: level player */
 
@@ -355,18 +350,15 @@ typedef struct pl_player
      * perhaps we need this in the future.
      */
 
-    /*object *last_used;*/     /* Pointer to object last picked or applied */
+    /*object_t *last_used;*/     /* Pointer to object last picked or applied */
     /*long last_used_id;*/     /* Safety measures to be sure it's the same */
 
     /* All pets owned by this player */
-    objectlink         *pets;
-} player;
+    objectlink_t         *pets;
+    sint32          tadoffset; // offset of the last visited map
+};
 
-void increment_pvp_counter(object *op, int counter);
-int command_pvp_stats(object *op, char *params);
-
-#ifdef WIN32
-#pragma pack(pop)
-#endif
+void increment_pvp_counter(object_t *op, int counter);
+int command_pvp_stats(object_t *op, char *params);
 
 #endif /* ifndef __PLAYER_H */

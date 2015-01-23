@@ -222,11 +222,25 @@ typedef struct _account
     char        pwd[MAX_ACCOUNT_PASSWORD+1];    /* we save here the password for writing back or changing */
 } Account;
 
+struct view_msp_t
+{
+    int     count;
+    short   faces[MSP_CLAYER_NROF];
+    uint16  fflag[MSP_CLAYER_NROF - MSP_CLAYER_UNSLICED - 1];
+    uint8   ff_probe[MSP_CLAYER_NROF - MSP_CLAYER_UNSLICED - 1];
+    uint8   quick_pos[MSP_CLAYER_NROF - MSP_CLAYER_UNSLICED - 1];
+};
+
+struct view_map_t
+{
+    view_msp_t cells[MAP_CLIENT_X][MAP_CLIENT_Y];
+};
+
 /* Note: Take care when setting or deleting socket - account_data can hold hash strings references */
 typedef struct NewSocket_struct
 {
     int                 fd;
-    struct pl_player    *pl;                /* if != NULL this socket is part of a player struct */
+    struct player_t    *pl;                /* if != NULL this socket is part of a player struct */
     struct _account     pl_account;            /* every socket is related to an account or waiting for one */
     command_struct      *cmd_start;         /* pointer to the list of incoming commands in process */
     command_struct      *cmd_end;
@@ -237,7 +251,7 @@ typedef struct NewSocket_struct
     int                 sockbuf_len;        /* sic */
     int                 sockbuf_nrof;        /* number of the queued socket buffers */
     int                 sockbuf_bytes;        /* number of bytes in all queued socket buffers we must transfer */
-    struct Map          lastmap;            /* Thats the VISIBLE map area of the player, used to send to client */
+    view_map_t          lastmap;            /* Thats the VISIBLE map area of the player, used to send to client */
     uint32              login_count;        /* if someone is to long idle in the login, we kick him here! */
     int                 mapx, mapy;         /* How large a map the client wants */
     int                 mapx_2, mapy_2;     /* same like above but /2 */

@@ -83,13 +83,13 @@ CommArray_s Commands[] =
     {"use_skill",     command_uskill,         0.1f, 1, NULL}, /* uses a specified skill*/
     {"ready_skill",   command_rskill,         0.1f, 1, NULL}, /* readies a specified skill*/
     {"privacy",       command_privacy,        0.0f, 1, NULL}, /* enters player in privacy mode*/
-    {"egobind",       command_egobind,        1.0f, 1, NULL}, /* egobinds an item to the player*/
+    {"egobind",       command_egobind,        1.0f, 1, NULL}, /* egobinds an item to the player */
     {"invite",        command_party_invite,   4.0f, 1, NULL}, /* invites specified player to join group*/
     {"join",          command_party_join,     0.1f, 1, NULL}, /* join a group when invited*/
     {"deny",          command_party_deny,     0.1f, 1, NULL}, /* deny joining a group when invited*/
     {"leave",         command_party_leave,    4.0f, 1, NULL}, /* leave a group*/
     {"remove",        command_party_remove,   4.0f, 1, NULL}, /* remove a specified player from a group*/
-    {"pvp",           command_pvp_stats,      0.0f, 0, NULL}, /* lists pvp stats of specified player*/
+    {"pvp",           command_pvp_stats,      0.0f, 0, NULL}, /* lists pvp stats of specified player */
 	{"level",         command_level,          0.0f, 0, NULL}, /* states specified player's level*/
 #ifdef USE_CHANNELS
     {"channel",       command_channel,        1.0f, 0, NULL}, /* channel system */
@@ -330,7 +330,7 @@ void init_commands()
 /* Finds cmd if it exists for pl (determined by gmaster_mode).
  * If so, the particular command element is returned. Otherwise, NULL is
  * returned. */
-CommArray_s *find_command(char *cmd, player *pl)
+CommArray_s *find_command(char *cmd, player_t *pl)
 {
     CommArray_s *csp,
                  plugin_csp;
@@ -386,7 +386,7 @@ CommArray_s *find_command_element(char *cmd, CommArray_s *commarray, int commsiz
 }
 
 /* We go through the list of queued commands we got from the client */
-void process_command_queue(NewSocket *ns, player *pl)
+void process_command_queue(NewSocket *ns, player_t *pl)
 {
     int cmd, cmd_count = 0;
 
@@ -463,8 +463,8 @@ void cs_cmd_ping(char *buf, int len, NewSocket *ns)
 */
 void cs_cmd_generic(char *buf, int len, NewSocket *ns)
 {
-    player          *pl;
-    object          *ob;
+    player_t          *pl;
+    object_t          *ob;
     char            *cp;
     CommArray_s     *csp;
     struct channels *channel=NULL;
@@ -487,7 +487,7 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
 
     if (!(pl->state & ST_PLAYING))
     {
-        new_draw_info(NDI_UNIQUE, 0, ob, "You can not issue commands - state is not ST_PLAYING (%s)",
+        ndi(NDI_UNIQUE, 0, ob, "You can not issue commands - state is not ST_PLAYING (%s)",
                              buf);
 
         return;
@@ -503,7 +503,7 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
     /* Find the command. */
     if (!(csp = find_command(buf, pl)))
     {
-        new_draw_info(NDI_UNIQUE, 0, ob, "'/%s' is not a valid command.", buf);
+        ndi(NDI_UNIQUE, 0, ob, "'/%s' is not a valid command.", buf);
         return;
     }
 
@@ -513,7 +513,7 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
          * think this can be set from the client yet, so its use would be
          * pointless ATM.
          * -- Smacky 20090607 */
-        new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, ob, "/%s %s",
+        ndi(NDI_UNIQUE | NDI_YELLOW, 0, ob, "/%s %s",
                              buf, (cp) ? cp : "");
     }
 
@@ -533,7 +533,7 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
 
         case COMMANDS_RTN_VAL_SYNTAX:
             /* User doesn't know how to use the command properly */
-            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, ob, "Syntax error: Try ~/help /%s~",
+            ndi(NDI_UNIQUE | NDI_WHITE, 0, ob, "Syntax error: Try ~/help /%s~",
                                  csp->name);
             return;
 
@@ -1002,11 +1002,11 @@ void cs_cmd_file(char *buf, int len, NewSocket *ns)
 */
 void cs_cmd_moveobj(char *buf, int len, NewSocket *ns)
 {
-    player *pl;
+    player_t *pl;
     tag_t   loc,
             tag;
     uint32  nrof;
-    object *who,
+    object_t *who,
            *what;
 
     if (!buf ||
@@ -1057,7 +1057,7 @@ void cs_cmd_moveobj(char *buf, int len, NewSocket *ns)
     /* Pick up. */
     else
     {
-        object *where = esrv_get_ob_from_count(who, loc);
+        object_t *where = esrv_get_ob_from_count(who, loc);
 
         /* Pick up to inventory. */
         if (where == who ||
@@ -1102,7 +1102,7 @@ void cs_cmd_face(char *params, int len, NewSocket *ns)
 
 void cs_cmd_move(char *buf, int len, NewSocket *ns)
 {
-    player *pl = ns->pl;
+    player_t *pl = ns->pl;
     int dir, mode;
 
     if (!buf || len<(PARM_SIZE_CHAR*2) || !pl || !pl->ob || ns->status != Ns_Playing)
@@ -1123,7 +1123,7 @@ void cs_cmd_move(char *buf, int len, NewSocket *ns)
     CONTR(op)->run_on = 1;
     }
     move_player(op, dir, TRUE);
-    int command_stay(object *op, char *params)
+    int command_stay(object_t *op, char *params)
     {
     fire(op, 0);
     return 0;
@@ -1135,8 +1135,8 @@ void cs_cmd_move(char *buf, int len, NewSocket *ns)
 /* Client wants to examine some object.  So lets do so. */
 void cs_cmd_examine(char *buf, int len, NewSocket *ns)
 {
-    player *pl = ns->pl;
-    object *op;
+    player_t *pl = ns->pl;
+    object_t *op;
     long    tag;
 
     if (!buf || len<PARM_SIZE_INT || !pl || ns->status != Ns_Playing)
@@ -1159,9 +1159,9 @@ void cs_cmd_examine(char *buf, int len, NewSocket *ns)
 /* Client wants to apply some object.  Lets do so. */
 void cs_cmd_apply(char *buf, int len, NewSocket *ns)
 {
-    player *pl;
+    player_t *pl;
     uint32  tag;
-    object *op;
+    object_t *op;
 
     if (!buf ||
         len < PARM_SIZE_INT ||
@@ -1192,7 +1192,7 @@ void cs_cmd_apply(char *buf, int len, NewSocket *ns)
     if ((tag & 0xe0000000) == 0xe0000000 || // bits 29-31 = end inv delimeter
         (tag & 0xc0000000) == 0xc0000000)   // bits 30-31 = start inv delimeter
     {
-        new_draw_info(NDI_UNIQUE, 0, pl->ob, "inv delim!");
+        ndi(NDI_UNIQUE, 0, pl->ob, "inv delim!");
     }
     else if ((tag & 0x80000000))            // bit 31 = next/prev
     {
@@ -1203,7 +1203,7 @@ void cs_cmd_apply(char *buf, int len, NewSocket *ns)
      * really see. */
     else if ((op  = esrv_get_ob_from_count(pl->ob, tag)))
     {
-        player_apply(pl->ob, op, 0);
+        (void)manual_apply(pl->ob, op, 0);
     }
 }
 
@@ -1211,8 +1211,8 @@ void cs_cmd_apply(char *buf, int len, NewSocket *ns)
 void cs_cmd_lock(char *data, int len, NewSocket *ns)
 {
     int     flag, tag;
-    player *pl = ns->pl;
-    object *op;
+    player_t *pl = ns->pl;
+    object_t *op;
 
     if (!data || len < (PARM_SIZE_CHAR+PARM_SIZE_INT) || !pl || !pl->ob || ns->status != Ns_Playing)
     {
@@ -1231,7 +1231,7 @@ void cs_cmd_lock(char *data, int len, NewSocket *ns)
     /* only lock item inside the players own inventory */
     if (is_player_inv(op) != pl->ob)
     {
-        new_draw_info(NDI_UNIQUE, 0, pl->ob, "You can't lock items outside your inventory!");
+        ndi(NDI_UNIQUE, 0, pl->ob, "You can't lock items outside your inventory!");
         return;
     }
     if (!flag)
@@ -1246,8 +1246,8 @@ void cs_cmd_lock(char *data, int len, NewSocket *ns)
 void cs_cmd_mark(char *data, int len, NewSocket *ns)
 {
     int     tag;
-    object *op;
-    player *pl = ns->pl;
+    object_t *op;
+    player_t *pl = ns->pl;
 
     if (!data || len<PARM_SIZE_INT || !pl || !pl->ob || ns->status != Ns_Playing)
     {
@@ -1277,7 +1277,7 @@ void cs_cmd_mark(char *data, int len, NewSocket *ns)
 
 void cs_cmd_talk(char *data, int len, NewSocket *ns)
 {
-    player *pl;
+    player_t *pl;
     sint8   mode;
 
     if (!data ||
@@ -1327,8 +1327,8 @@ void cs_cmd_fire(char *params, int len, NewSocket *ns)
 {
     int            dir;
     altact_mode_t  mode;
-    player        *pl = ns->pl;
-    object        *op,
+    player_t        *pl = ns->pl;
+    object_t        *op,
                   *weapon = NULL,
                   *ammo = NULL;
     float          ticks = -1.0;
@@ -1615,7 +1615,7 @@ void cs_cmd_login(char *buf, int len, NewSocket *ns)
 /* try to add (login) a player <name> from account logged in on socket ns */
 void cs_cmd_addme(char *buf, int len, NewSocket *ns)
 {
-    player     *pl = NULL;
+    player_t     *pl = NULL;
     addme_login_msg error_msg;
     const char *hash_name;
 
@@ -1649,7 +1649,7 @@ void cs_cmd_addme(char *buf, int len, NewSocket *ns)
     else
     {
         char    double_login_warning[] = "3 Double login! Kicking older instance!";
-        player *ptmp = first_player;
+        player_t *ptmp = first_player;
 
         for (; ptmp; ptmp = ptmp->next)
         {
@@ -1708,16 +1708,16 @@ void cs_cmd_addme(char *buf, int len, NewSocket *ns)
         ns->addme = 1; /* mark the old socket as invalid because mirrored */
 
         /* give out some more initial info */
-        new_draw_info(NDI_UNIQUE, 0, pl->ob, "This is %s.", version_string());
+        ndi(NDI_UNIQUE, 0, pl->ob, "This is %s.", version_string());
         display_motd(pl->ob);
 #ifdef USE_CHANNELS
 #ifdef ANNOUNCE_CHANNELS
         /* TODO: We should instead give useful info here like which channels
          * are available. */
-        new_draw_info(NDI_UNIQUE | NDI_RED, 0, pl->ob, "We are testing out a new channel-system!\nMake sure you have a client with channel-support.\nSee forums on www.daimonin.org!");
+        ndi(NDI_UNIQUE | NDI_RED, 0, pl->ob, "We are testing out a new channel-system!\nMake sure you have a client with channel-support.\nSee forums on www.daimonin.org!");
 #endif
 #endif
-//        new_draw_info(NDI_UNIQUE | NDI_RED, 0, pl->ob, "Testing!");
+//        ndi(NDI_UNIQUE | NDI_RED, 0, pl->ob, "Testing!");
     }
 }
 
@@ -1731,7 +1731,7 @@ void cs_cmd_addme(char *buf, int len, NewSocket *ns)
 void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
 {
     int     gender, race, skill_nr, ret = ADDME_MSG_OK;
-    shstr  *pass;
+    shstr_t  *pass;
     char    filename[MEDIUM_BUF];
 
     /* if the cmd isn't perfect, kill the socket. */
@@ -1782,7 +1782,7 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
             /* Otherwise it must be old-style and therefore reclaimable. */
             else
             {
-                shstr *password = add_string(real_password);
+                shstr_t *password = add_string(real_password);
 
                 fclose(fp);
 
@@ -1807,7 +1807,7 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
                  * player below. */
                 else
                 {
-                     shstr *name = NULL;
+                     shstr_t *name = NULL;
 
                      /* Add a dummy player so that delete player will work! */
                      ns->pl_account.level[ns->pl_account.nrof_chars] = 1; /* we always start with level 1 */
@@ -1859,7 +1859,7 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
 
     if (ret == ADDME_MSG_OK)
     {
-        player *pl = NULL;
+        player_t *pl = NULL;
 
         /* name is ok... now we have to do some work by filling up a player structure.
          * in this way we can use the standard save_player() function which is alot more
@@ -1910,7 +1910,7 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
 void cs_cmd_delchar(char *buf, int len, NewSocket *ns)
 {
     int ret;
-    shstr *name = NULL;
+    shstr_t *name = NULL;
 
     /* if the cmd isn't perfect, kill the socket. */
     if (!ns->pl_account.nrof_chars ||

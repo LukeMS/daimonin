@@ -23,6 +23,11 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
+/* TODO: The generic name for (wizard) spells and (divine) prayers is
+ * castables, so the filenames/prefixes will be changed accordingly.
+ *
+ * -- Smacky 20140815 */
+
 #ifndef __SPELLS_H
 #define __SPELLS_H
 
@@ -380,7 +385,7 @@ enum spellnrs
                 ((__op->path_repelled & __spell->path) ? 0.8 : 1))
 
 extern const char  *spellpathnames[NRSPELLPATHS];
-extern archetype   *spellarch[NROFREALSPELLS];
+extern archetype_t   *spellarch[NROFREALSPELLS];
 
 /* i added spellNPC here as special... its used for example to force scripted npc
  * action which is normally ingame not legal - like shopkeepers who casts self only

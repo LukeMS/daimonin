@@ -34,13 +34,13 @@
  * object and pointers.  This structure should get removed, and just replaced
  * by the object structure
  */
-typedef struct archt
+struct archetype_t
 {
     const char                 *name;           /* More definite name, like "generate_kobold" */
-    struct archt               *next;           /* Next archetype in a linked list */
-    struct archt               *head;           /* The main part of a linked object */
-    struct archt               *more;           /* Next part of a linked object */
-    object                     *base_clone;         /* used by artifacts list: if != NULL,
+    archetype_t               *next;           /* Next archetype in a linked list */
+    archetype_t               *head;           /* The main part of a linked object_t */
+    archetype_t               *more;           /* Next part of a linked object_t */
+    object_t                   *base_clone;         /* used by artifacts list: if != NULL,
                                                      * this object is the base object and clone is
                                                      * the modified artifacts object.
                                                      * we use base_clone for unidentified objects
@@ -48,53 +48,74 @@ typedef struct archt
                                                      * or it is used to get a base object when we
                                                      * remove the artifacts changes (cancellation, dispel...)
                                                      */
-    object                      clone;          /* An object from which to do copy_object() */
+    object_t                    clone;          /* An object from which to do copy_object() */
     struct mob_behaviourset    *ai; /* arch-default ai definition (optional)*/
-} archetype;
+};
 
-EXTERN archetype           *first_archetype;
+EXTERN archetype_t           *first_archetype;
 
 typedef struct _archetype_global
 {
-    archetype *_empty_archetype;
-    archetype *_base_info;
-    archetype *_waypoint;
-    archetype *_level_up;
-    archetype *_aggro_history;
-    archetype *_dmg_info;
-    archetype *_drain;
-    archetype *_depletion;
-    archetype *_ring_normal;
-    archetype *_ring_generic;
-    archetype *_amulet_generic;
-    archetype *_mitcoin;
-    archetype *_goldcoin;
-    archetype *_silvercoin;
-    archetype *_coppercoin;
-    archetype *_quest_container;
-    archetype *_quest_info;
-    archetype *_quest_trigger;
-    archetype *_quest_update;
-    archetype *_player_info;
-    archetype *_force;
-    archetype *_guild_force;
-    archetype *_alignment_force;
-    archetype *_rank_force;
-    archetype *_gravestone;
-    archetype *_deathsick;
-    archetype *_poisoning;
-    archetype *_slowness;
-    archetype *_fear;
-    archetype *_snare;
-    archetype *_confusion;
-    archetype *_blindness;
-    archetype *_paralyze;
-    archetype *_corpse_default;
-    archetype *_loot_container;
-    archetype *_pvp_stat_force;
+    archetype_t *_empty_archetype;
+    archetype_t *_base_info;
+    archetype_t *_waypoint;
+    archetype_t *_level_up;
+    archetype_t *_aggro_history;
+    archetype_t *_dmg_info;
+    archetype_t *_drain;
+    archetype_t *_depletion;
+    archetype_t *_ring_normal;
+    archetype_t *_ring_generic;
+    archetype_t *_amulet_generic;
+    archetype_t *_mitcoin;
+    archetype_t *_goldcoin;
+    archetype_t *_silvercoin;
+    archetype_t *_coppercoin;
+    archetype_t *_quest_container;
+    archetype_t *_quest_info;
+    archetype_t *_quest_trigger;
+    archetype_t *_quest_update;
+    archetype_t *_player_info;
+    archetype_t *_force;
+    archetype_t *_guild_force;
+    archetype_t *_alignment_force;
+    archetype_t *_rank_force;
+    archetype_t *_gravestone;
+    archetype_t *_deathsick;
+    archetype_t *_poisoning;
+    archetype_t *_slowness;
+    archetype_t *_fear;
+    archetype_t *_snare;
+    archetype_t *_confusion;
+    archetype_t *_blindness;
+    archetype_t *_paralyze;
+    archetype_t *_corpse_default;
+    archetype_t *_loot_container;
+    archetype_t *_pvp_stat_force;
 }
 _archetype_global;
 
 extern _archetype_global archetype_global;
+
+extern archetype_t *find_archetype_by_object_name(const char *name);
+extern object_t    *get_archetype_by_object_name(const char *name);
+extern void         init_archetypes(void);
+extern void         arch_info(object_t *op);
+extern void         clear_archetable(void);
+extern void         init_archetable(void);
+extern void         dump_arch(archetype_t *at);
+extern void         dump_all_archetypes(void);
+extern void         free_all_archs(void);
+extern archetype_t *get_archetype_struct(void);
+extern void         first_arch_pass(FILE *fp);
+extern void         second_arch_pass(FILE *fp_start);
+extern void         load_archetypes(void);
+extern object_t    *arch_to_object(archetype_t *at);
+extern object_t    *create_singularity(const char *name);
+extern object_t    *get_archetype(const char *name);
+extern archetype_t *find_archetype(const char *name);
+extern void         add_arch(archetype_t *at);
+extern archetype_t *type_to_archetype(int type);
+extern object_t    *clone_arch(int type);
 
 #endif /* ifndef __ARCH_H */

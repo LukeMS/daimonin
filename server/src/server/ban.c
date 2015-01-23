@@ -47,17 +47,17 @@
  * of the game server itself. MT-2005
  */
 
-static void ban_inform_client(NewSocket *ns, objectlink *ol, ENUM_BAN_TYPE ban_type, const char *account, const char *name, char *ip);
+static void ban_inform_client(NewSocket *ns, objectlink_t *ol, ENUM_BAN_TYPE ban_type, const char *account, const char *name, char *ip);
 
-/* returns a objectlink with ban_struct
+/* returns a objectlink with ban_t
  * we use for both the memorypool system
  */
-static objectlink *get_ban_node(void)
+static objectlink_t *get_ban_node(void)
 {
-    objectlink        *ol   = get_objectlink(OBJLNK_FLAG_BAN);
-    struct ban_struct  *gptr = (struct ban_struct *) get_poolchunk(pool_bannode);
+    objectlink_t        *ol   = objectlink_get(OBJLNK_FLAG_BAN);
+    struct ban_t  *gptr = (struct ban_t *) get_poolchunk(pool_bannode);
 
-    memset(gptr, 0, sizeof(struct ban_struct));
+    memset(gptr, 0, sizeof(struct ban_t));
     ol->objlink.ban = gptr;
 
     return ol;
@@ -65,7 +65,7 @@ static objectlink *get_ban_node(void)
 
 /* free the gmaster node and the used objectlink
  */
-static void free_ban_node(objectlink *ol)
+static void free_ban_node(objectlink_t *ol)
 {
     /* only called from remove_entry() - there is name hash deleted too */
     return_poolchunk(ol->objlink.ban, pool_bannode);
@@ -113,7 +113,7 @@ void load_ban_file(void)
 void save_ban_file(void)
 {
     char    filename[MEDIUM_BUF];
-    objectlink *ol, *ol_tmp;
+    objectlink_t *ol, *ol_tmp;
     FILE   *fp;
 
     LOG(llevSystem,"write ban_file...\n");
@@ -173,9 +173,9 @@ void save_ban_file(void)
  * only ONCE in the ban lists; so don't ever add, without first doing a remove
  * to get rid of the previous entry
  */
-struct objectlink *add_ban_entry(const char *account, const char *name, char *ip, int ticks, int ticks_left)
+struct objectlink_t *add_ban_entry(const char *account, const char *name, char *ip, int ticks, int ticks_left)
 {
-    objectlink *ol = get_ban_node();
+    objectlink_t *ol = get_ban_node();
 
     if(!account && !name && !ip)
         return NULL;
@@ -200,14 +200,14 @@ struct objectlink *add_ban_entry(const char *account, const char *name, char *ip
     else /* IP list */
         objectlink_link(&ban_list_ip, NULL, NULL, ban_list_ip, ol);
 
-    return (struct objectlink *)ol;
+    return (struct objectlink_t *)ol;
 }
 
 /* remove a ban entry from the ban list.
  * triggered automatically from the ban system or
  * manual by /ban remove <text> command.
  */
-void remove_ban_entry(struct oblnk *entry)
+void remove_ban_entry(struct objectlink_t *entry)
 {
     if(entry->objlink.ban->ip)
         free(entry->objlink.ban->ip); // TODO - can't this bit of code go below in the last 'else' ??
@@ -231,7 +231,7 @@ void remove_ban_entry(struct oblnk *entry)
  * Note: accout and name are both shared hash strings */
 int check_banned(NewSocket *ns, const char *account, const char *name, char *ip)
 {
-    objectlink *ol;
+    objectlink_t *ol;
 
     if(name)
     {
@@ -283,7 +283,7 @@ int check_banned(NewSocket *ns, const char *account, const char *name, char *ip)
     return FALSE;
 }
 
-static void ban_inform_client(NewSocket *ns, objectlink *ol, ENUM_BAN_TYPE ban_type, const char *account, const char *name, char *ip)
+static void ban_inform_client(NewSocket *ns, objectlink_t *ol, ENUM_BAN_TYPE ban_type, const char *account, const char *name, char *ip)
 {
     /* because name banning is handled from login procedure,
      * we tell here the client how long the name is banned - the

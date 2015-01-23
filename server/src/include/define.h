@@ -137,11 +137,7 @@
                                    force into a player with a specified string. */
 #define HOLY_ALTAR              56
 #define PLAYER_CHANGER          57
-/* warning - don't use battleground! i will integrate this as map flag
- * bound to normal floor. The extended map flags of daimonin will allow
- * to remove this stuff.
- */
-#define BATTLEGROUND            58      /* battleground, by Andreas Vogl */
+/* 58 is free */
 #define PEACEMAKER              59  /* Object owned by a player which can convert
                                       a monster into a peaceful being incapable of attack.  */
 #define GEM                     60
@@ -175,7 +171,7 @@
                                       on chairs, we create a new type and remove all
                                       chairs from here. */
 #define MONSTER                 80 /* yes, thats a real, living creature */
-#define SPAWN_POINT             81 /* a spawn point or monster generator object */
+#define SPAWN_POINT             81 /* a spawn point or monster generator object_t */
 #define TYPE_LIGHT_REFILL       82  /* refilling item for TYPE_LIGHT_APPLY */
 #define SPAWN_POINT_MOB         83 /* inactive default mob inside spawn point inv.
                                     * This object is somewhat special because its generated
@@ -188,7 +184,7 @@
 #define ORGANIC                 86 /* body parts which can't be eaten - dragon scales for example */
 #define CLOAK                   87
 #define CONE                    88
-#define AURA                    89  /* aura spell object */
+#define AURA                    89  /* aura spell object_t */
 #define SPINNER                 90
 #define GATE                    91
 #define BUTTON                  92
@@ -219,8 +215,8 @@
 #define POTION_EFFECT           115    /* a force, holding the effect of a potion */
 #define TYPE_JEWEL              116    /* to make it different from GEM - thats needed to have a better */
 #define TYPE_NUGGET             117    /* use from the artifacts file */
-#define TYPE_EVENT_OBJECT       118    /* event/script object */
-#define TYPE_WAYPOINT_OBJECT    119    /* waypoint object */
+#define TYPE_EVENT_OBJECT       118    /* event/script object_t */
+#define TYPE_WAYPOINT_OBJECT    119    /* waypoint object_t */
 #define TYPE_QUEST_CONTAINER    120    /* used to store quest infos in players */
 #define CLOSE_CON               121    /* Eneq(@csd.uu.se): Id for close_container archetype. */
 #define CONTAINER               122
@@ -232,7 +228,7 @@
                                          * tranformed to money by using level of mob or map to generating
                                          * a fitting amount of money basing on the base setting).
                                          */
-#define TYPE_AI                 126     /* MOB AI definition object */
+#define TYPE_AI                 126     /* MOB AI definition object_t */
 #define TYPE_AGGRO_HISTORY      127        /* aggro history - core base object for aggro handling. */
 #define TYPE_DAMAGE_INFO        128        /* info object for aggro, group damage, exp sharing and DOT handling */
 #define TYPE_QUEST_TRIGGER      129        /* a quest trigger describes & interact with quests & other quest things */
@@ -265,7 +261,7 @@
 #define CORPSE                  157
 #define DISEASE                 158
 #define SYMPTOM                 159
-#define TYPE_VOID_CONTAINER     255 /* pure internal system object */
+#define TYPE_VOID_CONTAINER     255 /* pure internal system object_t */
 /* END TYPE DEFINE */
 
 /* START SUB TYPE 1 DEFINE */
@@ -424,16 +420,6 @@
 
 /* END SUB TYPE 1 DEFINE */
 
-/* Instead of using arbitrary constants for indexing the
- * freearr, add these values.  <= SIZEOFFREE1 will get you
- * within 1 space.  <= SIZEOFFREE2 wll get you withing
- * 2 spaces, and the entire array (<= SIZEOFFREE) is
- * three spaces
- */
-#define SIZEOFFREE1 8
-#define SIZEOFFREE2 24
-#define SIZEOFFREE 49
-
 /* i change the spellpathes to 16 bit. Thats enough and will
  * safe 6 bytes - MT, 05-2005
  */
@@ -502,15 +488,24 @@
  * flags[3] is 96 to 127
  */
 /* Basic routines to do above */
-#define SET_FLAG(xyz, p) \
-    ((xyz)->flags[p/32] |= (1U << (p % 32)))
-#define CLEAR_FLAG(xyz, p) \
-    ((xyz)->flags[p/32] &= ~(1U << (p % 32)))
-#define QUERY_FLAG(xyz, p) \
-    ((xyz)->flags[p/32] & (1U << (p % 32)))
+#define SET_FLAG(_O_, _F_) \
+    ((_O_)->flags[(_F_) / 32] |= (1U << ((_F_) % 32)))
+#define CLEAR_FLAG(_O_, _F_) \
+    ((_O_)->flags[(_F_) / 32] &= ~(1U << ((_F_) % 32)))
+#define QUERY_FLAG(_O_, _F_) \
+    ((_O_)->flags[(_F_) / 32] & (1U << ((_F_) % 32)))
 
-#define SET_OR_CLEAR_FLAG(op, flag, val) \
-    { if (val) SET_FLAG(op, flag); else CLEAR_FLAG(op, flag); }
+#define SET_OR_CLEAR_FLAG(_O_, _F_, _V_) \
+    { \
+        if ((_V_)) \
+        { \
+            SET_FLAG((_O_), (_F_)); \
+        } \
+        else \
+        { \
+            CLEAR_FLAG((_O_), (_F_)); \
+        } \
+    }
 
 /* this is rarely used but needed for some flags, which are
  * used for intern handling like INVISIBLE or WALK_OFF. Because
@@ -518,42 +513,68 @@
  * we set this ONE time outside instead of every time in remove_ob():
  * we skip the call for the head in this way.
  */
-#define SET_MULTI_FLAG(xyz, p) \
-    {object * _tos_;for(_tos_=xyz;_tos_;_tos_=_tos_->more) ((_tos_)->flags[p/32] |= (1U << (p % 32)));}
-#define CLEAR_MULTI_FLAG(xyz, p) \
-    {object * _tos_;for(_tos_=xyz;_tos_;_tos_=_tos_->more) ((_tos_)->flags[p/32] &= ~(1U << (p % 32)));}
+#define SET_MULTI_FLAG(_O_, _F_) \
+    { \
+        object_t *_tos_; \
+        for (_tos_ = (_O_); _tos_; _tos_ = _tos_->more) \
+        { \
+            SET_FLAG(_tos_, (_F_)); \
+        } \
+    }
+#define CLEAR_MULTI_FLAG(_O_, _F_) \
+    { \
+        object_t *_tos_; \
+        for (_tos_ = (_O_); _tos_; _tos_ = _tos_->more) \
+        { \
+            CLEAR_FLAG(_tos_, (_F_)); \
+        } \
+    }
 
 /* convenience macros to determine what kind of things we are dealing with */
 
-#define IS_WEAPON(op) \
-    (op->type == ARROW || op->type == BOW || op->type == WEAPON)
+#define IS_WEAPON(_O_) \
+    ((_O_)->type == ARROW || \
+     (_O_)->type == BOW || \
+     (_O_)->type == WEAPON)
 
-#define IS_ARMOR(op) \
-    (op->type == ARMOUR || op->type == SHIELD || op->type == HELMET || \
-     op->type == CLOAK || op->type == BOOTS || op->type == GLOVES || \
-     op->type == BRACERS || op->type == GIRDLE || \
-     op->type == SHOULDER || op->type == LEGS)
+#define IS_ARMOR(_O_) \
+    ((_O_)->type == ARMOUR || \
+     (_O_)->type == SHIELD || \
+     (_O_)->type == HELMET || \
+     (_O_)->type == CLOAK || \
+     (_O_)->type == BOOTS || \
+     (_O_)->type == GLOVES || \
+     (_O_)->type == BRACERS || \
+     (_O_)->type == GIRDLE || \
+     (_O_)->type == SHOULDER || \
+     (_O_)->type == LEGS)
 
 #define IS_LIVE(_O_) \
     ((_O_)->type == PLAYER || \
-     QUERY_FLAG((_O_),FLAG_MONSTER) || \
+     QUERY_FLAG((_O_), FLAG_MONSTER) || \
      QUERY_FLAG((_O_), FLAG_ALIVE))
 
-#define IS_ARROW(op) \
-    (op->type==ARROW || op->type==MMISSILE || op->type==BULLET)
+#define IS_ARROW(_O_) \
+    ((_O_)->type == ARROW || \
+     (_O_)->type == MMISSILE || \
+     (_O_)->type == BULLET)
 
-#define IS_AIRBORNE(op) \
-    ((QUERY_FLAG(op, FLAG_FLYING) || QUERY_FLAG(op, FLAG_LEVITATE)))
+#define IS_AIRBORNE(_O_) \
+    (QUERY_FLAG((_O_), FLAG_FLYING) || \
+     QUERY_FLAG((_O_), FLAG_LEVITATE))
 
-#define IS_DEVICE(op) \
-    (op->type == HORN || \
-     op->type == ROD || \
-     op->type == WAND)
+#define IS_DEVICE(_O_) \
+    ((_O_)->type == HORN || \
+     (_O_)->type == ROD || \
+     (_O_)->type == WAND)
+
+#define IS_GOD_SPELL(_O_) \
+    ((_O_)->type == CONE || \
+     (_O_)->type == FBULLET || \
+     (_O_)->type == FBALL || \
+     (_O_)->type == SWARM_SPELL)
 
 /* the flags */
-
-/* used in blocked() when we only want know about blocked by something */
-#define TERRAIN_ALL     0xffff
 
 /* NOTE: you MUST set the FLAG_xx to V_xxx array in loader.l too when
  * you change something here! Search for NUM_FLAGS in loader.l for more.
@@ -572,7 +593,7 @@
 
 #define FLAG_NO_PICK        8 /* Object can't be picked up */
 #define FLAG_WALK_ON        9 /* Applied when it's walked upon */
-#define FLAG_NO_PASS        10 /* Nothing can pass (wall() is true) */
+#define FLAG_NO_PASS        10 /* Nothing can pass */
 #define FLAG_ANIMATE        11 /* The object looks at archetype for faces */
 #define FLAG_INITIALIZED    12 /* Used by some types to keep track of initialiization after map load (never saved) */
 
@@ -623,8 +644,8 @@
 #define FLAG_UNAGGRESSIVE   38 /* Monster doesn't attack players */
 #define FLAG_REFL_MISSILE   39 /* object will give missile reflection */
 
-#define FLAG_REFL_SPELL     40 /* object will give spell reflection */
-#define FLAG_NO_MAGIC       41 /* Spells (some) can't pass this object */
+#define FLAG_REFL_CASTABLE  40 /* object will give spell reflection */
+#define FLAG_NO_SPELLS      41 /* Spells (some) can't pass this object_t */
 #define FLAG_NO_FIX_PLAYER  42 /* fix_player() won't be called */
 #define FLAG_IS_EVIL        43 /* alignment flags */
 #define FLAG_TEAR_DOWN      44 /* at->faces[hp*animations/maxhp] at hit */
@@ -652,7 +673,7 @@
 #define FLAG_IN_ACTIVELIST  59 /* INTERNAL (not saved): mark object as in active list */
 #define FLAG_READY_BOW      60 /* mob or player has a bow readied */
 #define FLAG_XRAYS          61 /* X-ray vision */
-#define FLAG_NO_APPLY       62 /* Avoids step_on/fly_on to this object */
+#define FLAG_NO_APPLY       62 /* Avoids step_on/fly_on to this object_t */
 #define FLAG_CAN_STACK		63 /* a clean flag to mark stackable items */
 
 /* Start of values in flags[2] */
@@ -704,11 +725,11 @@
                                     * to send an upditem when we have not
                                     * actually sent the item.
                                     */
-#define FLAG_BERSERK            99  /* monster will attack closest living object */
+#define FLAG_BERSERK            99  /* monster will attack closest living object_t */
 #define FLAG_NO_ATTACK          100 /* object will not attack */
 #define FLAG_INVULNERABLE       101 /* monster can't be damaged */
 
-#define FLAG_QUEST_ITEM         102 /* this is a special quest object */
+#define FLAG_QUEST_ITEM         102 /* this is a special quest object_t */
 
 #define FLAG_IS_TRAPED          103 /* object is traped - most common a container with
                                      * a known trap inside. This info so useful for client
@@ -718,7 +739,7 @@
 #define FLAG_PROOF_ELEMENTAL    105
 #define FLAG_PROOF_MAGICAL      106
 #define FLAG_PROOF_SPHERICAL    107
-#define FLAG_NO_INVENTORY       108 /* special flag to avoid load/save of the inventory of an object */
+#define FLAG_NO_INVENTORY       108 /* special flag to avoid load/save of the inventory of an object_t */
 #define FLAG_DONATION_ITEM      109 /* checked by /generate command to stop generation of these items */
 #define FLAG_SYS_OBJECT         110 /* thats old invisible - now sys_object (which are invisible) */
 #define FLAG_HOMELESS_MOB       111
@@ -744,10 +765,8 @@
                                      * it decayed - then items drop on ground and all can grap it */
 #define FLAG_CORPSE_FORCED      121 /* normally, corpses will only be placed when the mob has some items to drop.
                                      * this flag will drop a corpse even the corpse is empty */
-#define FLAG_PLAYER_ONLY        122 /* if a item with this flag is placed in a tile, this tile can't be entered
-                                     * from anything ecept a player
-                                     */
-#define FLAG_NO_CLERIC          123
+#define FLAG_PLAYER_ONLY        122 // object can only be applied (if appliable at all) by a player
+#define FLAG_NO_PRAYERS         123
 #define FLAG_ONE_DROP           124 /* if this flag is set, the item marked with it will flaged
                                      * start equipment when a player gets it (item is inserted
                                      * in player inventory and/or touched by a player)
@@ -765,8 +784,8 @@
 /* Start of values in flags[4] */
 #define FLAG_WAS_REFLECTED      128   /* object was reflected (arrow, throw object...) */
 #define FLAG_IS_MISSILE         129   /* object is used as missile (arrow, potion, magic bullet, ...) */
-#define FLAG_CAN_REFL_MISSILE   130     /* Arrows WILL reflect from object (most times) */
-#define FLAG_CAN_REFL_SPELL     131     /* Spells WILL reflect from object (most times) */
+/* flag 130 is free */
+/* flag 131 is free */
 
 #define FLAG_IS_ASSASSINATION   132     /* If a attacking force and slaying is set, this is 3 times damage */
 #define FLAG_AUTO_APPLY			133		/* Will be applied when created */
@@ -787,42 +806,37 @@
 
 #define NROFNEWOBJS(xyz)    ((xyz)->stats.food)
 
-/* i disabled slow penalty ATM */
-#define SLOW_PENALTY(xyz)   0
-#define SET_SLOW_PENALTY(xyz,fl)    (xyz)->stats.exp = (sint32) ((fl)*1000.0)
-#define SET_GENERATE_TYPE(xyz,va)   (xyz)->stats.sp=(va)
-#define GENERATE_TYPE(xyz)  ((xyz)->stats.sp)
-#define GENERATE_SPEED(xyz) ((xyz)->stats.maxsp) /* if(!RANDOM()%<speed>) */
-
 /* Note: These values are only a default value, resizing can change them */
 #define INV_SIZE        12  /* How many items can be viewed in inventory */
 #define LOOK_SIZE       6   /* ditto, but for the look-window */
 #define MAX_INV_SIZE        40  /* For initializing arrays */
 #define MAX_LOOK_SIZE       40  /* ditto for the look-window */
 
-#define EXIT_PATH(_xyz)         (_xyz)->slaying
-#define EXIT_DST_PATH(_xyz)     (_xyz)->race
-#define EXIT_POS_FIX(_xyz)      (_xyz)->last_heal
-#define EXIT_POS_RANDOM(_xyz)   (_xyz)->last_sp
-#define EXIT_POS_FREE(_xyz)     (_xyz)->last_grace
-#define EXIT_STATUS(_xyz)   (_xyz)->last_eat
-#define EXIT_LEVEL(_xyz)    (_xyz)->stats.food
-#define EXIT_X(_xyz)        (_xyz)->stats.hp
-#define EXIT_Y(_xyz)        (_xyz)->stats.sp
-
 #define F_BUY 0
 #define F_SELL 1
 #define F_TRUE 2    /* True value of item, unadjusted */
 
-#define DIRX(xyz)   freearr_x[(xyz)->direction]
-#define DIRY(xyz)   freearr_y[(xyz)->direction]
+/* move_apply() function call flags */
+#define MOVE_APPLY_DEFAULT  0
+#define MOVE_APPLY_WALK_ON  1
+#define MOVE_APPLY_FLY_ON   2
+#define MOVE_APPLY_WALK_OFF 4
+#define MOVE_APPLY_FLY_OFF  8
+#define MOVE_APPLY_MOVE     16 /* means: our object makes a step in/out of this tile */
+#define MOVE_APPLY_VANISHED 32 /* when a player logs out, the player char not "move" out of a tile
+                                * but it "turns to nothing on the spot". This sounds senseless but for
+                               * example a move out can trigger a teleporter action. This flag prevents
+                               * a loging out/exploding object is teleported after removing it from the spot.
+                               */
+#define MOVE_APPLY_SAVING   64 /* move_apply() called from saving function */
 
-#define D_LOCK(xyz) (xyz)->contr->freeze_inv=(xyz)->contr->freeze_look=1;
-#define D_UNLOCK(xyz)   (xyz)->contr->freeze_inv=(xyz)->contr->freeze_look=0;
+/* WALK ON/OFF function return flags */
+#define CHECK_WALK_OK        0
+#define CHECK_WALK_DESTROYED 1
+#define CHECK_WALK_MOVED     2
 
-#define ARMOUR_SPEED(xyz)   (xyz)->last_sp
-#define ARMOUR_SPELLS(xyz)  (xyz)->last_heal
 
+#define ARCH_MAX_TYPES       512 /* important - this must be higher as max type number! */
 /* GET_?_FROM_DIR if used only for positional firing where dir is X and Y
    each of them signed char, concatenated in a int16 */
 #define GET_X_FROM_DIR(dir) (signed char) (  dir & 0xFF )
@@ -895,7 +909,7 @@ static inline void safe_strcat(char *dest, const char *orig, int *curlen, int ma
       safe_strcat(retbuf,")", len, maxlen); \
     }
 
-/* Flags for apply_special() */
+/* Flags for apply_equipment() */
 enum apply_flag
 {
     /* Basic flags, always use one of these */

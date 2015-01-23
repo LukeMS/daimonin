@@ -29,14 +29,14 @@
 #include <math.h>
 
 /* remove all food forces (should be only one but safe is safe) from a player */
-void remove_food_force(object *op)
+void remove_food_force(object_t *op)
 {
-    object *tmp, *tmp2;
+    object_t *tmp,
+           *next;
 
     CLEAR_FLAG(op, FLAG_EATING);
-    for(tmp=op->inv;tmp;tmp=tmp2) /* here are the damage infos */
+    FOREACH_OBJECT_IN_OBJECT(tmp, op, next)
     {
-        tmp2=tmp->below;
         if(tmp->type == TYPE_FOOD_FORCE)
                 remove_ob(tmp);
     }
@@ -45,7 +45,7 @@ void remove_food_force(object *op)
 /* Every time the food force is active, it increase the player stats,
  * like a reverse poison force.
  */
-void food_force_reg(object *op)
+void food_force_reg(object_t *op)
 {
     if(op->env && CONTR(op->env))
     {
@@ -54,14 +54,14 @@ void food_force_reg(object *op)
             /* implicit interruption of the food force - stop eat by killing the force */
             if (!CONTR(op->env)->rest_mode)
             {
-                new_draw_info(NDI_UNIQUE| NDI_NAVY, 0, op->env, "Your meal is interrupted!");
+                ndi(NDI_UNIQUE| NDI_NAVY, 0, op->env, "Your meal is interrupted!");
                 CONTR(op->env)->food_status = 0;
                 CLEAR_FLAG(op->env, FLAG_EATING);
                 remove_ob(op);
                 return;
             }
 
-            /*new_draw_info(NDI_UNIQUE, 0, op, "food-force ticks %d\n", op->stats.food);*/
+            /*ndi(NDI_UNIQUE, 0, op, "food-force ticks %d\n", op->stats.food);*/
 
             /* negative food_status count signals active food force (and not resting) as source for regeneration */
             CONTR(op->env)->food_status = (1000/op->last_eat* op->stats.food)*-1;
@@ -94,7 +94,7 @@ void food_force_reg(object *op)
 /* this is used from DRINK, FOOD & POISON forces now - to include buff/debuff
  * effects of stats & resists to the player. Cursed & damned effects are in too
  */
-void create_food_buf_force(object *who, object *food, object *force)
+void create_food_buf_force(object_t *who, object_t *food, object_t *force)
 {
     int i;
 
@@ -188,16 +188,17 @@ void create_food_buf_force(object *who, object *food, object *force)
  * there is a chance for the dragon's skin to get improved.
  *
  * attributes:
- *     object *op        the object (dragon player) eating the flesh
- *     object *meal      the flesh item, getting chewed in dragon's mouth
+ *     object_t *op        the object (dragon player) eating the flesh
+ *     object_t *meal      the flesh item, getting chewed in dragon's mouth
  * return:
  *     int               1 if eating successful, 0 if it doesn't work
  */
-int dragon_eat_flesh(object *op, object *meal)
+int dragon_eat_flesh(object_t *op, object_t *meal)
 {
-    object *skin        = NULL;    /* pointer to dragon skin force*/
-    object *abil        = NULL;    /* pointer to dragon ability force*/
-    object *tmp         = NULL;     /* tmp. object */
+    object_t *skin = NULL,
+           *abil = NULL,
+           *tmp,
+           *next;
 
     double  chance;                /* improvement-chance of one resistance type */
     double  maxchance   = 0;           /* highest chance of any type */
@@ -213,7 +214,7 @@ int dragon_eat_flesh(object *op, object *meal)
 
     /* now grab the 'dragon_skin'- and 'dragon_ability'-forces
        from the player's inventory */
-    for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
+    FOREACH_OBJECT_IN_OBJECT(tmp, op, next)
     {
         if (tmp->type == FORCE)
         {
@@ -288,17 +289,17 @@ int dragon_eat_flesh(object *op, object *meal)
 
     /* print message according to maxchance */
     if (maxchance > 50.)
-        new_draw_info(NDI_UNIQUE, 0, op, "Hmm! The %s tasted delicious!", meal->name);
+        ndi(NDI_UNIQUE, 0, op, "Hmm! The %s tasted delicious!", meal->name);
     else if (maxchance > 10.)
-        new_draw_info(NDI_UNIQUE, 0, op, "The %s tasted very good.", meal->name);
+        ndi(NDI_UNIQUE, 0, op, "The %s tasted very good.", meal->name);
     else if (maxchance > 1.)
-        new_draw_info(NDI_UNIQUE, 0, op, "The %s tasted good.", meal->name);
+        ndi(NDI_UNIQUE, 0, op, "The %s tasted good.", meal->name);
     else if (maxchance > 0.0001)
-        new_draw_info(NDI_UNIQUE, 0, op, "The %s had a boring taste.", meal->name);
+        ndi(NDI_UNIQUE, 0, op, "The %s had a boring taste.", meal->name);
     else if (meal->last_eat > 0 && atnr_is_dragon_enabled(meal->last_eat))
-        new_draw_info(NDI_UNIQUE, 0, op, "The %s tasted strange.", meal->name);
+        ndi(NDI_UNIQUE, 0, op, "The %s tasted strange.", meal->name);
     else
-        new_draw_info(NDI_UNIQUE, 0, op, "The %s had no taste.", meal->name);
+        ndi(NDI_UNIQUE, 0, op, "The %s had no taste.", meal->name);
 
     /* now choose a winner if we have any */
     i = -1;
@@ -311,7 +312,7 @@ int dragon_eat_flesh(object *op, object *meal)
         skin->resist[i]++;
         FIX_PLAYER(op ,"dragon eat flesh - resist");
 
-        new_draw_info(NDI_UNIQUE | NDI_RED, 0, op, "Your skin is now more resistant to %s!", attack_name[i].name);
+        ndi(NDI_UNIQUE | NDI_RED, 0, op, "Your skin is now more resistant to %s!", attack_name[i].name);
     }
 
     /* if this flesh contains a new ability focus, we mark it
@@ -322,12 +323,12 @@ int dragon_eat_flesh(object *op, object *meal)
 
         if (meal->last_eat != abil->stats.exp)
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "Your metabolism prepares to focus on %s!", attack_name[meal->last_eat].name);
-            new_draw_info(NDI_UNIQUE, 0, op, "The change will happen at level %d", abil->level + 1);
+            ndi(NDI_UNIQUE, 0, op, "Your metabolism prepares to focus on %s!", attack_name[meal->last_eat].name);
+            ndi(NDI_UNIQUE, 0, op, "The change will happen at level %d", abil->level + 1);
         }
         else
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "Your metabolism will continue to focus on %s.", attack_name[meal->last_eat].name);
+            ndi(NDI_UNIQUE, 0, op, "Your metabolism will continue to focus on %s.", attack_name[meal->last_eat].name);
             abil->last_eat = 0;
         }
     }

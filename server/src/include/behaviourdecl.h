@@ -219,7 +219,7 @@ BehaviourClass(MOVES,
     
     /** Runs away from the most repulsive object if scared. */
     Behaviour(RUN_AWAY_FROM_REPULSIVE_OBJECT, ai_run_away_from_repulsive_object,
-        /** Become scared if at least this close to the object */
+        /** Become scared if at least this close to the object_t */
         Parameter(RUN_AWAY_FROM_REPULSIVE_OBJECT, DISTANCE_THRESHOLD, INTEGER, OPTIONAL, 5)
         /** Become scared if repulsion is at least this low */
         Parameter(RUN_AWAY_FROM_REPULSIVE_OBJECT, REPULSION_THRESHOLD, INTEGER, OPTIONAL, -30)

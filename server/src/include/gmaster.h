@@ -63,11 +63,11 @@ typedef struct _gmaster_struct
 } gmaster_struct;
 
 /* lists of the active ingame gmasters */
-extern objectlink *gmaster_list;
-extern objectlink *gmaster_list_VOL;
-extern objectlink *gmaster_list_GM;
-extern objectlink *gmaster_list_MW;
-extern objectlink *gmaster_list_MM;
-extern objectlink *gmaster_list_SA;
+extern objectlink_t *gmaster_list;
+extern objectlink_t *gmaster_list_VOL;
+extern objectlink_t *gmaster_list_GM;
+extern objectlink_t *gmaster_list_MW;
+extern objectlink_t *gmaster_list_MM;
+extern objectlink_t *gmaster_list_SA;
 
 #endif /* ifndef __GMASTER_H */

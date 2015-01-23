@@ -33,9 +33,9 @@ typedef struct astar_node
 
     struct astar_node  *parent;  /* Node this was reached from */
 
-    struct mapdef      *map;
+    struct map_t      *map;
     sint16              x;                  /* X-Position in the map for this node */
-    sint16              y;                  /* Y-Position in the map for this object */
+    sint16              y;                  /* Y-Position in the map for this object_t */
 
     uint16              cost;                /* Cost of reaching this node (distance from origin) */
     float               heuristic;            /* Estimated cost of reaching the goal from this node */

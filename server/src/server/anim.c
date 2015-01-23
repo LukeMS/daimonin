@@ -167,7 +167,7 @@ int find_animation(char *name)
  * If the object is the head of a multi-object, all objects are animated.
  */
 
-void animate_object(object *op, int count)
+void animate_object(object_t *op, int count)
 {
     int numfacing, numanim;
     int max_state;  /* Max animation state object should be drawn in */

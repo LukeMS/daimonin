@@ -28,12 +28,12 @@
 #include <pwd.h>
 #endif
 
-static const char *CreateGravestone(object *op, mapstruct *m, int x, int y);
+static const char *CreateGravestone(object_t *op);
 
 /* find a player name for a NORMAL string.
  * we use the hash table system.
  */
-player * find_player(char *plname)
+player_t * find_player(char *plname)
 {
     char name[MAX_PLAYER_NAME+1];
     const char *name_hash;
@@ -53,9 +53,9 @@ player * find_player(char *plname)
 /* nearly the same as above except we
  * have the hash string when we call
  */
-player * find_player_hash(const char *plname)
+player_t * find_player_hash(const char *plname)
 {
-    player *pl;
+    player_t *pl;
 
     if(plname)
     {
@@ -69,7 +69,7 @@ player * find_player_hash(const char *plname)
 }
 
 
-void display_motd(object *op)
+void display_motd(object_t *op)
 {
 #ifdef MOTD
     char    buf[MEDIUM_BUF];
@@ -92,14 +92,14 @@ void display_motd(object *op)
         cp = strchr(buf, '\n');
         if (cp != NULL)
             *cp = '\0';
-        new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
+        ndi(NDI_UNIQUE, 0, op, "%s", buf);
     }
     fclose(fp);
-    new_draw_info(NDI_UNIQUE, 0, op, " ");
+    ndi(NDI_UNIQUE, 0, op, " ");
 #endif
 }
 
-void free_player(player *pl)
+void free_player(player_t *pl)
 {
     /* first, we removing the player from map or whatever */
 	LOG(llevDebug, "FREE_PLAYER(%s): state:%d g_status:%x\n", STRING_OBJ_NAME(pl->ob), pl->state, pl->group_status);
@@ -146,7 +146,7 @@ void free_player(player *pl)
         pl->state |= ST_DEAD;
 		LOG(llevDebug, "FREE_PLAYER(%s) --> ST_DEAD\n", STRING_OBJ_NAME(pl->ob));
         FREE_AND_COPY_HASH(pl->ob->name, "noname"); /* we neutralize the name - we don't want find this player anymore */
-        insert_ob_in_ob(pl->ob, &void_container); /* Avoid gc of the player object */
+        insert_ob_in_ob(pl->ob, &void_container); /* Avoid gc of the player object_t */
         return;
     }
     /* Now remove from list of players */
@@ -178,7 +178,7 @@ void free_player(player *pl)
 /* called from gc - we remove here the last allocated memory 
  * and release the hash strings
  */
-void destroy_player_struct(player *pl)
+void destroy_player_struct(player_t *pl)
 {
     /* clear all hash strings */
     FREE_AND_CLEAR_HASH(pl->instance_name);
@@ -191,17 +191,16 @@ void destroy_player_struct(player *pl)
     FREE_AND_CLEAR_HASH(pl->account_name);
 }
 
-void give_initial_items(object *pl, struct oblnk *items)
+void give_initial_items(object_t *pl, struct objectlink_t *items)
 {
-    object *op, *next = NULL;
+    object_t *op,
+           *next;
 
     if (pl->randomitems != NULL)
         create_treasure_list(items, pl, GT_ONLY_GOOD | GT_NO_VALUE, 1, ART_CHANCE_UNSET, 0);
 
-    for (op = pl->inv; op; op = next)
+    FOREACH_OBJECT_IN_OBJECT(op, pl, next)
     {
-        next = op->below;
-
         /* Forces get applied per default */
         if (op->type == FORCE)
         {
@@ -267,7 +266,7 @@ void give_initial_items(object *pl, struct oblnk *items)
     } /* for loop of objects in player inv */
 }
 
-void flee_player(object *op)
+void flee_player(object_t *op)
 {
     int dir, diff;
     if (op->stats.hp <= 0)
@@ -291,12 +290,12 @@ void flee_player(object *op)
     dir = absdir(4 + find_dir_2(op->x - op->enemy->x, op->y - op->enemy->y));
     for (diff = 0; diff < 3; diff++)
     {
-        int m   = 1 - (RANDOM() & 2);
-        if (move_ob(op, absdir(dir + diff * m), op) || (diff == 0 && move_ob(op, absdir(dir - diff * m), op)))
+        int m = 1 - (RANDOM() & 2);
+
+        if (move_ob(op, absdir(dir + diff * m), NULL) != MOVE_RESULT_INSERTION_FAILED ||
+            (diff == 0 &&
+             move_ob(op, absdir(dir - diff * m), NULL) != MOVE_RESULT_INSERTION_FAILED))
         {
-            /*
-               draw_client_map(op);
-             */
             return;
         }
     }
@@ -320,13 +319,13 @@ void flee_player(object *op)
  * -1 = doing the move failed (rotted, paralyzed...)
  * 0-x = move will go in that direction
  */
-int move_player(object * const op, int dir, const int flag)
+int move_player(object_t * const op, int dir, const int flag)
 {
-    player *pl = CONTR(op);
+    player_t *pl = CONTR(op);
 
     pl->rest_sitting = pl->rest_mode = 0;
 
-    if (op->map == NULL || op->map->in_memory != MAP_ACTIVE ||
+    if (op->map == NULL || op->map->in_memory != MAP_MEMORY_ACTIVE ||
         QUERY_FLAG(op,FLAG_PARALYZED) || QUERY_FLAG(op,FLAG_ROOTED))
         return -1;
 
@@ -346,42 +345,26 @@ int move_player(object * const op, int dir, const int flag)
         do_hidden_move(op);
     }
 
-    if (!flag)
-		return dir;
-
-	if (!move_ob(op, dir, op))
-		op->anim_enemy_dir = dir;
-	else
-		op->anim_moving_dir = dir;
-
-    /* But I need pushing for the Fluffy quest! -- Gecko :-( */
-    /* Thats what the /push command will be for... ;-) */
-    /* the old push & roll code - will be transfered to /push
-        if (get_owner(tmp)==op ||
-            ((QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE) || tmp->type==PLAYER ||
-            QUERY_FLAG(tmp, FLAG_FRIENDLY)) && !op_on_battleground(op, NULL, NULL)))
-        {
-            play_sound_map(op->map, op->x, op->y, SOUND_PUSH_PLAYER, SOUND_NORMAL);
-            if(push_ob(tmp,dir,op))
-                ret = 1;
-            if(op->hide)
-                make_visible(op);
-            return ret;
-        }
-        else if(QUERY_FLAG(tmp,FLAG_CAN_ROLL))
-        {
-            recursive_roll(tmp,dir,op);
-            if(action_makes_visible(op))
-                make_visible(op);
-        }
-    */
-
-    if (QUERY_FLAG(op, FLAG_ANIMATE)) /* hm, should be not needed - players always animated */
+    if (flag)
     {
-        if (op->anim_enemy_dir == -1 && op->anim_moving_dir == -1)
+        if (move_ob(op, dir, NULL) != MOVE_RESULT_SUCCESS)
+        {
+            op->anim_enemy_dir = dir;
+        }
+        else
+        {
+            op->anim_moving_dir = dir;
+        }
+
+        if (op->anim_enemy_dir == -1 &&
+            op->anim_moving_dir == -1)
+        {
             op->anim_last_facing = dir;
+        }
+
         animate_object(op, 0);
     }
+
     return dir;
 }
 
@@ -392,9 +375,9 @@ int move_player(object * const op, int dir, const int flag)
  *         0: turn speed used up or no commands left
  *        -1: player is invalid now
  */
-int handle_newcs_player(player *pl)
+int handle_newcs_player(player_t *pl)
 {
-    object *op  = pl->ob;
+    object_t *op  = pl->ob;
 
     if (!op || !OBJECT_ACTIVE(op))
         return -1;
@@ -422,24 +405,36 @@ int handle_newcs_player(player *pl)
     return 0;
 }
 
-int save_life(object *op)
+int save_life(object_t *op)
 {
-    object *tmp;
+    object_t *this,
+           *next;
 
     if (!QUERY_FLAG(op, FLAG_LIFESAVE))
+    {
         return 0;
-    for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
-        if (QUERY_FLAG(tmp, FLAG_APPLIED) && QUERY_FLAG(tmp, FLAG_LIFESAVE))
+    }
+
+    FOREACH_OBJECT_IN_OBJECT(this, op, next)
+    {
+        if (QUERY_FLAG(this, FLAG_APPLIED) &&
+            QUERY_FLAG(this, FLAG_LIFESAVE))
         {
-            play_sound_map(op->map, op->x, op->y, SOUND_OB_EVAPORATE, SOUND_NORMAL);
-            new_draw_info(NDI_UNIQUE, 0, op, "%s vibrates violently, then evaporates.",
-                QUERY_SHORT_NAME(tmp, op));
-            remove_ob(tmp);
+            play_sound_map(MSP_KNOWN(op), SOUND_OB_EVAPORATE, SOUND_NORMAL);
+            ndi(NDI_UNIQUE, 0, op, "%s vibrates violently, then evaporates.",
+                QUERY_SHORT_NAME(this, op));
+            remove_ob(this);
             CLEAR_FLAG(op, FLAG_LIFESAVE);
+
             if (op->stats.hp <= 0)
+            {
                 op->stats.hp = op->stats.maxhp;
+            }
+
             return 1;
         }
+    }
+
     LOG(llevBug, "BUG: LIFESAVE set without applied object.\n");
     CLEAR_FLAG(op, FLAG_LIFESAVE);
     return 0;
@@ -450,9 +445,9 @@ int save_life(object *op)
  * function will descend into containers.  op is the object to start the search
  * from.
  */
-void remove_unpaid_objects(object *op, object *env)
+void remove_unpaid_objects(object_t *op, object_t *env)
 {
-    object *next;
+    object_t *next;
 
     while (op)
     {
@@ -473,7 +468,7 @@ void remove_unpaid_objects(object *op, object *env)
 }
 
 /* regeneration helper functions - cleaner as a macro */
-static inline void do_reg_hp(player *pl, object *op)
+static inline void do_reg_hp(player_t *pl, object_t *op)
 {
     if(op->stats.hp < op->stats.maxhp)
     {
@@ -482,7 +477,7 @@ static inline void do_reg_hp(player *pl, object *op)
             op->stats.hp = op->stats.maxhp;
     }
 }
-static inline void do_reg_sp(player *pl, object *op)
+static inline void do_reg_sp(player_t *pl, object_t *op)
 {
     if(op->stats.sp < op->stats.maxsp)
     {
@@ -491,7 +486,7 @@ static inline void do_reg_sp(player *pl, object *op)
             op->stats.sp = op->stats.maxsp;
     }
 }
-static inline void do_reg_grace(player *pl, object *op)
+static inline void do_reg_grace(player_t *pl, object_t *op)
 {
     if(op->stats.grace < op->stats.maxgrace)
     {
@@ -513,9 +508,9 @@ static inline void do_reg_grace(player *pl, object *op)
  * will give a set amount of hp/sp/grace in a given time (usually 8-x sec too).
  * So, the regeneration will be potion (instant), food (direct in 8-x sec) or resting (8-x sec + 30-45 sec).
  */
-void do_some_living(object *op)
+void do_some_living(object_t *op)
 {
-    player *pl = CONTR(op);
+    player_t *pl = CONTR(op);
 
     if (!pl || !(pl->state & ST_PLAYING))
         return;
@@ -523,7 +518,7 @@ void do_some_living(object *op)
     /* sanity kill check */
     if (op->stats.hp <= 0)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "You died by low hitpoints!");
+        ndi(NDI_UNIQUE, 0, op, "You died by low hitpoints!");
         kill_player(op);
         return;
     }
@@ -548,7 +543,7 @@ void do_some_living(object *op)
                 --pl->normal_reg_timer;
              else
              {
-                 /*new_draw_info(NDI_UNIQUE, 0, op, "reg - combat sp/gr");*/
+                 /*ndi(NDI_UNIQUE, 0, op, "reg - combat sp/gr");*/
                  pl->normal_reg_timer = REG_DEFAULT_SEC_TIMER;
                  do_reg_sp(pl, op);
                  do_reg_grace(pl, op);
@@ -566,13 +561,13 @@ void do_some_living(object *op)
                 }
                 else if(pl->resting_reg_timer > 0)
                 {
-                    /*new_draw_info(NDI_UNIQUE, 0, op, "reg - prepare %d", pl->resting_reg_timer);*/
+                    /*ndi(NDI_UNIQUE, 0, op, "reg - prepare %d", pl->resting_reg_timer);*/
                     --pl->resting_reg_timer; /* player is still in rest preparing phase */
                     pl->food_status = (1000/RESTING_DEFAULT_SEC_TIMER)*(pl->resting_reg_timer+1);
                 }
                 else /* all ok - we rest and regenerate with full speed */
                 {
-                    /*new_draw_info(NDI_UNIQUE, 0, op, "reg - full rest");*/
+                    /*ndi(NDI_UNIQUE, 0, op, "reg - full rest");*/
                     pl->food_status = 999; /* "resting is active" marker */
                     do_reg_hp(pl, op);
                     do_reg_sp(pl, op);
@@ -585,7 +580,7 @@ void do_some_living(object *op)
                     --pl->normal_reg_timer;
                 else
                 {
-                    /*new_draw_info(NDI_UNIQUE, 0, op, "reg - normal tick");*/
+                    /*ndi(NDI_UNIQUE, 0, op, "reg - normal tick");*/
                     pl->normal_reg_timer = REG_DEFAULT_SEC_TIMER;
                     do_reg_hp(pl, op);
                     do_reg_sp(pl, op);
@@ -598,16 +593,29 @@ void do_some_living(object *op)
 
 /* Creates a gravestone for the player (op) and inserts it on the spot where he
  * died. */
-static const char *CreateGravestone(object *op, mapstruct *m, int x, int y)
+static const char *CreateGravestone(object_t *op)
 {
-    object        *gravestone;
-    int            i;
-    char           buf[MEDIUM_BUF];
-    timeanddate_t  tad;
+    object_t    *gravestone;
+    map_t *m;
+    sint16     x,
+               y;
+    msp_t  *msp;
+    sint8      i;
+    char       buf[MEDIUM_BUF];
 
-    if (!(gravestone = arch_to_object(archetype_global._gravestone)) ||
-        (i = check_insertion_allowed(gravestone, m, x, y, 1,
-                                     INS_NO_FORCE | INS_WITHIN_LOS)) == -1)
+    if (!(gravestone = arch_to_object(archetype_global._gravestone)))
+    {
+        return NULL;
+    }
+
+    m = op->map;
+    x = op->x;
+    y = op->y;
+    msp = MSP_KNOWN(op);
+    i = overlay_find_free(msp, gravestone, 0, OVERLAY_7X7,
+        OVERLAY_IGNORE_TERRAIN | OVERLAY_WITHIN_LOS | OVERLAY_FIRST_AVAILABLE);
+
+    if (i == -1)
     {
         return NULL;
     }
@@ -623,25 +631,25 @@ static const char *CreateGravestone(object *op, mapstruct *m, int x, int y)
     sprintf(buf, "R.I.P.\n\n%s", QUERY_SHORT_NAME(op, NULL));
     /* race, level */
     sprintf(strchr(buf, '\0'), " the %s\nwho was level %d\nwhen ",
-            STRING_OBJ_RACE(op), (int)op->level);
+        STRING_OBJ_RACE(op), (int)op->level);
     /* gender */
     sprintf(strchr(buf, '\0'), "%s",
-            (QUERY_FLAG(op, FLAG_IS_MALE)) ?
-            ((QUERY_FLAG(op, FLAG_IS_FEMALE)) ? "they were" : "he was") :
-            ((QUERY_FLAG(op, FLAG_IS_FEMALE)) ? "she was" : "it was"));
+        (QUERY_FLAG(op, FLAG_IS_MALE)) ?
+        ((QUERY_FLAG(op, FLAG_IS_FEMALE)) ? "they were" : "he was") :
+        ((QUERY_FLAG(op, FLAG_IS_FEMALE)) ? "she was" : "it was"));
     /* cause of death */
     sprintf(strchr(buf, '\0'), " killed by %s.\n\n",
-            (CONTR(op)->killer) ? CONTR(op)->killer : "bad luck");
+        (CONTR(op)->killer) ? CONTR(op)->killer : "bad luck");
     /* date */
-    get_tad(&tad, 0);
+    get_tad(m->tadnow, m->tadoffset);
     sprintf(strchr(buf, '\0'), "On %s\n",
-            print_tad(&tad, TAD_SHOWDATE | TAD_LONGFORM));
+        print_tad(m->tadnow, TAD_SHOWDATE | TAD_LONGFORM));
     FREE_AND_COPY_HASH(gravestone->msg, buf);
 
-    x += freearr_x[i];
-    y += freearr_y[i];
+    x += OVERLAY_X(i);
+    y += OVERLAY_Y(i);
 
-    if (!(m = out_of_map(m, &x, &y)))
+    if (!(m = OUT_OF_MAP(m, x, y)))
     {
         return NULL;
     }
@@ -661,60 +669,24 @@ static const char *CreateGravestone(object *op, mapstruct *m, int x, int y)
  * Returns 0 if the player didn't really die, 1 if they did. This is used for PvP
  * stat tracking.
  */
-int kill_player(object *op)
+int kill_player(object_t *op)
 {
-    player      *pl=CONTR(op);
+    player_t     *pl = CONTR(op);
     char        buf[MEDIUM_BUF];
-    int         x, y;
-    mapstruct  *map;  /*  this is for resurrection */
-    object     *tmp,
+    msp_t   *msp;
+    object_t     *tmp,
                *dep;
     uint8       lost_a_stat = 0;
 
     if (save_life(op))
-        return 0;
-
-    /* If player dies on BATTLEGROUND, no stat/exp loss! For Combat-Arenas
-     * in cities ONLY!!! It is very important that this doesn't get abused.
-     * Look at op_on_battleground() for more info       --AndreasV
-     */
-
-    if (op_on_battleground(op, &x, &y))
     {
-        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "You have been defeated in combat!");
-        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "Local medics have saved your life...");
-
-        /* restore player */
-        cast_heal(op, 110, op, SP_CURE_POISON);
-        /*cast_heal(op, op, SP_CURE_CONFUSION);*/
-        cure_disease(op, NULL);  /* remove any disease */
-        op->stats.hp = op->stats.maxhp;
-
-        /* create a bodypart-trophy to make the winner happy */
-        tmp = arch_to_object(find_archetype("finger"));
-        if (tmp != NULL)
-        {
-            sprintf(buf, "%s's finger", STRING_OBJ_NAME(op));
-            FREE_AND_COPY_HASH(tmp->name, buf);
-            sprintf(buf, "  This finger has been cut off %s\n"
-                         "  the %s, when he was defeated at\n  level %d by %s.\n",
-                    STRING_OBJ_NAME(op), (op->title) ? STRING_OBJ_TITLE(op) :
-                    STRING_OBJ_RACE(op), (int)op->level, (pl->killer) ?
-                    pl->killer : "bad luck");
-            FREE_AND_COPY_HASH(tmp->msg, buf);
-            tmp->value = 0, tmp->material = 0, tmp->type = 0;
-            tmp->x = op->x, tmp->y = op->y;
-            insert_ob_in_map(tmp, op->map, op, 0);
-        }
-
-        /* teleport defeated player to new destination*/
-        enter_map(op, NULL, op->map, x, y, 0, 0);
-        return 1;
+        return 0;
     }
 
-    if(trigger_object_plugin_event(EVENT_DEATH,
-                op, NULL, op, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
+    if (trigger_object_plugin_event(EVENT_DEATH, op, NULL, op, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
+    {
         return 0; /* Cheat death */
+    }
 
 #if 0 /* Disabled global events */
     CFParm      CFP;
@@ -727,10 +699,6 @@ int kill_player(object *op)
     GlobalEvent(&CFP);
 #endif
 
-    /*  save the map location for corpse, gravestone*/
-    x = op->x;
-    y = op->y;
-    map = op->map;
     play_sound_player_only(pl, SOUND_PLAYER_DIES, SOUND_NORMAL, 0, 0);
 
 #ifdef NOT_PERMADEATH
@@ -769,7 +737,7 @@ int kill_player(object *op)
     {
        uint8 i,
              num_stats_lose = 1,
-             stats[NUM_STATS] = { 0, 0, 0, 0, 0, 0, 0 };
+             stats[STAT_NROF] = { 0, 0, 0, 0, 0, 0, 0 };
 
         /* Stats are lost on death through death sickness according to
          * settings.stat_loss -- see config.h/STAT_LOSS.
@@ -789,7 +757,7 @@ int kill_player(object *op)
 
         for (i = 0; i < num_stats_lose; i++)
         {
-            stats[RANDOM() % NUM_STATS]++;
+            stats[RANDOM() % STAT_NROF]++;
         }
 
         if (!(dep = present_arch_in_ob(archetype_global._deathsick, op)))
@@ -798,7 +766,7 @@ int kill_player(object *op)
             insert_ob_in_ob(dep, op);
         }
 
-        for (i = 0; i < NUM_STATS; i++)
+        for (i = 0; i < STAT_NROF; i++)
         {
             uint8 op_val = get_stat_value(&(op->stats), i),
                   dep_val = ABS(get_stat_value(&(dep->stats), i));
@@ -810,8 +778,8 @@ int kill_player(object *op)
 
             if (stats[i])
             {
-                change_stat_value(&(dep->stats), i, -stats[i]);
-                new_draw_info(NDI_UNIQUE, 0, op, "%s (You lose ~%d~ %s).",
+                set_stat_value(&(dep->stats), i, -stats[i]);
+                ndi(NDI_UNIQUE, 0, op, "%s (You lose ~%d~ %s).",
                                      lose_msg[i], stats[i], stat_name[i]);
                 lost_a_stat = 1;
             }
@@ -837,19 +805,19 @@ int kill_player(object *op)
 
         if (god != shstr_cons.none)
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "For a brief moment you feel the holy presence of %s protecting you.",
+            ndi(NDI_UNIQUE, 0, op, "For a brief moment you feel the holy presence of %s protecting you.",
                                  god);
         }
         else
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "For a brief moment you feel a holy presence protecting you.");
+            ndi(NDI_UNIQUE, 0, op, "For a brief moment you feel a holy presence protecting you.");
         }
     }
 
 #ifdef USE_GRAVESTONES
     /* Put a gravestone up where or near to where the character died if there
      * is a free spot and isn't already one there. */
-    CreateGravestone(op, map, x, y);
+    CreateGravestone(op);
 #endif
 
     apply_death_exp_penalty(op);
@@ -857,13 +825,11 @@ int kill_player(object *op)
     op->stats.sp = op->stats.maxsp;
     op->stats.grace = op->stats.maxgrace;
 
-    /*
-     * Check to see if the player is in a shop.  IF so, then check to see if
+    /* Check to see if the player is in a shop.  IF so, then check to see if
      * the player has any unpaid items.  If so, remove them and put them back
-     * in the map.
-     */
-    GET_MAP_SPACE_SYS_OBJ(GET_MAP_SPACE_PTR(op->map, op->x, op->y), SHOP_FLOOR,
-                          tmp);
+     * in the map. */
+    msp = MSP_KNOWN(op);
+    MSP_GET_SYS_OBJ(msp, SHOP_FLOOR, tmp);
 
     if (tmp)
     {
@@ -876,9 +842,9 @@ int kill_player(object *op)
     /* position (usually last savebed)      */
     /*                                      */
     /****************************************/
-    /* JG (aka Grommit) 14-Mar-2007 - changed map_status to bed_status */
+    /* JG (aka Grommit) 14-Mar-2007 - changed status to bed_status */
 
-    enter_map_by_name(op, pl->savebed_map, pl->orig_savebed_map, pl->bed_x, pl->bed_y, pl->bed_status);
+    (void)enter_map_by_name(op, pl->savebed_map, pl->orig_savebed_map, pl->bed_x, pl->bed_y, pl->bed_status);
 
     /**************************************/
     /*                                    */
@@ -892,7 +858,7 @@ int kill_player(object *op)
      * data to a player death
      */
     /*STATS_EVENT(STATS_EVENT_PLAYER_DEATH, op->name);*/
-    new_draw_info(NDI_UNIQUE, 0, op, "YOU HAVE DIED.");
+    ndi(NDI_UNIQUE, 0, op, "YOU HAVE DIED.");
 
     return 1;
 #endif
@@ -900,9 +866,9 @@ int kill_player(object *op)
 
 /* cast_dust() - handles op throwing objects of type 'DUST' */
 /* WARNING: FUNCTION NEED TO BE REWRITTEN. works for ae spells only now! */
-void cast_dust(object *op, object *throw_ob, int dir)
+void cast_dust(object_t *op, object_t *throw_ob, int dir)
 {
-    archetype  *arch    = NULL;
+    archetype_t *arch = NULL;
 
     if (!(spells[throw_ob->stats.sp].flags & SPELL_DESC_DIRECTION))
     {
@@ -929,14 +895,14 @@ void cast_dust(object *op, object *throw_ob, int dir)
         LOG(llevBug, "BUG: cast_dust() can't find an archetype to use!\n");
 
     if (op->type == PLAYER && arch)
-        new_draw_info(NDI_UNIQUE, 0, op, "You cast %s.",
+        ndi(NDI_UNIQUE, 0, op, "You cast %s.",
             QUERY_SHORT_NAME(throw_ob, op));
 
     if (!QUERY_FLAG(throw_ob, FLAG_REMOVED))
         destruct_ob(throw_ob);
 }
 
-void make_visible(object *op)
+void make_visible(object_t *op)
 {
     /*
        if(op->type==PLAYER)
@@ -946,15 +912,15 @@ void make_visible(object *op)
     */
 }
 
-int is_true_undead(object *op)
+int is_true_undead(object_t *op)
 {
     /*
-      object *tmp=NULL;
+      object_t *tmp=NULL;
 
       if(QUERY_FLAG(&op->arch->clone,FLAG_UNDEAD)) return 1;
 
       if(op->type==PLAYER)
-        for(tmp=op->inv;tmp;tmp=tmp->below)
+        FOREACH_OBJECT_IN_OBJECT(tmp, op)
            if(tmp->type==TYPE_SKILLGROUP && tmp->stats.Wis)
           if(QUERY_FLAG(tmp,FLAG_UNDEAD)) return 1;
     */
@@ -966,7 +932,7 @@ int is_true_undead(object *op)
  * indicate greater hideability.
  */
 
-int hideability(object *ob)
+int hideability(object_t *ob)
 {
 #if 0
   int i,x,y,level=0;
@@ -975,7 +941,7 @@ int hideability(object *ob)
 
 
   /* scan through all nearby squares for terrain to hide in */
-  for(i=0,x=ob->x,y=ob->y;i<9;i++,x=ob->x+freearr_x[i],y=ob->y+freearr_y[i])
+  for(i=0,x=ob->x,y=ob->y;i<9;i++,x=ob->x+OVERLAY_X(i),y=ob->y+OVERLAY_Y(i))
   {
     if(blocks_view(ob->map,x,y)) /* something to hide near! */
       level += 2;
@@ -995,7 +961,7 @@ int hideability(object *ob)
  * spot (surrounded by clear terrain in broad daylight). -b.t.
  */
 
-void do_hidden_move(object *op)
+void do_hidden_move(object_t *op)
 {
     int hide = 0, num = random_roll(0, 19);
 
@@ -1007,7 +973,7 @@ void do_hidden_move(object *op)
     {
         if (num >= SK_level(op))
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "You ran too much! You are no longer hidden!");
+            ndi(NDI_UNIQUE, 0, op, "You ran too much! You are no longer hidden!");
             make_visible(op);
             return;
         }
@@ -1022,34 +988,45 @@ void do_hidden_move(object *op)
     {
         make_visible(op);
         if (op->type == PLAYER)
-            new_draw_info(NDI_UNIQUE, 0, op, "You moved out of hiding! You are visible!");
+            ndi(NDI_UNIQUE, 0, op, "You moved out of hiding! You are visible!");
     }
 }
 
 /* determine if who is standing near a hostile creature. */
-
-int stand_near_hostile(object *who)
+int stand_near_hostile(object_t *who)
 {
-    object     *tmp = NULL;
-    mapstruct  *m;
-    int         i, xt, yt;
+    uint8 i;
 
     if (!who)
+    {
         return 0;
+    }
 
     /* search adjacent squares */
     for (i = 1; i < 9; i++)
     {
-        xt = who->x + freearr_x[i];
-        yt = who->y + freearr_y[i];
-        if (!(m = out_of_map(who->map, &xt, &yt)))
-            continue;
-        for (tmp = GET_MAP_OB(m, xt, yt); tmp; tmp = tmp->above)
+        map_t *m = who->map;
+        sint16     x = who->x + OVERLAY_X(i),
+                   y = who->y + OVERLAY_Y(i);
+        msp_t  *msp = MSP_GET(m, x, y);
+        object_t    *this,
+                  *next;
+
+        if (!msp)
         {
-            if (!QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE) && get_friendship(who, tmp) <= FRIENDSHIP_ATTACK)
+            continue;
+        }
+
+        FOREACH_OBJECT_IN_MSP(this, msp, next)
+        {
+            if (!QUERY_FLAG(this, FLAG_UNAGGRESSIVE) &&
+                get_friendship(who, this) <= FRIENDSHIP_ATTACK)
+            {
                 return 1;
+            }
         }
     }
+
     return 0;
 }
 
@@ -1067,9 +1044,9 @@ int stand_near_hostile(object *who)
  * This function is now map tiling safe.
  */
 
-int player_can_view(object *pl, object *op)
+int player_can_view(object_t *pl, object_t *op)
 {
-    rv_vector   rv;
+    rv_t   rv;
     int         dx, dy;
 
     if (pl->type != PLAYER)
@@ -1119,17 +1096,17 @@ int player_can_view(object *pl, object *op)
  * effected by this. If we arent invisible to begin with, we
  * return 0.
  */
-int action_makes_visible(object *op)
+int action_makes_visible(object_t *op)
 {
     /*
       if(QUERY_FLAG(op,FLAG_IS_INVISIBLE) && QUERY_FLAG(op,FLAG_ALIVE)) {
         if(!QUERY_FLAG(op,FLAG_SEE_INVISIBLE))
           return 0;
         else if(op->hide) {
-          new_draw_info(NDI_UNIQUE, 0,op,"You become %!",op->hide?"unhidden":"visible");
+          ndi(NDI_UNIQUE, 0,op,"You become %!",op->hide?"unhidden":"visible");
           return 1;
         } else if(CONTR(op) && !CONTR(op)->shottype==range_magic) {
-              new_draw_info(NDI_UNIQUE, 0,op,"Your invisibility spell is broken!");
+              ndi(NDI_UNIQUE, 0,op,"Your invisibility spell is broken!");
               return 1;
         }
       }
@@ -1145,17 +1122,21 @@ int action_makes_visible(object *op)
  * be sure player are valid and on map.
  * RETURN: FALSE = no pvp, TRUE= pvp possible
  */
-int pvp_area(object *attacker, object *victim)
+uint8 pvp_area(object_t *attacker, object_t *victim)
 {
+/* Not positive what the intention behind both of these checks is, and the latter doesn't work anyway.
+ * So I'll comment them out for now and put my own in. :) -- _people_ */
+/* Now on map load if it is a PvP map we mark each square as MSP_FLAG_PVP. In this
+ * way we no longer need to (and shouldn't) test m->flags but must test
+ * msp->flags (IOW, after map load, PvP is determined per square not map-wide.
+ *
+ * -- Smacky 20140511 */
+#if 0
     if (attacker && attacker->map)
     {
-/* Not positive what the intention behind both of these checks is, and the latter doesn't work anyway.
- * So I'll comment them out for now and put my own in. :) -- _people_
- */
-
 /*
-      if (!(attacker->map->map_flags & MAP_FLAG_PVP)) ||
-            !(GET_MAP_FLAGS(attacker->map, attacker->x, attacker->y) & P_IS_PVP))
+      if (!(attacker->map->flags & MAP_FLAG_PVP)) ||
+            !(MSP_GET_FLAGS(attacker->map, attacker->x, attacker->y) & MSP_FLAG_PVP))
 */
         if (!MAP_PVP(attacker->map))
             return FALSE;
@@ -1163,54 +1144,38 @@ int pvp_area(object *attacker, object *victim)
     if (victim && victim->map)
     {
 /*
-        if (!(victim->map->map_flags & MAP_FLAG_PVP) || !(GET_MAP_FLAGS(victim->map, victim->x, victim->y) & P_IS_PVP))
+        if (!(victim->map->flags & MAP_FLAG_PVP) || !(MSP_GET_FLAGS(victim->map, victim->x, victim->y) & MSP_FLAG_PVP))
 */
         if (!MAP_PVP(victim->map))
             return FALSE;
     }
 
     return TRUE;
-}
-
-/* op_on_battleground - checks if the given object op (usually
- * a player) is standing on a valid battleground-tile,
- * function returns TRUE/FALSE. If true x, y returns the battleground
- * -exit-coord. (and if x, y not NULL)
- */
-/* TODO: sigh, this must be changed! we don't want loop tile objects in move/attack
- * or other action without any need.
-*/
-int op_on_battleground(object *op, int *x, int *y)
-{
-    /*object *tmp;*/
-
-    /* A battleground-tile needs the following attributes to be valid:
-     * is_floor 1 (has to be the FIRST floor beneath the player's feet),
-     * name="battleground", no_pick 1, type=58 (type BATTLEGROUND)
-     * and the exit-coordinates sp/hp must both be > 0.
-     * => The intention here is to prevent abuse of the battleground-
-     * feature (like pickable or hidden battleground tiles). */
-/* floors are now in map node - this needs a new logic */
-/*
-    for (tmp = op->below; tmp != NULL; tmp = tmp->below)
+#else
+    if (attacker &&
+        attacker->map)
     {
-        if (tmp->type == FLOOR)
+        msp_t *msp = MSP_KNOWN(attacker);
+
+        if (!(msp->flags & MSP_FLAG_PVP))
         {
-            if (QUERY_FLAG(tmp, FLAG_NO_PICK)
-             && tmp->name == shstr_cons.battleground
-             && tmp->type == BATTLEGROUND
-             && EXIT_X(tmp)
-             && EXIT_Y(tmp))
-            {
-                if (x != NULL && y != NULL)
-                    *x = EXIT_X(tmp), * y = EXIT_Y(tmp);
-                return 1;
-            }
+            return 0;
         }
     }
-*/
-    /* If we got here, did not find a battleground */
-    return 0;
+
+    if (victim &&
+        victim->map)
+    {
+        msp_t *msp = MSP_KNOWN(victim);
+
+        if (!(msp->flags & MSP_FLAG_PVP))
+        {
+            return 0;
+        }
+    }
+
+    return 1;
+#endif
 }
 
 /*
@@ -1218,16 +1183,16 @@ int op_on_battleground(object *op, int *x, int *y)
  * he gets some treasure
  *
  * attributes:
- *      object *who        the dragon player
+ *      object_t *who        the dragon player
  *      int atnr           the attack-number of the ability focus
  *      int level          ability level
  */
-void dragon_ability_gain(object *who, int atnr, int level)
+void dragon_ability_gain(object_t *who, int atnr, int level)
 {
     treasurelist   *trlist  = NULL;   /* treasurelist */
     treasure       *tr;                  /* treasure */
-    object         *tmp;                   /* tmp. object */
-    object         *item;                  /* treasure object */
+    object_t         *tmp;                   /* tmp. object_t */
+    object_t         *item;                  /* treasure object_t */
     char            buf[MEDIUM_BUF];             /* tmp. string buffer */
     int             i = 0, j = 0;
 
@@ -1263,7 +1228,7 @@ void dragon_ability_gain(object *who, int atnr, int level)
         if (spell >= 0 &&
             !check_spell_known(who, spell))
         {
-            new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, "You gained the ability of %s", spells[spell].name);
+            ndi(NDI_UNIQUE | NDI_BLUE, 0, who, "You gained the ability of %s", spells[spell].name);
             do_learn_spell(who, spell, 0);
 
             return;
@@ -1272,10 +1237,18 @@ void dragon_ability_gain(object *who, int atnr, int level)
     else if (item->type == FORCE)
     {
         /* forces in the treasurelist can alter the player's stats */
-        object *skin;
+        object_t *skin,
+               *next;
+
         /* first get the dragon skin force */
-        for (skin = who->inv; skin != NULL && skin->arch->name != shstr_cons.dragon_skin_force; skin = skin->below)
-            ;
+        FOREACH_OBJECT_IN_OBJECT(skin, who, next)
+        {
+            if (skin->arch->name != shstr_cons.dragon_skin_force)
+            {
+                break;
+            }
+        }
+
         if (skin == NULL)
             return;
 
@@ -1298,7 +1271,7 @@ void dragon_ability_gain(object *who, int atnr, int level)
                 }
             }
             strcat(buf, ".");
-            new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, "%s", buf);
+            ndi(NDI_UNIQUE | NDI_BLUE, 0, who, "%s", buf);
         }
 
         /* evtl. adding flags: */
@@ -1311,13 +1284,13 @@ void dragon_ability_gain(object *who, int atnr, int level)
 
         /* print message if there is one */
         if (item->msg != NULL)
-            new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, "%s", item->msg);
+            ndi(NDI_UNIQUE | NDI_BLUE, 0, who, "%s", item->msg);
     }
     else
     {
         /* generate misc. treasure */
         tmp = arch_to_object(tr->item);
-        new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, "You gained %s",
+        ndi(NDI_UNIQUE | NDI_BLUE, 0, who, "You gained %s",
             QUERY_SHORT_NAME(tmp, who));
         tmp = insert_ob_in_ob(tmp, who);
     }
@@ -1346,7 +1319,7 @@ int atnr_is_dragon_enabled(int attacknr)
  * returns true if the adressed object 'ob' is a player
  * of the dragon race.
  */
-int is_dragon_pl(object *op)
+int is_dragon_pl(object_t *op)
 {
     if (op != NULL
      && op->type == PLAYER
@@ -1358,7 +1331,7 @@ int is_dragon_pl(object *op)
 }
 
 /* we reset the instance information of the player */
-void reset_instance_data(player *pl)
+void reset_instance_data(player_t *pl)
 {
     if(pl)
     {
@@ -1371,9 +1344,9 @@ void reset_instance_data(player *pl)
 /* kick_player(NULL) global kicks *all* players.
  * kick_player(player) kicks the specific player.
  */
-void kick_player(player *pl)
+void kick_player(player_t *pl)
 {
-    player *tmp;
+    player_t *tmp;
 
     for (tmp = first_player; tmp; tmp = tmp->next)
     {
@@ -1424,9 +1397,9 @@ void kick_player(player *pl)
  * As the info is rewritten less frequently than before (when the entire string
  * was recreated every time anyone typed /who), data such as players' levels
  * and what map they are on is not included as this changes frequently. */
-char *get_online_players_info(player *who, player *diff, uint8 force)
+char *get_online_players_info(player_t *who, player_t *diff, uint8 force)
 {
-    player      *pl;
+    player_t      *pl;
     uint16       pri = 0;
     char        *buf;
     static char  buf_ping[HUGE_BUF] = "",
@@ -1574,9 +1547,9 @@ char *get_online_players_info(player *who, player *diff, uint8 force)
  * Deaths in this round - sp
  * The logic behind these is that the total kills should end up higher than round kills (even round kills can get over 65k).
  */
-void increment_pvp_counter(object *op, int counter)
+void increment_pvp_counter(object_t *op, int counter)
 {
-    object *pvp_force;
+    object_t *pvp_force;
 
     // Probably not needed, but usually won't hurt.
     if (!op)
@@ -1604,26 +1577,26 @@ void increment_pvp_counter(object *op, int counter)
         pvp_force->stats.sp++;
 }
 
-int command_pvp_stats(object *op, char *params)
+int command_pvp_stats(object_t *op, char *params)
 {
     char       *name = params;
     const char *name_hash;
-    player     *pl;
+    player_t     *pl;
 
     // Query op since no-one else was specified.
     if (!name)
     {
-        object *pvp_force = present_arch_in_ob(archetype_global._pvp_stat_force, op);
+        object_t *pvp_force = present_arch_in_ob(archetype_global._pvp_stat_force, op);
 
         if (pvp_force)
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "You  have killed ~%u~ player%s in PvP. You have been killed by a player in PvP ~%u~ time%s.",
+            ndi(NDI_UNIQUE, 0, op, "You  have killed ~%u~ player%s in PvP. You have been killed by a player in PvP ~%u~ time%s.",
                                          pvp_force->stats.maxhp, pvp_force->stats.maxhp != 1 ? "s":"",
                                          pvp_force->stats.hp, pvp_force->stats.hp != 1 ? "s":"");
         }
         else
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "You have not participated in any PvP.");
+            ndi(NDI_UNIQUE, 0, op, "You have not participated in any PvP.");
         }
 
         return 0;
@@ -1634,7 +1607,7 @@ int command_pvp_stats(object *op, char *params)
 
     if (!(name_hash = find_string(name)))
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
+        ndi(NDI_UNIQUE, 0, op, "No such player.");
         return 0;
     }
 
@@ -1642,23 +1615,23 @@ int command_pvp_stats(object *op, char *params)
     {
         if (pl->ob->name == name_hash)
         {
-            object *pvp_force = present_arch_in_ob(archetype_global._pvp_stat_force, pl->ob);
+            object_t *pvp_force = present_arch_in_ob(archetype_global._pvp_stat_force, pl->ob);
 
             if (pvp_force)
             {
-                new_draw_info(NDI_UNIQUE, 0, op, "Player: %s\nTotal PvP kills: ~%u~\nTotal PvP deaths: ~%u~",
+                ndi(NDI_UNIQUE, 0, op, "Player: %s\nTotal PvP kills: ~%u~\nTotal PvP deaths: ~%u~",
                     QUERY_SHORT_NAME(pl->ob, NULL), pvp_force->stats.maxhp, pvp_force->stats.hp);
             }
             else
             {
-                new_draw_info(NDI_UNIQUE, 0, op, "That player has not participated in PvP.");
+                ndi(NDI_UNIQUE, 0, op, "That player has not participated in PvP.");
             }
 
             return 0;
         }
     }
 
-    new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
+    ndi(NDI_UNIQUE, 0, op, "No such player.");
 
     return 0;
 }

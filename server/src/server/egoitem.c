@@ -29,7 +29,7 @@
 /* return the name prefix of an ego item.
 * Careful: return is a static char array
 */
-char *get_ego_item_name(object *ob)
+char *get_ego_item_name(object_t *ob)
 {
     char *cptr;
     static char name_buf[MEDIUM_BUF];
@@ -47,7 +47,7 @@ char *get_ego_item_name(object *ob)
 /* check the item is an ego item which can be applied
  * return: 0 = OK, 1= EGO unbound, 2= bound wrong person, 3= bound wrong clan
  */
-int check_ego_item(object *pl, object *ob)
+int check_ego_item(object_t *pl, object_t *ob)
 {
     if(QUERY_FLAG(ob, FLAG_IS_EGOCLAN))
         return EGO_ITEM_BOUND_CLAN;
@@ -72,7 +72,7 @@ int check_ego_item(object *pl, object *ob)
  * and setting the right flags.
  * mode: EGO_ITEM_BOUND_CLAN or EGO_ITEM_BOUND_PLAYER
  */
-void create_ego_item(object *ob, const char *name, int mode)
+void create_ego_item(object_t *ob, const char *name, int mode)
 {
     char buf[MEDIUM_BUF];
 

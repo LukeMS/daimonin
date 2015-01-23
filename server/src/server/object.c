@@ -29,195 +29,12 @@
 #include <sys/uio.h>
 #endif /* win32 */
 
-static void RegrowBurdenTree(object *op, sint32 nrof, sint8 mode);
-static void RemoveFromEnv(object *op);
-static void RemoveFromMap(object *op);
-static void Copy(object *from, object *to);
+static void RegrowBurdenTree(object_t *op, sint32 nrof, sint8 mode);
+static void RemoveFromEnv(object_t *op);
+static void RemoveFromMap(object_t *op);
+static void Copy(object_t *from, object_t *to);
 
 static int static_walk_semaphore = FALSE; /* see walk_off/walk_on functions  */
-
-/* The following arrays contain information necessary to check up to a 7x7 grid
- * of squares. */
-/* freearr_x/y contain the x and y offsets for the 48 squares. The array
- * indices map to the squares as follows:
- *   43 44 45 46 47 48 25
- *   42 21 22 23 24 09 26
- *   41 20 07 08 01 10 27
- *   40 19 06 00 02 11 28
- *   39 18 05 04 03 12 29
- *   38 17 16 15 14 13 30
- *   37 36 35 34 33 32 31 */
-int freearr_x[SIZEOFFREE] =
-{
-    0,
-    0, 1, 1, 1, 0, -1, -1, -1, /* SIZEOFFREE1 */
-    0, 1, 2, 2, 2, 2, 2, 1, 0, -1, -2, -2, -2, -2, -2, -1, /* SIZEOFFREE2 */
-    0, 1, 2, 3, 3, 3, 3, 3, 3, 3, 2, 1, 0, -1, -2, -3, -3, -3, -3, -3, -3, -3, -2, -1 /* SIZEOFFREE */
-};
-
-int freearr_y[SIZEOFFREE] =
-{
-    0,
-    -1, -1, 0, 1, 1, 1, 0, -1, /* SIZEOFFREE1 */
-    -2, -2, -2, -1, 0, 1, 2, 2, 2, 2, 2, 1, 0, -1, -2, -2, /* SIZEOFFREE2 */
-    -3, -3, -3, -3, -2, -1, 0, 1, 2, 3, 3, 3, 3, 3, 3, 3, 2, 1, 0, -1, -2, -3, -3, -3 /* SIZEOFFREE */
-};
-
-/* maxfree is now only used by free_dir(). It is used to cut a search short
- * when a wall is encountered. However, it produces some highly suspect
- * results. */
-/* TODO: Replace with the same LOS logic used in find_free_spot() -- Smacky 20090121 */
-int maxfree[SIZEOFFREE] =
-{
-    0,
-    9, 10, 13, 14, 17, 18, 21, 22, /* SIZEOFFREE1 */
-    25, 26, 27, 30, 31, 32, 33, 36, 37, 39, 39, 42, 43, 44, 45, 48, /* SIZEOFFREE2 */
-    49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49 /* SIZEOFFREE */
-};
-
-/* freedir is the dir from 00 (the central square) to each index square. */
-int freedir[SIZEOFFREE] =
-{
-    0,
-    1, 2, 3, 4, 5, 6, 7, 8, /* SIZEOFFREE1 */
-    1, 2, 2, 2, 3, 4, 4, 4, 5, 6, 6, 6, 7, 8, 8, 8, /* SIZEOFFREE2 */
-    1, 2, 2, 2, 2, 2, 3, 4, 4, 4, 4, 4, 5, 6, 6, 6, 6, 6, 7, 8, 8, 8, 8, 8 /* SIZEOFFREE */
-};
-
-/* freeback and freeback2 are the indices you arrive at when you take one step
- * from the current square towards the central square. */
-int freeback[SIZEOFFREE] =
-{
-    0,
-    0, 0, 0, 0, 0, 0, 0, 0, /* SIZEOFFREE1 */
-    1, 1, 2, 3, 3, 3, 4, 5, 5, 5, 6, 7, 7, 7, 8, 1, /*SIZEOFFREE1 */
-    9, 9, 10, 11, 12, 13, 13, 13, 14, 15, 16, 17, 17, 17, 18, 19, 20, 21, 21, 21, 22, 23, 24, 9 /* SIZEOFFREE */
-};
-
-int freeback2[SIZEOFFREE] =
-{
-    0,
-    0, 0, 0, 0, 0, 0, 0, 0, /* SIZEOFFREE1 */
-    1, 2, 2, 2, 3, 4, 4, 4, 5, 6, 6, 6, 7, 8, 8, 8, /*SIZEOFFREE1 */
-    9, 10, 11, 11, 11, 12, 13, 14, 15, 15, 15, 16, 17, 18, 19, 19, 19, 20, 21, 22, 22, 22, 23, 24 /* SIZEOFFREE */
-};
-
-/* find_free_spot(archetype, object, map, x, y, ins_flags, start, stop) will
- * search for a spot at the given map and coordinates which will be able to
- * contain the given archetype.  start and stop specifies how many squares
- * to search (see the freearr_x/y[] definition).
- * It returns a random choice among the alternatives found.
- * start and stop are where to start relative to the free_arr array (1,9
- * does all 4 immediate directions).  This returns the index into the
- * array of the free spot, -1 if no spot available (dir 0 = x,y)
- * Note - this only checks to see if there is space for the head of the
- * object - if it is a multispace object, this should be called for all
- * pieces. */
-int find_free_spot(archetype *at, object *op, mapstruct *m, int x, int y, int ins_flags, int start, int stop)
-{
-    int         i,
-                index = 0;
-    static int  altern[SIZEOFFREE];
-    object     *terrain = (op &&
-                           op->terrain_flag &&
-                           !(ins_flags & INS_IGNORE_TERRAIN)) ? op : NULL;
-
-    /* Prevent invalid indexing. */
-    start = MAX(0, MIN(start, SIZEOFFREE));
-    stop = MAX(0, MIN(stop, SIZEOFFREE));
-
-    for (i = start; i < stop; i++)
-    {
-        int bflag = 0;
-
-        /* The archetype won't fit. */
-        if (arch_blocked(at, terrain, m, x + freearr_x[i], y + freearr_y[i]))
-            continue;
-
-        if (i > 8 &&
-            ins_flags & INS_WITHIN_LOS)
-        {
-            int j;
-
-            for (j = freeback[i]; j; j = freeback[j])
-            {
-                if (wall(m, x + freearr_x[j], y + freearr_y[j]))
-                {
-                    bflag = 1;
-
-                    break;
-                }
-            }
-
-            if (wall(m, x + freearr_x[freeback2[i]], y + freearr_y[freeback2[i]]))
-                bflag = 1;
-        }
-
-        if (!bflag)
-            altern[index++] = i;
-    }
-
-    if (!index)
-        return -1;
-
-    return altern[RANDOM() % index];
-}
-
-/* find_first_free_spot(archetype, object, mapstruct, x, y) works like
- * find_free_spot(), but it will search max number of squares.
- * But it will return the first available spot, not a random choice.
- * Changed 0.93.2: Have it return -1 if there is no free spot available. */
-int find_first_free_spot(archetype *at, object *op, mapstruct *m, int x, int y)
-{
-    int     i;
-    object *terrain = (op && op->terrain_flag) ? op : NULL;
-
-    for (i = 0; i < SIZEOFFREE; i++)
-    {
-        if (!arch_blocked(at, terrain, m, x + freearr_x[i], y + freearr_y[i]))
-            return i;
-    }
-
-    return -1;
-}
-
-/* find_dir(map, x, y, exclude) will search some close squares in the
- * given map at the given coordinates for live objects.
- * It will not considered the object given as exlude among possible
- * live objects.
- * It returns the direction toward the first/closest live object if finds
- * any, otherwise 0. */
-int find_dir(mapstruct *m, int x, int y, object *exclude)
-{
-    int         i, xt, yt, max = SIZEOFFREE;
-    mapstruct  *mt;
-    object     *tmp;
-
-    if (exclude && exclude->head)
-        exclude = exclude->head;
-
-    for (i = 1; i < max; i++)
-    {
-        xt = x + freearr_x[i];
-        yt = y + freearr_y[i];
-        if (wall(m, xt, yt))
-            max = maxfree[i];
-        else
-        {
-            if (!(mt = out_of_map(m, &xt, &yt)))
-                continue;
-            tmp = GET_MAP_OB(mt, xt, yt);
-            while (tmp
-                != NULL
-                && ((tmp != NULL && !QUERY_FLAG(tmp, FLAG_MONSTER) && tmp->type != PLAYER)
-                 || (tmp == exclude || (tmp->head && tmp->head == exclude))))
-                tmp = tmp->above;
-            if (tmp != NULL)
-                return freedir[i];
-        }
-    }
-    return 0;
-}
 
 /* find_dir_2(delta-x,delta-y) will return a direction in which
  * an object which has subtracted the x and y coordinates of another
@@ -279,7 +96,7 @@ int dirdiff(int dir1, int dir2)
  * Utility functions for inserting & removing objects
  * from activelists
  */
-static inline void activelist_remove_inline(object *op)
+static inline void activelist_remove_inline(object_t *op)
 {
     /* If not already on any active list, don't do anything */
     if(!QUERY_FLAG(op, FLAG_IN_ACTIVELIST))
@@ -314,9 +131,9 @@ static inline void activelist_remove_inline(object *op)
 /* Insert an object into the insertion activelist, it will be
  * moved to its corresponding map's activelist at the next
  * call to process_events() */
-static inline void activelist_insert_inline(object *op)
+static inline void activelist_insert_inline(object_t *op)
 {
-    object *tmp;
+    object_t *tmp;
 
     /* Do not insert if op is a descendant of a sys_object. */
     for (tmp = op->env; tmp; tmp = tmp->env)
@@ -347,12 +164,12 @@ static inline void activelist_insert_inline(object *op)
     SET_FLAG(op, FLAG_IN_ACTIVELIST);
 }
 
-void activelist_insert(object *op)
+void activelist_insert(object_t *op)
 {
     activelist_insert_inline(op);
 }
 
-void activelist_remove(object *op)
+void activelist_remove(object_t *op)
 {
     activelist_remove_inline(op);
 }
@@ -361,7 +178,7 @@ void activelist_remove(object *op)
  * If the object has still FLAG_REMOVED set at the end of the
  * server timestep it will be freed
  */
-void mark_object_removed(object *ob)
+void mark_object_removed(object_t *ob)
 {
     struct mempool_chunk   *mem = MEM_POOLDATA(ob);
 
@@ -375,7 +192,7 @@ void mark_object_removed(object *ob)
         return;
 
     /* We abuse the mempool freelist here. Need to zero mem->next out
-     * before calling return_poolchunk() on the object */
+     * before calling return_poolchunk() on the object_t */
     mem->next = removed_objects;
     removed_objects = mem;
 }
@@ -384,7 +201,7 @@ void mark_object_removed(object *ob)
 void object_gc()
 {
     struct mempool_chunk   *current, *next;
-    object                 *ob;
+    object_t                 *ob;
 
 #if defined DEBUG_GC
     if(removed_objects != &end_marker)
@@ -404,7 +221,7 @@ void object_gc()
             next = current->next;
             current->next = NULL;
 
-            ob = (object *) MEM_USERDATA(current);
+            ob = (object_t *) MEM_USERDATA(current);
             if (QUERY_FLAG(ob, FLAG_REMOVED))
             {
 #if defined DEBUG_GC
@@ -426,7 +243,7 @@ void object_gc()
  *
  * Improvements made with merge:  Better checking on potion, and also
  * check weight. */
-static inline int can_merge(object *ob1, object *ob2)
+static inline int can_merge(object_t *ob1, object_t *ob2)
 {
     /* Non-stackable objects of course cannot merge. */
     if (!QUERY_FLAG(ob1, FLAG_CAN_STACK) ||
@@ -481,8 +298,10 @@ static inline int can_merge(object *ob1, object *ob2)
     if (ob1->inv ||
          ob2->inv)
     {
-        object *tmp1 = ob1->inv,
-               *tmp2 = ob2->inv;
+        object_t *tmp1 = ob1->inv,
+               *next1,
+               *tmp2 = ob2->inv,
+               *next2;
 
         if (!tmp1 ||
             !tmp2)
@@ -517,9 +336,9 @@ static inline int can_merge(object *ob1, object *ob2)
             return 0;
         }
 
-        for (tmp1 = ob1->inv; tmp1; tmp1 = tmp1->below)
+        FOREACH_OBJECT_IN_OBJECT(tmp1, ob1, next1)
         {
-            for (tmp2 = ob2->inv; tmp2; tmp2 = tmp2->below)
+            FOREACH_OBJECT_IN_OBJECT(tmp2, ob2, next2)
             {
                 if (can_merge(tmp1, tmp2))
                 {
@@ -543,7 +362,7 @@ static inline int can_merge(object *ob1, object *ob2)
         return 0;
 
     /* compare the static arrays/structs */
-    if ((memcmp(&ob1->stats, &ob2->stats, sizeof(living)) != 0)
+    if ((memcmp(&ob1->stats, &ob2->stats, sizeof(living_t)) != 0)
      || (memcmp(&ob1->resist, &ob2->resist, sizeof(ob1->resist)) != 0)
      || (memcmp(&ob1->attack, &ob2->attack, sizeof(ob1->attack)) != 0))
         return 0;
@@ -627,7 +446,7 @@ static inline int can_merge(object *ob1, object *ob2)
  * mergeable). tmp is also marked for removal.
  * Returns pointer to op if it succeded in the merge, otherwise NULL
  */
-object * merge_ob(object *op, object *tmp)
+object_t * merge_ob(object_t *op, object_t *tmp)
 {
     /* Nothing to merge with or op is non-stackable or has nrof 0, */
     if (!op || !QUERY_FLAG(op, FLAG_CAN_STACK) || !op->nrof)
@@ -637,10 +456,18 @@ object * merge_ob(object *op, object *tmp)
     if (tmp == NULL)
     {
         if (op->map)
-            tmp = GET_MAP_OB(op->map, op->x, op->y);
+        {
+            msp_t *msp = MSP_KNOWN(op);
+
+            tmp = msp->last;
+        }
         else if (op->env)
+        {
             for (tmp = op->env->inv; tmp && tmp->below; tmp = tmp->below)
+            {
                 ;
+            }
+        }
         else
         {
             LOG(llevBug, "BUG:: %s/merge_ob(): op (%s[%d]) has neither map nor environment!",
@@ -691,12 +518,13 @@ object * merge_ob(object *op, object *tmp)
  * its not recursive itself but the caller will take care of it.
  * thats for example the recursive flex loader and map.c/LoadObjects().
  */
-sint32 sum_weight(object *op)
+sint32 sum_weight(object_t *op)
 {
-    sint32  sum;
-    object *inv;
+    sint32  sum = 0;
+    object_t *inv,
+           *next;
 
-    for (sum = 0, inv = op->inv; inv != NULL; inv = inv->below)
+    FOREACH_OBJECT_IN_OBJECT(inv, op, next)
     {
         if (QUERY_FLAG(inv, FLAG_SYS_OBJECT))
             continue;
@@ -713,11 +541,11 @@ sint32 sum_weight(object *op)
 
 /* Changes the carrying value of any envs of op by nrof * op->weight. The
  * direction of change is specified by mode (positive or negative). */
-static void RegrowBurdenTree(object *op, sint32 nrof, sint8 mode)
+static void RegrowBurdenTree(object_t *op, sint32 nrof, sint8 mode)
 {
     sint32  tmp_nrof,
             weight;
-    object *where;
+    object_t *where;
 
     /* This bit of ugliness is because WEIGHT_OVERALL() assumes op->nrof is the
      * real nrof. */
@@ -783,7 +611,7 @@ static void RegrowBurdenTree(object *op, sint32 nrof, sint8 mode)
  * to update the item then! the player only sees his main inventory and *one* container.
  * is this object in a closed container, the player will never notice any change.
  */
-object * is_player_inv(object *op)
+object_t * is_player_inv(object_t *op)
 {
     for (; op != NULL && op->type != PLAYER; op = op->env)
         if (op->env == op)
@@ -791,74 +619,30 @@ object * is_player_inv(object *op)
     return op;
 }
 
-/*
- * Used by: Server DM commands: dumpbelow, dump.
+/* Used by: Server DM commands: dumpbelow, dump.
  *  Some error messages.
- * The result of the dump is stored in the static global errmsg array.
- */
-
-#if 0
-void dump_object2(const object *op)
+ * The result of the dump is stored in the static global errmsg array. */
+void dump_object2(const object_t *op)
 {
-    char   *cp;
-    /*  object *tmp;*/
+    char *cp;
 
-    if (op &&
-        op->arch)
-    {
-        sprintf(strchr(errmsg, '\0'), "arch %s\n", STRING_OBJ_ARCH_NAME(op));
-        sprintf(strchr(errmsg, '\0'), "count %d\n", op->count);
-        if ((cp = get_ob_diff(op, &archetype_global._empty_archetype->clone)) != NULL)
-            strcat(errmsg, cp);
-#if 0
-      /* Don't dump player diffs - they are to long, mostly meaningless, and
-       * will overflow the buffer.
-       * Changed so that we don't dump inventory either.  This may
-       * also overflow the buffer.
-       */
-      if(op->type!=PLAYER && (cp=get_ob_diff(op,&archetype_global._empty_archetype->clone))!=NULL)
-        strcat(errmsg,cp);
-      for (tmp=op->inv; tmp; tmp=tmp->below)
-        dump_object2(tmp);
-#endif
-        strcat(errmsg, "end\n");
-    }
-    else
-    {
-        sprintf(strchr(errmsg, '\0'), "Object %s\n", STRING_OBJ_NAME(op));
-#if 0
-      if((cp=get_ob_diff(op,&archetype_global._empty_archetype->clone))!=NULL)
-        strcat(errmsg,cp);
-      for (tmp=op->inv; tmp; tmp=tmp->below)
-        dump_object2(tmp);
-#endif
-        strcat(errmsg, "end\n");
-    }
-}
-#else
-void dump_object2(const object *op)
-{
-    char   *cp;
-    /*  object *tmp;*/
-
-    if (op->arch != NULL)
+    if (op->arch)
     {
         cp = get_ob_diff(op, &archetype_global._empty_archetype->clone);
         sprintf(strchr(errmsg, '\0'), "arch %s\ncount %d\n%send\n",
-                STRING_OBJ_ARCH_NAME(op), op->count, (cp) ? cp : "");
+            STRING_OBJ_ARCH_NAME(op), op->count, (cp) ? cp : "");
     }
     else
     {
         sprintf(strchr(errmsg, '\0'), "Object %s\nend\n", STRING_OBJ_NAME(op));
     }
 }
-#endif
 
 /*
  * Dumps an object.  Returns output in the static global errmsg array.
  */
 
-void dump_object(const object *op)
+void dump_object(const object_t *op)
 {
     if (op == NULL)
     {
@@ -873,7 +657,7 @@ void dump_object(const object *op)
 /* Note that no checking is done for the validity of the target string, so   */
 /* you need to be sure that you allocated enough space for it.               */
 /* JRG 13-May-2009 Additional parameter tells this function size of buffer.  */
-void dump_me(object *op, char *outstr, size_t bufsize)
+void dump_me(object_t *op, char *outstr, size_t bufsize)
 {
     char   *cp;
 
@@ -917,7 +701,7 @@ void free_all_object_data()
  * (This scheme should be changed to a refcount scheme in the future)
  */
 
-object * get_owner(object *op)
+object_t * get_owner(object_t *op)
 {
     if (!op || op->owner == NULL)
         return NULL;
@@ -927,7 +711,7 @@ object * get_owner(object *op)
     return NULL;
 }
 
-void clear_owner(object *op)
+void clear_owner(object_t *op)
 {
     if (!op)
         return;
@@ -949,7 +733,7 @@ void clear_owner(object *op)
  * See also get_owner()
  */
 
-static void set_owner_simple(object *op, object *owner)
+static void set_owner_simple(object_t *op, object_t *owner)
 {
     /* next line added to allow objects which own objects */
     /* Add a check for owner_counts in here, as I got into an endless loop
@@ -978,7 +762,7 @@ static void set_owner_simple(object *op, object *owner)
  * Sets the owner and sets the skill and exp pointers to owner's current
  * skill and experience objects.
  */
-void set_owner(object * const op, object * const owner)
+void set_owner(object_t * const op, object_t * const owner)
 {
     if (owner == NULL || op == NULL)
         return;
@@ -1001,9 +785,9 @@ void set_owner(object * const op, object * const owner)
  * accounted for the player's original skill, even if player has changed
  * skills meanwhile.
  */
-void copy_owner(object *op, object *clone)
+void copy_owner(object_t *op, object_t *clone)
 {
-    object *owner   = get_owner(clone);
+    object_t *owner   = get_owner(clone);
     if (owner == NULL)
     {
         /* players don't have owners - they own themselves.  Update
@@ -1031,9 +815,9 @@ void copy_owner(object *op, object *clone)
  * If used on any object structures, be sure all pointers of the
  * base object are cleared until they are wiped with this function
  */
-void initialize_object(object *op)
+void initialize_object(object_t *op)
 {
-    memset(op, 0, sizeof(object));
+    memset(op, 0, sizeof(object_t));
     op->name = op->title = op->race = op->slaying = op->msg = NULL;
     /* Set some values that should not be 0 by default */
     op->anim_enemy_dir = -1;      /* control the facings 25 animations */
@@ -1053,11 +837,12 @@ void initialize_object(object *op)
 
 /* clone_object() clones original (multiparts are correctly handled). If mode
  * is zero it also clones any inventory. The return is the clone. */
-object *clone_object(object *original, uint8 mode)
+object_t *clone_object(object_t *original, uint8 mode)
 {
-    object *clone = NULL,
+    object_t *clone = NULL,
            *prev = NULL,
-           *this;
+           *this,
+           *next;
 
     /* Sanity check: No original = nothing to do. */
     if (!original)
@@ -1073,14 +858,41 @@ object *clone_object(object *original, uint8 mode)
 
     /* Clone original to clone, being sure to correctly clone all parts of a
      * multipart. */
-    for (this = original; this; this = this->more)
+    for (this = original; this; this = next)
     {
-        object *that;
+        object_t *that;
+
+        /* Here we test if the being-cloned object is a multipart or, failing
+         * that, if it's archetype is a multipart. In this way we 'clone'
+         * multiparts from invs where only the arch head is stored (eg, spawn
+         * point mobs in spawn points) as complete objects). */
+        if (!(next = this->more) &&
+            !(next = this->arch->clone.more))
+        {
+            next = NULL;
+        }
 
         that = get_object();
         copy_object(this, that);
-        that->x -= original->x;
-        that->y -= original->y;
+
+        if (original->env)
+        {
+            that->env = original->env;
+        }
+        else if (original->map)
+        {
+            sint16 x = original->x + this->arch->clone.x,
+                   y = original->y + this->arch->clone.y;
+
+            /* out_of_map() will check and adjust map,x,y so that spawn points on
+             * or near the edge of a map will spawn a mob with the correct values
+             * on a tiled map (ie, the point is at map_0000 5 0 and the mob spawns
+             * on the northeast square -- this is map_0001 6 23, not map_0000 6 -1).
+             * -- Smacky 20131205 */
+            that->map = OUT_OF_MAP(original->map, x, y);
+            that->x = x;
+            that->y = y;
+        }
 
         if (!this->head)
         {
@@ -1104,9 +916,9 @@ object *clone_object(object *original, uint8 mode)
 
     if (mode == MODE_INVENTORY)
     {
-        for (this = original->inv; this; this = this->below)
+        FOREACH_OBJECT_IN_OBJECT(this, original, next)
         {
-            object *that = clone_object(this, MODE_INVENTORY);
+            object_t *that = clone_object(this, MODE_INVENTORY);
 
             (void)insert_ob_in_ob(that, clone);
         }
@@ -1125,7 +937,7 @@ object *clone_object(object *original, uint8 mode)
 
 /* copy_object first frees everything allocated to to and then copies the
  * contents of from into it, allocating what needs to be allocated. */
-void copy_object(object *from, object *to)
+void copy_object(object_t *from, object_t *to)
 {
     /* remove because perhaps speed will change when we copy */
     if (QUERY_FLAG(to, FLAG_IN_ACTIVELIST))
@@ -1147,12 +959,12 @@ void copy_object(object *from, object *to)
 }
 
 /* Same as above, but not touching the active list. */
-void copy_object_data(object *from, object *to)
+void copy_object_data(object_t *from, object_t *to)
 {
     Copy(from, to);
 }
 
-static void Copy(object *from, object *to)
+static void Copy(object_t *from, object_t *to)
 {
     int is_removed  = QUERY_FLAG(to, FLAG_REMOVED);
 
@@ -1167,9 +979,9 @@ static void Copy(object *from, object *to)
     FREE_AND_CLEAR_HASH2(to->race);
     FREE_AND_CLEAR_HASH2(to->slaying);
     FREE_AND_CLEAR_HASH2(to->msg);
-    (void)memcpy((void *)((char *)to + offsetof(object, name)),
-        (void *)((char *)from + offsetof(object, name)),
-        sizeof(object) - offsetof(object, name));
+    (void)memcpy((void *)((char *)to + offsetof(object_t, name)),
+        (void *)((char *)from + offsetof(object_t, name)),
+        sizeof(object_t) - offsetof(object_t, name));
     ADD_REF_NOT_NULL_HASH(to->name);
     ADD_REF_NOT_NULL_HASH(to->title);
     ADD_REF_NOT_NULL_HASH(to->race);
@@ -1217,9 +1029,9 @@ static void Copy(object *from, object *to)
  * If there are no free objects, expand_objects() is called to get more.
  */
 
-object * get_object()
+object_t * get_object()
 {
-    object *new_obj = (object *) get_poolchunk(pool_object);
+    object_t *new_obj = (object_t *) get_poolchunk(pool_object);
     mark_object_removed(new_obj);
     return new_obj;
 }
@@ -1230,7 +1042,7 @@ object * get_object()
  * be called to update the face variable, _and_ how it looks on the map.
  */
 
-void update_turn_face(object *op)
+void update_turn_face(object_t *op)
 {
     if (!QUERY_FLAG(op, FLAG_IS_TURNABLE) || op->arch == NULL)
         return;
@@ -1244,7 +1056,7 @@ void update_turn_face(object *op)
  * This function needs to be called whenever the speed of an object changes.
  */
 
-void update_ob_speed(object *op)
+void update_ob_speed(object_t *op)
 {
     /* No reason putting the archetypes objects on the speed list,
      * since they never really need to be updated.
@@ -1281,7 +1093,7 @@ void update_ob_speed(object *op)
  *
  * action is a hint of what the caller believes need to be done.
  * For example, if the only thing that has changed is the face (due to
- * an animation), we don't need to call update_position until that actually
+ * an animation), we don't need to call msp_update until that actually
  * comes into view of a player.  OTOH, many other things, like addition/removal
  * of walls or living creatures may need us to update the flags now.
  * current action are:
@@ -1296,20 +1108,22 @@ void update_ob_speed(object *op)
  * be called now from everything what does a noticable change to a object. We can
  * pre-decide its needed to call but normally we must call this.
  */
-void update_object(object *op, int action)
+void update_object(object_t *op, int action)
 {
-    MapSpace   *msp;
-    int         flags, newflags;
+    map_t *m;
+    sint16     x,
+               y;
+    msp_t  *msp;
 
     /*LOG(llevNoLog, "update_object: %s (%d,%d) - action %x\n", op->name, op->x, op->y,action);*/
-    if (op == NULL)
+    if (!op)
     {
         /* this should never happen */
-        LOG(llevError, "ERROR: update_object() called for NULL object.\n");
+        LOG(llevBug, "BUG:: update_object() called for NULL object.\n");
         return;
     }
 
-    if (op->env != NULL)
+    if (op->env)
     {
         // Send the player the new inventory information if needed.
         if (op->env->type == PLAYER)
@@ -1319,200 +1133,164 @@ void update_object(object *op, int action)
         return;
     }
 
-    if (!op->map || op->map->in_memory == MAP_SAVING)
+    if (!op->map ||
+        op->map->in_memory == MAP_MEMORY_SAVING)
     {
         return;
     }
 
-    /* make sure the object is within map boundaries */
-    /*
-       if (op->x < 0 || op->x >= MAP_WIDTH(op->map) || op->y < 0 || op->y >= MAP_HEIGHT(op->map))
-    {
-           LOG(llevError,"ERROR: update_object() called for object out of map!\n");
-        return;
-       }
-    */
+    m = op->map;
+    x = op->x;
+    y = op->y;
+    msp = MSP_KNOWN(op);
 
-    msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
-
-    if (action == UP_OBJ_FACE) /* no need to change anything except the map update counter */
+    switch (action)
     {
+        case UP_OBJ_INSERT:
+#ifdef DEBUG_CORE
+        LOG(llevDebug, "UO_INS - %s\n", STRING_OBJ_NAME(op));
+
+#endif
+        if (!QUERY_FLAG(op, FLAG_NO_SEND))
+        {
+            esrv_send_item(op);
+        }
+
+        if (op->glow_radius)
+        {
+            adjust_light_source(msp, op->glow_radius);
+        }
+
+        /* this is handled a bit more complex, we must always loop the flags! */
+        if (QUERY_FLAG(op, FLAG_NO_PASS) ||
+            QUERY_FLAG(op, FLAG_PASS_THRU) ||
+            QUERY_FLAG(op, FLAG_PASS_ETHEREAL))
+        {
+            msp->flags |= (MSP_FLAG_NO_ERROR | MSP_FLAG_UPDATE);
+            msp_update(m, NULL, x, y);
+        }
+        else /* ok, we don't must use flag loop - we can set it by hand! */
+        {
+            uint32 flags = 0;
+
+            MSP_SET_FLAGS_BY_OBJECT(flags, op);
+            msp->flags |= flags;
+        }
+
+        break;
+
+        case UP_OBJ_REMOVE:
+#ifdef DEBUG_CORE
+        LOG(llevDebug, "UO_REM - %s\n", STRING_OBJ_NAME(op));
+
+#endif
+        if (!QUERY_FLAG(op, FLAG_NO_SEND))
+        {
+            esrv_del_item(op);
+        }
+
+        /* we don't handle floor tile light/darkness setting here -
+         * we assume we don't remove a floor tile ever before dropping
+         * the map. */
+        if (op->glow_radius)
+        {
+            adjust_light_source(msp, -(op->glow_radius));
+        }
+
+        /* we must rebuild the flags when one of this flags is touched from our object_t */
+        if (op->type == CHECK_INV ||
+            op->type == MAGIC_EAR ||
+            op->type == GRAVESTONE ||
+            QUERY_FLAG(op, FLAG_ALIVE) ||
+            QUERY_FLAG(op, FLAG_IS_PLAYER) ||
+            QUERY_FLAG(op, FLAG_BLOCKSVIEW) ||
+            QUERY_FLAG(op, FLAG_DOOR_CLOSED) ||
+            QUERY_FLAG(op, FLAG_PASS_THRU) ||
+            QUERY_FLAG(op, FLAG_PASS_ETHEREAL) ||
+            QUERY_FLAG(op, FLAG_NO_PASS) ||
+            QUERY_FLAG(op, FLAG_NO_SPELLS) ||
+            QUERY_FLAG(op, FLAG_NO_PRAYERS) ||
+            QUERY_FLAG(op, FLAG_WALK_ON) ||
+            QUERY_FLAG(op, FLAG_FLY_ON) ||
+            QUERY_FLAG(op, FLAG_WALK_OFF) ||
+            QUERY_FLAG(op, FLAG_FLY_OFF) ||
+            QUERY_FLAG(op, FLAG_REFL_CASTABLE) ||
+            QUERY_FLAG(op, FLAG_REFL_MISSILE))
+        {
+            msp->flags |= (MSP_FLAG_NO_ERROR | MSP_FLAG_UPDATE);
+            msp_update(m, NULL, x, y);
+        }
+
+        break;
+
+        case UP_OBJ_FLAGS:
+#ifdef DEBUG_CORE
+        LOG(llevDebug, "UO_FLAGS - %s\n", STRING_OBJ_NAME(op));
+#endif
+        msp->flags |= (MSP_FLAG_NO_ERROR | MSP_FLAG_UPDATE);
+        msp_update(m, NULL, x, y);
+        break;
+
+        case UP_OBJ_FACE: /* no need to change anything except the map update counter */
 #ifdef DEBUG_CORE
         LOG(llevDebug, "UO_FACE - %s\n", STRING_OBJ_NAME(op));
 #endif
         esrv_update_item(UPD_FACE | UPD_ANIM | UPD_ANIMSPEED, op);
+        return;
 
+        case UP_OBJ_FLAGFACE:
+#ifdef DEBUG_CORE
+        LOG(llevDebug, "UO_FLAGFACE - %s\n", STRING_OBJ_NAME(op));
+#endif
+        msp->flags |= (MSP_FLAG_NO_ERROR | MSP_FLAG_UPDATE);
+        msp_update(m, NULL, x, y);
+        esrv_update_item(UPD_FACE | UPD_ANIM | UPD_ANIMSPEED, op);
+        break;
+
+        case UP_OBJ_SLICE:
+#ifdef DEBUG_CORE
+        LOG(llevDebug, "UO_SLICE - %s\n", STRING_OBJ_NAME(op));
+#endif
+        msp->flags |= (MSP_FLAG_NO_ERROR | MSP_FLAG_UPDATE);
+        msp_update(m, NULL, x, y);
+
+        if (!QUERY_FLAG(op, FLAG_NO_SEND))
+        {
+            esrv_send_or_del_item(op);
+        }
+
+        break;
+
+        case UP_OBJ_ALL:
+#ifdef DEBUG_CORE
+        LOG(llevDebug, "UO_ALL - %s\n", STRING_OBJ_NAME(op));
+#endif
+        msp->flags |= (MSP_FLAG_NO_ERROR | MSP_FLAG_UPDATE);
+        msp_update(m, NULL, x, y);
+        break;
+
+        default:
+        LOG(llevBug, "BUG:: update_object called with invalid action: %d\n", action);
         return;
     }
 
-    newflags = msp->flags;
-    flags = newflags & ~P_NEED_UPDATE;
-
-    switch(action)
+    /* Update all parts of a multipart. */
+    if (op->more)
     {
-        case UP_OBJ_INSERT: /* always resort layer - but not always flags */
-#ifdef DEBUG_CORE
-            LOG(llevDebug, "UO_INS - %s\n", STRING_OBJ_NAME(op));
-#endif
-            newflags |= P_NEED_UPDATE; /* force layer rebuild */
-
-            if (!QUERY_FLAG(op, FLAG_NO_SEND))
-            {
-                esrv_send_item(op);
-            }
-
-            /* handle lightning system */
-            if (op->glow_radius)
-                adjust_light_source(op->map, op->x, op->y, op->glow_radius);
-
-            /* this is handled a bit more complex, we must always loop the flags! */
-            if (QUERY_FLAG(op, FLAG_NO_PASS) || QUERY_FLAG(op, FLAG_PASS_THRU) || QUERY_FLAG(op, FLAG_PASS_ETHEREAL))
-                newflags |= P_FLAGS_UPDATE;
-            else /* ok, we don't must use flag loop - we can set it by hand! */
-            {
-                if (op->type == CHECK_INV)
-                    newflags |= P_CHECK_INV;
-                else if (op->type == MAGIC_EAR)
-                    newflags |= P_MAGIC_EAR;
-                else if (op->type == GRAVESTONE)
-                    newflags |= P_PLAYER_GRAVE;
-
-                if (QUERY_FLAG(op, FLAG_ALIVE))
-                {
-                    newflags |= P_IS_ALIVE;
-                    if(op->type==MONSTER && OBJECT_VALID(op->owner, op->owner_count)
-                            && op->owner->type == PLAYER)
-                        newflags |= P_IS_PLAYER_PET;
-                }
-                if (QUERY_FLAG(op, FLAG_IS_PLAYER))
-                    newflags |= P_IS_PLAYER;
-                if (QUERY_FLAG(op, FLAG_PLAYER_ONLY))
-                    newflags |= P_PLAYER_ONLY;
-                if (QUERY_FLAG(op, FLAG_BLOCKSVIEW))
-                    newflags |= P_BLOCKSVIEW;
-                if (QUERY_FLAG(op, FLAG_NO_MAGIC))
-                    newflags |= P_NO_MAGIC;
-                if (QUERY_FLAG(op, FLAG_NO_CLERIC))
-                    newflags |= P_NO_CLERIC;
-                if (QUERY_FLAG(op, FLAG_WALK_ON))
-                    newflags |= P_WALK_ON;
-                if (QUERY_FLAG(op, FLAG_FLY_ON))
-                    newflags |= P_FLY_ON;
-                if (QUERY_FLAG(op, FLAG_WALK_OFF))
-                    newflags |= P_WALK_OFF;
-                if (QUERY_FLAG(op, FLAG_FLY_OFF))
-                    newflags |= P_FLY_OFF;
-                if (QUERY_FLAG(op, FLAG_DOOR_CLOSED))
-                    newflags |= P_DOOR_CLOSED;
-                if (QUERY_FLAG(op, FLAG_CAN_REFL_SPELL))
-                    newflags |= P_REFL_SPELLS;
-                if (QUERY_FLAG(op, FLAG_CAN_REFL_MISSILE))
-                    newflags |= P_REFL_MISSILE;
-            }
-            break;
-        case UP_OBJ_REMOVE:
-#ifdef DEBUG_CORE
-            LOG(llevDebug, "UO_REM - %s\n", STRING_OBJ_NAME(op));
-#endif
-            newflags |= P_NEED_UPDATE; /* force layer rebuild */
-
-            if (!QUERY_FLAG(op, FLAG_NO_SEND))
-            {
-                esrv_del_item(op);
-            }
-
-            /* we don't handle floor tile light/darkness setting here -
-             * we assume we don't remove a floor tile ever before dropping
-             * the map.
-             */
-
-            /* handle lightning system */
-            if (op->glow_radius)
-                adjust_light_source(op->map, op->x, op->y, -(op->glow_radius));
-
-            /* we must rebuild the flags when one of this flags is touched from our object */
-            if (QUERY_FLAG(op, FLAG_ALIVE)
-             || QUERY_FLAG(op, FLAG_IS_PLAYER)
-             || QUERY_FLAG(op, FLAG_BLOCKSVIEW)
-             || QUERY_FLAG(op, FLAG_DOOR_CLOSED)
-             || QUERY_FLAG(op, FLAG_PASS_THRU)
-             || QUERY_FLAG(op, FLAG_PASS_ETHEREAL)
-             || QUERY_FLAG(op, FLAG_NO_PASS)
-             || QUERY_FLAG(op, FLAG_PLAYER_ONLY)
-             || QUERY_FLAG(op, FLAG_NO_MAGIC)
-             || QUERY_FLAG(op, FLAG_NO_CLERIC)
-             || QUERY_FLAG(op, FLAG_WALK_ON)
-             || QUERY_FLAG(op, FLAG_FLY_ON)
-             || QUERY_FLAG(op, FLAG_WALK_OFF)
-             || QUERY_FLAG(op, FLAG_FLY_OFF)
-             || QUERY_FLAG(op, FLAG_CAN_REFL_SPELL)
-             || QUERY_FLAG(op, FLAG_CAN_REFL_MISSILE)
-             || op->type == CHECK_INV
-             || op->type == MAGIC_EAR
-             || op->type == GRAVESTONE)
-                newflags |= P_FLAGS_UPDATE; /* force flags rebuild */
-            break;
-        case UP_OBJ_FLAGS:
-#ifdef DEBUG_CORE
-            LOG(llevDebug, "UO_FLAGS - %s\n", STRING_OBJ_NAME(op));
-#endif
-            newflags |= P_FLAGS_UPDATE; /* force flags rebuild but no tile counter*/
-            break;
-        case UP_OBJ_FLAGFACE:
-#ifdef DEBUG_CORE
-            LOG(llevDebug, "UO_FLAGFACE - %s\n", STRING_OBJ_NAME(op));
-#endif
-            newflags |= P_FLAGS_UPDATE; /* force flags rebuild */
-            esrv_update_item(UPD_FACE | UPD_ANIM | UPD_ANIMSPEED, op);
-            break;
-        case UP_OBJ_LAYER:
-#ifdef DEBUG_CORE
-            LOG(llevDebug, "UO_LAYER - %s\n", STRING_OBJ_NAME(op));
-#endif
-            map_set_slayers(msp, op, 1); // must have uptodate slayers if we want to rebuild the clayers!
-            newflags |= P_NEED_UPDATE; /* rebuild layers - most common when we change visibility of the object */
-
-            if (!QUERY_FLAG(op, FLAG_NO_SEND))
-            {
-                esrv_send_or_del_item(op);
-            }
-
-            break;
-        case UP_OBJ_ALL:
-#ifdef DEBUG_CORE
-            LOG(llevDebug, "UO_ALL - %s\n", STRING_OBJ_NAME(op));
-#endif
-            newflags |= (P_FLAGS_UPDATE | P_NEED_UPDATE); /* force full tile update */
-            break;
-        default:
-            LOG(llevError, "ERROR: update_object called with invalid action: %d\n", action);
-            return;
-    }
-
-    if (flags != newflags)
-    {
-        if (newflags & (P_FLAGS_UPDATE))  /* rebuild flags */
-        {
-            msp->flags |= (newflags | P_NO_ERROR | P_FLAGS_ONLY);
-            update_position(op->map, NULL, op->x, op->y);
-        }
-        else
-            msp->flags |= newflags;
-    }
-
-    if (op->more != NULL)
         update_object(op->more, action);
+    }
 }
 
 /* Drops the inventory of ob into ob's current environment. */
 /* Makes some decisions whether to actually drop or not, and/or to
  * create a corpse for the stuff */
-void drop_ob_inv(object *ob)
+void drop_ob_inv(object_t *ob)
 {
-    player *pl      = NULL;
-    object *corpse  = NULL;
-    object *tmp_op  = NULL;
-    object *gtmp, *tmp     = NULL;
+    player_t *pl      = NULL;
+    object_t *corpse  = NULL;
+    object_t *tmp_op,
+           *next;
+    object_t *gtmp, *tmp     = NULL;
 
     if (ob->type == PLAYER)
     {
@@ -1525,7 +1303,7 @@ void drop_ob_inv(object *ob)
 
     if (!ob->env &&
         (!ob->map ||
-         ob->map->in_memory != MAP_ACTIVE))
+         ob->map->in_memory != MAP_MEMORY_ACTIVE))
     {
         /* TODO */
         LOG(llevDebug, "BUG: drop_ob_inv() - can't drop inventory of objects not in map yet: %s (%s)\n",
@@ -1575,9 +1353,8 @@ void drop_ob_inv(object *ob)
         corpse->weight = (sint32)(ob->weight * 0.50);
     }
 
-    for (tmp_op = ob->inv; tmp_op; tmp_op = tmp)
+    FOREACH_OBJECT_IN_OBJECT(tmp_op, ob, next)
     {
-        tmp = tmp_op->below;
         remove_ob(tmp_op); /* Inv-no check off / This will be destroyed in next loop of object_gc() */
 
         if(tmp_op->type == TYPE_QUEST_TRIGGER)
@@ -1744,7 +1521,7 @@ void drop_ob_inv(object *ob)
 /** Frees all data belonging to an object, but doesn't
  * care about the object itself. This can be used for
  * non-GC objects like archetype clone objects */
-void free_object_data(object *ob, int free_static_data)
+void free_object_data(object_t *ob, int free_static_data)
 {
     /* This should be very rare... */
     if (QUERY_FLAG(ob, FLAG_IS_LINKED))
@@ -1793,7 +1570,7 @@ void free_object_data(object *ob, int free_static_data)
 
             case TYPE_BEACON:
               {
-                  object *registered = hashtable_find(beacon_table, ob->custom_attrset);
+                  object_t *registered = hashtable_find(beacon_table, ob->custom_attrset);
 
 #ifdef DEBUG_BEACONS
                   /* the original object name is stored in custom_attrset */
@@ -1837,19 +1614,18 @@ void free_object_data(object *ob, int free_static_data)
 }
 
 /* destroy and delete recursive the inventory of an destroyed object. */
-static void destroy_ob_inv(object *op)
+static void destroy_ob_inv(object_t *op)
 {
-    object *tmp, *tmp2;
+    object_t *tmp,
+           *next;
 
 #if defined DEBUG_GC
     if(op->inv)
         LOG(llevDebug, "  destroy_ob_inv(%s (%d))\n", STRING_OBJ_NAME(op), op->count);
 #endif
 
-    for (tmp = op->inv; tmp; tmp = tmp2)
+    FOREACH_OBJECT_IN_OBJECT(tmp, op, next)
     {
-        tmp2 = tmp->below;
-
         /* For some reason sometimes a dmg info in an aggro history will be
          * freed with return_poolchunk() in object_gc() above but not entirely
          * removed by the time we get here (ie, during map swap). We therefore
@@ -1889,7 +1665,7 @@ static void destroy_ob_inv(object *op)
  * The object must have been removed by remove_ob() first for this function to succeed.
  * @note Due to the tricky free/active/remove-list handling of objects, don't ever call this manually.
  */
-void destroy_object(object *ob)
+void destroy_object(object_t *ob)
 {
     if (OBJECT_FREE(ob))
     {
@@ -1925,7 +1701,7 @@ void destroy_object(object *ob)
 
 int count_free() {
   int i=0;
-  object *tmp=free_objects;
+  object_t *tmp=free_objects;
   while(tmp!=NULL)
     tmp=tmp->next, i++;
   return i;
@@ -1937,7 +1713,7 @@ int count_free() {
 
 int count_used() {
   int i=0;
-  object *tmp=objects;
+  object_t *tmp=objects;
   while(tmp!=NULL)
     tmp=tmp->next, i++;
   return i;
@@ -1946,9 +1722,9 @@ int count_used() {
 
 /* Physically kill/destroy an object, creating corpse and/or
  * dropping any inventory on the floor */
-void destruct_ob(object *op)
+void destruct_ob(object_t *op)
 {
-    object *owner;
+    object_t *owner;
 
     drop_ob_inv(op);
     remove_ob(op);
@@ -1960,7 +1736,7 @@ void destruct_ob(object *op)
         (owner = get_owner(op)) &&
         owner->type == PLAYER)
     {
-        new_draw_info(NDI_UNIQUE, 0, owner, "%s was killed!",
+        ndi(NDI_UNIQUE, 0, owner, "%s was killed!",
             query_name(op, owner, ARTICLE_POSSESSIVE, 0));
     }
 }
@@ -1975,7 +1751,7 @@ void destruct_ob(object *op)
  *   FLAG_NO_FIX_PLAYER to the player first and call fix_player()
  *   explicit then.
  */
-void remove_ob(object *op)
+void remove_ob(object_t *op)
 {
     if (QUERY_FLAG(op, FLAG_REMOVED))
     {
@@ -2010,9 +1786,9 @@ void remove_ob(object *op)
     }
 }
 
-static void RemoveFromEnv(object *op)
+static void RemoveFromEnv(object_t *op)
 {
-    object *env = op->env;
+    object_t *env = op->env;
 
     /* When the object being removed is an open container, close it. */
     if (op->type == CONTAINER &&
@@ -2064,15 +1840,9 @@ static void RemoveFromEnv(object *op)
     }
 }
 
-static void RemoveFromMap(object *op)
+static void RemoveFromMap(object_t *op)
 {
-    MapSpace *msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
-
-    /* Sort out map space slayer. */
-    if (op->layer)
-    {
-        map_set_slayers(msp, op, 0);
-    }
+    msp_t *msp = MSP_KNOWN(op);
 
     /* Sort out object chain. Don't NULL op->map (still needed). */
     if (op->above)
@@ -2081,7 +1851,7 @@ static void RemoveFromMap(object *op)
     }
     else
     {
-        SET_MAP_SPACE_LAST(msp, op->below); // assign below as last one
+        msp->last = op->below;
     }
 
     if (op->below)
@@ -2090,21 +1860,21 @@ static void RemoveFromMap(object *op)
     }
     else
     {
-        SET_MAP_SPACE_FIRST(msp, op->above);  // first object goes on above it
+        msp->first = op->above;
     }
 
     op->above = NULL;
     op->below = NULL;
 
     /* When a map is swapped out and the objects on it get removed too. */
-    if (op->map->in_memory == MAP_SAVING)
+    if (op->map->in_memory == MAP_MEMORY_SAVING)
     {
         return;
     }
 
     if (op->type == PLAYER)
     {
-        player *pl = CONTR(op);
+        player_t *pl = CONTR(op);
 
         /* now we remove us from the local map player chain */
         if (pl->map_below)
@@ -2132,20 +1902,23 @@ static void RemoveFromMap(object *op)
         }
     }
 
+    if (op->layer > MSP_SLAYER_UNSLICED)
+    {
+        msp_rebuild_slices_without(msp, op);
+    }
+
     update_object(op, UP_OBJ_REMOVE);
     op->env = NULL;
 }
 
 /* Recursively remove the inventory of op. */
-void remove_ob_inv(object *op)
+void remove_ob_inv(object_t *op)
 {
-    object *this,
+    object_t *this,
            *next;
 
-    for (this = op->inv; this; this = next)
+    FOREACH_OBJECT_IN_OBJECT(this, op, next)
     {
-        next = this->below;
-
         if (this->inv)
         {
             remove_ob_inv(this);
@@ -2181,54 +1954,58 @@ void remove_ob_inv(object *op)
  * explicit when we want make a "move/step" for a object which can trigger it.
  */
 
-object *insert_ob_in_map(object *const op, mapstruct *m, object *const originator, const int flag)
+object_t *insert_ob_in_map(object_t *const op, map_t *m, object_t *const originator, const int flag)
 {
-    object*tmp =    NULL, *top;
-    MapSpace       *msp;
-    int             x, y, lt, layer, layer_inv;
-    mapstruct      *old_map = op->map;
+    object_t         *tmp = NULL,
+                   *top;
+    sint16          x,
+                    y;
+    msp_t       *msp;
+    int             lt, layer, layer_inv;
+    map_t      *old_map = op->map;
 
     /* some tests to check all is ok... some cpu ticks
-     * which tracks we have problems or not
-     */
+     * which tracks we have problems or not */
     if (OBJECT_FREE(op))
     {
         dump_object(op);
-        LOG(llevBug, "BUG: insert_ob_in_map(): Trying to insert freed object %s in map %s!\n:%s\n", STRING_OBJ_NAME(op),
-            m->name, errmsg);
+        LOG(llevBug, "BUG: insert_ob_in_map(): Trying to insert freed object %s in map %s!\n:%s\n",
+            STRING_OBJ_NAME(op), m->name, errmsg);
         return NULL;
     }
-    if (m == NULL)
+
+    if (!m)
     {
         dump_object(op);
-        LOG(llevBug, "BUG: insert_ob_in_map(): Trying to insert object %s in null-map!\n%s\n", STRING_OBJ_NAME(op), errmsg);
+        LOG(llevBug, "BUG: insert_ob_in_map(): Trying to insert object %s in null-map!\n%s\n",
+            STRING_OBJ_NAME(op), errmsg);
         return NULL;
     }
 
     if (!QUERY_FLAG(op, FLAG_REMOVED))
     {
         dump_object(op);
-        LOG(llevBug, "BUG: insert_ob_in_map(): Trying to insert non removed object %s in map %s.\n%s\n", STRING_OBJ_NAME(op),
-            m->name, errmsg);
+        LOG(llevBug, "BUG: insert_ob_in_map(): Trying to insert non removed object %s in map %s.\n%s\n",
+            STRING_OBJ_NAME(op), m->name, errmsg);
         return NULL;
     }
 
     /* tail, but no INS_TAIL_MARKER: we had messed something outside! */
-    if (op->head && !(flag & INS_TAIL_MARKER))
+    if (op->head &&
+        !(flag & INS_TAIL_MARKER))
     {
-        LOG(llevBug,
-            "BUG: insert_ob_in_map(): inserting op->more WITHOUT INS_TAIL_MARKER! OB:%s (ARCH: %s) (MAP: %s (%d,%d))\n",
+        LOG(llevBug, "BUG: insert_ob_in_map(): inserting op->more WITHOUT INS_TAIL_MARKER! OB:%s (ARCH: %s) (MAP: %s (%d,%d))\n",
             STRING_OBJ_NAME(op), op->arch->name, m->path, op->x, op->y);
         return NULL;
     }
 
     if (op->more)
     {
-        if (insert_ob_in_map(op->more, op->more->map, originator, flag | INS_TAIL_MARKER) == NULL)
+        if (!insert_ob_in_map(op->more, op->more->map, originator, flag | INS_TAIL_MARKER))
         {
             if (!op->head)
-                LOG(llevBug, "BUG: insert_ob_in_map(): inserting op->more killed op %s in map %s\n", STRING_OBJ_NAME(op),
-                    m->name);
+                LOG(llevBug, "BUG: insert_ob_in_map(): inserting op->more killed op %s in map %s\n",
+                    STRING_OBJ_NAME(op), m->name);
             return NULL;
         }
     }
@@ -2236,7 +2013,8 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
     /* A stackable object with nrof 0 is junk.
      * We do this because otherwise objects marked for removal by merge_ob()
      * can be un-removed here. */
-    if (QUERY_FLAG(op, FLAG_CAN_STACK) && !op->nrof)
+    if (QUERY_FLAG(op, FLAG_CAN_STACK) &&
+        !op->nrof)
         return NULL;
 
 #ifdef POSITION_DEBUG
@@ -2244,14 +2022,16 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
     op->oy = op->y;
 #endif
 
+#if 0
     /* this is now a key part of this function, because
      * we adjust multi arches here when they cross map boarders!
      */
     x = op->x;
     y = op->y;
     op->map = m;
+    msp = MSP_GET(m, x, y);
 
-    if (!(m = out_of_map(m, &x, &y)))
+    if (!msp)
     {
         LOG(llevBug, "BUG: insert_ob_in_map(): Trying to insert object %s outside the map %s (%d,%d).\n\n",
             STRING_OBJ_NAME(op), op->map->path, op->x, op->y);
@@ -2265,6 +2045,27 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
         op->x = x;
         op->y = y;
     }
+#else
+    x = op->x;
+    y = op->y;
+    op->map = m;
+    msp = MSP_GET2(m, x, y);
+
+    if (!msp)
+    {
+        LOG(llevBug, "BUG: insert_ob_in_map(): Trying to insert object %s outside the map %s (%d,%d).\n\n",
+            STRING_OBJ_NAME(op), op->map->path, op->x, op->y);
+        return NULL;
+    }
+
+    /* x and y will only change when we change the map too - so check the map */
+    if (op->map != m)
+    {
+        op->map = m;
+        op->x = x;
+        op->y = y;
+    }
+#endif
 
     if (!(flag & INS_NO_MERGE))
         (void)merge_ob(op, NULL);
@@ -2284,41 +2085,38 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
      * Also, see that we don't need to access in the inserting or sorting the old objects.
      * no FLAG_xx check or something - all can be done by the cpu in cache.
      */
-    msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y); /* for fast access - we will not change the node here */
     /* Layer 0 (system) objects always go to the first object on the square --
      * everything else is ->above it -- and are never visible on the client map
-     * (so no SET_MAP_SPACE_SLAYER()) -- except to gmaster_matrix players but
-     * this is handled specially. */
-    if (op->layer == 0)
+     * -- except to gmaster_matrix players but this is handled specially. */
+    if (op->layer == MSP_SLAYER_SYSTEM)
     {
-        if ((top = GET_MAP_SPACE_FIRST(msp)))
+        if ((top = msp->first))
         {
             top->below = op;
             op->above = top;
         }
         else
         {
-            SET_MAP_SPACE_LAST(msp, op);
+            msp->last = op;
         }
 
-        SET_MAP_SPACE_FIRST(msp, op);
+        msp->first = op;
     }
     /* Other layers are non-system objects always go to the last object on the
      * square -- everything else is ->below it. */
     else
     {
-        if ((top = GET_MAP_SPACE_LAST(msp)))
+        if ((top = msp->last))
         {
             top->above = op;
             op->below = top;
         }
         else
         {
-            SET_MAP_SPACE_FIRST(msp, op);
+            msp->first = op;
         }
 
-        SET_MAP_SPACE_LAST(msp, op);
-        map_set_slayers(msp, op, 1);
+        msp->last = op;
     }
 
     /* lets set some specials for our players
@@ -2327,7 +2125,7 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
      */
     if (op->type == PLAYER)
     {
-        player *pl = CONTR(op);
+        player_t *pl = CONTR(op);
 
         /* Bug #000120, Make sure we have a valid player object here */
         if(!pl)
@@ -2351,7 +2149,12 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
         }
     }
 
-    if(!(op->map->map_flags & MAP_FLAG_NO_UPDATE))
+    if (op->layer > MSP_SLAYER_UNSLICED)
+    {
+        msp_rebuild_slices_with(msp, op);
+    }
+
+    if(!(op->map->flags & MAP_FLAG_NO_UPDATE))
     {
         update_object(op, UP_OBJ_INSERT);
     }
@@ -2370,17 +2173,22 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
 
     /* Help pets to catch up if player entered another mapset or
      * went too far away */
-    if(op->type == PLAYER && op->map != old_map && CONTR(op)->pets)
-        pets_follow_owner(op);
-
+    if (op->type == PLAYER)
+    {
+        if (op->map != old_map &&
+            CONTR(op)->pets)
+        {
+            pets_follow_owner(op);
+        }
+    }
     /* For exits we NULL ->race, which is the destination path. This forces it
      * to be recalculated next time the exit is used. Which means that an
      * inherited exit can be moved to a different (status) map and still
      * function correctly as an exit. */
-    if (op->type == EXIT ||
-        op->type == TELEPORTER ||
-        op->type == PIT ||
-        op->type == TRAPDOOR)
+    else if (op->type == EXIT ||
+             op->type == TELEPORTER ||
+             op->type == PIT ||
+             op->type == TRAPDOOR)
     {
         FREE_AND_CLEAR_HASH(op->race);
     }
@@ -2391,13 +2199,13 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
      * objects - for example when we hit a teleporter trap.
      * Check only for single tiles || or head but ALWAYS for heads.
      */
-    if (!(flag & INS_NO_WALK_ON) && (msp->flags & (P_WALK_ON | P_FLY_ON) || op->more) && !op->head)
+    if (!(flag & INS_NO_WALK_ON) && (msp->flags & (MSP_FLAG_WALK_ON | MSP_FLAG_FLY_ON) || op->more) && !op->head)
     {
         for (tmp = op; tmp; tmp = tmp->more)
         {
             int event;
 
-            msp = GET_MAP_SPACE_PTR(tmp->map, tmp->x, tmp->y);
+            msp = MSP_KNOWN(tmp);
 
             /* tmp is flying/levitating but no fly event here */
             if (IS_AIRBORNE(tmp)) /* Old code queried op only, but as
@@ -2405,13 +2213,13 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
                                    * queries it for the flying flags, we must
                                    * do so here too -- Smacky 20080926 */
             {
-                if (!(msp->flags & P_FLY_ON))
+                if (!(msp->flags & MSP_FLAG_FLY_ON))
                     continue;
             }
             /* tmp is walkimg but no walk event here */
             else
             {
-                if (!(msp->flags & P_WALK_ON))
+                if (!(msp->flags & MSP_FLAG_WALK_ON))
                     continue;
             }
 
@@ -2432,17 +2240,18 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
  *  finds an object of its own type, it'll remove that one first.
  *  op is the object to insert it under:  supplies x and the map.
  */
-void replace_insert_ob_in_map(char *arch_string, object *op)
+void replace_insert_ob_in_map(char *arch_string, object_t *op)
 {
-    object   *this,
-             *next;
-    MapSpace *msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
+    map_t *m = op->map;
+    sint16     x = op->x,
+               y = op->y;
+    msp_t  *msp = MSP_KNOWN(op);
+    object_t    *this,
+              *next;
 
     /* Search for itself and remove any old instances */
-    for (this = GET_MAP_SPACE_FIRST(msp); this; this = next)
+    FOREACH_OBJECT_IN_MSP(this, msp, next)
     {
-        next = this->above;
-
         if (!strcmp(this->arch->name, arch_string)) /* same archetype */
         {
             remove_ob(this); /* no move off here... should be ok, this is a technical function */
@@ -2451,9 +2260,9 @@ void replace_insert_ob_in_map(char *arch_string, object *op)
 
     /* Insert a replacement. */
     this = get_archetype(arch_string);
-    this->x = op->x;
-    this->y = op->y;
-    insert_ob_in_map(this, op->map, op, 0);
+    this->x = x;
+    this->y = y;
+    insert_ob_in_map(this, m, op, 0);
 }
 
 /*
@@ -2463,10 +2272,12 @@ void replace_insert_ob_in_map(char *arch_string, object *op)
  * On failure, NULL is returned.
  */
 
-object * get_split_ob(object *orig_ob, uint32 nr)
+object_t * get_split_ob(object_t *orig_ob, uint32 nr)
 {
-    object *newob;
-    object *tmp, *event;
+    object_t *newob,
+           *tmp,
+           *next,
+           *event;
 
     if(!orig_ob)
         return NULL;
@@ -2477,7 +2288,7 @@ object * get_split_ob(object *orig_ob, uint32 nr)
         return NULL;
     }
 
-    if (orig_ob->env == NULL && orig_ob->map->in_memory != MAP_ACTIVE)
+    if (orig_ob->env == NULL && orig_ob->map->in_memory != MAP_MEMORY_ACTIVE)
     {
         LOG(llevDebug, "get_split_ob(): Tried to split object whose map is not in memory.\n");
         return NULL;
@@ -2487,7 +2298,7 @@ object * get_split_ob(object *orig_ob, uint32 nr)
     copy_object(orig_ob, newob);
 
     /* Gecko: copy inventory (event objects)  */
-    for (tmp = orig_ob->inv; tmp; tmp = tmp->below)
+    FOREACH_OBJECT_IN_OBJECT(tmp, orig_ob, next)
     {
         if (tmp->type == TYPE_EVENT_OBJECT)
         {
@@ -2511,7 +2322,7 @@ object * get_split_ob(object *orig_ob, uint32 nr)
  * Return value: 'op' if something is left, NULL if the amount reached 0
  */
 
-object * decrease_ob_nr(object *op, uint32 i)
+object_t * decrease_ob_nr(object_t *op, uint32 i)
 {
     if (i == 0) // objects with op->nrof require this check
     {
@@ -2579,10 +2390,10 @@ object * decrease_ob_nr(object *op, uint32 i)
  *
  * The function returns now pointer to inserted item, and return value can
  * be != op, if items are merged. */
-object *insert_ob_in_ob(object *op, object *where)
+object_t *insert_ob_in_ob(object_t *op, object_t *where)
 {
-    mapstruct *m;
-    object    *merged;
+    map_t *m;
+    object_t    *merged;
 
     if (!op)
     {
@@ -2723,13 +2534,14 @@ object *insert_ob_in_ob(object *op, object *where)
  * on top.
  */
 
-int check_walk_on(object *const op, object *const originator, int flags)
+int check_walk_on(object_t *const op, object_t *const originator, int flags)
 {
-    uint8     fly,
-              local_walk_semaphore = 0; // 1= root call for static_walk_semaphore setting
-    tag_t     tag;
-    MapSpace *msp;
-    object   *this;
+    uint8      fly,
+               local_walk_semaphore = 0; // 1= root call for static_walk_semaphore setting
+    tag_t      tag;
+    msp_t  *msp;
+    object_t    *this,
+              *next;
 
     if (QUERY_FLAG(op, FLAG_NO_APPLY))
     {
@@ -2757,9 +2569,9 @@ int check_walk_on(object *const op, object *const originator, int flags)
     }
 
     tag = op->count;
-    msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
+    msp = MSP_KNOWN(op);
 
-    for (this = GET_MAP_SPACE_FIRST(msp); this; this = this->above)
+    FOREACH_OBJECT_IN_MSP(this, msp, next)
     {
         /* Can't apply yourself. */
         if (this == op)
@@ -2811,10 +2623,9 @@ int check_walk_on(object *const op, object *const originator, int flags)
  * There are some flags notifiying move_apply() about the kind of event
  * we have.
  */
-int check_walk_off(object *op, object *originator, int flags)
+int check_walk_off(object_t *op, object_t *originator, int flags)
 {
-    MapSpace   *mc;
-    object     *tmp, *part;
+    object_t     *part;
     int         local_walk_semaphore    = FALSE; /* when TRUE, this function is root call for static_walk_semaphore setting */
     int         fly;
     tag_t       tag;
@@ -2840,15 +2651,20 @@ int check_walk_off(object *op, object *originator, int flags)
 
     for (part = op; part; part = part->more) /* check single and multi arches */
     {
-        mc = GET_MAP_SPACE_PTR(part->map, part->x, part->y);
-        if (!(mc->flags & (P_WALK_OFF | P_FLY_OFF))) /* no event on this tile */
+        msp_t *msp = MSP_GET(op->map, part->x, part->y);
+        object_t   *tmp,
+                 *next;
+
+        if (!(msp->flags & (MSP_FLAG_WALK_OFF | MSP_FLAG_FLY_OFF))) /* no event on this tile */
+        {
             continue;
+        }
 
         /* This flags ensures we notice when a moving event has appeared!
          * Because the functions who set/clear the flag can be called recursive
          * from this function and walk_off() we need a static, global semaphor
-         * like flag to ensure we don't clear the flag except in the mother call.
-         */
+         * like flag to ensure we don't clear the flag except in the mother
+         * call. */
         if (!static_walk_semaphore)
         {
             local_walk_semaphore = TRUE;
@@ -2856,31 +2672,42 @@ int check_walk_off(object *op, object *originator, int flags)
             CLEAR_FLAG(op, FLAG_OBJECT_WAS_MOVED);
         }
 
-        for (tmp = mc->first; tmp != NULL; tmp = tmp->above) /* ok, check objects here... */
+        FOREACH_OBJECT_IN_MSP(tmp, msp, next)
         {
             if (tmp == part) /* its the ob part in this space... better not >1 part in same space of same arch */
+            {
                 continue;
+            }
 
-            if (fly ? QUERY_FLAG(tmp, FLAG_FLY_OFF) : QUERY_FLAG(tmp, FLAG_WALK_OFF)) /* event */
+            if ((fly) ? QUERY_FLAG(tmp, FLAG_FLY_OFF) : QUERY_FLAG(tmp, FLAG_WALK_OFF)) /* event */
             {
                 move_apply(tmp, part, originator, flags);
 
-                if (OBJECT_FREE(part) || tag != op->count)
+                if (OBJECT_FREE(part) ||
+                    tag != op->count)
                 {
                     if (local_walk_semaphore)
+                    {
                         static_walk_semaphore = FALSE;
+                    }
+
                     return CHECK_WALK_DESTROYED;
                 }
 
                 /* and here a insert_xx() was triggered - we MUST stop now */
-                if (!QUERY_FLAG(part, FLAG_REMOVED) || QUERY_FLAG(part, FLAG_OBJECT_WAS_MOVED))
+                if (!QUERY_FLAG(part, FLAG_REMOVED) ||
+                    QUERY_FLAG(part, FLAG_OBJECT_WAS_MOVED))
                 {
                     if (local_walk_semaphore)
+                    {
                         static_walk_semaphore = FALSE;
+                    }
+
                     return CHECK_WALK_MOVED;
                 }
             }
         }
+
         if (local_walk_semaphore)
         {
             local_walk_semaphore = FALSE;
@@ -2889,97 +2716,125 @@ int check_walk_off(object *op, object *originator, int flags)
     }
 
     if (local_walk_semaphore)
+    {
         static_walk_semaphore = FALSE;
+    }
+
     return CHECK_WALK_OK;
 }
 
-
-/*
- * present_arch(arch, map, x, y) searches for any objects with
+/* present_arch(arch, map, x, y) searches for any objects with
  * a matching archetype at the given map and coordinates.
- * The first matching object is returned, or NULL if none.
- */
-
-object * present_arch(archetype *at, mapstruct *m, int x, int y)
+ * The first matching object is returned, or NULL if none. */
+object_t *present_arch(archetype_t *at, map_t *m, sint16 x, sint16 y)
 {
-    object *tmp;
-    if (!(m = out_of_map(m, &x, &y)))
+    msp_t *msp = MSP_GET(m, x, y);
+    object_t   *this,
+             *next;
+
+    if (!msp)
     {
-        LOG(llevError, "ERROR: Present_arch called outside map.\n");
+        LOG(llevBug, "BUG:: %s/present_arch(): outside map!\n", __FILE__);
         return NULL;
     }
-    for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above)
-        if (tmp->arch == at)
-            return tmp;
+
+    FOREACH_OBJECT_IN_MSP(this, msp, next)
+    {
+        if (this->arch == at)
+        {
+            return this;
+        }
+    }
+
     return NULL;
 }
 
-/*
- * present(type, map, x, y) searches for any objects with
+/* present(type, map, x, y) searches for any objects with
  * a matching type variable at the given map and coordinates.
- * The first matching object is returned, or NULL if none.
- */
-
-object * present(unsigned char type, mapstruct *m, int x, int y)
+ * The first matching object is returned, or NULL if none. */
+object_t *present(unsigned char type, map_t *m, sint16 x, sint16 y)
 {
-    object *tmp;
-    if (!(m = out_of_map(m, &x, &y)))
+    msp_t *msp = MSP_GET(m, x, y);
+    object_t   *this,
+             *next;
+
+    if (!msp)
     {
-        LOG(llevError, "ERROR: Present called outside map.\n");
+        LOG(llevBug, "BUG:: %s/present(): outside map!\n", __FILE__);
         return NULL;
     }
-    for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above)
-        if (tmp->type == type)
-            return tmp;
+
+    FOREACH_OBJECT_IN_MSP(this, msp, next)
+    {
+        if (this->type == type)
+        {
+            return this;
+        }
+    }
+
     return NULL;
 }
 
-/*
- * present_in_ob(type, object) searches for any objects with
+/* present_in_ob(type, object) searches for any objects with
  * a matching type variable in the inventory of the given object.
- * The first matching object is returned, or NULL if none.
- */
-
-object * present_in_ob(unsigned char type, object *op)
+ * The first matching object is returned, or NULL if none. */
+object_t *present_in_ob(unsigned char type, object_t *op)
 {
-    object *tmp;
-    for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
-        if (tmp->type == type)
-            return tmp;
+    object_t *this,
+           *next;
+
+    FOREACH_OBJECT_IN_OBJECT(this, op, next)
+    {
+        if (this->type == type)
+        {
+            return this;
+        }
+    }
+
     return NULL;
 }
 
-/*
- * present_arch_in_ob(archetype, object) searches for any objects with
+/* present_arch_in_ob(archetype, object) searches for any objects with
  * a matching archetype in the inventory of the given object.
- * The first matching object is returned, or NULL if none.
- */
-
-object *present_arch_in_ob(archetype *at, object *op)
+ * The first matching object is returned, or NULL if none. */
+object_t *present_arch_in_ob(archetype_t *at, object_t *op)
 {
-    object *tmp;
-    for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
-        if (tmp->arch == at)
-            return tmp;
+    object_t *this,
+           *next;
+
+    FOREACH_OBJECT_IN_OBJECT(this, op, next)
+    {
+        if (this->arch == at)
+        {
+            return this;
+        }
+    }
+
     return NULL;
 }
 
-/*
-* present_arch_in_ob_temp(archetype, object) searches for any objects with
-* a matching archetype in the inventory of the given object which
-* has the flag FLAG_IS_USED_UP set.
-* The first matching object is returned, or NULL if none.
-*/
-object *present_arch_in_ob_temp(archetype *at, object *op)
+/* present_arch_in_ob_temp(archetype, object) searches for any objects with
+ * a matching archetype in the inventory of the given object which
+ * has the flag FLAG_IS_USED_UP set.
+ * The first matching object is returned, or NULL if none. */
+object_t *present_arch_in_ob_temp(archetype_t *at, object_t *op)
 {
-    object *tmp;
-    for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
-        if (tmp->arch == at && QUERY_FLAG(tmp,FLAG_IS_USED_UP))
-            return tmp;
+    object_t *this,
+           *next;
+
+    FOREACH_OBJECT_IN_OBJECT(this, op, next)
+    {
+        if (this->arch == at &&
+            QUERY_FLAG(this, FLAG_IS_USED_UP))
+        {
+            return this;
+        }
+    }
+
     return NULL;
 }
 
-int was_destroyed(const object *const op, const tag_t old_tag)
+int was_destroyed(const object_t *const op, const tag_t old_tag)
 {
     /* checking for OBJECT_FREE isn't necessary, but makes this function more
      * robust */
@@ -3000,9 +2855,9 @@ int was_destroyed(const object *const op, const tag_t old_tag)
  * concurrent call to load_object_str() (ie, via scripts using
  * game:LoadObject()). Also, multipart object loading is supported in Dai.
  * -- Smacky 20090314 */
-object * load_object_str(char *obstr)
+object_t * load_object_str(char *obstr)
 {
-    object *ob;
+    object_t *ob;
 
     /* Basic checks that obstr is reasonable. */
     if (strncmp(obstr, "arch ", 5) ||
@@ -3029,10 +2884,12 @@ object * load_object_str(char *obstr)
 }
 
 
-int auto_apply(object *op)
+int auto_apply(object_t *op)
 {
-    object*tmp =    NULL, *tmp2;
-    int             i, level;
+    object_t *tmp,
+           *next;
+    int     i,
+            level;
 
     /* because auto_apply will be done only *one* time
      * when a new, base map is loaded, we always clear
@@ -3076,9 +2933,8 @@ int auto_apply(object *op)
            * that is put inside other objects.
           * i fixed this - old part only copied one object instead all.
            */
-          for (tmp = op->inv; tmp; tmp = tmp2)
+          FOREACH_OBJECT_IN_OBJECT(tmp, op, next)
           {
-              tmp2 = tmp->below;
               remove_ob(tmp);
               if (op->env)
                   insert_ob_in_ob(tmp, op->env);
@@ -3093,22 +2949,22 @@ int auto_apply(object *op)
 /** Tries to locate a beacon.
  * @return the named beacon object if it was in memory,
  *         or NULL otherwise */
-object *locate_beacon(shstr *id)
+object_t *locate_beacon(shstr_t *id)
 {
     if(id == NULL)
     {
         LOG(llevBug, "locate_beacon(NULL)\n");
         return NULL;
     }
-    return (object *)hashtable_find(beacon_table, id);
+    return (object_t *)hashtable_find(beacon_table, id);
 }
 
 /** Intializer function for TYPE_BEACON objects.
  * Ensures the beacon is added to the beacon hashtable.
  */
-static void beacon_initializer(object *op)
+static void beacon_initializer(object_t *op)
 {
-    object *parent;
+    object_t *parent;
 
     /* Beacons must be unique so do not register beacons in SPAWN_POINT_MOBs */
     for (parent = op; parent->env; parent = parent->env)
@@ -3137,7 +2993,7 @@ static void beacon_initializer(object *op)
      * so lets not actually remove it. This means the object is still there on
      * the map, which IIMO is not great, but it is not registered as a beacon.
      * -- Smacky 20091024 */
-    if (!MAP_MULTI(parent->map))
+    if (!(parent->map->status & MAP_STATUS_MULTI))
     {
         LOG(llevMapbug, "MAPBUG:: Ignoring beacon on instance (%s[%s %d %d])!\n",
             STRING_OBJ_NAME(op), STRING_MAP_PATH(parent->map), parent->x,
@@ -3185,7 +3041,7 @@ static void beacon_initializer(object *op)
     }
 }
 
-static void monster_initializer(object *op)
+static void monster_initializer(object_t *op)
 {
     /* We only want to initialize monsters inside objects here. Monsters on maps
      * are handled by map.c:map.c/LoadObjects() after they have been inserted onto the map */
@@ -3216,9 +3072,9 @@ void init_object_initializers()
  * The natural root is the ancestor which is on a map (the assumption is that
  * players and monsters must always be directly on a map, not in an
  * environment). */
-object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
+object_t *find_next_object(object_t *op, uint8 type, uint8 mode, object_t *root)
 {
-    object *next;
+    object_t *next;
 
 #ifdef DEBUG_FNO
     LOG(llevDebug, "DEBUG:: %s/find_next_object(%s[%d], %d, %d, %s[%d]):",
@@ -3246,7 +3102,7 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
         }
         else if (next->env && !next->below)
         {
-            object *tmp = NULL;
+            object_t *tmp = NULL;
 
             while (!tmp && next->env)
             {
@@ -3325,9 +3181,9 @@ object *find_next_object(object *op, uint8 type, uint8 mode, object *root)
  * Changes an item back to its original/unbuffed state so that it can be saved
  * or buff effects can be recalculated.
  */
-void revert_buff_stats(object *item)
+void revert_buff_stats(object_t *item)
 {
-    object *original;
+    object_t *original;
 
     if (item && item->original)
     {
@@ -3352,12 +3208,12 @@ void revert_buff_stats(object *item)
  * store the original version of that object in item->original so that it can
  * easily be reverted or compared.
  */
-void fix_buff_stats(object *item)
+void fix_buff_stats(object_t *item)
 {
     int i = 0;
     uint32 n = 0;
-    object *inv;
-    object *below;
+    object_t *inv,
+           *next;
     uint8 buffs = 0; // Only tracks if the object still has *any* buffs
 
     if (!item)
@@ -3371,6 +3227,7 @@ void fix_buff_stats(object *item)
         return;
     }
 
+    // Try to create a duplicate of the object to make changing stats relative to the original.
     if (item->original)
     {
         // If orig was found, item should be different than orig, so revert item to orig.
@@ -3388,11 +3245,10 @@ void fix_buff_stats(object *item)
     {
         LOG(llevDebug, "fix_buff_stats() failed - could not copy original object\n");
         return;
-    }
+     }
 
-    for (inv = item->inv; inv != NULL; inv = below)
+    FOREACH_OBJECT_IN_OBJECT(inv, item, next)
     {
-        below = inv->below;
         buffs++;
 
         if (inv->type != BUFF_FORCE)
@@ -3473,11 +3329,12 @@ void fix_buff_stats(object *item)
  * This does not take into account if the object has already taken
  * this buff.
  */
-uint8 check_buff_limit(object *op, int nr)
+uint8 check_buff_limit(object_t *op, int nr)
 {
     sint8 real_max = 0; // The max after considering item_condition
     sint8 buffs = 0;
-    object *inv;
+    object_t *inv,
+           *next;
 
     // -1 always means this item can never be buffed.
     if (op->max_buffs == -1)
@@ -3503,16 +3360,12 @@ uint8 check_buff_limit(object *op, int nr)
         real_max = op->max_buffs;
     }
 
-    if (op->inv)
+    FOREACH_OBJECT_IN_OBJECT(inv, op, next)
     {
-        for (inv = op->inv; inv; inv = inv->below)
+        if (inv->type == BUFF_FORCE)
         {
-            if (inv->type == BUFF_FORCE)
-            {
-                buffs += inv->nrof;
-            }
+            buffs += inv->nrof;
         }
-
     }
 
     if (buffs + nr > real_max)
@@ -3524,9 +3377,10 @@ uint8 check_buff_limit(object *op, int nr)
 
 }
 
-object * check_buff_exists(object *item, const char *name)
+object_t * check_buff_exists(object_t *item, const char *name)
 {
-    object *inv;
+    object_t *inv,
+           *next;
 
     if (!item || !name)
     {
@@ -3534,7 +3388,7 @@ object * check_buff_exists(object *item, const char *name)
         return NULL;
     }
 
-    for (inv = item->inv; inv; inv = inv->below)
+    FOREACH_OBJECT_IN_OBJECT(inv, item, next)
     {
         if (inv->type == BUFF_FORCE && strcmp(inv->name, name) == 0)
         {
@@ -3554,9 +3408,9 @@ object * check_buff_exists(object *item, const char *name)
  *
  * Multiple flags can be applied to better inform the user of why the buff wasn't applied.
  */
-int add_item_buff(object *item, object *buff, short just_checking)
+int add_item_buff(object_t *item, object_t *buff, short just_checking)
 {
-    object *oldbuff;
+    object_t *oldbuff;
     uint8 ret = BUFF_ADD_SUCCESS;
 
     if (!item || !buff)
@@ -3623,9 +3477,9 @@ int add_item_buff(object *item, object *buff, short just_checking)
     return ret;
 }
 
-int remove_item_buff(object *item, char *name, uint32 nrof)
+int remove_item_buff(object_t *item, char *name, uint32 nrof)
 {
-    object *oldbuff;
+    object_t *oldbuff;
 
     if (!item || !name)
     {
@@ -3670,10 +3524,10 @@ int remove_item_buff(object *item, char *name, uint32 nrof)
  * no article but yes nrof.
  *
  * TODO: status will probably be removed and handled client-side in future.
- *
+ * 
  * NOTE: Capitalisation, pluralisation and other string mungeing will be
  * handled client-side. */
-char *query_name(object *what, object *who, uint32 article, uint8 status)
+char *query_name(object_t *what, object_t *who, uint32 article, uint8 status)
 {
     static char   buf[5][MEDIUM_BUF];
     static uint8  n = 0;
@@ -3845,7 +3699,7 @@ char *query_name(object *what, object *who, uint32 article, uint8 status)
                 else if ((CONTR(who)->group_status & GROUP_STATUS_GROUP) &&
                     CONTR(CONTR(who)->group_leader)->group_id == what->stats.maxhp)
                 {
-                    sprintf(strchr(cp, '\0'), " (bounty of your group%s)",
+                    sprintf(strchr(cp, '\0'), " (bounty of your group%s)", 
                         (QUERY_FLAG(what, FLAG_BEEN_APPLIED)) ? ", SEARCHED" : "");
                 }
                 else
@@ -4006,3 +3860,21 @@ char *query_name(object *what, object *who, uint32 article, uint8 status)
 
     return cp;
 }
+
+map_t *parent_map(object_t *what)
+{
+    map_t *m;
+
+    while (what)
+    {
+        if ((m = what->map))
+        {
+            break;
+        }
+
+        what = what->env;
+    }
+
+    return m;
+}
+

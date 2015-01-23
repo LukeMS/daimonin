@@ -173,6 +173,11 @@ struct plugin_hooklist *hooks;
     MAP_WHEN_RESET((_M_)) = 0
 #endif
 
+#undef OUT_OF_MAP
+#define OUT_OF_MAP(_M_, _X_, _Y_) \
+    ((!OUT_OF_REAL_MAP((_M_), (_X_), (_Y_)) || \
+      ((_M_) = hooks->out_of_map((_M_), &(_X_), &(_Y_)))) ? (_M_) : NULL)
+
 #undef QUERY_SHORT_NAME
 #define QUERY_SHORT_NAME(_WHAT_, _WHO_) \
     hooks->query_name((_WHAT_), (_WHO_), \
@@ -195,18 +200,18 @@ struct lua_context
     int                 threadidx; /* ref to thread object in the registry */
 
     /* Script event data, accessible in lua through the event variable */
-    object             *self, *activator, *other; /* Involved objects */
+    object_t             *self, *activator, *other; /* Involved objects */
     tag_t               self_tag, activator_tag, other_tag;
-    shstr              *text;             /* Text for SAY events */
+    shstr_t              *text;             /* Text for SAY events */
 
-    shstr              *options;          /* Options from event object */
-    shstr              *file;             /* Script file (normalized) */
+    shstr_t              *options;          /* Options from event object_t */
+    shstr_t              *file;             /* Script file (normalized) */
     int                 parm1, parm2, parm3, parm4;  /* Parameters from event */
     int                 returnvalue;              /* Return value from script */
     move_response      *move_response;    /* For AI move behaviours */
 };
 
-enum lua_object_type
+enum lua_objectype
 {
     LUATYPE_EVENT,
     LUATYPE_GAME,
@@ -234,8 +239,8 @@ typedef struct lua_object_s
     union
     {
         struct lua_context     *context;
-        object                 *object;
-        mapstruct              *map;
+        object_t                 *object;
+        map_t              *map;
         void                   *game;
 
         struct flag_decl        flag;
@@ -250,7 +255,7 @@ typedef struct lua_object_s
 
 typedef struct lua_class_s
 {
-    enum lua_object_type    type;
+    enum lua_objectype    type;
     const char             *name;
     int                     meta;    /* ref to the metatable for class objects */
 
@@ -346,9 +351,9 @@ extern int              AI_init(lua_State *s);
 /*****************************************************************************/
 
 /* The "About Lua" stuff. Bound to "python" command. */
-extern MODULEAPI int    cmd_aboutLua(object *op, char *params);
+extern MODULEAPI int    cmd_aboutLua(object_t *op, char *params);
 /* The following one handles all custom Python command calls. */
-extern MODULEAPI int    cmd_customLua(object *op, char *params);
+extern MODULEAPI int    cmd_customLua(object_t *op, char *params);
 
 #if 0
 /* This structure is used to define one python-implemented crossfire command.*/

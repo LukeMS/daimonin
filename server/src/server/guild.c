@@ -26,32 +26,36 @@
 #include <global.h>
 
 /* get the guild object from a player */
-object *guild_get(player *pl, char *name)
+/* FIXME: Why is name not shstr_t *? */
+object_t *guild_get(player_t *pl, char *name)
 {
-    object     *walk = pl->guild_force;
-
-    if(!pl->ob)
-        return NULL;
-
-    if (walk && name) /* we have a guild force - check its our guild name */
+    if (pl->guild_force &&
+        name) /* we have a guild force - check its our guild name */
     {
-        if (!walk->slaying || strcmp(walk->slaying, name)) /* we are not in this guild - search old guild info */
+        object_t *walk = pl->guild_force,
+               *next;
+
+        if (!walk->slaying ||
+            strcmp(walk->slaying, name)) /* we are not in this guild - search old guild info */
         {
-            for (walk = walk->inv; walk != NULL; walk = walk->below)
+            FOREACH_OBJECT_IN_OBJECT(walk, walk, next)
             {
-                if (walk->slaying && !strcmp(walk->slaying, name)) /* thats the old guild info */
-                    break;
+                if (walk->slaying &&
+                    !strcmp(walk->slaying, name)) /* thats the old guild info */
+                {
+                    return walk;
+                }
             }
         }
     }
 
-    return walk;
+    return NULL;
 }
 
-void guild_remove_restricted_items(player *pl)
+void guild_remove_restricted_items(player_t *pl)
 {
-    object *guild = NULL;
-    object *item = NULL;
+    object_t *guild = NULL;
+    object_t *item = NULL;
 
     if(!pl->ob || !pl->guild_force)
     {
@@ -67,29 +71,29 @@ void guild_remove_restricted_items(player *pl)
     {
         if (item->sub_type1 >= WEAP_POLE_IMPACT && (guild->weight_limit & GUILD_NO_POLEARM))
         {
-            player_apply(pl->ob, item, AP_QUIET | AP_UNAPPLY);
+            (void)manual_apply(pl->ob, item, AP_QUIET | AP_UNAPPLY);
         }
         if (item->sub_type1 >= WEAP_2H_IMPACT && item->sub_type1 <= WEAP_2H_CLEAVE &&
              (guild->weight_limit & GUILD_NO_2H))
         {
-            player_apply(pl->ob, item, AP_QUIET | AP_UNAPPLY);
+            (void)manual_apply(pl->ob, item, AP_QUIET | AP_UNAPPLY);
         }
     }
     if ((item = pl->equipment[PLAYER_EQUIP_BOW]))
     {
         if (guild->weight_limit & GUILD_NO_ARCHERY)
         {
-            player_apply(pl->ob, item, AP_QUIET | AP_UNAPPLY);
+            (void)manual_apply(pl->ob, item, AP_QUIET | AP_UNAPPLY);
         }
     }
 
     CLEAR_FLAG(pl->ob, FLAG_NO_FIX_PLAYER);
 }
 
-/* join a guild and return the new and/or updated guild object */
-object *guild_join(player *pl, char *name, int s1_group, int s1_value, int s2_group, int s2_value, int s3_group, int s3_value)
+/* join a guild and return the new and/or updated guild object_t */
+object_t *guild_join(player_t *pl, char *name, int s1_group, int s1_value, int s2_group, int s2_value, int s3_group, int s3_value)
 {
-    object *guild;
+    object_t *guild;
 
     if(!pl->ob)
     {
@@ -154,9 +158,11 @@ object *guild_join(player *pl, char *name, int s1_group, int s1_value, int s2_gr
 /* Leave the current guild, move the guild info in the guild
  * object inventory and neutralize the force.
  */
-void guild_leave(player *pl)
+void guild_leave(player_t *pl)
 {
-    object *old, *walk = pl->guild_force;
+    object_t *old,
+           *walk = pl->guild_force,
+           *next;
 
     if(!pl->ob)
     {
@@ -168,7 +174,7 @@ void guild_leave(player *pl)
         return;
     }
 
-    for (old = walk->inv; old != NULL; old = old->below)
+    FOREACH_OBJECT_IN_OBJECT(old, walk, next)
     {
         if (old->slaying == walk->slaying) /* thats the old guild info */
         {
