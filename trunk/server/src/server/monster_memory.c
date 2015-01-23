@@ -32,8 +32,8 @@
 #include <aiconfig.h>
 
 /* Those are pseudobehaviours in monster_behaviour.c */
-extern int get_npc_object_attraction(object *op, object *other);
-extern int get_npc_attitude(object *op, object *other);
+extern int get_npc_object_attraction(object_t *op, object_t *other);
+extern int get_npc_attitude(object_t *op, object_t *other);
 
 /** Purge a single object from list of known mobs/objects */
 static inline void remove_mob_known(struct mob_known_obj *tmp, struct mob_known_obj **first, hashtable *ht)
@@ -53,7 +53,7 @@ static inline void remove_mob_known(struct mob_known_obj *tmp, struct mob_known_
 }
 
 /** Purge invalid and old objects from list of known mobs/objects */
-void cleanup_mob_knowns(object *op, struct mob_known_obj **first, hashtable *ht)
+void cleanup_mob_knowns(object_t *op, struct mob_known_obj **first, hashtable *ht)
 {
     struct mob_known_obj   *tmp;
     for (tmp = *first; tmp; tmp = tmp->next)
@@ -70,7 +70,7 @@ void cleanup_mob_knowns(object *op, struct mob_known_obj **first, hashtable *ht)
 }
 
 /** Completely clear list of known mobs or objects */
-void clear_mob_knowns(object *op, struct mob_known_obj **first, hashtable *ht)
+void clear_mob_knowns(object_t *op, struct mob_known_obj **first, hashtable *ht)
 {
     struct mob_known_obj   *tmp;
     /* TODO: can be optimized (clear hashtable, return all chunks, set list
@@ -114,11 +114,11 @@ void update_npc_known_obj(struct mob_known_obj *known, int delta_friendship, int
  * @param check_los set to enable line-of-sight test in some cases
  * @return a mob_known_obj struct for other, or NULL if there was a problem.
  */
-struct mob_known_obj *register_npc_known_obj(object *npc, object *other, int friendship, int attraction, int check_los)
+struct mob_known_obj *register_npc_known_obj(object_t *npc, object_t *other, int friendship, int attraction, int check_los)
 {
     struct mob_known_obj *known;
     int i;
-    rv_vector rv;
+    rv_t rv;
     int nomap = 0;
     int is_object = 0;
 
@@ -167,7 +167,7 @@ struct mob_known_obj *register_npc_known_obj(object *npc, object *other, int fri
             return NULL;
         }
 
-        /* We check LOS here, only if we are registering a new object */
+        /* We check LOS here, only if we are registering a new object_t */
         /* Also, we only check against players, and not if we have
          * been hit or helped by them, or if they own us */
         if(other->type == PLAYER && check_los && npc->owner != other)
@@ -264,7 +264,7 @@ struct mob_known_obj *register_npc_known_obj(object *npc, object *other, int fri
  * @param delta_friendship friendship change towards other (for example if other is helping or attacking npc)
  * @param delta_attraction attraction change towards other
  */
-struct mob_known_obj *update_npc_knowledge(object *npc, object *other, int delta_friendship, int delta_attraction)
+struct mob_known_obj *update_npc_knowledge(object_t *npc, object_t *other, int delta_friendship, int delta_attraction)
 {
     int is_object = 0; /* We differ between objects and mobs */
     struct mob_known_obj *known = NULL; /* Did we already know this other */
@@ -371,7 +371,7 @@ struct mob_known_obj *update_npc_knowledge(object *npc, object *other, int delta
  * @return a vector. possibly an older cached vector. possibly NULL if a vector
  * couldn't be calculated.
  */
-rv_vector * get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int maxage)
+rv_t * get_known_obj_rv(object_t *op, struct mob_known_obj *known_obj, int maxage)
 {
     /* TODO: added checks for NULL maps here (happens if monster is picked up, for example).
      * Actually, it would be slightly more interesting if we could get the coordinates for the

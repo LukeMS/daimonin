@@ -30,12 +30,12 @@
  * behaviour classes
  */
 
-struct  obj;
+struct  object_t;
 struct  mob_behaviour_param;
 struct  behaviour_move_response;
-typedef void (PROCESSES_behaviour_t)(struct obj *, struct mob_behaviour_param *);
-typedef void (MOVES_behaviour_t)(struct obj *, struct mob_behaviour_param *, struct behaviour_move_response *);
-typedef int (ACTIONS_behaviour_t)(struct obj *, struct mob_behaviour_param *);
+typedef void (PROCESSES_behaviour_t)(struct object_t *, struct mob_behaviour_param *);
+typedef void (MOVES_behaviour_t)(struct object_t *, struct mob_behaviour_param *, struct behaviour_move_response *);
+typedef int (ACTIONS_behaviour_t)(struct object_t *, struct mob_behaviour_param *);
 
 /* Some flags and types we can use in the declaration */
 enum

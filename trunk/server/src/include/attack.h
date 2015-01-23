@@ -27,19 +27,14 @@
 #define __ATTACK_H
 
 /* status for attack function to decide kind of attack */
-typedef enum _env_attack
+enum attack_envmode_t
 {
     ENV_ATTACK_CHECK = -1,
     ENV_ATTACK_YES,
     ENV_ATTACK_NO
-}_env_attack;
+};
 
-/* Note that the last ATNR_ should be one less than NROFATTACKS above
- * since the ATNR starts counting at zero.
- * For compatible loading, these MUST correspond to the same value
- * as the bitmasks below.
- */
-typedef enum _attacks
+enum attack_nr_t
 {
     /* We start with the double used attacks - for resist & protection too */
     /* damage type: physical */
@@ -88,22 +83,22 @@ typedef enum _attacks
     /* and the real special one here */
     ATNR_INTERNAL,
     NROFATTACKS /* index (= 32 ATM) */
-}_attacks;
+};
 
 /* defines the last real damage attack in array above */
 #define LAST_ATNR_ATTACK (ATNR_GODPOWER)
 
-typedef struct attack_name_t
+struct attack_name_t
 {
     char *abbr;
     char *name;
-} attack_name_t;
+};
 
 /* only the damage dealing attacks are covered by armour protections.
  * all attacks in the second part are effects and only covered from
  * resistance. */
 extern attack_name_t attack_name[NROFATTACKS];
-extern int   resist_table[];
+extern attack_nr_t   resist_table[];
 
 #define num_resist_table 58
 

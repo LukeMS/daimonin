@@ -35,10 +35,11 @@
  * multiparts anyway. The containef monster should be a spawn point.
  *
  * -- Smacky 20140323 */
-static void free_container_monster(object *monster, object *op)
+static void free_container_monster(object_t *monster, object_t *op)
 {
-    int     i;
-    object *container   = monster->env;
+    object_t *container = monster->env;
+    msp_t *msp;
+    sint8 i;
 
     if (container == NULL)
         return;
@@ -46,18 +47,19 @@ static void free_container_monster(object *monster, object *op)
     remove_ob(monster); /* in container, no walk off check */
     monster->x = container->x;
     monster->y = container->y;
-    i = find_free_spot(monster->arch, monster, op->map, monster->x, monster->y, 0, 0, SIZEOFFREE1 + 1);
+    msp = MSP_GET(op->map, monster->x, monster->y);
+    i = overlay_find_free(msp, monster, 0, OVERLAY_3X3, 0);
     if (i != -1)
     {
-        monster->x += freearr_x[i];
-        monster->y += freearr_y[i];
+        monster->x += OVERLAY_X(i);
+        monster->y += OVERLAY_Y(i);
     }
 
     fix_monster(monster);
 
     if (insert_ob_in_map(monster, op->map, monster, 0))
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "%s jumps out of %s!",
+        ndi(NDI_UNIQUE, 0, op, "%s jumps out of %s!",
            QUERY_SHORT_NAME(monster, op),
            QUERY_SHORT_NAME(container, op));
     }
@@ -66,7 +68,7 @@ static void free_container_monster(object *monster, object *op)
 /* a player has opened a container - link him to the
 * list of player which have (perhaps) it opened too.
 */
-int container_link(player *const pl, object *const sack)
+int container_link(player_t *const pl, object_t *const sack)
 {
     int ret = 0;
 
@@ -137,9 +139,9 @@ int container_link(player *const pl, object *const sack)
 * if pl == NULL, we unlink ALL players from sack.
 * if sack == NULL, we unlink the current container from pl.
 */
-int container_unlink(player *const pl, object *sack)
+int container_unlink(player_t *const pl, object_t *sack)
 {
-    object *tmp, *tmp2;
+    object_t *tmp, *tmp2;
 
     if (pl == NULL && sack == NULL)
     {
@@ -255,12 +257,13 @@ int container_unlink(player *const pl, object *sack)
 /* examine the items in a container which gets readied or opened by player .
 * Explode or trigger every trap & rune in there and free trapped monsters.
 */
-int container_trap(object *const op, object *const container)
+int container_trap(object_t *const op, object_t *const container)
 {
     int     ret = 0;
-    object *tmp;
+    object_t *tmp,
+           *next;
 
-    for (tmp = container->inv; tmp; tmp = tmp->below)
+    FOREACH_OBJECT_IN_OBJECT(tmp, container, next)
     {
         if (tmp->type == RUNE) /* search for traps & runes */
         {

@@ -322,8 +322,8 @@ _level_color level_color[MAXMOBLEVEL + 1] =
 #endif
 };
 
-static int AdjustExp(object *pl, object *op, int exp, int cap);
-static void AdjustLevel(object *who, object *op, int flag_msg);
+static int AdjustExp(object_t *pl, object_t *op, int exp, int cap);
+static void AdjustLevel(object_t *who, object_t *op, int flag_msg);
 
 /* add_exp() new algorithm. Revamped experience gain/loss routine.
  * Based on the old add_exp() function - but tailored to add experience
@@ -343,10 +343,10 @@ static void AdjustLevel(object *who, object *op, int flag_msg);
  * add_exp() and AdjustExp(). Its now much faster, easier and more accurate. MT
  * exp lose by dead is handled from apply_death_exp_penalty().
  */
-sint32 add_exp(object *op, int exp, int skill_nr, int cap)
+sint32 add_exp(object_t *op, int exp, int skill_nr, int cap)
 {
-    object *skillgroup      = NULL;    /* the exp. object into which experience will go */
-    object *skill   = NULL; /* the real skill object */
+    object_t *skillgroup      = NULL;    /* the exp. object into which experience will go */
+    object_t *skill   = NULL; /* the real skill object_t */
     /*    int del_exp=0; */
 
     /*LOG(llevBug,"ADD: add_exp() called for $d!\n", exp); */
@@ -446,9 +446,9 @@ sint32 add_exp(object *op, int exp, int skill_nr, int cap)
  * This routine use brute force and goes through the whole inventory. We should
  * use a kind of skill container for speed this up. MT
  */
-static int AdjustExp(object *pl, object *op, int exp, int cap)
+static int AdjustExp(object_t *pl, object_t *op, int exp, int cap)
 {
-    object *tmp;
+    object_t *tmp;
     int     i;
     sint32  sk_exp, pl_exp;
 
@@ -515,7 +515,7 @@ static int AdjustExp(object *pl, object *op, int exp, int cap)
                 }
             }
 
-            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl, "%s exp~ in ~%s~!",
+            ndi(NDI_UNIQUE | NDI_WHITE, 0, pl, "%s exp~ in ~%s~!",
                 buf, STRING_OBJ_NAME(op));
             exp = total;
         }
@@ -526,7 +526,7 @@ static int AdjustExp(object *pl, object *op, int exp, int cap)
 
     for (i = 0; i < NROFSKILLS; i++)
     {
-        object *skill = CONTR(pl)->skill_ptr[i];
+        object_t *skill = CONTR(pl)->skill_ptr[i];
 
         if (skill &&
             skill->magic == op->magic &&
@@ -558,9 +558,9 @@ static int AdjustExp(object *pl, object *op, int exp, int cap)
  * whether the player gets more hp, sp and new levels.
  * -b.t.
  */
-static void AdjustLevel(object *who, object *op, int flag_msg)
+static void AdjustLevel(object_t *who, object_t *op, int flag_msg)
 {
-    object *force;
+    object_t *force;
     int drain_level = 0;
 
     SET_FLAG(who, FLAG_NO_FIX_PLAYER);
@@ -577,7 +577,7 @@ static void AdjustLevel(object *who, object *op, int flag_msg)
         /* show the player some effects... */
         if (op->type == TYPE_SKILL && who && who->map)
         {
-            object *effect_ob;
+            object_t *effect_ob;
 
             play_sound_player_only(CONTR(who), SOUND_LEVEL_UP, SOUND_NORMAL, 0, 0);
 
@@ -591,7 +591,7 @@ static void AdjustLevel(object *who, object *op, int flag_msg)
 
                 if (!insert_ob_in_map(effect_ob, effect_ob->map, NULL, INS_NO_MERGE | INS_NO_WALK_ON))
                 {
-                    /* something is wrong - kill object */
+                    /* something is wrong - kill object_t */
                     if (!QUERY_FLAG(effect_ob, FLAG_REMOVED))
                         remove_ob(effect_ob); /* check off not needed */
                 }
@@ -631,18 +631,18 @@ static void AdjustLevel(object *who, object *op, int flag_msg)
 
             if(flag_msg)
             {
-                new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, "You are now level %d in %s based skills.",
+                ndi(NDI_UNIQUE | NDI_RED, 0, who, "You are now level %d in %s based skills.",
                               op->level, op->name);
             }
         }
         else if (flag_msg && op->level > 1 && op->type == TYPE_SKILL)
         {
-            new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, "You are now level %d in the skill %s.",
+            ndi(NDI_UNIQUE | NDI_RED, 0, who, "You are now level %d in the skill %s.",
                            op->level, op->name);
         }
         else if(flag_msg)
         {
-            new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, "You are now level %d.",
+            ndi(NDI_UNIQUE | NDI_RED, 0, who, "You are now level %d.",
                           op->level);
         }
 
@@ -656,17 +656,17 @@ static void AdjustLevel(object *who, object *op, int flag_msg)
         {
             if (op->type == TYPE_SKILLGROUP)
             {
-                new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, "-You are now level %d in %s based skills.",
+                ndi(NDI_UNIQUE | NDI_RED, 0, who, "-You are now level %d in %s based skills.",
                               op->level, op->name);
             }
             else if (op->type == TYPE_SKILL)
             {
-                new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, "-You are now level %d in the skill %s.",
+                ndi(NDI_UNIQUE | NDI_RED, 0, who, "-You are now level %d in the skill %s.",
                               op->level, op->name);
             }
             else
             {
-                new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, "-You are now level %d.",
+                ndi(NDI_UNIQUE | NDI_RED, 0, who, "-You are now level %d.",
                               op->level);
             }
         }
@@ -686,14 +686,16 @@ static void AdjustLevel(object *who, object *op, int flag_msg)
  * but it will be hard in any case to get exp in high levels.
  * This is a just a design adjustment.
  */
-void apply_death_exp_penalty(object *op)
+void apply_death_exp_penalty(object_t *op)
 {
-    object *tmp;
+    object_t *tmp,
+           *next;
     float   loss_p;
     long    level_exp, loss_exp;
 
     CONTR(op)->update_skills = 1; /* we will sure change skill exp, mark for update */
-    for (tmp = op->inv; tmp; tmp = tmp->below)
+
+    FOREACH_OBJECT_IN_OBJECT(tmp, op, next)
     {
         /* only adjust skills with level and a positive exp value - negative exp has special meaning */
         if (tmp->type == TYPE_SKILL && tmp->level && tmp->last_eat == INDIRECT)
@@ -735,7 +737,7 @@ void apply_death_exp_penalty(object *op)
         }
     }
 
-    for (tmp = op->inv; tmp; tmp = tmp->below)
+    FOREACH_OBJECT_IN_OBJECT(tmp, op, next)
     {
         if (tmp->type == TYPE_SKILLGROUP && tmp->stats.exp)
             AdjustLevel(op, tmp, FALSE); /* adjust exp objects levels */
@@ -828,7 +830,7 @@ float calc_level_difference(int who_lvl, int op_lvl)
  * successfull use of a skill.  Returns value of experience gain.
  * If level is == -1, we get the used skill from (player) who.
  */
-int calc_skill_exp(object *who, object *op, float mod, int level, int *real)
+int calc_skill_exp(object_t *who, object_t *op, float mod, int level, int *real)
 {
     int     who_lvl = level, op_lvl = 0;
     int    op_exp = 0;
@@ -900,7 +902,7 @@ int calc_skill_exp(object *who, object *op, float mod, int level, int *real)
     return op_exp;
 }
 
-int exp_from_base_skill(player *pl, int base_exp, int sk)
+int exp_from_base_skill(player_t *pl, int base_exp, int sk)
 {
     int i;
     float percent;

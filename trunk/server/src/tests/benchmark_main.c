@@ -55,7 +55,7 @@ void run_benchmarks(void)
 {
     /* See http://check.sourceforge.net/doc/ for a check tutorial */
     int failed = 0;
-    SRunner *sr = srunner_create(shstr_benchmark_suite());
+    SRunner *sr = srunner_create(shstr_t_benchmark_suite());
     srunner_add_suite(sr, hashtable_benchmark_suite());
 
     fprintf(stderr, "Running Daimonin Benchmarks\n");

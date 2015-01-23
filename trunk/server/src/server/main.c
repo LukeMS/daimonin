@@ -59,70 +59,70 @@ static char     days[7][4]  =
  * handled client-side. Sending a huge mass of NDIs from server to client like
  * this is just a waste.
  * -- Smacky 20090613 */
-void version(object *op)
+void version(object_t *op)
 {
     /* If in a socket, don't print out the list of authors.  It confuses the
      * crossclient program.
      */
     if (op == NULL)
         return;
-    new_draw_info(NDI_UNIQUE, 0, op, "Authors and contributors to Daimonin & Crossfire:");
-    new_draw_info(NDI_UNIQUE, 0, op, "(incomplete list - mail us if you miss your name):");
-    new_draw_info(NDI_UNIQUE, 0, op, "mark@scruz.net (Mark Wedel)");
-    new_draw_info(NDI_UNIQUE, 0, op, "frankj@ifi.uio.no (Frank Tore Johansen)");
-    new_draw_info(NDI_UNIQUE, 0, op, "kjetilho@ifi.uio.no (Kjetil Torgrim Homme)");
-    new_draw_info(NDI_UNIQUE, 0, op, "tvangod@ecst.csuchico.edu (Tyler Van Gorder)");
-    new_draw_info(NDI_UNIQUE, 0, op, "elmroth@cd.chalmers.se (Tony Elmroth)");
-    new_draw_info(NDI_UNIQUE, 0, op, "dougal.scott@fcit.monasu.edu.au (Dougal Scott)");
-    new_draw_info(NDI_UNIQUE, 0, op, "wchuang@athena.mit.edu (William)");
-    new_draw_info(NDI_UNIQUE, 0, op, "ftww@cs.su.oz.au (Geoff Bailey)");
-    new_draw_info(NDI_UNIQUE, 0, op, "jorgens@flipper.pvv.unit.no (Kjetil Wiekhorst Jxrgensen)");
-    new_draw_info(NDI_UNIQUE, 0, op, "c.blackwood@rdt.monash.edu.au (Cameron Blackwood)");
-    new_draw_info(NDI_UNIQUE, 0, op, "jtraub+@cmu.edu (Joseph L. Traub)");
-    new_draw_info(NDI_UNIQUE, 0, op, "rgg@aaii.oz.au (Rupert G. Goldie)");
-    new_draw_info(NDI_UNIQUE, 0, op, "eanders+@cmu.edu (Eric A. Anderson)");
-    new_draw_info(NDI_UNIQUE, 0, op, "eneq@Prag.DoCS.UU.SE (Rickard Eneqvist)");
-    new_draw_info(NDI_UNIQUE, 0, op, "Jarkko.Sonninen@lut.fi (Jarkko Sonninen)");
-    new_draw_info(NDI_UNIQUE, 0, op, "kholland@sunlab.cit.cornell.du (Karl Holland)");
-    new_draw_info(NDI_UNIQUE, 0, op, "vick@bern.docs.uu.se (Mikael Lundgren)");
-    new_draw_info(NDI_UNIQUE, 0, op, "mol@meryl.csd.uu.se (Mikael Olsson)");
-    new_draw_info(NDI_UNIQUE, 0, op, "Tero.Haatanen@lut.fi (Tero Haatanen)");
-    new_draw_info(NDI_UNIQUE, 0, op, "ylitalo@student.docs.uu.se (Lasse Ylitalo)");
-    new_draw_info(NDI_UNIQUE, 0, op, "anipa@guru.magic.fi (Niilo Neuvo)");
-    new_draw_info(NDI_UNIQUE, 0, op, "mta@modeemi.cs.tut.fi (Markku J{rvinen)");
-    new_draw_info(NDI_UNIQUE, 0, op, "meunier@inf.enst.fr (Sylvain Meunier)");
-    new_draw_info(NDI_UNIQUE, 0, op, "jfosback@darmok.uoregon.edu (Jason Fosback)");
-    new_draw_info(NDI_UNIQUE, 0, op, "cedman@capitalist.princeton.edu (Carl Edman)");
-    new_draw_info(NDI_UNIQUE, 0, op, "henrich@crh.cl.msu.edu (Charles Henrich)");
-    new_draw_info(NDI_UNIQUE, 0, op, "schmid@fb3-s7.math.tu-berlin.de (Gregor Schmid)");
-    new_draw_info(NDI_UNIQUE, 0, op, "quinet@montefiore.ulg.ac.be (Raphael Quinet)");
-    new_draw_info(NDI_UNIQUE, 0, op, "jam@modeemi.cs.tut.fi (Jari Vanhala)");
-    new_draw_info(NDI_UNIQUE, 0, op, "kivinen@joker.cs.hut.fi (Tero Kivinen)");
-    new_draw_info(NDI_UNIQUE, 0, op, "peterm@soda.berkeley.edu (Peter Mardahl)");
-    new_draw_info(NDI_UNIQUE, 0, op, "matt@cs.odu.edu (Matthew Zeher)");
-    new_draw_info(NDI_UNIQUE, 0, op, "srt@sun-dimas.aero.org (Scott R. Turner)");
-    new_draw_info(NDI_UNIQUE, 0, op, "huma@netcom.com (Ben Fennema)");
-    new_draw_info(NDI_UNIQUE, 0, op, "njw@cs.city.ac.uk (Nick Williams)");
-    new_draw_info(NDI_UNIQUE, 0, op, "Wacren@Gin.ObsPM.Fr (Laurent Wacrenier)");
-    new_draw_info(NDI_UNIQUE, 0, op, "thomas@astro.psu.edu (Brian Thomas)");
-    new_draw_info(NDI_UNIQUE, 0, op, "jsm@axon.ksc.nasa.gov (John Steven Moerk)");
-    new_draw_info(NDI_UNIQUE, 0, op, "Delbecq David       [david.delbecq@mailandnews.com]");
-    new_draw_info(NDI_UNIQUE, 0, op, "Chachkoff Yann      [yann.chachkoff@mailandnews.com]\n");
-    new_draw_info(NDI_UNIQUE, 0, op, "Images and art:");
-    new_draw_info(NDI_UNIQUE, 0, op, "Peter Gardner");
-    new_draw_info(NDI_UNIQUE, 0, op, "David Gervais       [david_eg@mail.com]");
-    new_draw_info(NDI_UNIQUE, 0, op, "Mitsuhiro Itakura   [ita@gold.koma.jaeri.go.jp]");
-    new_draw_info(NDI_UNIQUE, 0, op, "Hansjoerg Malthaner [hansjoerg.malthaner@danet.de]");
-    new_draw_info(NDI_UNIQUE, 0, op, "Mårten Woxberg      [maxmc@telia.com]");
-    new_draw_info(NDI_UNIQUE, 0, op, "The FRUA art community [http://uamirror.dns2go.com/]");
-    new_draw_info(NDI_UNIQUE, 0, op, "future wave shaper(sounds) [http://www.futurewaveshaper.com/]");
-    new_draw_info(NDI_UNIQUE, 0, op, "Zero Sum Software [http://www.zero-sum.com/]");
-    new_draw_info(NDI_UNIQUE, 0, op, "Reiner Prokein [[reiner.prokein@t-online.de]]");
-    new_draw_info(NDI_UNIQUE, 0, op, "Dungeon Craft Community [http://uaf.sourceforge.net/]");
-    new_draw_info(NDI_UNIQUE, 0, op, "Marc [http://www.angelfire.com/dragon/kaltusara_dc/index.html]");
-    new_draw_info(NDI_UNIQUE, 0, op, "Iron Works DC art [http://www.tgeweb.com/ironworks/dungeoncraft/index.shtml]");
-    new_draw_info(NDI_UNIQUE, 0, op, "The mighty Dink.");
-    new_draw_info(NDI_UNIQUE, 0, op, "And many more!");
+    ndi(NDI_UNIQUE, 0, op, "Authors and contributors to Daimonin & Crossfire:");
+    ndi(NDI_UNIQUE, 0, op, "(incomplete list - mail us if you miss your name):");
+    ndi(NDI_UNIQUE, 0, op, "mark@scruz.net (Mark Wedel)");
+    ndi(NDI_UNIQUE, 0, op, "frankj@ifi.uio.no (Frank Tore Johansen)");
+    ndi(NDI_UNIQUE, 0, op, "kjetilho@ifi.uio.no (Kjetil Torgrim Homme)");
+    ndi(NDI_UNIQUE, 0, op, "tvangod@ecst.csuchico.edu (Tyler Van Gorder)");
+    ndi(NDI_UNIQUE, 0, op, "elmroth@cd.chalmers.se (Tony Elmroth)");
+    ndi(NDI_UNIQUE, 0, op, "dougal.scott@fcit.monasu.edu.au (Dougal Scott)");
+    ndi(NDI_UNIQUE, 0, op, "wchuang@athena.mit.edu (William)");
+    ndi(NDI_UNIQUE, 0, op, "ftww@cs.su.oz.au (Geoff Bailey)");
+    ndi(NDI_UNIQUE, 0, op, "jorgens@flipper.pvv.unit.no (Kjetil Wiekhorst Jxrgensen)");
+    ndi(NDI_UNIQUE, 0, op, "c.blackwood@rdt.monash.edu.au (Cameron Blackwood)");
+    ndi(NDI_UNIQUE, 0, op, "jtraub+@cmu.edu (Joseph L. Traub)");
+    ndi(NDI_UNIQUE, 0, op, "rgg@aaii.oz.au (Rupert G. Goldie)");
+    ndi(NDI_UNIQUE, 0, op, "eanders+@cmu.edu (Eric A. Anderson)");
+    ndi(NDI_UNIQUE, 0, op, "eneq@Prag.DoCS.UU.SE (Rickard Eneqvist)");
+    ndi(NDI_UNIQUE, 0, op, "Jarkko.Sonninen@lut.fi (Jarkko Sonninen)");
+    ndi(NDI_UNIQUE, 0, op, "kholland@sunlab.cit.cornell.du (Karl Holland)");
+    ndi(NDI_UNIQUE, 0, op, "vick@bern.docs.uu.se (Mikael Lundgren)");
+    ndi(NDI_UNIQUE, 0, op, "mol@meryl.csd.uu.se (Mikael Olsson)");
+    ndi(NDI_UNIQUE, 0, op, "Tero.Haatanen@lut.fi (Tero Haatanen)");
+    ndi(NDI_UNIQUE, 0, op, "ylitalo@student.docs.uu.se (Lasse Ylitalo)");
+    ndi(NDI_UNIQUE, 0, op, "anipa@guru.magic.fi (Niilo Neuvo)");
+    ndi(NDI_UNIQUE, 0, op, "mta@modeemi.cs.tut.fi (Markku J{rvinen)");
+    ndi(NDI_UNIQUE, 0, op, "meunier@inf.enst.fr (Sylvain Meunier)");
+    ndi(NDI_UNIQUE, 0, op, "jfosback@darmok.uoregon.edu (Jason Fosback)");
+    ndi(NDI_UNIQUE, 0, op, "cedman@capitalist.princeton.edu (Carl Edman)");
+    ndi(NDI_UNIQUE, 0, op, "henrich@crh.cl.msu.edu (Charles Henrich)");
+    ndi(NDI_UNIQUE, 0, op, "schmid@fb3-s7.math.tu-berlin.de (Gregor Schmid)");
+    ndi(NDI_UNIQUE, 0, op, "quinet@montefiore.ulg.ac.be (Raphael Quinet)");
+    ndi(NDI_UNIQUE, 0, op, "jam@modeemi.cs.tut.fi (Jari Vanhala)");
+    ndi(NDI_UNIQUE, 0, op, "kivinen@joker.cs.hut.fi (Tero Kivinen)");
+    ndi(NDI_UNIQUE, 0, op, "peterm@soda.berkeley.edu (Peter Mardahl)");
+    ndi(NDI_UNIQUE, 0, op, "matt@cs.odu.edu (Matthew Zeher)");
+    ndi(NDI_UNIQUE, 0, op, "srt@sun-dimas.aero.org (Scott R. Turner)");
+    ndi(NDI_UNIQUE, 0, op, "huma@netcom.com (Ben Fennema)");
+    ndi(NDI_UNIQUE, 0, op, "njw@cs.city.ac.uk (Nick Williams)");
+    ndi(NDI_UNIQUE, 0, op, "Wacren@Gin.ObsPM.Fr (Laurent Wacrenier)");
+    ndi(NDI_UNIQUE, 0, op, "thomas@astro.psu.edu (Brian Thomas)");
+    ndi(NDI_UNIQUE, 0, op, "jsm@axon.ksc.nasa.gov (John Steven Moerk)");
+    ndi(NDI_UNIQUE, 0, op, "Delbecq David       [david.delbecq@mailandnews.com]");
+    ndi(NDI_UNIQUE, 0, op, "Chachkoff Yann      [yann.chachkoff@mailandnews.com]\n");
+    ndi(NDI_UNIQUE, 0, op, "Images and art:");
+    ndi(NDI_UNIQUE, 0, op, "Peter Gardner");
+    ndi(NDI_UNIQUE, 0, op, "David Gervais       [david_eg@mail.com]");
+    ndi(NDI_UNIQUE, 0, op, "Mitsuhiro Itakura   [ita@gold.koma.jaeri.go.jp]");
+    ndi(NDI_UNIQUE, 0, op, "Hansjoerg Malthaner [hansjoerg.malthaner@danet.de]");
+    ndi(NDI_UNIQUE, 0, op, "Mårten Woxberg      [maxmc@telia.com]");
+    ndi(NDI_UNIQUE, 0, op, "The FRUA art community [http://uamirror.dns2go.com/]");
+    ndi(NDI_UNIQUE, 0, op, "future wave shaper(sounds) [http://www.futurewaveshaper.com/]");
+    ndi(NDI_UNIQUE, 0, op, "Zero Sum Software [http://www.zero-sum.com/]");
+    ndi(NDI_UNIQUE, 0, op, "Reiner Prokein [[reiner.prokein@t-online.de]]");
+    ndi(NDI_UNIQUE, 0, op, "Dungeon Craft Community [http://uaf.sourceforge.net/]");
+    ndi(NDI_UNIQUE, 0, op, "Marc [http://www.angelfire.com/dragon/kaltusara_dc/index.html]");
+    ndi(NDI_UNIQUE, 0, op, "Iron Works DC art [http://www.tgeweb.com/ironworks/dungeoncraft/index.shtml]");
+    ndi(NDI_UNIQUE, 0, op, "The mighty Dink.");
+    ndi(NDI_UNIQUE, 0, op, "And many more!");
 }
 #endif
 
@@ -146,9 +146,9 @@ int get_new_instance_num(void)
  * is needed after the players have been updated.
  */
 
-void process_players1(mapstruct *map)
+void process_players1(map_t *map)
 {
-    player *pl;
+    player_t *pl;
 
     /* Basically, we keep looping until all the players have done their actions. */
     for (pl = first_player; pl != NULL; pl = pl->next)
@@ -172,9 +172,9 @@ void process_players1(mapstruct *map)
     }
 }
 
-void process_players2(mapstruct *map)
+void process_players2(map_t *map)
 {
-    player *pl;
+    player_t *pl;
 
     for (pl = first_player; pl != NULL; pl = pl->next)
     {
@@ -246,9 +246,9 @@ void process_players2(mapstruct *map)
     }
 }
 
-static void process_map_events(mapstruct *map)
+static void process_map_events(map_t *map)
 {
-    object *op, *first_obj;
+    object_t *op, *first_obj;
     tag_t   tag;
 
     /* Find first object in activelist (skip sentinel) */
@@ -388,7 +388,7 @@ static void process_map_events(mapstruct *map)
 
 void process_events()
 {
-    mapstruct *map;
+    map_t *map;
 #if defined TIME_PROCESS_EVENTS
     /* This is instrumentation code that shows how the speedup to this function
      * was measured. It can easily be moved to the old version too, but if you
@@ -409,7 +409,7 @@ void process_events()
      * mobs&players first and less interesting objects next, or
      * have two activelists per map for that */
     if(inserted_active_objects) {
-        object *obj, *next;
+        object_t *obj, *next;
         for(obj = inserted_active_objects; obj; obj = next)
         {
             next = obj->active_next;
@@ -437,7 +437,7 @@ void process_events()
                 /* In case the map was swapped out with an object in the insertion list
                  * (This probably doesn't happen, since all objects are removed when the map
                  * is swapped out) */
-                if(obj->map->in_memory != MAP_ACTIVE)
+                if(obj->map->in_memory != MAP_MEMORY_ACTIVE)
                 {
                     /* FIXME: for now we'll just see if this happens */
                     LOG( llevDebug, "ACTIVEBUG: object on map not in memory! obj %s in %s\n",
@@ -468,7 +468,7 @@ void process_events()
     /* TODO: only go through maps in special list of maps with active objects */
     for (map = first_map; map; map = map->next)
     {
-        if (map->active_objects->active_next && map->in_memory == MAP_ACTIVE)
+        if (map->active_objects->active_next && map->in_memory == MAP_MEMORY_ACTIVE)
             process_map_events(map);
     }
 
@@ -492,7 +492,7 @@ void process_events()
 
 void clean_tmp_files(int flag)
 {
-    mapstruct  *m, *next;
+    map_t  *m, *next;
 
     LOG(llevInfo, "Save maps and cleaning up...\n");
 
@@ -503,7 +503,7 @@ void clean_tmp_files(int flag)
     for (m = first_map; m != NULL; m = next)
     {
         next = m->next;
-        if (m->in_memory == MAP_ACTIVE)
+        if (m->in_memory == MAP_MEMORY_ACTIVE)
         /* If we want to reuse the temp maps, swap it out (note that will also
          * update the log file.  Otherwise, save the map (mostly for unique item
          * stuff).  Note that the clean_tmp_map is called after the end of
@@ -556,7 +556,7 @@ void cleanup_without_exit(void)
     /* free_all_srv_files(); */
 }
 
-void leave(player *pl, int draw_exit)
+void leave(player_t *pl, int draw_exit)
 {
     if (pl != NULL)
     {
@@ -608,7 +608,7 @@ void dequeue_path_requests()
 #ifdef LEFTOVER_CPU_FOR_PATHFINDING
     static struct timeval   new_time;
     long                    leftover_sec, leftover_usec;
-    object                 *op;
+    object_t                 *op;
 
     while ((op = get_next_requested_path()))
     {
@@ -638,8 +638,8 @@ void dequeue_path_requests()
             break;
     }
 #else
-    object *op                  = get_next_requested_path();
-    extern void             object_accept_path  (object *op);
+    object_t *op                  = get_next_requested_path();
+    extern void             object_accept_path  (object_t *op);
     if (wp)
         object_accept_path(op);
 #endif /* LEFTOVER_CPU_FOR_PATHFINDING */
@@ -662,9 +662,11 @@ void dequeue_path_requests()
 void do_specials()
 {
 #ifdef DEBUG_CALENDAR
-    if (!(ROUND_TAG % (PTICKS_PER_ARKHE_HOUR / ARKHE_MES_PER_HR)) &&
+    if (!(ROUND_TAG % (PTICKS_PER_ARKHE_HOUR/* / ARKHE_MES_PER_HR*/)) &&
         first_player)
-        (void)command_time(first_player->ob, NULL);
+    {
+        (void)command_time(first_player->ob, "verbose");
+    }
 #endif
 
     if (!(ROUND_TAG % PTICKS_PER_ARKHE_HOUR))
@@ -706,7 +708,7 @@ void do_specials()
  * If timer == -2, any existing countdown is stopped. pl should be the player
  * responsible. Other parameters are ignored. A message that the shutdown has
  * been stopped is broadcast to all players. */
-void shutdown_agent(int timer, int ret, player *pl, char *reason)
+void shutdown_agent(int timer, int ret, player_t *pl, char *reason)
 {
     static int            status = SERVER_EXIT_NORMAL,
                           sd_timer = -1;
@@ -727,7 +729,7 @@ void shutdown_agent(int timer, int ret, player *pl, char *reason)
                     (status == SERVER_EXIT_RESTART) ? "RESTART" : "SHUTDOWN",
                     STRING_OBJ_NAME(pl->ob));
             LOG(llevSystem, "%s", buf);
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5,
+            ndi(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5,
                           NULL, "[Server]: ** %s **", buf);
         }
 
@@ -763,7 +765,7 @@ void shutdown_agent(int timer, int ret, player *pl, char *reason)
         }
 
         t_tot = timer;
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
+        ndi(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
                       "[Server]: ** SERVER %s STARTED by %s **\n    %s",
                       (status == SERVER_EXIT_RESTART) ? "RESTART" : "SHUTDOWN",
                       (name[0]) ? name : "no-one",
@@ -778,7 +780,7 @@ void shutdown_agent(int timer, int ret, player *pl, char *reason)
         /* Exactly when the timer expires, send messages to the client. */
         if (t_tot == 0)
         {
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5,
+            ndi(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5,
                           NULL, "[Server]: ** SERVER GOES DOWN NOW!!! **");
 
             return;
@@ -818,7 +820,7 @@ void shutdown_agent(int timer, int ret, player *pl, char *reason)
         if (!t_sec ||
             timer >= 0)
         {
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5,
+            ndi(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5,
                           NULL, "[Server]: SERVER %s in %d minute%s and %d second%s",
                           (status == SERVER_EXIT_RESTART) ? "RESTART" : "SHUTDOWN",
                           t_min, (t_min == 1) ? "" : "s",
@@ -828,7 +830,7 @@ void shutdown_agent(int timer, int ret, player *pl, char *reason)
         else if (timer == -1 &&
                  pl)
         {
-            new_draw_info(NDI_UNIQUE | NDI_GREEN, 5, pl->ob, "[Server]: SERVER %s in %d minute%s and %d second%s",
+            ndi(NDI_UNIQUE | NDI_GREEN, 5, pl->ob, "[Server]: SERVER %s in %d minute%s and %d second%s",
                           (status == SERVER_EXIT_RESTART) ? "RESTART" : "SHUTDOWN",
                           t_min, (t_min == 1) ? "" : "s",
                           t_sec, (t_sec == 1) ? "" : "s");
@@ -917,7 +919,7 @@ static void traverse_player_stats(char* start_dir)
             /* lets check its a valid, local artifacts file */
             if(entry->d_name[0] != '.' && (fptr = strrchr(entry->d_name, '.')) && !strcmp(fptr, ".pl") )
             {
-                player *pl = NULL;
+                player_t *pl = NULL;
 
                 LOG(llevDebug, "found player %s...\n", entry->d_name);
 
@@ -931,7 +933,7 @@ static void traverse_player_stats(char* start_dir)
                     entry->d_name[fptr-entry->d_name] = '.';
                     chdir(base_cwd);
                     check_login(pl->ob, FALSE);
-                    /* player is now loaded, do something with it - after it, release player & object */
+                    /* player is now loaded, do something with it - after it, release player & object_t */
 
                     /* ........... */
 
@@ -1100,7 +1102,7 @@ int main(int argc, char **argv)
              * ATM we only use it to spam hard coded messages
              */
             auto_msg_count = AUTO_MSG_COUNTER;
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
+            ndi(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
                     "[INFO]: Please HELP US and VOTE for Daimonin DAILY!\nGo to www.daimonin.org and hit the VOTE ICONS!\nThanks and happy playing!! - Michtoen");
         }
 #endif

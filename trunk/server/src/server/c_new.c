@@ -68,7 +68,7 @@ static int  map_pos_array[][2]  =
 #define NROF_MAP_NODE ((int)(sizeof(map_pos_array) /(sizeof(int)*2)))
 
 
-int command_run(object *op, char *params)
+int command_run(object_t *op, char *params)
 {
     CONTR(op)->run_on = 1;
     move_player(op, params ? atoi(params) : 0, TRUE);
@@ -76,14 +76,14 @@ int command_run(object *op, char *params)
     return 0;
 }
 
-int command_run_stop(object *op, char *params)
+int command_run_stop(object_t *op, char *params)
 {
     CONTR(op)->run_on = 0;
 
     return 0;
 }
 
-int command_combat(object *op, char *params)
+int command_combat(object_t *op, char *params)
 {
     if (!op || !op->map || op->type != PLAYER || !CONTR(op))
         return 0;
@@ -103,7 +103,7 @@ int command_combat(object *op, char *params)
     return 0;
 }
 
-void target_self(object *op)
+void target_self(object_t *op)
 {
     CONTR(op)->target_object = op;
     CONTR(op)->target_level = op->level;
@@ -112,7 +112,7 @@ void target_self(object *op)
 }
 
 /** Filter for valid targets */
-static int valid_new_target(object *op, object *candidate)
+static int valid_new_target(object_t *op, object_t *candidate)
 {
     /* TODO: how about golems? */
     if (IS_LIVE(candidate))
@@ -158,23 +158,34 @@ static int valid_new_target(object *op, object *candidate)
  * clamor and say that this function needs a rewrite (and also possibly moved to the client),
  * but I can't do it now, too much other stuff I want to work on. -- _people_*/
 
-int command_target(object *op, char *params)
+int command_target(object_t *op, char *params)
 {
-    mapstruct  *m;
-    object     *tmp = NULL, *head;
+    player_t   *pl = NULL;
+    object_t   *tmp,
+               *next,
+               *head;
     int         jump_in, jump_in_n = 0, get_ob_flag;
-    int         n, nt, xt, yt, block;
+    int         n, nt;
+    sint16      x2,
+                y2;
 
-    if (!op || !op->map || op->type != PLAYER || !CONTR(op))
+    if (!op ||
+        !op->map ||
+        op->type != PLAYER ||
+        !(pl = CONTR(op)))
+    {
         return 0;
+    }
 
     if (!params || params[0] == '\0')
         return 1;
 
+    x2 = pl->socket.mapx_2,
+    y2 = pl->socket.mapy_2;
+
     /* !x y = mouse map target */
     if (params[0] == '!')
     {
-
         int     xstart, ystart;
         char   *ctmp;
 
@@ -185,86 +196,108 @@ int command_target(object *op, char *params)
 
         ystart = atoi(ctmp + 1);
 
-        for (n = 0; n < SIZEOFFREE; n++)
+        for (n = 0; n < OVERLAY_7X7; n++)
         {
-            int xx, yy;
-
+            map_t *m = op->map;
             /* thats the trick: we get  op map pos, but we have 2 offsets:
              * the offset from the client mouse click - can be
-             * +- CONTR(op)->socket.mapx/2 - and the freearr_x/y offset for
-             * the search.
-             */
-            xt = op->x + (xx = freearr_x[n] + xstart);
-            yt = op->y + (yy = freearr_y[n] + ystart);
+             * +- pl->socket.mapx/2 - and the freearr_x/y offset for
+             * the search. */
+            sint16     xx = OVERLAY_X(n) + xstart,
+                       yy = OVERLAY_Y(n) + ystart,
+                       x = op->x + xx,
+                       y = op->y + yy;
+            msp_t  *msp;
 
-            if (xx <-(int) (CONTR(op)->socket.mapx_2)
-             || xx>(int)(CONTR(op)->socket.mapx_2)
-             || yy <-(int) (CONTR(op)->socket.mapy_2)
-             || yy>(int)(CONTR(op)->socket.mapy_2))
+            if (xx < -x2 ||
+                xx > x2 ||
+                yy < -y2 ||
+                yy > y2 ||
+                pl->blocked_los[xx + x2][yy + y2] > BLOCKED_LOS_BLOCKSVIEW)
+            {
                 continue;
+            }
 
-            block = CONTR(op)->blocked_los[xx + CONTR(op)->socket.mapx_2][yy + CONTR(op)->socket.mapy_2];
-            if (block > BLOCKED_LOS_BLOCKSVIEW || !(m = out_of_map(op->map, &xt, &yt)))
+            msp = MSP_GET(m, x, y);
+
+            if (!msp)
+            {
                 continue;
+            }
 
             /* we can have more as one possible target
              * on a square - but i try this first without
              * handle it.
              */
-            for (tmp = GET_MAP_OB(m, xt, yt); tmp != NULL; tmp = tmp->above)
+            FOREACH_OBJECT_IN_MSP(tmp, msp, next)
             {
                 /* this is a possible target */
-                tmp->head != NULL ? (head = tmp->head) : (head = tmp); /* ensure we have head */
+                head = (tmp->head) ? tmp->head : tmp;
+
                 if (valid_new_target(op, head) &&
-                    head != CONTR(op)->target_object)
+                    head != pl->target_object)
                 {
-                    CONTR(op)->target_object = head;
-                    CONTR(op)->target_level = head->level;
-                    CONTR(op)->target_object_count = head->count;
-                    CONTR(op)->target_map_pos = n;
-                    goto found_target;
+                    pl->target_object = head;
+                    pl->target_level = head->level;
+                    pl->target_object_count = head->count;
+                    pl->target_map_pos = n;
+                    send_target_command(pl);
+                    return 0;
                 }
             }
         }
     }
     else if (params[0] == '0')
     {
-        n = CONTR(op)->target_map_pos;
         // Loop through the map_pos_array and try to find the nearest enemy to the op.
-        for (; n < NROF_MAP_NODE; n++)
+        for (n = pl->target_map_pos; n < NROF_MAP_NODE; n++)
         {
-            int xx, yy;
+            map_t *m = op->map;
+            /* thats the trick: we get  op map pos, but we have 2 offsets:
+             * the offset from the client mouse click - can be
+             * +- pl->socket.mapx/2 - and the freearr_x/y offset for
+             * the search. */
+            sint16     xx = map_pos_array[n][MAP_POS_X],
+                       yy = map_pos_array[n][MAP_POS_Y],
+                       x = op->x + xx,
+                       y = op->y + yy;
+            msp_t  *msp;
 
-            xt = op->x + (xx = map_pos_array[n][MAP_POS_X]);
-            yt = op->y + (yy = map_pos_array[n][MAP_POS_Y]);
-
-            if (xx <-(int) (CONTR(op)->socket.mapx_2)
-             || xx>(int)(CONTR(op)->socket.mapx_2)
-             || yy <-(int) (CONTR(op)->socket.mapy_2)
-             || yy>(int)(CONTR(op)->socket.mapy_2))
+            if (xx < -x2 ||
+                xx > x2 ||
+                yy < -y2 ||
+                yy > y2 ||
+                pl->blocked_los[xx + x2][yy + y2] > BLOCKED_LOS_BLOCKSVIEW)
+            {
                 continue;
+            }
 
-            block = CONTR(op)->blocked_los[xx + CONTR(op)->socket.mapx_2][yy + CONTR(op)->socket.mapy_2];
-            if (block > BLOCKED_LOS_BLOCKSVIEW || !(m = out_of_map(op->map, &xt, &yt)))
+            msp = MSP_GET(m, x, y);
+
+            if (!msp)
+            {
                 continue;
+            }
 
             /* we can have more as one possible target
              * on a square - but i try this first without
              * handle it.
              */
-            for (tmp = GET_MAP_OB(m, xt, yt); tmp != NULL; tmp = tmp->above)
+            FOREACH_OBJECT_IN_MSP(tmp, msp, next)
             {
                 /* this is a possible target */
-                tmp->head != NULL ? (head = tmp->head) : (head = tmp); /* ensure we have head */
+                head = (tmp->head) ? tmp->head : tmp;
+
                 if (valid_new_target(op, head)
                     && get_friendship(op, head) <= FRIENDSHIP_ATTACK
-                    && head != CONTR(op)->target_object)
+                    && head != pl->target_object)
                 {
-                    CONTR(op)->target_object = head;
-                    CONTR(op)->target_level = head->level;
-                    CONTR(op)->target_object_count = head->count;
-                    CONTR(op)->target_map_pos = n;
-                    goto found_target;
+                    pl->target_object = head;
+                    pl->target_level = head->level;
+                    pl->target_object_count = head->count;
+                    pl->target_map_pos = n;
+                    send_target_command(pl);
+                    return 0;
                 }
             }
         }
@@ -272,9 +305,11 @@ int command_target(object *op, char *params)
     else if (params[0] == '1') /* friend */
     {
         /* if /target friend but old target was enemy - target self first */
-        if(OBJECT_VALID(CONTR(op)->target_object, CONTR(op)->target_object_count)
-                && get_friendship(op, CONTR(op)->target_object) < FRIENDSHIP_HELP)
+        if (OBJECT_VALID(pl->target_object, pl->target_object_count) &&
+            get_friendship(op, pl->target_object) < FRIENDSHIP_HELP)
+        {
             target_self(op);
+        }
         else /* ok - search for a friendly object now! */
         {
             /* if our target before was a non enemy, start new search
@@ -283,63 +318,82 @@ int command_target(object *op, char *params)
             n = 0;
             nt = -1;
             /* lets search for last friendly object position! */
-            if (CONTR(op)->target_object == op)
+            if (pl->target_object == op)
             {
                 get_ob_flag = 0;
                 jump_in = 1;
                 jump_in_n = n;
                 tmp = op->above;
             }
-            else if (OBJECT_VALID(CONTR(op)->target_object, CONTR(op)->target_object_count)
-                  && get_friendship(op, CONTR(op)->target_object) >= FRIENDSHIP_HELP)
+            else if (OBJECT_VALID(pl->target_object, pl->target_object_count)
+                  && get_friendship(op, pl->target_object) >= FRIENDSHIP_HELP)
             {
                 get_ob_flag = 0;
                 jump_in = 1;
-                n = CONTR(op)->target_map_pos;
+                n = pl->target_map_pos;
                 jump_in_n = n;
-                tmp = CONTR(op)->target_object->above;
+                tmp = pl->target_object->above;
             }
             else
             {
                 n = 1;
-                CONTR(op)->target_object = NULL;
+                pl->target_object = NULL;
                 jump_in = 0;
                 get_ob_flag = 1;
             }
 
             for (; n < NROF_MAP_NODE && n != nt; n++)
             {
-                int xx, yy;
+                map_t *m = op->map;
+                sint16     xx,
+                           yy,
+                           x,
+                           y;
+                msp_t  *msp;
+
                 if (nt == -1)
+                {
                     nt = n;
-                dirty_jump_in1 : xt = op->x + (xx = map_pos_array[n][MAP_POS_X]);
-                yt = op->y + (yy = map_pos_array[n][MAP_POS_Y]);
-                block = CONTR(op)->blocked_los[xx + CONTR(op)->socket.mapx_2][yy + CONTR(op)->socket.mapy_2];
-                if (block > BLOCKED_LOS_BLOCKSVIEW || !(m = out_of_map(op->map, &xt, &yt)))
+                }
+dirty_jump_in1:
+                xx = map_pos_array[n][MAP_POS_X];
+                yy = map_pos_array[n][MAP_POS_Y];
+                x = op->x + xx;
+                y = op->y + yy;
+
+                msp = MSP_GET(m, x, y);
+
+                if (!msp ||
+                    pl->blocked_los[xx + x2][yy + y2] > BLOCKED_LOS_BLOCKSVIEW)
                 {
                     if ((n + 1) == NROF_MAP_NODE)
                         n = -1;
                     continue;
                 }
+
                 /* we can have more as one possible target
                  * on a square - but i try this first without
                  * handle it.  */
                 if (get_ob_flag)
-                    tmp = GET_MAP_OB(m, xt, yt);
+                {
+                    tmp = msp->last;
+                }
 
-                for (get_ob_flag = 1; tmp != NULL; tmp = tmp->above)
+                for (get_ob_flag = 1; tmp; tmp = tmp->below)
                 {
                     /* this is a possible target */
-                    tmp->head != NULL ? (head = tmp->head) : (head = tmp); /* ensure we have head */
+                    head = (tmp->head) ? tmp->head : tmp;
+
                     if(valid_new_target(op, head)
                             && get_friendship(op, head) >= FRIENDSHIP_HELP
-                            && head != CONTR(op)->target_object)
+                            && head != pl->target_object)
                     {
-                        CONTR(op)->target_object = head;
-                        CONTR(op)->target_level = head->level;
-                        CONTR(op)->target_object_count = head->count;
-                        CONTR(op)->target_map_pos = n;
-                        goto found_target;
+                        pl->target_object = head;
+                        pl->target_level = head->level;
+                        pl->target_object_count = head->count;
+                        pl->target_map_pos = n;
+                        send_target_command(pl);
+                        return 0;
                     }
                 }
                 if ((n + 1) == NROF_MAP_NODE) /* force a full loop */
@@ -363,31 +417,36 @@ int command_target(object *op, char *params)
     {
         /* If we have a valid target already, search from there, else start
          * afresh. */
-        n = (OBJECT_VALID(CONTR(op)->target_object,
-                          CONTR(op)->target_object_count)) ?
-            CONTR(op)->target_map_pos : 0;
+        n = (OBJECT_VALID(pl->target_object,
+                          pl->target_object_count)) ?
+            pl->target_map_pos : 0;
         nt = -1;
 
         /* The target was invalid so make sure it is nullified. */
         if (!n)
-            CONTR(op)->target_object = NULL;
+            pl->target_object = NULL;
 
         for (; n < NROF_MAP_NODE && n != nt; n++)
         {
-            int xx = map_pos_array[n][MAP_POS_X],
-                yy = map_pos_array[n][MAP_POS_Y];
+            map_t *m = op->map;
+            sint16     xx = map_pos_array[n][MAP_POS_X],
+                       yy = map_pos_array[n][MAP_POS_Y],
+                       x = op->x + xx,
+                       y = op->y + yy;
+            msp_t  *msp;
 
             if (nt == -1)
+            {
                 nt = n;
+            }
 
-            xt = op->x + xx;
-            yt = op->y + yy;
-            xx += CONTR(op)->socket.mapx_2;
-            yy += CONTR(op)->socket.mapy_2;
-            block = CONTR(op)->blocked_los[xx][yy];
+            xx += x2;
+            yy += y2;
 
-            if (block > BLOCKED_LOS_BLOCKSVIEW ||
-                !(m = out_of_map(op->map, &xt, &yt)))
+            msp = MSP_GET(m, x, y);
+
+            if (!msp ||
+                pl->blocked_los[xx][yy] > BLOCKED_LOS_BLOCKSVIEW)
             {
                 if ((n + 1) == NROF_MAP_NODE)
                     n = -1;
@@ -399,7 +458,7 @@ int command_target(object *op, char *params)
              * on a square - but i try this first without
              * handle it.
              */
-            for (tmp = GET_MAP_OB(m, xt, yt); tmp != NULL; tmp = tmp->above)
+            FOREACH_OBJECT_IN_MSP(tmp, msp, next)
             {
                 head = (tmp->head) ? tmp->head : tmp;
 
@@ -408,12 +467,12 @@ int command_target(object *op, char *params)
                 {
                     /* This can happen when our old target has moved to next
                      * position. */
-                    CONTR(op)->target_object = head;
-                    CONTR(op)->target_level = head->level;
-                    CONTR(op)->target_object_count = head->count;
-                    CONTR(op)->target_map_pos = n;
-
-                    goto found_target;
+                    pl->target_object = head;
+                    pl->target_level = head->level;
+                    pl->target_object_count = head->count;
+                    pl->target_map_pos = n;
+                    send_target_command(pl);
+                    return 0;
                 }
             }
 
@@ -424,17 +483,15 @@ int command_target(object *op, char *params)
 
     // Haven't found a target yet, so target self.
     target_self(op);
-
-found_target:
-    send_target_command(CONTR(op));
-
+    send_target_command(pl);
     return 0;
 }
 
 /* generate_ext_title() - get name and grap race/gender/profession from force objects */
-void generate_ext_title(player *pl)
+void generate_ext_title(player_t *pl)
 {
-    object *walk;
+    object_t *walk,
+           *next;
     char   *gender, *gmaster;
     char    prof[32]    = "";
     char    title[32]   = "";
@@ -442,7 +499,7 @@ void generate_ext_title(player *pl)
     char    align[32]   = "";
 
     /* collect all information from the force objects. Just walk one time through them*/
-    for (walk = pl->ob->inv; walk != NULL; walk = walk->below)
+    FOREACH_OBJECT_IN_OBJECT(walk, pl->ob, next)
     {
         if (walk->name == shstr_cons.GUILD_FORCE &&
             walk->arch == archetype_global._guild_force)

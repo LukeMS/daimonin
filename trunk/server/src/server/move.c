@@ -22,7 +22,10 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
-#include <global.h>
+
+#include "global.h"
+
+static int PushLiving(object_t *who, sint8 dir, object_t *pusher);
 
 /* object op is trying to move in direction dir.
  * originator is typically the same as op, but
@@ -34,121 +37,130 @@
  * Return -1 if the object is destroyed in the move process (most likely
  * when hit a deadly trap or something).
  */
-int move_ob(object *op, int dir, object *originator)
+sint8 move_ob(object_t *who, sint8 dir, object_t *originator)
 {
-    object     *tmp;
-    mapstruct  *m;
-    int         xt, yt, flags;
+    uint32  block;
+    object_t *part,
+           *next;
+    sint16  wx,
+            wy;
+    sint8   ox,
+            oy;
 
-    if (op == NULL)
+    /* Sanity checks. */
+    if (!who)
     {
         LOG(llevBug, "BUG: move_ob(): Trying to move NULL.\n");
-        return 0;
+        return MOVE_RESULT_INSERTION_FAILED;
     }
-
-    if (QUERY_FLAG(op, FLAG_REMOVED))
+    else if (QUERY_FLAG(who, FLAG_REMOVED))
     {
         LOG(llevBug, "BUG: move_ob: monster has been removed - will not process further\n");
-        return 0;
+        return MOVE_RESULT_INSERTION_FAILED;
+    }
+    else if (who->head)
+    {
+        LOG(llevBug, "BUG:: move_ob() called with non head object: %s %s (%d,%d)\n",
+            STRING_OBJ_NAME(who->head), STRING_MAP_PATH(who->map), who->x, who->y);
+        who = who->head;
     }
 
-    /* this function should now only be used on the head - it won't call itself
-     * recursively, and functions calling us should pass the right part.
-     */
-    if (op->head)
+    who->anim_moving_dir = who->direction = dir;
+    wx = who->x;
+    wy = who->y;
+    ox = OVERLAY_X(dir);
+    oy = OVERLAY_Y(dir);
+
+    /* Nothing can move out of map, obviously. */
+    if ((block = msp_blocked(who, NULL, ox, oy)) == MSP_FLAG_OUT_OF_MAP)
     {
-        LOG(llevDebug, "move_ob() called with non head object: %s %s (%d,%d)\n", STRING_OBJ_NAME(op->head),
-            op->map->path ? op->map->path : "<no map>", op->x, op->y);
-        op = op->head;
+        return MOVE_RESULT_INSERTION_FAILED;
     }
-
-    /* animation stuff */
-    if (op->head)
-        op->head->anim_moving_dir = dir;
-    else
-        op->anim_moving_dir = dir;
-    op->direction = dir;
-
-    xt = op->x + freearr_x[dir];
-    yt = op->y + freearr_y[dir];
-
-
-    /* we have here a out_of_map - we can skip all */
-    if (!(m = out_of_map(op->map, &xt, &yt)))
-        return 0;
-
-    /* totally new logic here... blocked() handles now ALL map flags... blocked_two()
-    * is called implicit from blocked() - really only called for nodes where a checker
-    * is inside. blocked_link() is used for multi arch blocked_test().
-    * Inside here we use a extended version of blocked_link(). Reason is, that even when
-    * we can't move the multi arch on the new spot, we have perhaps a legal earthwall
-    * in the step - we need to hit it here too. That a 3x3 multi arch monster can't
-    * enter a corridor of 2 tiles is right - but when the entry is closed by a wall
-    * then there is no reason why we can't hit the wall - even when we can't enter in.
-    */
-
-    /* multi arch objects... */
-    if (op->more)
+    /* Otherwise only consider blockages if not a gmaster with wizpass. */
+    else if (!IS_GMASTER_WIZPASS(who))
     {
-        /* insert new blocked_link() here which can hit ALL earthwalls */
-        /* but as long monster don't destroy walls and no mult arch player
-         * are ingame - we can stay with this
-         */
-        /* look in single tile move to see how we handle doors.
-         * This needs to be done before we allow multi tile mobs to do
-         * more fancy things.
-         */
-        if (blocked_link(op, NULL, freearr_x[dir], freearr_y[dir]))
-            return 0;
-
-        remove_ob(op);
-        if (check_walk_off(op, originator, MOVE_APPLY_MOVE) & (CHECK_WALK_DESTROYED | CHECK_WALK_MOVED))
-            return 1;
-
-        for (tmp = op; tmp != NULL; tmp = tmp->more)
-            tmp->x += freearr_x[dir], tmp->y += freearr_y[dir];
-        insert_ob_in_map(op, op->map, op, 0);
-
-        return 1;
-    }
-
-    /* single arch */
-    if (!IS_GMASTER_WIZPASS(op))
-    {
-        /* is the spot blocked from something? */
-        if ((flags = blocked(op, m, xt, yt, op->terrain_flag)))
+        /* If the block is a door (ONLY) this means msp_blocked() has already
+         * done the necessary checks; we know already that those msps are valid
+         * and unblocked (apart from the door(s)) and that who can open any
+         * door(s) on those msps so all we need to do is issue the
+         * instructions. */
+        /* Much of the following code block is adapted from msp_blocked(), so
+         * see that function for futher explanation. */
+        if (block == MSP_FLAG_DOOR_CLOSED)
         {
-            /* blocked!... BUT perhaps we have a door here to open.
-             * If P_DOOR_CLOSED returned by blocked() then we have a door here.
-             * If there is a door but not touchable from op, then blocked()
-             * will hide the flag! So, if the flag is set, we can try our
-             * luck - but only if op can open doors!
-             */
-            if ((flags & P_DOOR_CLOSED) && QUERY_FLAG(op, FLAG_CAN_OPEN_DOOR)) /* a (closed) door which we can open? */
+            /* For multiparts we need to loop through each part again to find
+             * the msps of the non-overlapping parts after the move. */
+            if (who->more)
             {
-                if (open_door(op, m, xt, yt, 1)) /* yes, we can open this door */
-                    return 1;
+                FOREACH_PART_OF_OBJECT(part, who, next)
+                {
+                    sint16     x2 = part->arch->clone.x + ox,
+                               y2 = part->arch->clone.y + oy;
+                    object_t    *part2,
+                              *next2;
+
+                    FOREACH_PART_OF_OBJECT(part2, who, next2)
+                    {
+                        if (x2 == part2->arch->clone.x &&
+                            y2 == part2->arch->clone.y)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (!part2)
+                    {
+                        map_t *m = who->map;
+                        sint16     x = part->x + ox,
+                                   y = part->y + oy;
+                        msp_t  *msp = MSP_GET(m, x, y);
+
+                        (void)open_door(who, msp, 1);
+                    }
+                }
+            }
+            /* Singleparts are easy. */
+            else
+            {
+                map_t *m = who->map;
+                sint16     x = wx + ox,
+                           y = wy + oy;
+                msp_t  *msp = MSP_GET(m, x, y);
+
+                (void)open_door(who, msp, 1);
             }
 
-            /* in any case we don't move - door or not. This will avoid we open the door
-             * and do the move in one turn.
-             */
-            return 0;
+            /* When who opens a door, that's his movement over for this turn. */
+            return MOVE_RESULT_SUCCESS;
+        }
+        /* Any other block halts movement. */
+        else if (block)
+        {
+            return MOVE_RESULT_INSERTION_FAILED;
         }
     }
 
-    remove_ob(op);
-    if (check_walk_off(op, originator, MOVE_APPLY_MOVE) & (CHECK_WALK_DESTROYED | CHECK_WALK_MOVED))
-        return 1;
+    remove_ob(who);
 
-    op->x += freearr_x[dir];
-    op->y += freearr_y[dir];
+    /* Remember that the actual process of moving from A to B can itself result
+     * in the destruction of who (for example, who steps off a button which
+     * triggers an explosion) so we're not home free yet. */
+    if (check_walk_off(who, originator, MOVE_APPLY_MOVE) != CHECK_WALK_OK)
+    {
+        return MOVE_RESULT_WHO_DESTROYED;
+    }
 
-    insert_ob_in_map(op, op->map, originator, 0);
+    /* If we've got this far, who is actually able to be moved. */
+    /* This works for both multiparts and singleparts. */
+    FOREACH_PART_OF_OBJECT(part, who, next)
+    {
+        part->x += ox;
+        part->y += oy;
+    }
 
-    return 1;
+    insert_ob_in_map(who, who->map, originator, 0);
+    return MOVE_RESULT_SUCCESS;
 }
-
 
 /*
  * Return value: 1 if object was destroyed, 0 otherwise.
@@ -156,20 +168,14 @@ int move_ob(object *op, int dir, object *originator)
  * real use, instead we pass the 'user' of the teleporter.  All the
  * callers know what they wanted to teleporter (move_teleporter or
  * shop map code)
- * tele_type is the type of teleporter we want to match against -
- * currently, this is either set to SHOP_MAT or TELEPORTER.
- * It is basically used so that shop_mats and normal teleporters can
- * be used close to each other and not have the player put to the
- * one of another type.
  */
-/* FIXME: Why use the tele_type parameter instead of teleporter->type?
- * -- Smacky 20101123 */
-int teleport(object *teleporter, uint8 tele_type, object *user)
+int teleport(object_t *teleporter, object_t *user)
 {
-    object     *altern[120]; /* Better use c/malloc here in the future */
-    int         i, j, k, nrofalt = 0, xt, yt;
-    object     *other_teleporter, *tmp;
-    mapstruct  *m;
+    object_t *altern[TINY_BUF];
+    int     i, j, k, nrofalt = 0;
+    object_t *other_teleporter;
+    msp_t  *msp;
+    object_t *this;
 
     if (user == NULL)
         return 0;
@@ -181,146 +187,120 @@ int teleport(object *teleporter, uint8 tele_type, object *user)
      * using hard coded values.
      */
     for (i = -5; i < 6; i++)
+    {
         for (j = -5; j < 6; j++)
         {
-            if (i == 0 && j == 0)
+            map_t *mt;
+            sint16     xt,
+                       yt;
+            object_t    *next;
+
+            if (i == 0 &&
+                j == 0)
+            {
                 continue;
+            }
+
+            mt = teleporter->map;
             xt = teleporter->x + i;
             yt = teleporter->y + j;
-            if (!(m = out_of_map(teleporter->map, &xt, &yt)))
-                continue;
-            other_teleporter = GET_MAP_OB(m, xt, yt);
+            msp = MSP_GET(mt, xt, yt);
 
-            while (other_teleporter)
+            if (!msp)
             {
-                if (other_teleporter->type == tele_type)
-                    break;
-                other_teleporter = other_teleporter->above;
+                continue;
             }
-            if (other_teleporter)
-                altern[nrofalt++] = other_teleporter;
+
+            FOREACH_OBJECT_IN_MSP(this, msp, next)
+            {
+                if (this->type == teleporter->type)
+                {
+                    altern[nrofalt++] = this;
+                    break;
+                }
+            }
         }
+    }
 
     if (!nrofalt)
     {
         LOG(llevMapbug, "MAPBUG:: %s[%s %d %d]: No destination %s around!\n",
             STRING_OBJ_NAME(teleporter), STRING_MAP_PATH(teleporter->map),
             teleporter->x, teleporter->y,
-            (tele_type == SHOP_MAT) ? "shop mats" : "teleporters");
-
+            (teleporter->type == SHOP_MAT) ? "shop mats" : "teleporters");
         return 0;
     }
 
     other_teleporter = altern[RANDOM() % nrofalt];
-    k = find_free_spot(user->arch, user, other_teleporter->map, other_teleporter->x, other_teleporter->y, 0, 1, SIZEOFFREE1 + 1);
-    if (k == -1)
-        return 0;
-
-    remove_ob(user);
-    if (check_walk_off(user, NULL, MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
-        return 1;
-
-    /* Update location for the object */
-    for (tmp = user; tmp != NULL; tmp = tmp->more)
-    {
-        tmp->x = other_teleporter->x + freearr_x[k] + (tmp->arch == NULL ? 0 : tmp->arch->clone.x);
-        tmp->y = other_teleporter->y + freearr_y[k] + (tmp->arch == NULL ? 0 : tmp->arch->clone.y);
-    }
-
-    return (insert_ob_in_map(user, other_teleporter->map, NULL, 0) == NULL);
+    msp = MSP_KNOWN(other_teleporter);
+    return enter_map(user, msp, teleporter, OVERLAY_FIRST_AVAILABLE | OVERLAY_SPECIAL, 0);
 }
 
-void recursive_roll(object *op, int dir, object *pusher)
+int push_roll_object(object_t * const op, int dir, const int flag)
 {
-    if (!roll_ob(op, dir, pusher))
-    {
-        new_draw_info(NDI_UNIQUE, 0, pusher, "You fail to push %s.",
-            QUERY_SHORT_NAME(op, pusher));
-        return;
-    }
-    (void) move_ob(pusher, dir, pusher);
-    new_draw_info(NDI_WHITE, 0, pusher, "You roll %s.",
-        QUERY_SHORT_NAME(op, pusher));
-    return;
-}
+    map_t *mt;
+    sint16     xt,
+               yt;
+    msp_t  *msp;
+    object_t    *this,
+              *next;
 
-/* Rolls (moves, means walks) <op> one space in <dir>. <op> must be rollable,
- * the square in <dir> must be not blocked, and <pusher> must be strong enough.
- * Return 1 on success, 0 on failure. */
-/* FIXME: this is not perfect yet. it does not roll objects behind multipart
- * objects properly. */
-/* TODO: I fixed 'FS#12 - /push more than possible', but the ability for
- * mappers to set objects that specifically CAN be pushed in trains might be
- * nice (although usually, Sokoban-style single pushes are better). Probably
- * best to add a new map square P_PUSH_TRAIN flag for this, for speed.
- * TODO: It is possible to push an object diagonally through a gap in a wall
- * or terrain which is visually too small. This needs addressing but make more
- * sense with smooth imovement.
- * TODO: No allowance for flying/levitating op ATM. ???
- * -- Smacky 20091026 */
-int roll_ob(object *op, int dir, object *pusher)
-{
-    mapstruct *m;
-    int        x,
-               y;
-    object    *tmp;
-
-    if (op->head)
-    {
-        op = op->head;
-    }
-
-    if (!QUERY_FLAG(op, FLAG_CAN_ROLL) ||
-        (op->weight &&
-         random_roll(0, op->weight / 50000 - 1) > pusher->stats.Str))
+    /* we check for all conditions where op can't push anything */
+    if (dir <= 0 ||
+        CONTR(op)->rest_mode ||
+        QUERY_FLAG(op,FLAG_PARALYZED) ||
+        QUERY_FLAG(op,FLAG_ROOTED) ||
+        IS_AIRBORNE(op))
     {
         return 0;
     }
 
-    x = op->x + freearr_x[dir];
-    y = op->y + freearr_y[dir];
+    mt = op->map;
+    xt = op->x + OVERLAY_X(dir);
+    yt = op->y + OVERLAY_Y(dir);
+    msp = MSP_GET(mt, xt, yt);
 
-    if (!(m = out_of_map(op->map, &x, &y)) || // out of map
-        (op->more && blocked_link(op, m, x, y)) || // multi part
-        (!op->more && blocked(op, m, x, y, op->terrain_flag))) // single part
+    if (!msp)
     {
         return 0;
     }
 
-    if (QUERY_FLAG(op, FLAG_ANIMATE))
+    FOREACH_OBJECT_IN_MSP(this, msp, next)
     {
-        op->anim_moving_dir = dir;
-        op->direction = dir;
+        this = (this->head) ? this->head : this;
+
+        if (IS_LIVE(this))
+        {
+            play_sound_map(MSP_KNOWN(op), SOUND_PUSH_PLAYER, SOUND_NORMAL);
+            return PushLiving(this, dir, op);
+        }
+        else if (QUERY_FLAG(this, FLAG_CAN_ROLL))
+        {
+            if ((random_roll(0, this->weight / 50000 - 1) > op->stats.Str) ||
+                move_ob(this, dir, op) == MOVE_RESULT_INSERTION_FAILED)
+            {
+                ndi(NDI_UNIQUE, 0, op, "You fail to push %s.",
+                    QUERY_SHORT_NAME(this, op));
+            }
+            else
+            {
+                (void)move_ob(op, dir, NULL);
+                ndi(NDI_WHITE, 0, op, "You roll %s.",
+                    QUERY_SHORT_NAME(this, op));
+            }
+            return 0;
+        }
     }
 
-    remove_ob(op);
-
-    if (check_walk_off(op, NULL, MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
-    {
-        return 0;
-    }
-
-    for (tmp = op; tmp; tmp = tmp->more)
-    {
-        tmp->x += freearr_x[dir];
-        tmp->y += freearr_y[dir];
-    }
-
-    insert_ob_in_map(op, op->map, pusher, 0);
-
-    return 1;
+    return 0;
 }
 
 /* returns 1 if pushing invokes a attack, 0 when not */
-/* new combat command do the attack now - i disabled push attacks */
-int push_ob(object *who, int dir, object *pusher)
+static int PushLiving(object_t *who, sint8 dir, object_t *pusher)
 {
-    int     str1, str2;
-    object *owner;
-
-    if (who->head != NULL)
-        who = who->head;
-    owner = get_owner(who);
+    int     str1,
+            str2;
+    object_t *owner = get_owner(who);
 
     /* Wake up sleeping monsters that may be pushed */
     CLEAR_FLAG(who, FLAG_SLEEP);
@@ -359,42 +339,17 @@ int push_ob(object *who, int dir, object *pusher)
         remove_ob(who);
         if (check_walk_off(who, NULL, MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
             return 0;
-        move_ob(pusher, dir, pusher);
+        (void)move_ob(pusher, dir, pusher);
         pet_follow_owner(who);
 
 
         return 1;
     }
 
-    /* We want ONLY become enemy of evil, unaggressive monster. We must RUN in them */
-    /* In original we have here a unaggressive check only - that was the reason why */
-    /* we so often become an enemy of friendly monsters... */
-    /* funny: was they set to unaggressive 0 (= not so nice) they don't attack */
-
-    /* i disabled run/push attacks
-    if (owner != pusher &&
-        pusher->type == PLAYER &&
-        who->type != PLAYER &&
-        !QUERY_FLAG(who,FLAG_FRIENDLY))
-    {
-        if (CONTR(pusher)->run_on)
-        {
-            new_draw_info(NDI_UNIQUE, 0, pusher, "You start to attack %s !!",
-                QUERY_SHORT_NAME(who, pusher));
-            update_npc_knowledge(who, pusher, FRIENDSHIP_PUSH, 0);
-            return 1;
-        }
-        else
-        {
-            new_draw_info(NDI_UNIQUE, 0, pusher, "You avoid attacking %s.",
-                QUERY_SHORT_NAME(who, pusher));
-        }
-    }*/
-
     /* now, lets test stand still we NEVER can push stand_still monsters. */
     if (QUERY_FLAG(who, FLAG_STAND_STILL))
     {
-       new_draw_info(NDI_UNIQUE, 0, pusher, "You can't push %s.",
+       ndi(NDI_UNIQUE, 0, pusher, "You can't push %s.",
            QUERY_SHORT_NAME(who, pusher));
         return 0;
     }
@@ -415,9 +370,9 @@ int push_ob(object *who, int dir, object *pusher)
     str2 = (pusher->stats.Str > 0 ? pusher->stats.Str : 9 + pusher->level / 10);
 
     if (random_roll(str1, str1 / 2 + str1 * 2) >= random_roll(str2, str2 / 2 + str2 * 2) ||
-        !move_ob(who, dir, pusher))
+        move_ob(who, dir, pusher) != MOVE_RESULT_SUCCESS)
     {
-        new_draw_info(NDI_UNIQUE, 0, who, "%s tried to push you.",
+        ndi(NDI_UNIQUE, 0, who, "%s tried to push you.",
             QUERY_SHORT_NAME(pusher, who));
         return 0;
     }
@@ -427,62 +382,15 @@ int push_ob(object *who, int dir, object *pusher)
      * to be in an else block - the message is going to a different
      * player
      */
-    (void) move_ob(pusher, dir, pusher);
-    new_draw_info(NDI_UNIQUE, 0, who, "%s pushed you.",
+    (void)move_ob(pusher, dir, NULL);
+    ndi(NDI_UNIQUE, 0, who, "%s pushed you.",
         QUERY_SHORT_NAME(pusher, who));
-    new_draw_info(NDI_UNIQUE, 0, pusher, "You pushed %s back.",
+    ndi(NDI_UNIQUE, 0, pusher, "You pushed %s back.",
         QUERY_SHORT_NAME(who, pusher));
-
     return 1;
 }
-int push_roll_object(object * const op, int dir, const int flag)
-{
 
-    object     *tmp;
-    mapstruct  *m;
-    int         xt, yt, ret;
-    ret = 0;
-	/* we check for all conditions where op can't push anything */
-    if (dir <= 0 || CONTR(op)->rest_mode || QUERY_FLAG(op,FLAG_PARALYZED) ||
-		QUERY_FLAG(op,FLAG_ROOTED) || IS_AIRBORNE(op))
-        return 0;
-    xt = op->x + freearr_x[dir];
-    yt = op->y + freearr_y[dir];
-    if (!(m = out_of_map(op->map, &xt, &yt)))
-        return 0;
-	for (tmp = GET_MAP_OB(m, xt, yt); tmp != NULL; tmp = tmp->above)
-	{
-        if (IS_LIVE(tmp)|| QUERY_FLAG(tmp,FLAG_CAN_ROLL))
-		{
-			break;
-		}
-	}
-	if (tmp == NULL)
-	{
-        new_draw_info(NDI_UNIQUE, 0, op, "You fail to push anything.");
-		return 0;
-	}
-	/* here we try to push pets, players and mobs */
-	if (get_owner(tmp)==op || IS_LIVE(tmp))
-    {
-        play_sound_map(op->map, op->x, op->y, SOUND_PUSH_PLAYER, SOUND_NORMAL);
-        if(push_ob(tmp,dir,op))
-            ret = 1;
-        if(op->hide)
-            make_visible(op);
-        return ret;
-    }
-	/* here we try to push moveable objects */
-    else if(QUERY_FLAG(tmp,FLAG_CAN_ROLL))
-    {
-        tmp->direction = dir;
-        recursive_roll(tmp,dir,op);
-        if(action_makes_visible(op))
-            make_visible(op);
-    }
-    return ret;
-}
-int missile_reflection_adjust(object *op, int flag)
+int missile_reflection_adjust(object_t *op, int flag)
 {
     if (!op->stats.maxgrace) /* no more direction/reflection! */
         return FALSE;
@@ -498,9 +406,9 @@ int missile_reflection_adjust(object *op, int flag)
 /* All this really is is a glorified remove_object that also updates
  * the counts on the map if needed. newmap is the map pl is going to, or NULL
  * if pl is logging out. */
-uint8 leave_map(player *pl, mapstruct *newmap)
+uint8 leave_map(player_t *pl, map_t *newmap)
 {
-    mapstruct *oldmap = pl->ob->map;
+    map_t *oldmap = pl->ob->map;
     uint8      r;
 
     remove_ob(pl->ob); /* TODO: hmm... never drop inv here? */
@@ -513,13 +421,12 @@ uint8 leave_map(player *pl, mapstruct *newmap)
          * unique map, save the player file. The map is then also saved below,
          * meaning that the two object list should not get out of sync. */
         if (newmap &&
-            (MAP_INSTANCE(oldmap) ||
-             MAP_UNIQUE(oldmap)))
+            ((oldmap->status & (MAP_STATUS_INSTANCE | MAP_STATUS_UNIQUE))))
         {
             (void)player_save(pl->ob);
         }
 
-        if (MAP_MULTI(oldmap) ||
+        if ((oldmap->status & MAP_STATUS_MULTI) ||
             map_save(oldmap))
         {
             /* When there are still players or (TODO) permanently loading mobs on
@@ -527,7 +434,7 @@ uint8 leave_map(player *pl, mapstruct *newmap)
             if (oldmap->player_first ||
                 oldmap->perm_load)
             {
-                oldmap->in_memory = MAP_ACTIVE;
+                oldmap->in_memory = MAP_MEMORY_ACTIVE;
             }
         }
     }
@@ -535,51 +442,139 @@ uint8 leave_map(player *pl, mapstruct *newmap)
     return r;
 }
 
-/* same as enter_map_by_exit() but without exit_ob().
-* Function is used from player loader, scripts and other "direct access" situations.
-* By calling without op and/or using MAP_STATUS_NO_FALLBACK and MAP_STATUS_LOAD_ONLY,
-* enter_map_by_name() will only load and return single maps.
-* There are 2 special cases:
-* When called with src_path == NULL, ready_map_name() will only check the loaded maps for
-* that path and, when found, we set src_path to newmap->orig_path.
-* When called with path == NULL, we create it using flags
-* RETURN: loaded map ptr or NULL
-*/
-mapstruct *enter_map_by_name(object *op, const char *path, const char *src_path, int x, int y, int flags)
+sint8 enter_map(object_t *who, msp_t *msp, object_t *originator, uint8 oflags, uint32 iflags)
 {
-    mapstruct  *newmap;
-    const char *dyn_path = NULL;
-    shstr      *reference = (op && op->type == PLAYER) ? op->name : NULL;
+    sint8   i;
+    object_t *part,
+           *next;
+    player_t *pl = (who->type == PLAYER) ? CONTR(who) : NULL;
+
+    if (who->head)
+    {
+        who = who->head;
+    }
+
+    i = overlay_find_free_by_flags(msp, who, oflags);
+
+    /* If no spot could be found (i = -1), return insertion failed. If the
+     * spot is the one at m, x, y (i = 0), msp as calculated above is still
+     * valid. Otherwise (i > 0), recalculate msp (using MSP_GET() so that
+     * out_of_map() is called; this is because the new x, y may be on a
+     * different map). */
+    if (i == -1)
+    {
+        return MOVE_RESULT_INSERTION_FAILED;
+    }
+    else if (i > 0)
+    {
+        sint16 x = msp->x + OVERLAY_X(i),
+               y = msp->y + OVERLAY_Y(i);
+
+        msp = MSP_GET(msp->map, x, y);
+    }
+
+    /* If it is a player login, he has yet to be inserted anyplace.
+     * otherwise, we need to deal with removing the object here. */
+    if (!QUERY_FLAG(who, FLAG_REMOVED))
+    {
+        if (pl)
+        {
+            if (leave_map(pl, msp->map) != CHECK_WALK_OK)
+            {
+                return MOVE_RESULT_WHO_DESTROYED;
+            }
+        }
+        else
+        {
+            remove_ob(who);
+
+            if (check_walk_off(who, originator, MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
+            {
+                return MOVE_RESULT_WHO_DESTROYED;
+            }
+        }
+    }
+
+    /* set single or all part of a multi arch */
+    FOREACH_PART_OF_OBJECT(part, who, next)
+    {
+        part->x = msp->x + part->arch->clone.x;
+        part->y = msp->y + part->arch->clone.y;
+    }
+
+    if (!insert_ob_in_map(who, msp->map, originator, iflags))
+    {
+        return MOVE_RESULT_WHO_DESTROYED;
+    }
+
+    /* do some action special for players after we have inserted them */
+    if (pl)
+    {
+        pl->count = 0;
+
+        if (pl->tadoffset != who->map->tadoffset)
+        {
+            (void)command_time(who, "verbose");
+            pl->tadoffset = who->map->tadoffset;
+        }
+
+        /* TODO: Pets, golems? */
+    }
+
+    return MOVE_RESULT_SUCCESS;
+}
+
+/* Function is used from player loader, scripts and other "direct access" situations.
+ * By calling without who and/or using MAP_STATUS_NO_FALLBACK and MAP_STATUS_LOAD_ONLY,
+ * will only load and return single maps.
+ * There are 2 special cases:
+ * When called with orig_path_sh == NULL, ready_map_name() will only check the loaded maps for
+ * that path_sh and, when found, we set orig_path_sh to newmap->orig_path.
+ * When called with path_sh == NULL, we create it using flags
+ * RETURN: loaded map ptr or NULL */
+sint8 enter_map_by_name(object_t *who, shstr_t *path_sh, shstr_t *orig_path_sh, sint16 x, sint16 y, uint32 mflags)
+{
+    player_t     *pl = (who && who->type == PLAYER) ? CONTR(who) : NULL;
+    shstr_t      *reference;
+    map_t  *m;
+    msp_t   *msp;
 
     /* new unique maps & instance pathes must be generated by the caller (scripts,...).
-    * Easy enough with the 2 helper functions create_unique_path_sh() and create_instance_path_sh()
-    */
-    if(!path)
+     * Easy enough with the 2 helper functions create_unique_path_sh() and create_instance_path_sh() */
+    if (!path_sh)
     {
-        if(!src_path)
-            return NULL;
-
-        if(flags & (MAP_STATUS_UNIQUE|MAP_STATUS_INSTANCE))
+        if (!orig_path_sh)
         {
-            if(!op || op->type != PLAYER || !CONTR(op)) /* just some sanity checks */
-                return NULL;
+            return MOVE_RESULT_INSERTION_FAILED;
+        }
 
-            if(flags & MAP_STATUS_UNIQUE)
-                path = dyn_path = create_unique_path_sh(op->name, src_path);
+        if ((mflags & (MAP_STATUS_UNIQUE | MAP_STATUS_INSTANCE)))
+        {
+            /* Sanity checks. */
+            if (!pl)
+            {
+                return MOVE_RESULT_INSERTION_FAILED;
+            }
+
+            if ((mflags & MAP_STATUS_UNIQUE))
+            {
+                path_sh = create_unique_path_sh(who->name, orig_path_sh);
+            }
             else /* ATM we always get here a new instance... can't see the sense to use an old one in this case */
             {
                 /* a forced instance... this is for example done by a script forcing a player in an instance! */
-                CONTR(op)->instance_num = MAP_INSTANCE_NUM_INVALID;
-                /* the '0' as flags are right: enter_map_by_exit() will automatically use
-                 * the exit_ob settings for this flags.
+                pl->instance_num = MAP_INSTANCE_NUM_INVALID;
+                /* the '0' as mflags are right: will automatically use
+                 * the exit_ob settings for this mflags.
                  * enter_map_by_name() is called at this point only
-                 * from scripts or other controllers which will do the setup after the call.
-                 */
-                path = dyn_path = create_instance_path_sh(CONTR(op), src_path, 0);
+                 * from scripts or other controllers which will do the setup after the call. */
+                path_sh = create_instance_path_sh(pl, orig_path_sh, 0);
             }
         }
-        else /* we can just copy src_path */
-            path = src_path; /* not a bug: add_refcount() is not needed because we KNOW that the hash string is valid */
+        else /* we can just copy orig_path_sh */
+        {
+            path_sh = orig_path_sh; /* not a bug: add_refcount() is not needed because we KNOW that the hash string is valid */
+        }
     }
     else
     {
@@ -588,83 +583,102 @@ mapstruct *enter_map_by_name(object *op, const char *path, const char *src_path,
          * ATM we only check the map is there. If the map exists, the
          * instance exists too because the "unique directory setup".
          * We can add here more tricky stuff like instances with a time limit
-         * or instances which don't allow a relogin.
-         */
-        if(src_path && flags & MAP_STATUS_INSTANCE)
+         * or instances which don't allow a relogin. */
+        if (orig_path_sh &&
+            (mflags & MAP_STATUS_INSTANCE))
         {
-            if( check_path(path, FALSE) == -1) /* file don't exits */
+            if (check_path(path_sh, FALSE) == -1) /* file don't exist */
             {
                 /* for non player just return with NULL...
-                 * for player override with his bind point now
-                 */
-                if(!op || op->type != PLAYER || !CONTR(op) || flags & (MAP_STATUS_NO_FALLBACK|MAP_STATUS_LOAD_ONLY))
-                    return NULL;
+                 * for player override with his bind point now */
+                if (!pl ||
+                    (mflags & (MAP_STATUS_NO_FALLBACK | MAP_STATUS_LOAD_ONLY)))
+                {
+                    return MOVE_RESULT_INSERTION_FAILED;
+                }
 
-                path = CONTR(op)->savebed_map;
-                src_path = CONTR(op)->orig_savebed_map;
-                flags = CONTR(op)->bed_status;
-                x = CONTR(op)->bed_x;
-                y = CONTR(op)->bed_y;
+                path_sh = pl->savebed_map;
+                orig_path_sh = pl->orig_savebed_map;
+                mflags = pl->bed_status;
+                x = pl->bed_x;
+                y = pl->bed_y;
             }
         }
     }
 
-    newmap = ready_map_name(path, src_path, MAP_STATUS_TYPE(flags), reference);
-    FREE_ONLY_HASH(dyn_path);
+    reference = (pl) ? who->name : NULL;
+    m = ready_map_name(path_sh, orig_path_sh, MAP_STATUS_TYPE(mflags), reference);
 
-    if (!newmap) /* map don't exists, fallback to savebed and/or emergency when possible */
+    if (!m) /* map don't exists, fallback to savebed and/or emergency when possible */
     {
-        if(!op || flags & MAP_STATUS_NO_FALLBACK || !src_path) /* we only try path !  - no fallback to a different map */
-            return NULL;
-
-        /* for player we first try to the bind point (aka savebed) */
-        if(op->type == PLAYER && CONTR(op))
+        if (!who ||
+            (mflags & MAP_STATUS_NO_FALLBACK) ||
+            !orig_path_sh) /* we only try path_sh !  - no fallback to a different map */
         {
-            LOG( llevBug, "BUG: enter_map_by_name(): pathname to map does not exist! player: %s (%s)\n", STRING_OBJ_NAME(op), STRING_SAFE(src_path));
-            newmap = ready_map_name(CONTR(op)->savebed_map, CONTR(op)->orig_savebed_map, CONTR(op)->bed_status, reference);
-            x = CONTR(op)->bed_x;
-            y = CONTR(op)->bed_y;
+            return MOVE_RESULT_INSERTION_FAILED;
+        }
 
-            if(!newmap)
+        /* For player we first try to the bind point (aka savebed) */
+        if (pl)
+        {
+            LOG(llevBug, "BUG:: %s:enter_map_by_name(): pathname to map does not exist! player: %s[%d] (%s)\n",
+                __FILE__, STRING_OBJ_NAME(who), TAG(who), STRING_SAFE(orig_path_sh));
+            m = ready_map_name(pl->savebed_map, pl->orig_savebed_map, pl->bed_status, reference);
+            x = pl->bed_x;
+            y = pl->bed_y;
+
+            /* Something is wrong with our bind point... reset */
+            if (!m)
             {
-                /* something is wrong with our bind point... reset */
-                set_bindpath_by_default(CONTR(op));
-                newmap = ready_map_name(shstr_cons.emergency_mappath, shstr_cons.emergency_mappath, MAP_STATUS_MULTI, reference);
+                set_bindpath_by_default(pl);
+                m = ready_map_name(shstr_cons.emergency_mappath, shstr_cons.emergency_mappath, MAP_STATUS_MULTI, reference);
 
                 /* If we can't load the emergency map, something is probably really screwed up, so bail out now. */
-                if (!newmap)
-                    LOG(llevError, "ERROR: enter_map_by_name(): could not load emergency map? Fatal error! (player: %s)\n", STRING_OBJ_NAME(op));
+                if (!m)
+                {
+                    LOG(llevError, "ERROR:: %s:enter_map_by_name(): could not load emergency map? Fatal error! (player: %s[%d])\n",
+                        __FILE__, STRING_OBJ_NAME(who), TAG(who));
+                }
             }
         }
         else /* we NEVER use the emergency map for mobs */
-            return NULL;
-
+        {
+            return MOVE_RESULT_INSERTION_FAILED;
+        }
     }
 
-    if(!op || flags & MAP_STATUS_LOAD_ONLY )
-        return NULL;
+    /* TODO: Not sure why this is. */
+    if (!who ||
+        (mflags & MAP_STATUS_LOAD_ONLY))
+    {
+        return MOVE_RESULT_INSERTION_FAILED;
+    }
 
     /* This is EXTREMLY useful for quest maps with treasure rooms. */
-    if (MAP_FIXEDLOGIN(newmap) || flags & MAP_STATUS_FIXED_LOGIN || x == -1 || y == -1)
+    if (MAP_FIXEDLOGIN(m) ||
+        (mflags & MAP_STATUS_FIXED_LOGIN) ||
+        OUT_OF_REAL_MAP(m, x, y))
     {
-        x = MAP_ENTER_X(newmap);
-        y = MAP_ENTER_Y(newmap);
+        x = MAP_ENTER_X(m);
+        y = MAP_ENTER_Y(m);
     }
 
-    if(!src_path) /* special case - we have identified the map by his dest path from loaded map list */
+    if (!orig_path_sh) /* special case - we have identified the map by his dest path_sh from loaded map list */
     {
-        src_path = add_refcount(newmap->orig_path);
+        orig_path_sh = add_refcount(m->orig_path);
         /* because we can't be sure in this case about the map status, we overrule it with the loaded map! */
-        flags = newmap->map_status;
+        mflags = m->status;
     }
 
-    /* have in mind that op can be destroyed by enter_map() */
-    enter_map(op, NULL, newmap, x, y, flags, 0);
-
-    return newmap;
+    /* enter_map_by_name() only enters the specified map, so x, y must be
+     * within its boundaries (checked above). Therefore, msp can be directly
+     * calculated (no need for MSP_GET()) as out_of_map() needn't and mustn't
+     * be called. */
+    msp = MSP_RAW(m, x, y);
+    return enter_map(who, msp, NULL, OVERLAY_FIRST_AVAILABLE, INS_NO_MERGE | INS_NO_WALK_ON);
 }
 
-/* Tries to move 'op' to exit_ob.  op is the character or monster that is
+/* Tries to move 'who' to exit_ob.  who is the character or monster that is
 * using the exit, where exit_ob is the exit object (boat, door, teleporter,
 * etc.)
 * This is now the one and only "use an exit" function. Every object from type EXIT
@@ -674,42 +688,36 @@ mapstruct *enter_map_by_name(object *op, const char *path, const char *src_path,
 * the type is the same as the map where the exit object is part off (or always "normal" when
 * there is no root map.
 * RETURN: TRUE: we have loaded and entered a map. FALSE: we failed to enter
-* MT-2006
-*/
-int enter_map_by_exit(object *op, object *exit_ob)
+* MT-2006 */
+sint8 enter_map_by_exit(object_t *who, object_t *exit_ob)
 {
-    int         flags,
-                mstatus,
-                x,
-                y;
-    object     *tmp;
-    mapstruct  *exit_map,
-               *newmap;
-    shstr      *reference = NULL;
+    object_t  *tmp;
+    shstr_t   *reference = NULL;
+    uint32     mstatus;
+    uint8      oflags;
+    map_t     *exit_map,
+              *m;
+    sint16     x,
+               y;
+    msp_t     *msp;
+    sint8      i;
 
-    if (op->head)
-        op = op->head;
-
-    if (!exit_ob)
-    {
-        LOG(llevBug, "BUG: enter_map_by_exit(): called with object %s but without exit ob!\n", STRING_OBJ_NAME(op));
-        return FALSE;
-    }
+    who = (who->head) ? who->head : who;
 
     /* Event trigger and quick exit */
-    if(trigger_object_plugin_event(EVENT_TRIGGER,
-                exit_ob, op, NULL,
-                NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
-        return FALSE;
+    if (trigger_object_plugin_event(EVENT_TRIGGER, exit_ob, who, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
+    {
+        return MOVE_RESULT_INSERTION_FAILED;
+    }
 
     /* If the destination path is nonexistent or invalid, we ain't goin'
      * nowhere. */
     if (!exit_ob->slaying ||
         check_path(exit_ob->slaying, 1) == -1)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "%s is temporarily closed.",
-            QUERY_SHORT_NAME(exit_ob, op));
-        return FALSE;
+        ndi(NDI_UNIQUE, 0, who, "%s is temporarily closed.",
+            QUERY_SHORT_NAME(exit_ob, who));
+        return MOVE_RESULT_INSERTION_FAILED;
     }
 
     /* Get the map the exit is on (or the environment of the exit is on). */
@@ -741,7 +749,7 @@ int enter_map_by_exit(object *op, object *exit_ob)
      * was intentional.
      *
      * So the original destination path is translated, according to status
-     * (->last_eat or exit_map->map_status), into a destination path (->race),
+     * (->last_eat or exit_map->status), into a destination path (->race),
      *
      * TODO: Exits created/modified by scripts do not have their original
      * destination paths normalized/validated in this way so may well be
@@ -750,7 +758,7 @@ int enter_map_by_exit(object *op, object *exit_ob)
     /* We need to know the status with which to load the destination map. This
      * either held by the exit itself or is inherited from the exit map. */
     mstatus = (!exit_ob->last_eat) ? // means inherited
-       (int)MAP_STATUS_TYPE(exit_map->map_status) :
+       (int)MAP_STATUS_TYPE(exit_map->status) :
        (int)MAP_STATUS_TYPE(exit_ob->last_eat);
 
     /* If our status is not one of these we have a problem and must bail out. */
@@ -772,7 +780,7 @@ int enter_map_by_exit(object *op, object *exit_ob)
                 mstatus);
         }
 
-        return FALSE;
+        return MOVE_RESULT_INSERTION_FAILED;
     }
     /* Multiplayer maps are easy as reference is always NULL and the
      * destination path is the same as the original destination path. */
@@ -814,15 +822,15 @@ int enter_map_by_exit(object *op, object *exit_ob)
         /* Here we're going from a multiplayer map to a unique/instance. */
         else
         {
-            player *pl = (op->type == PLAYER) ? CONTR(op) : NULL;
-            uint32  flags;
+            player_t *pl = (who->type == PLAYER) ? CONTR(who) : NULL;
+            uint32    flags;
 
             /* Only players can have uniques/instances. */
             /* TODO: ATM only players can use exits at all but this will likely
              * change soon. */
             if (!pl)
             {
-                return FALSE;
+                return MOVE_RESULT_INSERTION_FAILED;
             }
 
             /* For a unique, the destination path is in server/data/players/.
@@ -849,7 +857,7 @@ int enter_map_by_exit(object *op, object *exit_ob)
                 /* So the reference is the player's name. */
                 else
                 {
-                    FREE_AND_ADD_REF_HASH(reference, op->name);
+                    FREE_AND_ADD_REF_HASH(reference, who->name);
                 }
 
                 FREE_AND_COPY_HASH(exit_ob->race, create_unique_path_sh(reference, exit_ob->slaying));
@@ -859,7 +867,7 @@ int enter_map_by_exit(object *op, object *exit_ob)
             else if ((mstatus & MAP_STATUS_INSTANCE))
             {
                 /* So the reference is the player's name. */
-                FREE_AND_ADD_REF_HASH(reference, op->name);
+                FREE_AND_ADD_REF_HASH(reference, who->name);
 
                 /* we give here a player a "temporary" instance directory inside /instance
                  * which is identified by global_instance_num (directory name  = itoa(num)).
@@ -875,7 +883,7 @@ int enter_map_by_exit(object *op, object *exit_ob)
                     pl->instance_num = MAP_INSTANCE_NUM_INVALID; /* if set, we generate a NEW instance! */
                 }
 
-                flags = (QUERY_FLAG(exit_ob, FLAG_IS_MALE)) ? INSTANCE_FLAG_NO_REENTER : 0;
+                flags = (QUERY_FLAG(exit_ob, FLAG_IS_MALE)) ? MAP_INSTANCE_FLAG_NO_REENTER : 0;
 
                 /* create_instance..() will try to load an old instance, will fallback to
                  * a new one if needed and setup all what need be done to start the instance. */
@@ -884,336 +892,88 @@ int enter_map_by_exit(object *op, object *exit_ob)
         }
     }
 
-    /* get the map ptr - load the map if needed */
-    newmap = ready_map_name(exit_ob->race, exit_ob->slaying, mstatus, reference);
+    m = ready_map_name(exit_ob->race, exit_ob->slaying, mstatus, reference);
     FREE_ONLY_HASH(reference);
 
-    /* If no map could be readied, we ain't goin' nowhere. */
-    if (!newmap)
+    if (!m)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "%s is closed.",
-            QUERY_SHORT_NAME(exit_ob, op));
-        return FALSE;
+        ndi(NDI_UNIQUE, 0, who, "%s is closed.",
+            QUERY_SHORT_NAME(exit_ob, who));
+        return MOVE_RESULT_INSERTION_FAILED;
     }
 
     /* Now we got for sure transported away.
      * IF this exit has the "neutralize instance" flag set AND the old map type
-     * was instance and the new one NOT - then neutralize the instance now.
-     */
-    if(exit_map->map_status & MAP_STATUS_INSTANCE && QUERY_FLAG(exit_ob, FLAG_IS_FEMALE)
-        && !(mstatus & MAP_STATUS_INSTANCE))
-        reset_instance_data(CONTR(op));
+     * was instance and the new one NOT - then neutralize the instance now. */
+    if ((exit_map->status & MAP_STATUS_INSTANCE) &&
+        QUERY_FLAG(exit_ob, FLAG_IS_FEMALE) &&
+        !(mstatus & MAP_STATUS_INSTANCE))
+    {
+        reset_instance_data(CONTR(who));
+    }
 
     /* lets play a sound where we have left the map */
-    if (exit_ob->sub_type1 == ST1_EXIT_SOUND && exit_map)
-        play_sound_map(exit_map, exit_ob->x, exit_ob->y, SOUND_TELEPORT, SOUND_NORMAL);
+    if (exit_ob->sub_type1 == ST1_EXIT_SOUND &&
+        exit_map)
+    {
+        play_sound_map(MSP_RAW(exit_map, exit_ob->x, exit_ob->y), SOUND_TELEPORT, SOUND_NORMAL);
+    }
 
     /* Send any exit message to exiter */
     if (exit_ob->msg)
-        new_draw_info(NDI_NAVY, 0, op, "%s", exit_ob->msg);
-
-    /* collect the flag settings from our exit_ob */
-    flags = EXIT_STATUS(exit_ob);
-    if(EXIT_POS_FIX(exit_ob))
-        flags |=  MAP_STATUS_FIXED_POS;
-    if(EXIT_POS_FREE(exit_ob))
-        flags |=  MAP_STATUS_FREE_POS_ONLY;
-    if(EXIT_POS_RANDOM(exit_ob))
-        flags |=  MAP_STATUS_RANDOM_POS;
-
-    x = (EXIT_X(exit_ob) == -1) ? MAP_ENTER_X(newmap) : EXIT_X(exit_ob);
-    y = (EXIT_Y(exit_ob) == -1) ? MAP_ENTER_Y(newmap) : EXIT_Y(exit_ob);
-
-    /* if 1 was returned from enter_map() object was destroyed in the
-     * meantime! */
-    if (enter_map(op, NULL, newmap, x, y, flags,
-                  INS_NO_FORCE | INS_WITHIN_LOS))
-        return FALSE;
-
-    /* some "exits" like a pit will move you for sure to a new map - but for a price ... */
-    if (exit_ob && exit_ob->stats.dam)
-        damage_ob(op, exit_ob->stats.dam, exit_ob, ENV_ATTACK_CHECK);
-
-    return TRUE;
-}
-
-#if 0
-/* Random maps are disabled ATM.
-* TODO: reactivate the module, implement it as a threaded instance and add it to the
-* map instance patch
-* This function should then be merged into enter_map().
-* I leaved it here as example.
-*/
-/* The player is trying to enter a randomly generated map.  In this case, generate the
-* random map as needed.
-*/
-static void enter_random_map(object *pl, object *exit_ob)
-{
-    mapstruct  *new_map;
-    char        newmap_name[HUGE_BUF];
-    static int  reference_number    = 0;
-    RMParms     rp;
-
-    memset(&rp, 0, sizeof(RMParms));
-    rp.Xsize = -1;
-    rp.Ysize = -1;
-    if (exit_ob->msg)
-        set_random_map_variable(&rp, exit_ob->msg);
-    rp.origin_x = exit_ob->x;
-    rp.origin_y = exit_ob->y;
-    rp.generate_treasure_now = 1;
-    strcpy(rp.origin_map, pl->map->path);
-
-    /* pick a new pathname for the new map.  Currently, we just
-    * use a static variable and increment the counter one each time.
-    */
-    sprintf(newmap_name, "/random/%016d", reference_number++);
-
-    /* now to generate the actual map. */
-    new_map = (mapstruct *) generate_random_map(newmap_name, &rp);
-
-    /* Update the exit_ob so it now points directly at the newly created
-    * random maps.  Not that it is likely to happen, but it does mean that a
-    * exit in a unique map leading to a random map will not work properly.
-    * It also means that if the created random map gets reset before
-    * the exit leading to it, that the exit will no longer work.
-    */
-    if (new_map)
     {
-        int x, y;
-        x = EXIT_X(exit_ob) = MAP_ENTER_X(new_map);
-        y = EXIT_Y(exit_ob) = MAP_ENTER_Y(new_map);
-        FREE_AND_COPY_HASH(EXIT_PATH(exit_ob), newmap_name);
-        FREE_AND_COPY_HASH(new_map->path, newmap_name);
-        enter_map(pl, new_map, x, y, 0, 0);
-    }
-}
-#endif
-
-/* Try to find a spot for op on map on or near x, y depending on mode and
- * ins_flags.
- * If a spot is found, the return is >= 0. This is the index into
- * freearr_x/freearr_y. Otherwise, the return is -1. */
-int check_insertion_allowed(object *op, mapstruct *map, int x, int y, int mode, int ins_flags)
-{
-    int i;
-
-    switch (mode)
-    {
-        /* first available location */
-        case 1:
-            i = find_first_free_spot(op->arch, op, map, x, y);
-
-            break;
-
-        /* Fixed location. */
-        case 2:
-            i = (arch_blocked(op->arch, op, map, x, y)) ? -1 : 0;
-
-            break;
-
-        /* Random location, 1 squares radius. */
-        case 3:
-            i = find_free_spot(op->arch, op, map, x, y, 0, 0, SIZEOFFREE1 + 1);
-
-            break;
-
-        /* Random location, 2 squares radius. */
-        case 4:
-            i = find_free_spot(op->arch, op, map, x, y, ins_flags, 0, SIZEOFFREE2 + 1);
-
-            break;
-
-        /* Random location, 3 squares radius. */
-        case 5:
-            i = find_free_spot(op->arch, op, map, x, y, ins_flags, 0, SIZEOFFREE);
-
-            break;
-
-        /* Random location, progressive radius. */
-        case 6:
-            i = find_free_spot(op->arch, op, map, x, y, 0, 0, SIZEOFFREE1 + 1);
-
-            if (i == -1)
-            {
-                i = find_free_spot(op->arch, op, map, x, y, ins_flags, SIZEOFFREE1 + 1, SIZEOFFREE2 + 1);
-
-                if (i == -1)
-                    i = find_free_spot(op->arch, op, map, x, y, ins_flags, SIZEOFFREE2 + 1, SIZEOFFREE);
-            }
-
-            break;
-
-        default:
-            LOG(llevDebug, "DEBUG:: %s/check_insertion_allowed(): Illegal mode (defaulting to first available location)!\n",
-                __FILE__);
-            i = find_first_free_spot(op->arch, op, map, x, y);
+        ndi(NDI_NAVY, 0, who, "%s", exit_ob->msg);
     }
 
-#if 0
-    LOG(llevDebug, "DEBUG: %s/check_insertion_allowed(): op=%s[%d], mode=%d, INS_NO_FORCE=%d, INS_WITHIN_LOS=%d, i=%d\n",
-        __FILE__, STRING_OBJ_NAME(op), TAG(op), mode,
-        (ins_flags & INS_NO_FORCE), (ins_flags & INS_WITHIN_LOS), i);
-#endif
+    x = (exit_ob->stats.hp == -1) ? MAP_ENTER_X(m) : exit_ob->stats.hp;
+    y = (exit_ob->stats.sp == -1) ? MAP_ENTER_Y(m) : exit_ob->stats.sp;
 
-    /* Couldn't find a free spot? If we have specified free spot only, this
-     * means failure. Otherwise, force to the default spot. */
-    if (i == -1)
+    /* At this stage, x, y should be within m boundaries; if not, return
+     * insertion failed. Equally, if they are, msp can be directly calculated
+     * (no need for MSP_GET() as out_of_map() needn't and mustn't be called). */
+    if (OUT_OF_REAL_MAP(m, x, y))
     {
-        if (ins_flags & INS_NO_FORCE)
-            return -1;
-        else
-            return 0;
+        return MOVE_RESULT_INSERTION_FAILED;
     }
 
-    return i;
-}
+    msp = MSP_RAW(m, x, y);
+    oflags = OVERLAY_FIRST_AVAILABLE;
 
-/*
-* enter_map():  Moves the player and pets from current map (if any) to
-* new map.  map, x, y must be set.  map is the map we are moving the
-* player to - it could be the map he just came from.
-* The place the object is put on is x,y. Depending on setting MAP_STATUS_FIXED_POS
-* the function tries to find a free spot around it or use it as fixed position.
-* @return 0 if successful, 1 if object was destroyed, 2 if insertion failed.
-*/
-int enter_map(object *op, object *originator, mapstruct *newmap, int x, int y, int flags, int ins_flags)
-{
-    int        mode,
-               i;
-    object    *tmp;
-    mapstruct *oldmap = op->map;
-    player    *pl;
-
-    if (op->head)
+    if (exit_ob->last_heal)
     {
-        op = op->head;
-        LOG(llevBug, "BUG: enter_map(): called from tail of object! (obj:%s map: %s (%d,%d))\n", op->name, newmap->path,
-            x, y);
+        oflags |= OVERLAY_FIXED;
+    }
+    else if (exit_ob->last_sp)
+    {
+        oflags |= OVERLAY_RANDOM;
     }
 
-    /* this is a last secure check. In fact, newmap MUST legal and we only
-    * check x and y. No out_of_map() - we want check that x,y is part of this newmap.
-    * if not, we have somewhere missed some checks - give a note to the log.
-    */
-    if (OUT_OF_REAL_MAP(newmap, x, y))
+    if (exit_ob->last_grace)
     {
-        LOG(llevBug, "BUG: enter_map(): supplied coordinates are not within the map! (obj:%s map: %s (%d,%d))\n",
-            op->name, newmap->path, x, y);
-        x = MAP_ENTER_X(newmap);
-        y = MAP_ENTER_Y(newmap);
+        oflags |= OVERLAY_SPECIAL;
     }
 
-    if (flags & MAP_STATUS_RANDOM_POS)
-        mode = 6;
-    else if (flags & MAP_STATUS_RANDOM_POS_3)
-        mode = 5;
-    else if (flags & MAP_STATUS_RANDOM_POS_2)
-        mode = 4;
-    else if (flags & MAP_STATUS_RANDOM_POS_1)
-        mode = 3;
-    else if (flags & MAP_STATUS_FIXED_POS)
-        mode = 2;
-    else
-        mode = 1;
+    /* enter_map() may destroy who; if so, just return that info. */
+    i = enter_map(who, msp, exit_ob, oflags, 0);
 
-    if (flags & MAP_STATUS_FREE_POS_ONLY)
-        ins_flags |= INS_NO_FORCE;
-
-    if ((i = check_insertion_allowed(op, newmap, x, y, mode, ins_flags)) == -1)
-        return 2; // insertion failed
-
-    /* If it is a player login, he has yet to be inserted anyplace.
-    * otherwise, we need to deal with removing the playe here.
-    */
-    if (!QUERY_FLAG(op, FLAG_REMOVED))
+    if (i != MOVE_RESULT_SUCCESS)
     {
-        if (op->type == PLAYER)
+        return i;
+    }
+
+    /* some "exits" like a pit will move you for sure to a new map -- but for a
+     * price ... */
+    if (exit_ob &&
+        exit_ob->stats.dam)
+    {
+        damage_ob(who, exit_ob->stats.dam, exit_ob, ENV_ATTACK_CHECK);
+
+        /* CHECK THIS! */
+        if (who->stats.hp == 0)
         {
-            if (leave_map(CONTR(op), newmap) != CHECK_WALK_OK)
-            {
-                return 1; // object destroyed
-            }
-        }
-        else
-        {
-            remove_ob(op);
-
-            if (check_walk_off(op, originator, MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
-            {
-                return 1; // object destroyed
-            }
+            return MOVE_RESULT_WHO_DESTROYED;
         }
     }
 
-#if 0
-    if (op->map != NULL && op->type == PLAYER && !op->head)
-    {
-        int         evtid;
-        CFParm      CFP;
-
-        /* GROS : Here we handle the MAPLEAVE global event */
-        evtid = EVENT_MAPLEAVE;
-        CFP.Value[0] = (void *) (&evtid);
-        CFP.Value[1] = (void *) (op);
-        GlobalEvent(&CFP);
-    };
-#endif
-
-    x += freearr_x[i];
-    y += freearr_y[i];
-
-    /* set single or all part of a multi arch */
-    for (tmp = op; tmp; tmp = tmp->more)
-    {
-        tmp->x = x + tmp->arch->clone.x;
-        tmp->y = y + tmp->arch->clone.y;
-    }
-
-    if (!insert_ob_in_map(op, newmap, originator, ins_flags))
-    {
-        return 1; // object destroyed
-    }
-
-    /* do some action special for players after we have inserted them */
-    if (op->type == PLAYER && (pl = CONTR(op)))
-    {
-        pl->count = 0;
-
-        /* Update any golems */
-        if (pl->golem != NULL)
-        {
-            int i   = find_free_spot(pl->golem->arch, op, newmap, x, y, INS_WITHIN_LOS, 1, SIZEOFFREE);
-
-            remove_ob(pl->golem);
-            if (check_walk_off(pl->golem, NULL, MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
-                i = -1;
-
-            /* why not using the same spot as the we insert the player for the golem, when
-            * there is nothing free? It does no harm and its more senseful as this.
-            */
-            if (i == -1)
-            {
-                send_golem_control(pl->golem, GOLEM_CTR_RELEASE);
-                pl->golem = NULL;
-            }
-            else
-            {
-                object *tmp;
-                for (tmp = pl->golem; tmp != NULL; tmp = tmp->more)
-                {
-                    tmp->x = x + freearr_x[i] + (tmp->arch == NULL ? 0 : tmp->arch->clone.x);
-                    tmp->y = y + freearr_y[i] + (tmp->arch == NULL ? 0 : tmp->arch->clone.y);
-                    tmp->map = newmap;
-                }
-                /* we assume insert_ob_in_map() will release the golem when its destroyed */
-                if (insert_ob_in_map(pl->golem, newmap, NULL, 0))
-                    pl->golem->direction = find_dir_2(op->x - pl->golem->x, op->y - pl->golem->y);
-            }
-        }
-
-        op->direction = 0;
-    }
-
-    return 0; // success!
+    return MOVE_RESULT_SUCCESS;
 }

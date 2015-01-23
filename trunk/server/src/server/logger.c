@@ -54,7 +54,7 @@ static void DoPrint(char *buf, FILE *fp);
  * return). As this says nothing about how the function has performed this can
  * usually be ignored. But it does mean LOG() can be used in tests (eg, if
  * (LOG())) which is extremely useful for debugging, particularly in macros. */
-sint8 LOG(LogLevel logLevel, char *format, ...)
+sint8 LOG(log_t logLevel, char *format, ...)
 {
     /* Check if timestamp needed */
     CheckTimestamp();
@@ -84,7 +84,7 @@ sint8 LOG(LogLevel logLevel, char *format, ...)
                 sendChannelMessage(NULL, channel, buf);
             }
 # else
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_RED, 5, NULL,
+            ndi(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_RED, 5, NULL,
                           "%s", buf);
 # endif
         }

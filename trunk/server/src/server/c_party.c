@@ -26,10 +26,10 @@
 
 /* DEBUG ONLY */
 #ifdef DEBUG_GROUP
-static void party_dump(object *pobj)
+static void party_dump(object_t *pobj)
 {
     int     i = 0;
-    object *tmp;
+    object_t *tmp;
 
     if (!CONTR(pobj))
     {
@@ -41,7 +41,7 @@ static void party_dump(object *pobj)
 
     for(tmp = CONTR(pobj)->group_leader; tmp; tmp = CONTR(tmp)->group_next, i++)
     {
-        player *pl = CONTR(tmp);
+        player_t *pl = CONTR(tmp);
 
         if (QUERY_FLAG(tmp, FLAG_REMOVED))
         {
@@ -70,7 +70,7 @@ static void party_dump(object *pobj)
 #endif
 
 /* help function to clear group data */
-static inline void party_clear_links(player *pl)
+static inline void party_clear_links(player_t *pl)
 {
     pl->group_status = GROUP_STATUS_FREE;
     pl->group_id = GROUP_NO;
@@ -87,9 +87,9 @@ static inline void party_clear_links(player *pl)
  * b.) player is not in a group
  * c.) has no unanswered invite pending
  */
-int command_party_invite(object *pl, char *params)
+int command_party_invite(object_t *pl, char *params)
 {
-    player *activator,
+    player_t *activator,
            *target;
 
     if(!(activator = CONTR(pl)))
@@ -105,7 +105,7 @@ int command_party_invite(object *pl, char *params)
          */
         if(!strcasecmp(params,"on"))
         {
-            new_draw_info(NDI_UNIQUE, 0,pl, "Group: /invite unlocked.");
+            ndi(NDI_UNIQUE, 0,pl, "Group: /invite unlocked.");
             /* important! to avoid side effect, a group mode change
              * will delete a pending invite!
             */
@@ -118,7 +118,7 @@ int command_party_invite(object *pl, char *params)
 
         if(!strcasecmp(params,"off"))
         {
-            new_draw_info(NDI_UNIQUE, 0,pl, "Group: /invite locked.");
+            ndi(NDI_UNIQUE, 0,pl, "Group: /invite locked.");
             if(activator->group_status & GROUP_STATUS_INVITE)
                 command_party_deny (pl, NULL); /* automatic /deny */
             activator->group_mode = GROUP_MODE_DENY;
@@ -136,12 +136,12 @@ int command_party_invite(object *pl, char *params)
                         command_party_deny (pl, NULL); /* automatic /deny */
                     activator->group_mode = GROUP_MODE_INVITE;
                     FREE_AND_ADD_REF_HASH(activator->group_invite_name, target->ob->name);
-                    new_draw_info(NDI_UNIQUE, 0,pl, "Group: /invite enabled for player %s.", STRING_SAFE(params));
+                    ndi(NDI_UNIQUE, 0,pl, "Group: /invite enabled for player %s.", STRING_SAFE(params));
                 }
             }
         }
 
-        new_draw_info(NDI_UNIQUE, 0,pl, "/invite %s: offline or unknown player.", params);
+        ndi(NDI_UNIQUE, 0,pl, "/invite %s: offline or unknown player.", params);
 
         return 0;
     }
@@ -156,7 +156,7 @@ int command_party_invite(object *pl, char *params)
         if(activator->group_leader != activator->ob)
         {
             /* can be handled client sided */
-            new_draw_info(NDI_UNIQUE, 0,pl, "/invite: you are not the group leader.");
+            ndi(NDI_UNIQUE, 0,pl, "/invite: you are not the group leader.");
 
             return 0;
         }
@@ -165,7 +165,7 @@ int command_party_invite(object *pl, char *params)
         if(CONTR(activator->group_leader)->group_nrof == GROUP_MAX_MEMBER)
         {
             /* can be handled client sided */
-            new_draw_info(NDI_UNIQUE, 0,pl, "/invite: the group is full.");
+            ndi(NDI_UNIQUE, 0,pl, "/invite: the group is full.");
 
             return 0;
         }
@@ -175,7 +175,7 @@ int command_party_invite(object *pl, char *params)
     if(target->group_status & GROUP_STATUS_INVITE)
     {
         /* we want avoid /invite spaming - so we don't give much information here */
-        new_draw_info(NDI_UNIQUE, 0,pl, "/invite: %s has pending invite requests.",
+        ndi(NDI_UNIQUE, 0,pl, "/invite: %s has pending invite requests.",
             QUERY_SHORT_NAME(target->ob, NULL));
 
         return 0;
@@ -184,7 +184,7 @@ int command_party_invite(object *pl, char *params)
     /* target can be invited? */
     if(target->group_id != GROUP_NO) /* player has a group - GROUP_STATUS_GROUP should work to*/
     {
-        new_draw_info(NDI_UNIQUE, 0,pl, "/invite: %s is in another group.",
+        ndi(NDI_UNIQUE, 0,pl, "/invite: %s is in another group.",
             QUERY_SHORT_NAME(target->ob, NULL));
 
         return 0;
@@ -194,7 +194,7 @@ int command_party_invite(object *pl, char *params)
     if(target->group_mode == GROUP_MODE_DENY ||
             (target->group_mode == GROUP_MODE_INVITE && pl->name != target->group_invite_name))
     {
-        new_draw_info(NDI_UNIQUE, 0,pl, "/invite: %s doesn't allow invites.",
+        ndi(NDI_UNIQUE, 0,pl, "/invite: %s doesn't allow invites.",
             QUERY_SHORT_NAME(target->ob, NULL));
 
         return 0;
@@ -210,7 +210,7 @@ int command_party_invite(object *pl, char *params)
 
     /* send the /invite to our player */
     Write_String_To_Socket(&target->socket, SERVER_CMD_INVITE, pl->name, strlen(pl->name));
-    new_draw_info(NDI_YELLOW, 0,pl, "You invited %s to join the group.",
+    ndi(NDI_YELLOW, 0,pl, "You invited %s to join the group.",
         QUERY_SHORT_NAME(target->ob, NULL));
 
     return 0;
@@ -221,9 +221,9 @@ int command_party_invite(object *pl, char *params)
  * this *can* fail when the group is gone, invite give has
  * left or the group is full now
  */
-int command_party_join(object *pl, char *params)
+int command_party_join(object_t *pl, char *params)
 {
-    player *activator,
+    player_t *activator,
            *target;
 
     if(!(activator = CONTR(pl)))
@@ -238,7 +238,7 @@ int command_party_join(object *pl, char *params)
         target = CONTR(activator->group_leader);
     else if(!(target = find_player_hash(activator->group_invite_name)))
     {
-        new_draw_info(NDI_YELLOW, 0,pl, "/join: %s is offline.", STRING_SAFE(activator->group_invite_name));
+        ndi(NDI_YELLOW, 0,pl, "/join: %s is offline.", STRING_SAFE(activator->group_invite_name));
         party_client_group_kill(pl);
         party_clear_links(activator);
 
@@ -250,7 +250,7 @@ int command_party_join(object *pl, char *params)
      */
     if(target->group_status & GROUP_STATUS_GROUP && target->group_leader != target->ob)
     {
-        new_draw_info(NDI_YELLOW, 0,pl, "/join: %s joined another group.",
+        ndi(NDI_YELLOW, 0,pl, "/join: %s joined another group.",
             QUERY_SHORT_NAME(target->ob, NULL));
         party_client_group_kill(pl);
         party_clear_links(activator);
@@ -269,9 +269,9 @@ int command_party_join(object *pl, char *params)
  * when the other denyed the invite - that will make abusing of
  * invite alot less funny.
  */
-int command_party_deny(object *pl, char *params)
+int command_party_deny(object_t *pl, char *params)
 {
-    player *activator;
+    player_t *activator;
 
     if(!(activator = CONTR(pl)))
         return 0;
@@ -281,7 +281,7 @@ int command_party_deny(object *pl, char *params)
         return 0;
 
     /* message is redundant because the invite window will vanish as signal */
-    /* new_draw_info(NDI_UNIQUE, 0,pl, "You denied the invite."); */
+    /* ndi(NDI_UNIQUE, 0,pl, "You denied the invite."); */
     activator->group_status = GROUP_STATUS_FREE; /* simple action */
 
     return 0;
@@ -289,9 +289,9 @@ int command_party_deny(object *pl, char *params)
 
 /* remove yourself from a group.
  */
-int command_party_leave(object *pl, char *params)
+int command_party_leave(object_t *pl, char *params)
 {
-    player *activator;
+    player_t *activator;
 
     if(!(activator = CONTR(pl)))
         return 0;
@@ -302,7 +302,7 @@ int command_party_leave(object *pl, char *params)
 
     party_message(0,NDI_YELLOW, 0, activator->group_leader, pl, "%s left the group.",
         QUERY_SHORT_NAME(pl, NULL));
-    new_draw_info(NDI_YELLOW, 0,pl, "You left the group.");
+    ndi(NDI_YELLOW, 0,pl, "You left the group.");
     party_remove_member(CONTR(pl), FALSE);
 
     return 0;
@@ -311,9 +311,9 @@ int command_party_leave(object *pl, char *params)
 /* Group leader only.
  * remove (kick) a group member.
  */
-int command_party_remove(object *pl, char *params)
+int command_party_remove(object_t *pl, char *params)
 {
-    player *activator,
+    player_t *activator,
            *target;
 
     if (!(activator = CONTR(pl)))
@@ -335,14 +335,14 @@ int command_party_remove(object *pl, char *params)
         !(target->group_status & GROUP_STATUS_GROUP) ||
         activator->group_id != target->group_id)
     {
-        new_draw_info(NDI_YELLOW, 0, pl, "/remove: %s is not in your group.",
+        ndi(NDI_YELLOW, 0, pl, "/remove: %s is not in your group.",
                              STRING_SAFE(params));
 
         return 0;
     }
     party_message(0, NDI_YELLOW, 0, pl, target->ob, "%s was removed from the group.",
         QUERY_SHORT_NAME(target->ob, NULL));
-    new_draw_info(NDI_YELLOW, 0, target->ob, "You were removed from the group.");
+    ndi(NDI_YELLOW, 0, target->ob, "You were removed from the group.");
     party_remove_member(target, FALSE);
 
     return 0;
@@ -355,15 +355,15 @@ int command_party_remove(object *pl, char *params)
  */
 
 /* add a player to a group */
-void party_add_member(player *leader, player *member)
+void party_add_member(player_t *leader, player_t *member)
 {
-    object *tmp;
+    object_t *tmp;
     int     i;
 
     /* don't allow more as GROUP_MAX_MEMBER people in a group */
     if(leader->group_nrof == GROUP_MAX_MEMBER)
     {
-        new_draw_info(NDI_YELLOW, 0, member->ob, "Group is full.");
+        ndi(NDI_YELLOW, 0, member->ob, "Group is full.");
         return;
     }
 
@@ -418,18 +418,18 @@ void party_add_member(player *leader, player *member)
         QUERY_SHORT_NAME(member->ob, NULL));
 
     if( leader->group_nrof == 2)
-        new_draw_info(NDI_YELLOW, 0, leader->ob, "Use /gsay for group speak or /help group for help.");
+        ndi(NDI_YELLOW, 0, leader->ob, "Use /gsay for group speak or /help group for help.");
 
-    new_draw_info(NDI_YELLOW, 0, member->ob, "You joined the group.");
-    new_draw_info(NDI_YELLOW, 0, member->ob, "Use /gsay for group speak or /help group for help.");
+    ndi(NDI_YELLOW, 0, member->ob, "You joined the group.");
+    ndi(NDI_YELLOW, 0, member->ob, "Use /gsay for group speak or /help group for help.");
     party_client_group_status(member->ob);
 
 }
 
 /* remove a player from a group */
-void party_remove_member(player *member, int flag)
+void party_remove_member(player_t *member, int flag)
 {
-    object *tmp, *leader;
+    object_t *tmp, *leader;
     int i;
 
     /* 3 things can happen:
@@ -455,7 +455,7 @@ void party_remove_member(player *member, int flag)
     {
         party_message(0,NDI_YELLOW, 0, member->group_leader , member->ob, "%s left the group.",
             QUERY_SHORT_NAME(member->ob, NULL));
-        new_draw_info(NDI_YELLOW, 0, member->ob, "You left the group.");
+        ndi(NDI_YELLOW, 0, member->ob, "You left the group.");
     }
 
     /* if only 1 member in the group is left - destruct the whole group! */
@@ -518,9 +518,9 @@ void party_remove_member(player *member, int flag)
 /* send a message to every group member of group of leader.
  * except member source
  */
-void party_message(int mode, int flags, int pri,object *leader, object *source, char *format, ...)
+void party_message(int mode, int flags, int pri,object_t *leader, object_t *source, char *format, ...)
 {
-    object *tmp;
+    object_t *tmp;
     char buf[HUGE_BUF];
 
     va_list ap;
@@ -531,7 +531,7 @@ void party_message(int mode, int flags, int pri,object *leader, object *source, 
     for(tmp=CONTR(leader)->group_leader;tmp;tmp=CONTR(tmp)->group_next)
     {
         if(tmp != source && (!(mode&PMSG_MODE_NOTEXT) || !(CONTR(tmp)->group_status &GROUP_STATUS_NOQUEST)) )
-            new_draw_info(flags, pri, tmp, "%s", buf);
+            ndi(flags, pri, tmp, "%s", buf);
     }
 }
 
@@ -544,10 +544,10 @@ void party_message(int mode, int flags, int pri,object *leader, object *source, 
  * This is used for start a group but also for changes.
  * This is normally only called once when a member is added or one left.
  */
-void party_client_group_status(object *member)
+void party_client_group_status(object_t *member)
 {
     sockbuf_struct *sockbuf;
-    object *tmp;
+    object_t *tmp;
     char buf[HUGE_BUF]= "";
     char buf2[HUGE_BUF];
 
@@ -567,7 +567,7 @@ void party_client_group_status(object *member)
 }
 
 /* tell a member that he has no group! */
-void party_client_group_kill(object *member)
+void party_client_group_kill(object_t *member)
 {
     Write_Command_To_Socket(&CONTR(member)->socket, SERVER_CMD_GROUP);
 }
@@ -580,11 +580,11 @@ void party_client_group_kill(object *member)
  */
 
 /* update a member data for all group members */
-void party_client_group_update(object *member, int flag)
+void party_client_group_update(object_t *member, int flag)
 {
     sockbuf_struct *sockbuf;
-    object *tmp;
-    player *pl, *plm;
+    object_t *tmp;
+    player_t *pl, *plm;
     char buf2[HUGE_BUF];
     char buf[HUGE_BUF];
 

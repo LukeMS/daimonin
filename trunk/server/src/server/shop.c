@@ -25,14 +25,14 @@
 
 #include <global.h>
 
-static sint64 PayFrom(object *where, sint64 amount);
-static void   InsertCoin(uint8 cointype, uint32 nrof, object *into);
+static sint64 PayFrom(object_t *where, sint64 amount);
+static void   InsertCoin(uint8 cointype, uint32 nrof, object_t *into);
 
 /* query_cost() will return the real value of an item
  * Thats not always ->value - and in some cases the value 
  * is calced using the default arch
  */
-sint64 query_cost(object *tmp, object *who, int flag)
+sint64 query_cost(object_t *tmp, object_t *who, int flag)
 {
     sint64  val;
     int     number; /* used to better calculate value */
@@ -123,9 +123,9 @@ sint64 query_cost(object *tmp, object *who, int flag)
 /* Find the coin type that is worth more the 'c'.  Starts at the
  * cointype placement.
  */
-static inline archetype * find_next_coin(sint64 c, int *cointype)
+static inline archetype_t * find_next_coin(sint64 c, int *cointype)
 {
-    archetype  *coin;
+    archetype_t  *coin;
 
     do
     {
@@ -145,7 +145,7 @@ static inline archetype * find_next_coin(sint64 c, int *cointype)
 char * cost_string_from_value(sint64 cost, int mode)
 {
     static char buf[MEDIUM_BUF];
-    archetype  *coin, *next_coin;
+    archetype_t  *coin, *next_coin;
     char       *endbuf;
     uint32      num;
     int         cointype = 0;
@@ -208,7 +208,7 @@ char * cost_string_from_value(sint64 cost, int mode)
     return buf;
 }
 
-char * query_cost_string(object *tmp, object *who, int flag, int mode)
+char * query_cost_string(object_t *tmp, object_t *who, int flag, int mode)
 {
     return cost_string_from_value(query_cost(tmp, who, flag), mode);
 }
@@ -219,9 +219,10 @@ char * query_cost_string(object *tmp, object *who, int flag, int mode)
  * If money is non-NULL, the exact nrof coin denominations is recorded here.
  *
  * The return is the total value. */
-sint64 query_money(object *where, _money_block *money)
+sint64 query_money(object_t *where, moneyblock_t *money)
 {
-    object *this;
+    object_t *this,
+           *next;
     sint64  total = 0;
 
     if (!where)
@@ -229,7 +230,7 @@ sint64 query_money(object *where, _money_block *money)
         return 0;
     }
 
-    for (this = where->inv; this; this = this->below)
+    FOREACH_OBJECT_IN_OBJECT(this, where, next)
     {
         if (this->type == CONTAINER)
         {
@@ -276,7 +277,7 @@ sint64 query_money(object *where, _money_block *money)
 
 /* Tries to pay to_pay if op can afford it. Returns 1 or 0 on success or
  * failure. */
-uint8 shop_pay_amount(sint64 amount, object *op)
+uint8 shop_pay_amount(sint64 amount, object_t *op)
 {
     /* Sanity check. */
     if (!op)
@@ -300,9 +301,10 @@ uint8 shop_pay_amount(sint64 amount, object *op)
 
     if ((amount = PayFrom(op, amount)) > 0)
     {
-        object *this;
+        object_t *this,
+               *next;
 
-        for (this = op->inv; this; this = this->below)
+        FOREACH_OBJECT_IN_OBJECT(this, op, next)
         {
             if (this->type == CONTAINER &&
                 (amount = PayFrom(this, amount)) <= 0)
@@ -315,8 +317,8 @@ uint8 shop_pay_amount(sint64 amount, object *op)
     /* Negative means we're due change. */
     if (amount < 0)
     {
-        _money_block  money;
-        object       *loot;
+        moneyblock_t  money;
+        object_t       *loot;
 
         (void)enumerate_coins(ABS(amount), &money);
         loot = create_financial_loot(&money, op, MODE_NO_INVENTORY);
@@ -327,9 +329,9 @@ uint8 shop_pay_amount(sint64 amount, object *op)
     return 1;
 }
 
-static sint64 PayFrom(object *where, sint64 amount)
+static sint64 PayFrom(object_t *where, sint64 amount)
 {
-    object *this;
+    object_t *this;
 
     /* Sanity checks. */
     if (!where ||
@@ -342,7 +344,7 @@ static sint64 PayFrom(object *where, sint64 amount)
 
     while (this)
     {
-        object *next = this->below;
+        object_t *next = this->below;
 
         if (amount <= 0)
         {
@@ -363,7 +365,7 @@ static sint64 PayFrom(object *where, sint64 amount)
 
 /* Tries to buy every unpaid item in the inv of or below this (which should
  * originally be op->inv). */
-uint8 shop_checkout(object *op, object *this)
+uint8 shop_checkout(object_t *op, object_t *this)
 {
     uint8 success;
 
@@ -381,13 +383,13 @@ uint8 shop_checkout(object *op, object *this)
 
         if (!(success = shop_pay_amount(price, op)))
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "You lack the funds to buy %s.",
+            ndi(NDI_UNIQUE, 0, op, "You lack the funds to buy %s.",
                           QUERY_SHORT_NAME(this, op));
         }
         else
         {
             CLEAR_FLAG(this, FLAG_UNPAID);
-            new_draw_info(NDI_UNIQUE, 0, op, "You paid %s for %s.",
+            ndi(NDI_UNIQUE, 0, op, "You paid %s for %s.",
                           cost_string_from_value(price, COSTSTRING_SHORT),
                           QUERY_SHORT_NAME(this, op));
             (void)merge_ob(this, NULL);
@@ -421,12 +423,12 @@ uint8 shop_checkout(object *op, object *this)
  *
  * The return is money-> mode (so MONEY_MODE_NOTHING, MONEY_MODE_AMOUNT, or
  * MONEY_MODE_ALL depending on string).  */
-int get_money_from_string(char *string, struct _money_block *money)
+int get_money_from_string(char *string, struct moneyblock_t *money)
 {
     char *cp = string,
           buf[MEDIUM_BUF];
 
-    memset(money, 0, sizeof(struct _money_block));
+    memset(money, 0, sizeof(struct moneyblock_t));
     (void)get_token(string, buf, 0);
 
     if (!strncasecmp(buf, "all", 3))
@@ -485,12 +487,13 @@ int get_money_from_string(char *string, struct _money_block *money)
     return money->mode;
 }
 
-int query_money_type(object *op, int value)
+int query_money_type(object_t *op, int value)
 {
-    object *tmp;
-    sint64     total   = 0;
+    object_t *tmp,
+           *next;
+    sint64  total = 0;
 
-    for (tmp = op->inv; tmp; tmp = tmp->below)
+    FOREACH_OBJECT_IN_OBJECT(tmp, op, next)
     {
         if (tmp->type == MONEY && tmp->value == value)
             total += tmp->nrof;
@@ -505,9 +508,9 @@ int query_money_type(object *op, int value)
 
 /* A simple function to calculate the optimum number of coins of each
  * denomination for a given value. */
-int enumerate_coins(sint64 value, struct _money_block *money)
+int enumerate_coins(sint64 value, struct moneyblock_t *money)
 {
-    memset(money, 0, sizeof(struct _money_block));
+    memset(money, 0, sizeof(struct moneyblock_t));
     money->mode = MONEY_MODE_NOTHING;
 
     if ((money->mithril = value / 10000000))
@@ -550,9 +553,9 @@ int enumerate_coins(sint64 value, struct _money_block *money)
  * contents. IOW something should be done with it immediately following this
  * function to extract those contents. */
 /* TODO: This can form the basis of the business end of a pickpocket skill. */
-object *create_financial_loot(_money_block *money, object *who, uint8 mode)
+object_t *create_financial_loot(moneyblock_t *money, object_t *who, uint8 mode)
 {
-    object *loot;
+    object_t *loot;
 
     if (money &&
         money->mode == MONEY_MODE_ALL)
@@ -581,7 +584,7 @@ object *create_financial_loot(_money_block *money, object *who, uint8 mode)
     {
         if (mode == MODE_NO_INVENTORY)
         {
-            object *this;
+            object_t *this;
 
             for (this = who; this->env; this = this->env)
             {
@@ -602,9 +605,9 @@ object *create_financial_loot(_money_block *money, object *who, uint8 mode)
 }
 
 /* InsertCoin() inserts nrof * coins of cointype into into. */
-static void InsertCoin(uint8 cointype, uint32 nrof, object *into)
+static void InsertCoin(uint8 cointype, uint32 nrof, object_t *into)
 {
-     object *coin = clone_object(&coins_arch[cointype]->clone, MODE_NO_INVENTORY);
+     object_t *coin = clone_object(&coins_arch[cointype]->clone, MODE_NO_INVENTORY);
 
      coin->nrof = nrof;
      (void)insert_ob_in_ob(coin, into);

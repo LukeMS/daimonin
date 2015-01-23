@@ -28,7 +28,7 @@
 
 #include <aiconfig.h>
 
-/** Maximum number of ticks we trust an older rangevector to a known object */
+/** Maximum number of ticks we trust an older rangevector to a known object_t */
 #define MAX_KNOWN_OBJ_RV_AGE 1
 
 /** Maximum number of ticks a mob remembers an object that it can't see */
@@ -47,7 +47,7 @@ struct mobdata_pathfinding
     /** either an obj on map or a waypoint
      * (or a mob base info object) (or NULL)
      * @{ */
-    object                 *target_obj;
+    object_t                 *target_obj;
     tag_t                   target_count;
     /** @} */
 
@@ -90,7 +90,7 @@ struct mob_known_obj
 
     /** The actual object we remember
      * @{ */
-    object                 *obj;
+    object_t                 *obj;
     tag_t                   obj_count;
     /** @} */
 
@@ -102,7 +102,7 @@ struct mob_known_obj
     /** @} */
 
     /** this stored rv saves some CPU at the cost of some memory, is it really worth it? */
-    rv_vector               rv;
+    rv_t               rv;
     uint32                  rv_time;  /**< Last time the rv was recalculated (or 0 for invalid) */
 
     /** Cumulative friendship and fear values
@@ -173,7 +173,7 @@ struct mobdata
 
     struct mob_behaviourset    *behaviours;    /**< This mob's behaviours */
 
-    object                     *spawn_info;    /**< quick pointer to spawn info (and so to its spawn point - if one) */
+    object_t                     *spawn_info;    /**< quick pointer to spawn info (and so to its spawn point - if one) */
 
     /** Antilure timer */
     int antiluring_timer;
@@ -220,7 +220,7 @@ typedef enum
     MOVE_RESPONSE_WAYPOINT,
     /** move towards a generic coordinate */
     MOVE_RESPONSE_COORD,
-    /** move towards a (possibly moving) object */
+    /** move towards a (possibly moving) object_t */
     MOVE_RESPONSE_OBJECT
 }    move_response_type;
 
@@ -229,7 +229,7 @@ typedef struct behaviour_move_response
 {
     move_response_type  type; /**< @see move_response_type */
     uint16              forbidden; /**< bitmap of forbidden directions */
-    void (*success_callback)(object *op, int dir); /**< callback function in case the movement turned out successful */
+    void (*success_callback)(object_t *op, int dir); /**< callback function in case the movement turned out successful */
     union
     {
         int direction;  /**< single direction to move in */
@@ -239,13 +239,13 @@ typedef struct behaviour_move_response
         struct
         {
             int         x, y;
-            mapstruct  *map;
+            map_t  *map;
         } coord;
 
-        /** Move towards a target object */
+        /** Move towards a target object_t */
         struct
         {
-            object *obj;
+            object_t *obj;
             tag_t   obj_count;
         } target;
     } data;

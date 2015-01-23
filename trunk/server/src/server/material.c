@@ -911,16 +911,16 @@ materialtype            material[NROFMATERIALS]                             =
 };
 
 /* Damage an item a player is wearing */
-void material_attack_damage(object *op, int num, int chance, int base)
+void material_attack_damage(object_t *op, int num, int chance, int base)
 {
-    object *item;
-    player *pl;
+    object_t *item;
+    player_t *pl;
     int r, i, flag_fix = FALSE;
 
     if(op->type != PLAYER || !(pl = CONTR(op)))
         return;
 
-    /*new_draw_info(NDI_UNIQUE, 0, op, "num: %d chance:%d base:%d", num,chance,base);*/
+    /*ndi(NDI_UNIQUE, 0, op, "num: %d chance:%d base:%d", num,chance,base);*/
     flag_fix = FALSE;
     while(num--)
     {
@@ -976,17 +976,17 @@ void material_attack_damage(object *op, int num, int chance, int base)
         mnaterial_dmg_jmp:
         /* we have an item, we can damage it - do it */
 
-        /*new_draw_info(NDI_UNIQUE, 0, op, "DAMAGE ITEM:: %s (%d)", STRING_OBJ_NAME(item), item->item_condition);*/
+        /*ndi(NDI_UNIQUE, 0, op, "DAMAGE ITEM:: %s (%d)", STRING_OBJ_NAME(item), item->item_condition);*/
         /* sanity check */
         if(item->item_condition > 0)
             item->item_condition--;
 
-        new_draw_info(NDI_UNIQUE, 0, op, "%s is damaged.",
+        ndi(NDI_UNIQUE, 0, op, "%s is damaged.",
             QUERY_SHORT_NAME(item, op));
         esrv_update_item(UPD_QUALITY, item);
         /* broken - unapply it - even its cursed */
         if(!item->item_condition)
-            apply_special(op, item, AP_UNAPPLY | AP_IGNORE_CURSE);
+            apply_equipment(op, item, AP_UNAPPLY | AP_IGNORE_CURSE);
 
         flag_fix = TRUE;
     }
@@ -996,7 +996,7 @@ void material_attack_damage(object *op, int num, int chance, int base)
 }
 
 /* repair costs for item - owner is owner of that item */
-sint64 material_repair_cost(object *item, object *owner)
+sint64 material_repair_cost(object_t *item, object_t *owner)
 {
     double tmp;
     sint64 costs=0;
@@ -1021,7 +1021,7 @@ sint64 material_repair_cost(object *item, object *owner)
 }
 
 /* repair the item */
-void material_repair_item(object *item, int skill_value)
+void material_repair_item(object_t *item, int skill_value)
 {
 
     if(!item->item_quality || item->item_quality <= item->item_condition)

@@ -45,7 +45,7 @@ static void teardown()
 /* Test the basic creation and deleting operations */
 START_TEST (object_creation)
 {
-    object *obj;
+    object_t *obj;
     int nfree;
 
     obj = get_object();
@@ -67,7 +67,7 @@ END_TEST
 /* test that object creation from archetypes work */
 START_TEST (arch_creation)
 {
-    object *obj;
+    object_t *obj;
     obj = get_archetype("qwerty");
     fail_if(obj == NULL, "Didn't get any object");
     fail_unless(strcmp(obj->arch->name, "empty_archetype") == 0, "Not a singularity");
@@ -81,7 +81,7 @@ END_TEST
 /* Test that strings used in objects are correctly dereferenced */
 START_TEST (object_strings)
 {
-    object *obj = get_object();
+    object_t *obj = get_object();
 
     int entries1, refs1, links1;
     int entries2, refs2, links2;
@@ -116,12 +116,12 @@ END_TEST
 
 START_TEST (object_type_beacon)
 {
-    shstr *path = add_string("/dev/testmaps/testmap_plugin");
-    shstr *b1_name = add_string("script_tester_beacon_1");
-    shstr *b2_name = add_string("script_tester_beacon_2");
+    shstr_t *path = add_string("/dev/testmaps/testmap_plugin");
+    shstr_t *b1_name = add_string("script_tester_beacon_1");
+    shstr_t *b2_name = add_string("script_tester_beacon_2");
 
-    mapstruct *map;
-    object *beacon1, *beacon2, *lostsoul;
+    map_t *map;
+    object_t *beacon1, *beacon2, *lostsoul;
 
     fail_if(beacon_table == NULL, "Beacon hashtable not initialized\n");
     fail_if(locate_beacon(b1_name) != NULL, "Inv beacon available before test");
@@ -151,33 +151,33 @@ END_TEST
 
 START_TEST (object_type_check_inv)
 {
-    mapstruct *map = ready_map_name(NULL, add_string("/dev/unit_tests/test_check_inv"), MAP_STATUS_MULTI, NULL);
+    map_t *map = ready_map_name(NULL, add_string("/dev/unit_tests/test_check_inv"), MAP_STATUS_MULTI, NULL);
 
-    object *check1 = locate_beacon(find_string("check1"))->env;
-    object *check2 = locate_beacon(find_string("check2"))->env;
-    object *key1 = locate_beacon(find_string("key1"))->env;
-    object *cont1 = arch_to_object(find_archetype("chest"));
-    object *cont2 = arch_to_object(find_archetype("chest"));
+    object_t *check1 = locate_beacon(find_string("check1"))->env;
+    object_t *check2 = locate_beacon(find_string("check2"))->env;
+    object_t *key1 = locate_beacon(find_string("key1"))->env;
+    object_t *cont1 = arch_to_object(find_archetype("chest"));
+    object_t *cont2 = arch_to_object(find_archetype("chest"));
 
     remove_ob(key1);
     key1=insert_ob_in_ob(key1, cont1);
 
-    fail_if(blocked_tile(cont1, map, check1->x, check1->y), "inv_check doesn't allow pass through");
-    fail_unless(blocked_tile(cont1, map, check2->x, check2->y), "inv_check doesn't block pass through");
-    fail_unless(blocked_tile(cont2, map, check1->x, check1->y), "inv_check doesn't block pass through");
+    fail_if(blocked_tile(cont1, NULL, map, check1->x, check1->y), "inv_check doesn't allow pass through");
+    fail_unless(blocked_tile(cont1, NULL, map, check2->x, check2->y), "inv_check doesn't block pass through");
+    fail_unless(blocked_tile(cont2, NULL, map, check1->x, check1->y), "inv_check doesn't block pass through");
 
     /* Test inversed match */
     check1->last_sp = 0;
     check2->last_sp = 0;
 
-    fail_unless(blocked_tile(cont1, map, check1->x, check1->y), "inv_check doesn't block pass through");
-    fail_if(blocked_tile(cont1, map, check2->x, check2->y), "inv_check doesn't allow pass through");
-    fail_if(blocked_tile(cont2, map, check1->x, check1->y), "inv_check doesn't allow pass through");
+    fail_unless(blocked_tile(cont1, NULL, map, check1->x, check1->y), "inv_check doesn't block pass through");
+    fail_if(blocked_tile(cont1, NULL, map, check2->x, check2->y), "inv_check doesn't allow pass through");
+    fail_if(blocked_tile(cont2, NULL, map, check1->x, check1->y), "inv_check doesn't allow pass through");
 
     /* Turn off blockage (need to update map flags) */
     check1->last_grace = 0;
     update_object(check1, UP_OBJ_ALL);
-    fail_if(blocked_tile(cont1, map, check1->x, check1->y), "inv_check doesn't allow pass through");
+    fail_if(blocked_tile(cont1, NULL, map, check1->x, check1->y), "inv_check doesn't allow pass through");
 
     /* TODO: test script triggering */
 }
@@ -190,10 +190,10 @@ END_TEST
 START_TEST (object_merge_memleak)
 {
     int nrof_objs = pool_object->nrof_allocated[0] - pool_object->nrof_free[0];
-    object *container = arch_to_object(find_archetype("chest"));
-    object *coin1 = arch_to_object(find_archetype("goldcoin"));
-    object *coin2 = arch_to_object(find_archetype("goldcoin"));
-    object *coin3;
+    object_t *container = arch_to_object(find_archetype("chest"));
+    object_t *coin1 = arch_to_object(find_archetype("goldcoin"));
+    object_t *coin2 = arch_to_object(find_archetype("goldcoin"));
+    object_t *coin3;
 
     fail_unless(container != NULL, "No container object");
     fail_if(container->inv, "Container not empty before test");
@@ -226,11 +226,11 @@ END_TEST
  */
 START_TEST (object_insert_ob_in_ob)
 {
-    object *container1 = arch_to_object(find_archetype("chest"));
-    object *container2 = arch_to_object(find_archetype("chest"));
-    object *coin1 = arch_to_object(find_archetype("goldcoin"));
-    object *coin2 = arch_to_object(find_archetype("goldcoin"));
-    object *coin3;
+    object_t *container1 = arch_to_object(find_archetype("chest"));
+    object_t *container2 = arch_to_object(find_archetype("chest"));
+    object_t *coin1 = arch_to_object(find_archetype("goldcoin"));
+    object_t *coin2 = arch_to_object(find_archetype("goldcoin"));
+    object_t *coin3;
 
     coin1->nrof = 10;
     coin2->nrof = 20;

@@ -30,7 +30,6 @@ f_plugin HookList[NR_OF_HOOKS] =
 {
     CFWSendCustomCommand,
     CFWCreateObject,
-    CFWOutOfMap,
     CFWCmdRSkill,
     CFWBecomeFollower,
     CFWGetMapObject,

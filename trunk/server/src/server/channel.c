@@ -29,7 +29,7 @@ struct channels *channel_list_start = NULL;
 
 /** The Main Function
  */
-int command_channel(object *ob, char *params)
+int command_channel(object_t *ob, char *params)
 {
     char    channelname[MAX_CHANNEL_NAME+1];
     char    mode;
@@ -46,7 +46,7 @@ int command_channel(object *ob, char *params)
     /* Command Parser */
     if ((channelnamelen = strcspn(params, "-+ :?*!%$")) > MAX_CHANNEL_NAME)
     {
-        new_draw_info(NDI_UNIQUE, 0, ob, "Channelname is too long!");
+        ndi(NDI_UNIQUE, 0, ob, "Channelname is too long!");
 
         return 0;
     }
@@ -59,7 +59,7 @@ int command_channel(object *ob, char *params)
 
     if (strlen(params)>210)
     {
-        new_draw_info(NDI_UNIQUE, 0, ob, "Message too long!");
+        ndi(NDI_UNIQUE, 0, ob, "Message too long!");
 
         return 0;
     }
@@ -72,19 +72,19 @@ int command_channel(object *ob, char *params)
         if ((mode=='-') && (params[0]==0)) /* temp-on-off without leaving */
         {
             CONTR(ob)->channels_on=FALSE;
-            new_draw_info(NDI_UNIQUE, 0, ob, "You have all Channels temporally disabled");
+            ndi(NDI_UNIQUE, 0, ob, "You have all Channels temporally disabled");
             return 0;
         }
         if ((mode=='+') && (params[0]==0)) /* temp-on-off without leaving */
         {
             CONTR(ob)->channels_on=TRUE;
-            new_draw_info(NDI_UNIQUE, 0, ob, "You listen to all your channels again.");
+            ndi(NDI_UNIQUE, 0, ob, "You listen to all your channels again.");
             return 0;
         }
         if ((mode=='?') && (params[0]==0)) /* List all channels */
         {
             /* atm its only a quick listing, TODO: maybe descriptions for channels? */
-            new_draw_info(NDI_UNIQUE, 0, ob, "These channels exist:");
+            ndi(NDI_UNIQUE, 0, ob, "These channels exist:");
 
             for (channel=channel_list_start;channel;channel=channel->next)
             {
@@ -102,9 +102,9 @@ int command_channel(object *ob, char *params)
                      ob->level < channel->enter_lvl))
                         continue;
                 if((pl_channel=findPlayerChannelFromName(CONTR(ob),CONTR(ob), channel->name, TRUE)))
-                    new_draw_info(NDI_UNIQUE|channel->color, 0, ob, "*(%d) [%c] %s", channel->pl_count, pl_channel->shortcut, channel->name);
+                    ndi(NDI_UNIQUE|channel->color, 0, ob, "*(%d) [%c] %s", channel->pl_count, pl_channel->shortcut, channel->name);
                 else
-                    new_draw_info(NDI_UNIQUE|channel->color, 0, ob, "   (%d) [%c] %s", channel->pl_count, channel->shortcut, channel->name);
+                    ndi(NDI_UNIQUE|channel->color, 0, ob, "   (%d) [%c] %s", channel->pl_count, channel->shortcut, channel->name);
             }
             return 0;
         }
@@ -142,16 +142,16 @@ int command_channel(object *ob, char *params)
     }
     else if (mode=='?') /* list players on channel */
     {
-        new_draw_info(NDI_UNIQUE, 0, ob, "Listening on this channel:");
+        ndi(NDI_UNIQUE, 0, ob, "Listening on this channel:");
 
         /* ATM unfortunatly we can only send one player at a line,
-         * cause clients append a newline to new_draw_info's
+         * cause clients append a newline to ndi's
          * In the future if we have 1000 Players or more, we should think about some limitation or disabling
          */
         for (cpl=pl_channel->channel->players;cpl;cpl=cpl->next_player)
         {
             if (!cpl->pl->privacy)
-                new_draw_info(NDI_UNIQUE, 0, ob, "%s",cpl->pl->ob->name);
+                ndi(NDI_UNIQUE, 0, ob, "%s",cpl->pl->ob->name);
         }
         return 0;
     }
@@ -166,7 +166,7 @@ int command_channel(object *ob, char *params)
         if (ob->level<pl_channel->channel->post_lvl &&
             !(CONTR(ob)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL)))
         {
-            new_draw_info(NDI_UNIQUE, 0, ob, "You need at least level %d to post on this channel.",pl_channel->channel->post_lvl);
+            ndi(NDI_UNIQUE, 0, ob, "You need at least level %d to post on this channel.",pl_channel->channel->post_lvl);
             return 0;
         }
         if (check_channel_mute(pl_channel))
@@ -183,7 +183,7 @@ int command_channel(object *ob, char *params)
         if (ob->level<pl_channel->channel->post_lvl &&
             !(CONTR(ob)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL)))
         {
-            new_draw_info(NDI_UNIQUE, 0, ob, "You need at least level %d to post on this channel.",pl_channel->channel->post_lvl);
+            ndi(NDI_UNIQUE, 0, ob, "You need at least level %d to post on this channel.",pl_channel->channel->post_lvl);
             return 0;
         }
         if (check_channel_mute(pl_channel))
@@ -214,18 +214,18 @@ int command_channel(object *ob, char *params)
         if (strlen(params)==0)
         {
             /* we don't have server side colors anymore */
-//            new_draw_info(NDI_UNIQUE, 0, ob, "Colorsyntax: -<channelname>!color <1-210>");
+//            ndi(NDI_UNIQUE, 0, ob, "Colorsyntax: -<channelname>!color <1-210>");
             return 1;
         }
 //        if (!strncasecmp(params,"color",5))
 //        {
 //            int color;
 //            if (sscanf(params,"color %d",&color)==EOF)
-//                new_draw_info(NDI_UNIQUE, 0, ob, "Colorsyntax: -<channelname>!color <1-210>");
+//                ndi(NDI_UNIQUE, 0, ob, "Colorsyntax: -<channelname>!color <1-210>");
 //            else
 //            {
 //                if ((color>210) || (color <1))
-//                    new_draw_info(NDI_UNIQUE, 0, ob, "Colorsyntax: -<channelname>!color <1-210>");
+//                    ndi(NDI_UNIQUE, 0, ob, "Colorsyntax: -<channelname>!color <1-210>");
 //                else
 //                    pl_channel->color=color-1;
 //            }
@@ -257,38 +257,38 @@ int command_channel(object *ob, char *params)
     {
         if (strlen(params)==0)
         {
-            new_draw_info(NDI_UNIQUE, 0, ob, "Current shortcut for channel %s is %c.",pl_channel->channel->name, pl_channel->shortcut);
+            ndi(NDI_UNIQUE, 0, ob, "Current shortcut for channel %s is %c.",pl_channel->channel->name, pl_channel->shortcut);
             return 0;
         }
         if (strlen(params)>1)
         {
-            new_draw_info(NDI_UNIQUE, 0, ob, "Shortcut can only be one char or number!");
+            ndi(NDI_UNIQUE, 0, ob, "Shortcut can only be one char or number!");
             return 0;
         }
         if ((params[0]=='+') || (params[0]=='-') || (params[0]==' ') || (params[0]=='*') || (params[0]=='%') || (params[0]=='!') || (params[0]==':') || (params[0]=='#') || (params[0]=='$'))
         {
-            new_draw_info(NDI_UNIQUE, 0, ob, "This Shortcut can't be used!");
+            ndi(NDI_UNIQUE, 0, ob, "This Shortcut can't be used!");
             return 0;
         }
         pl_channel->shortcut=params[0];
-        new_draw_info(NDI_UNIQUE, 0, ob, "Shortcut for channel %s changed to %c.",pl_channel->channel->name,pl_channel->shortcut);
+        ndi(NDI_UNIQUE, 0, ob, "Shortcut for channel %s changed to %c.",pl_channel->channel->name,pl_channel->shortcut);
         return 0;
     }
     else if (mode == '$')
     {
         char buf[HUGE_BUF];
 
-        object *targetob = CONTR(ob)->mark;
+        object_t *targetob = CONTR(ob)->mark;
 
         if (!targetob) // Don't do anything if there is no marked item.
         {
-            new_draw_info(NDI_UNIQUE, 0, ob, "You must ~M~ark an item to describe it.");
+            ndi(NDI_UNIQUE, 0, ob, "You must ~M~ark an item to describe it.");
             return 0;
         }
 
         if (!QUERY_FLAG(targetob, FLAG_IDENTIFIED))
         {
-            new_draw_info(NDI_UNIQUE, 0, ob, "Unidentified items cannot be described.");
+            ndi(NDI_UNIQUE, 0, ob, "Unidentified items cannot be described.");
             return 0;
         }
 
@@ -313,7 +313,7 @@ int command_channel(object *ob, char *params)
  * @param params will be used to hold the pw for pw-protected (clan)channels
  * TODO: pw-channels
  */
-void addPlayerToChannel(player *pl, char *name, char *params)
+void addPlayerToChannel(player_t *pl, char *name, char *params)
 {
     struct channels         *channel=NULL;
     struct player_channel   *pl_channel=NULL;
@@ -324,7 +324,7 @@ void addPlayerToChannel(player *pl, char *name, char *params)
     pl_channel=getPlChannelFromPlayerShortcut(pl, name);
     if (pl_channel)
     {
-        new_draw_info(NDI_UNIQUE, 0, pl->ob, "You have already joined the channel %s",pl_channel->channel->name);
+        ndi(NDI_UNIQUE, 0, pl->ob, "You have already joined the channel %s",pl_channel->channel->name);
         return;
     }
 
@@ -333,7 +333,7 @@ void addPlayerToChannel(player *pl, char *name, char *params)
     {
         if (!strncasecmp(pl_channel->channel->name, name, strlen(name)))
         {
-            new_draw_info(NDI_UNIQUE, 0, pl->ob, "You have already joined channel %s",pl_channel->channel->name);
+            ndi(NDI_UNIQUE, 0, pl->ob, "You have already joined channel %s",pl_channel->channel->name);
             return;
         }
     }
@@ -359,7 +359,7 @@ void addPlayerToChannel(player *pl, char *name, char *params)
     pl_channel=final_addChannelToPlayer(pl, channel, 0);
 
     /* ok player is added to channel, give message to player */
-    new_draw_info(NDI_UNIQUE, 0, pl->ob, "You enter channel %s.",channel->name);
+    ndi(NDI_UNIQUE, 0, pl->ob, "You enter channel %s.",channel->name);
 
 /*TODO: implement DM/DM/VOL inform */
 
@@ -378,7 +378,7 @@ void addPlayerToChannel(player *pl, char *name, char *params)
  * @return pointer to matching channel or NULL (no match or multiple matches
  * found).
  */
-struct channels *findGlobalChannelFromName(player *pl, char *name, int mute)
+struct channels *findGlobalChannelFromName(player_t *pl, char *name, int mute)
 {
     struct channels *match,
                     *duplicate;
@@ -413,7 +413,7 @@ struct channels *findGlobalChannelFromName(player *pl, char *name, int mute)
         if (!mute &&
             pl)
         {
-            new_draw_info(NDI_UNIQUE, 0, pl->ob, "There is no channel with that name.");
+            ndi(NDI_UNIQUE, 0, pl->ob, "There is no channel with that name.");
         }
 
         return NULL;
@@ -447,8 +447,8 @@ struct channels *findGlobalChannelFromName(player *pl, char *name, int mute)
             {
                 if (!mute)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, pl->ob, "That channelname was not unique. The following channels match:");
-                    new_draw_info(NDI_UNIQUE, 0, pl->ob, "  ~%s~", match->name);
+                    ndi(NDI_UNIQUE, 0, pl->ob, "That channelname was not unique. The following channels match:");
+                    ndi(NDI_UNIQUE, 0, pl->ob, "  ~%s~", match->name);
                 }
 
                 match = NULL;
@@ -456,7 +456,7 @@ struct channels *findGlobalChannelFromName(player *pl, char *name, int mute)
 
             if (!mute)
             {
-                new_draw_info(NDI_UNIQUE, 0, pl->ob, "  ~%s~", duplicate->name);
+                ndi(NDI_UNIQUE, 0, pl->ob, "  ~%s~", duplicate->name);
             }
         }
     }
@@ -470,7 +470,7 @@ struct channels *findGlobalChannelFromName(player *pl, char *name, int mute)
  * @param name Shortcut
  * @return pointer to player-channel-linklist
  */
-struct player_channel *getPlChannelFromPlayerShortcut(player *pl, char *name)
+struct player_channel *getPlChannelFromPlayerShortcut(player_t *pl, char *name)
 {
     struct player_channel *pl_channel;
 
@@ -491,7 +491,7 @@ struct player_channel *getPlChannelFromPlayerShortcut(player *pl, char *name)
  * @param name Shortcut
  * @return pointer to channel or NULL
  */
-struct channels *getChannelFromGlobalShortcut(player *pl, char *name)
+struct channels *getChannelFromGlobalShortcut(player_t *pl, char *name)
 {
     struct channels *channel;
 
@@ -525,7 +525,7 @@ struct channels *getChannelFromGlobalShortcut(player *pl, char *name)
  * @param shortcut shortcut, or 0 for default shortcut
  * @return pointer to new player-channel-linklist
  */
-struct player_channel *final_addChannelToPlayer(player *pl, struct channels *channel, char shortcut)
+struct player_channel *final_addChannelToPlayer(player_t *pl, struct channels *channel, char shortcut)
 {
     struct player_channel *node;
     struct player_channel *ptr=NULL, *ptr1=NULL;
@@ -636,7 +636,7 @@ int channelname_ok(char *cp)
  * @param mute, No 'error' output, useful if we implement some channel_kick commands
  * @return pointer to matching player_channel-link
  */
-struct player_channel *findPlayerChannelFromName(player *pl, player *wiz, char *name, int mute)
+struct player_channel *findPlayerChannelFromName(player_t *pl, player_t *wiz, char *name, int mute)
 {
     struct  player_channel *c, *tmp;
     char   buf[50];
@@ -661,7 +661,7 @@ struct player_channel *findPlayerChannelFromName(player *pl, player *wiz, char *
     {
         if (!mute)
         {
-            new_draw_info(NDI_UNIQUE, 0, wiz->ob, "%s on a channel with that name.",buf);
+            ndi(NDI_UNIQUE, 0, wiz->ob, "%s on a channel with that name.",buf);
         }
         return c;
     }
@@ -674,13 +674,13 @@ struct player_channel *findPlayerChannelFromName(player *pl, player *wiz, char *
             {
                 if (!mute)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, wiz->ob, "That channelname was not unique");
-                    new_draw_info(NDI_UNIQUE, 0, wiz->ob, "The following channels match:");
-                    new_draw_info(NDI_UNIQUE, 0, wiz->ob, "%s", c->channel->name);
+                    ndi(NDI_UNIQUE, 0, wiz->ob, "That channelname was not unique");
+                    ndi(NDI_UNIQUE, 0, wiz->ob, "The following channels match:");
+                    ndi(NDI_UNIQUE, 0, wiz->ob, "%s", c->channel->name);
                 }
                 c=NULL;
             }
-            if (!mute) {new_draw_info(NDI_UNIQUE, 0, wiz->ob, "%s", tmp->channel->name);}
+            if (!mute) {ndi(NDI_UNIQUE, 0, wiz->ob, "%s", tmp->channel->name);}
         }
     }
     return c;
@@ -692,7 +692,7 @@ struct player_channel *findPlayerChannelFromName(player *pl, player *wiz, char *
  * @param pl_channel player_channel-link for that player/channel
  * @param msg Message to send to player (eg, reason for removal) or NULL for none.
  */
-void removeChannelFromPlayer(player *pl, struct player_channel *pl_channel, char *msg)
+void removeChannelFromPlayer(player_t *pl, struct player_channel *pl_channel, char *msg)
 {
     struct player_channel *pl_node, *pl_tmp=NULL;
 
@@ -729,7 +729,7 @@ void removeChannelFromPlayer(player *pl, struct player_channel *pl_channel, char
     return_poolchunk(pl_channel,pool_player_channel);
 
     if (msg)
-        new_draw_info(NDI_UNIQUE, 0, pl->ob, "%s", msg);
+        ndi(NDI_UNIQUE, 0, pl->ob, "%s", msg);
 
     return;
 }
@@ -740,7 +740,7 @@ void removeChannelFromPlayer(player *pl, struct player_channel *pl_channel, char
  * @param pl_channel player_channel-link for that player/channel
  * @param params Message
  */
-void sendChannelMessage(player *pl, struct channels *channel, char *params)
+void sendChannelMessage(player_t *pl, struct channels *channel, char *params)
 {
     struct player_channel *cpl;
     sockbuf_struct        *sockbuf;
@@ -776,7 +776,7 @@ void sendChannelMessage(player *pl, struct channels *channel, char *params)
 /* XXX: Why is this a separate func from semdChannelMessage()? Can't we just
  * use a fourth 0 or 1 param, emote?
  * -- Smacky 20120204 */
-void sendChannelEmote(player *pl, struct channels *channel, char *params)
+void sendChannelEmote(player_t *pl, struct channels *channel, char *params)
 {
     struct player_channel *cpl;
     sockbuf_struct        *sockbuf;
@@ -808,7 +808,7 @@ void sendChannelEmote(player *pl, struct channels *channel, char *params)
  * Add the player to the default channels
  * @param pl PlayerStruct of Sender
  */
-void addDefaultChannels(player *pl)
+void addDefaultChannels(player_t *pl)
 {
 //    loginAddPlayerToChannel(pl,"Auction",0,-1,0);
     loginAddPlayerToChannel(pl,"Quest",0,0);
@@ -825,7 +825,7 @@ void addDefaultChannels(player *pl)
  * @param shortcut shortcut, or 0 for default shortcut
  * @param color color for that channel, or -1 for default color
  */
-void loginAddPlayerToChannel(player *pl, char *channelname, char shortcut, unsigned long mute)
+void loginAddPlayerToChannel(player_t *pl, char *channelname, char shortcut, unsigned long mute)
 {
     /* first lets check if the channel still exists
      * channelname must be an exact match, not that player logs out, with channel
@@ -977,7 +977,7 @@ struct channels *final_addChannel(char *name, char shortcut, int color, sint8 po
  * called when player leaves the game to remove him completely and free all player_channel-links
  * @param pl Pointer to player struct
  */
-void leaveAllChannels(player *pl)
+void leaveAllChannels(player_t *pl)
 {
     struct player_channel  *node, *tmp=NULL;
 
@@ -996,7 +996,7 @@ void leaveAllChannels(player *pl)
  * @param pl Pointer to player struct
  * @param privacy value of privacy
  */
-void channel_privacy(player *pl, int privacy)
+void channel_privacy(player_t *pl, int privacy)
 {
     struct player_channel *pl_channel;
     for (pl_channel=pl->channels;pl_channel;pl_channel=pl_channel->next_channel)
@@ -1085,7 +1085,7 @@ void save_channels(void)
     fclose(fp);
 }
 
-int command_channel_create(object *ob, char *params)
+int command_channel_create(object_t *ob, char *params)
 {
     char    channelname[MAX_CHANNEL_NAME];
     int     channelcolor=-1;
@@ -1096,34 +1096,34 @@ int command_channel_create(object *ob, char *params)
 
     if (!params)
     {
-        new_draw_info(NDI_UNIQUE, 0, ob, "Syntax: /createchannel <name> <defaultshortcut> <defaultcolor> <postlevel> <enterlevel> <gmastermode>");
-        new_draw_info(NDI_UNIQUE, 0, ob, "set defaultshortcut to '#' for no defaultshortcut");
-        new_draw_info(NDI_UNIQUE, 0, ob, "set defaultcolor to '-1' for no defaultcolor");
+        ndi(NDI_UNIQUE, 0, ob, "Syntax: /createchannel <name> <defaultshortcut> <defaultcolor> <postlevel> <enterlevel> <gmastermode>");
+        ndi(NDI_UNIQUE, 0, ob, "set defaultshortcut to '#' for no defaultshortcut");
+        ndi(NDI_UNIQUE, 0, ob, "set defaultcolor to '-1' for no defaultcolor");
         return 0;
     }
 
     if (sscanf(params, "%s %c %d %d %d %d", channelname, &defaultshortcut, &channelcolor, &channelpostlevel, &channelenterlevel, &channelgmastermode) < 6)
     {
-        new_draw_info(NDI_UNIQUE, 0, ob, "Syntax: /createchannel <name> <defaultshortcut> <defaultcolor> <postlevel> <enterlevel> <gmastermode>");
-        new_draw_info(NDI_UNIQUE, 0, ob, "set defaultshortcut to '#' for no defaultshortcut");
-        new_draw_info(NDI_UNIQUE, 0, ob, "set defaultcolor to '-1' for no defaultcolor");
+        ndi(NDI_UNIQUE, 0, ob, "Syntax: /createchannel <name> <defaultshortcut> <defaultcolor> <postlevel> <enterlevel> <gmastermode>");
+        ndi(NDI_UNIQUE, 0, ob, "set defaultshortcut to '#' for no defaultshortcut");
+        ndi(NDI_UNIQUE, 0, ob, "set defaultcolor to '-1' for no defaultcolor");
         return 0;
     }
     else
     {
         if (strlen(channelname)>MAX_CHANNEL_NAME)
         {
-            new_draw_info(NDI_UNIQUE, 0, ob, "Channelname is too long!");
+            ndi(NDI_UNIQUE, 0, ob, "Channelname is too long!");
             return 0;
         }
         if (!channelname_ok(channelname))
         {
-            new_draw_info(NDI_UNIQUE, 0, ob, "This Channelname is not allowed!");
+            ndi(NDI_UNIQUE, 0, ob, "This Channelname is not allowed!");
             return 0;
         }
         if (strlen(channelname)<3)
         {
-            new_draw_info(NDI_UNIQUE, 0, ob, "Channelname must be at least 3 chars long!");
+            ndi(NDI_UNIQUE, 0, ob, "Channelname must be at least 3 chars long!");
             return 0;
         }
 
@@ -1131,12 +1131,12 @@ int command_channel_create(object *ob, char *params)
         {
             if (!strcasecmp(channel->name,channelname) || ((channel->shortcut==defaultshortcut) && (defaultshortcut!='#')))
             {
-                new_draw_info(NDI_UNIQUE, 0, ob, "Channel with that name or shortcut already exists!");
+                ndi(NDI_UNIQUE, 0, ob, "Channel with that name or shortcut already exists!");
                 return 0;
             }
         }
         final_addChannel(channelname,defaultshortcut,channelcolor, channelpostlevel, channelenterlevel, channelgmastermode);
-        new_draw_info(NDI_UNIQUE, 0, ob, "Channel %s is created.",channelname);
+        ndi(NDI_UNIQUE, 0, ob, "Channel %s is created.",channelname);
         CHATLOG("Create:>%s<: %s, %d, %d, %d\n", ob->name, channelname, channelpostlevel, channelenterlevel, channelgmastermode);
         save_channels();
     }
@@ -1147,21 +1147,21 @@ int command_channel_create(object *ob, char *params)
 
 void forceAddPlayerToChannel(struct player_channel *cpl, char *params)
 {
-    player *pl=NULL;
+    player_t *pl=NULL;
 
     if (!params)
     {
-        new_draw_info(NDI_UNIQUE, 0, cpl->pl->ob, "Syntax: -<channel>!add <player>");
+        ndi(NDI_UNIQUE, 0, cpl->pl->ob, "Syntax: -<channel>!add <player>");
         return;
     }
     if (!(pl=find_player(params)))
     {
-        new_draw_info(NDI_UNIQUE, 0, cpl->pl->ob, "Player %s not found.",params);
+        ndi(NDI_UNIQUE, 0, cpl->pl->ob, "Player %s not found.",params);
         return;
     }
     final_addChannelToPlayer(pl, cpl->channel, 0);
-    new_draw_info(NDI_UNIQUE, 0, cpl->pl->ob, "You added player %s to channel %s.",pl->ob->name, cpl->channel->name);
-    new_draw_info(NDI_UNIQUE, 0, pl->ob, "You were added to channel %s by %s.",cpl->channel->name, cpl->pl->ob->name);
+    ndi(NDI_UNIQUE, 0, cpl->pl->ob, "You added player %s to channel %s.",pl->ob->name, cpl->channel->name);
+    ndi(NDI_UNIQUE, 0, pl->ob, "You were added to channel %s by %s.",cpl->channel->name, cpl->pl->ob->name);
     CHATLOG("Pl >%s< added pl %s to channel %s\n", cpl->pl->ob->name, pl->ob->name, cpl->channel->name);
 
     return;
@@ -1169,25 +1169,25 @@ void forceAddPlayerToChannel(struct player_channel *cpl, char *params)
 }
 void kickPlayerFromChannel(struct player_channel *cpl, char *params)
 {
-    player *pl=NULL;
+    player_t *pl=NULL;
     struct player_channel *kick;
     char buf[MEDIUM_BUF];
 
     if (!params)
     {
-        new_draw_info(NDI_UNIQUE, 0, cpl->pl->ob, "Syntax: -<channel>!kick <player>");
+        ndi(NDI_UNIQUE, 0, cpl->pl->ob, "Syntax: -<channel>!kick <player>");
         return;
     }
     if (!(pl=find_player(params)))
     {
-        new_draw_info(NDI_UNIQUE, 0, cpl->pl->ob, "Player %s not found.",params);
+        ndi(NDI_UNIQUE, 0, cpl->pl->ob, "Player %s not found.",params);
         return;
     }
 
     kick=findPlayerChannelFromName(pl, cpl->pl, cpl->channel->name, TRUE);
     sprintf(buf, "You were kicked from channel %s by %s.", cpl->channel->name, cpl->pl->ob->name);
     removeChannelFromPlayer(pl, kick, buf);
-    new_draw_info(NDI_UNIQUE, 0, cpl->pl->ob, "You kicked player %s from channel %s.",pl->ob->name, cpl->channel->name);
+    ndi(NDI_UNIQUE, 0, cpl->pl->ob, "You kicked player %s from channel %s.",pl->ob->name, cpl->channel->name);
     CHATLOG("Pl >%s< kicked pl %s from channel %s\n", cpl->pl->ob->name, pl->ob->name, cpl->channel->name);
 
     return;
@@ -1195,7 +1195,7 @@ void kickPlayerFromChannel(struct player_channel *cpl, char *params)
 }
 
 
-int command_channel_mute(object *ob, char *params)
+int command_channel_mute(object_t *ob, char *params)
 {
     struct channels *channel=NULL;
     struct player_channel *cpl;
@@ -1206,7 +1206,7 @@ int command_channel_mute(object *ob, char *params)
 
     if (!params)
 //    {
-//        new_draw_info(NDI_UNIQUE, 0, ob, "Syntax: /channemute <channel> <who> <howmuch>");
+//        ndi(NDI_UNIQUE, 0, ob, "Syntax: /channemute <channel> <who> <howmuch>");
         return 1;
 //    }
 
@@ -1214,7 +1214,7 @@ int command_channel_mute(object *ob, char *params)
 
     if(seconds<0)
 //    {
-//        new_draw_info(NDI_UNIQUE, 0, ob, "/channelmute command: illegal seconds parameter (%d)", seconds);
+//        ndi(NDI_UNIQUE, 0, ob, "/channelmute command: illegal seconds parameter (%d)", seconds);
         return 1;
 //    }
 
@@ -1227,7 +1227,7 @@ int command_channel_mute(object *ob, char *params)
     }
     if (!channel)
     {
-        new_draw_info(NDI_UNIQUE, 0, ob, "No channel with that name.");
+        ndi(NDI_UNIQUE, 0, ob, "No channel with that name.");
         return 0;
     }
 
@@ -1239,33 +1239,33 @@ int command_channel_mute(object *ob, char *params)
 
     if (!cpl)
     {
-        new_draw_info(NDI_UNIQUE, 0, ob, "%s is not on that channel.",playername);
+        ndi(NDI_UNIQUE, 0, ob, "%s is not on that channel.",playername);
         return 0;
     }
     /* ok now we have all checks done... i hate it that we have to do such an effort in coding for only some assholes */
 
     if(!seconds) /* unmute player */
     {
-        new_draw_info(NDI_UNIQUE, 0, ob, "/channelmute command: umuting player %s on channel %s!", playername, channelname);
+        ndi(NDI_UNIQUE, 0, ob, "/channelmute command: umuting player %s on channel %s!", playername, channelname);
         cpl->mute_counter = 0;
     }
     else
     {
-        new_draw_info(NDI_UNIQUE, 0, ob, "/channelmute command: mute player %s for %d seconds on channel %s!", playername, seconds, channelname);
+        ndi(NDI_UNIQUE, 0, ob, "/channelmute command: mute player %s for %d seconds on channel %s!", playername, seconds, channelname);
         cpl->mute_counter = pticks+seconds*(1000000/MAX_TIME);
     }
 
     return 0;
 }
 
-int command_channel_delete(object *ob, char *params)
+int command_channel_delete(object_t *ob, char *params)
 {
     struct channels *channel=NULL, *ch_ptr1=NULL;
     struct player_channel *cpl;
 
     if (!params)
 //    {
-//        new_draw_info(NDI_UNIQUE, 0, ob, "Syntax: /deletechannel <name>");
+//        ndi(NDI_UNIQUE, 0, ob, "Syntax: /deletechannel <name>");
         return 1;
 //    }
     for (channel=channel_list_start;channel;channel=channel->next)
@@ -1277,7 +1277,7 @@ int command_channel_delete(object *ob, char *params)
     }
     if (!channel)
     {
-        new_draw_info(NDI_UNIQUE, 0, ob, "No channel with that name.");
+        ndi(NDI_UNIQUE, 0, ob, "No channel with that name.");
         return 0;
     }
 
@@ -1292,7 +1292,7 @@ int command_channel_delete(object *ob, char *params)
         if (channel==ch_ptr1->next)
         {
            ch_ptr1->next=channel->next;
-           new_draw_info(NDI_UNIQUE, 0, ob, "Channel '%s' deleted.",channel->name);
+           ndi(NDI_UNIQUE, 0, ob, "Channel '%s' deleted.",channel->name);
            free(channel);
            CHATLOG("Delete:>%s<: %s\n", ob->name, params);
            save_channels();
@@ -1315,7 +1315,7 @@ int check_channel_mute(struct player_channel *cpl)
             {
                 unsigned long tmp = (cpl->pl->mute_counter-pticks)/(1000000/MAX_TIME);
 
-                new_draw_info( NDI_UNIQUE, 0, cpl->pl->ob, "You are still muted for %d second(s).", (int)(tmp?tmp:1));
+                ndi( NDI_UNIQUE, 0, cpl->pl->ob, "You are still muted for %d second(s).", (int)(tmp?tmp:1));
                 cpl->pl->mute_msg_count = pticks+MUTE_MSG_FREQ;
             }
             return FALSE;
@@ -1332,7 +1332,7 @@ int check_channel_mute(struct player_channel *cpl)
             {
                 unsigned long tmp = (cpl->mute_counter-pticks)/(1000000/MAX_TIME);
 
-                new_draw_info( NDI_UNIQUE, 0, cpl->pl->ob, "You are still muted for %d second(s) on this channel.", (int)(tmp?tmp:1));
+                ndi( NDI_UNIQUE, 0, cpl->pl->ob, "You are still muted for %d second(s) on this channel.", (int)(tmp?tmp:1));
                 cpl->mute_msg_count = pticks+MUTE_MSG_FREQ;
             }
             return FALSE;
@@ -1350,19 +1350,19 @@ int check_channel_mute(struct player_channel *cpl)
         {
             if(!(cpl->mute_flags & MUTE_FLAG_SHOUT)) /* friendly message not to spam */
             {
-                new_draw_info( NDI_UNIQUE, 0, cpl->pl->ob, "Please wait 2 seconds between messages on the same channel.");
+                ndi( NDI_UNIQUE, 0, cpl->pl->ob, "Please wait 2 seconds between messages on the same channel.");
                 cpl->mute_flags |= MUTE_FLAG_SHOUT;
                 return FALSE;
             }
             else if(!(cpl->mute_flags & MUTE_FLAG_SHOUT_WARNING)) /* first & last warning */
             {
-                new_draw_info( NDI_UNIQUE|NDI_ORANGE, 0, cpl->pl->ob, "Auto-Mute Warning: Please wait 2 seconds!");
+                ndi( NDI_UNIQUE|NDI_ORANGE, 0, cpl->pl->ob, "Auto-Mute Warning: Please wait 2 seconds!");
                 cpl->mute_flags |= MUTE_FLAG_SHOUT_WARNING;
                 return FALSE;
             }
             else /* mute him */
             {
-                new_draw_info( NDI_UNIQUE|NDI_RED, 0, cpl->pl->ob, "Auto-Mute: Don't spam! You are muted for %d seconds!",(int)(MUTE_AUTO_NORMAL/(1000000/MAX_TIME)));
+                ndi( NDI_UNIQUE|NDI_RED, 0, cpl->pl->ob, "Auto-Mute: Don't spam! You are muted for %d seconds!",(int)(MUTE_AUTO_NORMAL/(1000000/MAX_TIME)));
                 cpl->mute_counter = pticks+MUTE_AUTO_NORMAL;
                 return FALSE;
             }
@@ -1378,7 +1378,7 @@ void modify_channel_params(struct player_channel *cpl, char *params)
 
     if (!params)
     {
-        new_draw_info(NDI_UNIQUE, 0, cpl->pl->ob, "Syntax: -<channel>!mod <postlevel> <enterlevel>");
+        ndi(NDI_UNIQUE, 0, cpl->pl->ob, "Syntax: -<channel>!mod <postlevel> <enterlevel>");
         return;
     }
 
@@ -1390,7 +1390,7 @@ void modify_channel_params(struct player_channel *cpl, char *params)
     if (enter_lvl>0)
         cpl->channel->enter_lvl=enter_lvl;
 
-    new_draw_info(NDI_UNIQUE, 0, cpl->pl->ob, "Channel: %s - postlvl: %d, enterlvl: %d",cpl->channel->name, cpl->channel->post_lvl,cpl->channel->enter_lvl);
+    ndi(NDI_UNIQUE, 0, cpl->pl->ob, "Channel: %s - postlvl: %d, enterlvl: %d",cpl->channel->name, cpl->channel->post_lvl,cpl->channel->enter_lvl);
 
     save_channels();
 
@@ -1398,7 +1398,7 @@ void modify_channel_params(struct player_channel *cpl, char *params)
 
 }
 
-void sendVirtualChannelMsg(player *sender, char *channelname, player *target, char* msg, int color)
+void sendVirtualChannelMsg(player_t *sender, char *channelname, player_t *target, char* msg, int color)
 {
     sockbuf_struct *sockbuf;
     char buf[512];

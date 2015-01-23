@@ -27,7 +27,7 @@
 
 #include <global.h>
 
-struct Settings settings    =
+struct settings_t settings    =
 {
     2,                      /* default max connections from single ip address */
     0,                      /* will be set from create_client_settings() */
@@ -85,7 +85,7 @@ struct Command_Line_Options
                                                  */
 };
 
-static void FreeStrings(size_t nrof, shstr **ptr);
+static void FreeStrings(size_t nrof, shstr_t **ptr);
 static void CreateLogfiles(const char *tlogfilename, const char *clogfilename,
                            const char *mode, const uint8 llev);
 
@@ -107,7 +107,6 @@ static void init_strings()
     shstr_cons.none = add_string("none"); /* Used in god code */
     shstr_cons.NONE = add_string("NONE"); /* Used in alchemy code */
     shstr_cons.quarterstaff = add_string("quarterstaff");
-    shstr_cons.battleground = add_string("battleground");
 
     shstr_cons.clawing = add_string("clawing");
     shstr_cons.dragon_skin_force = add_string("dragon_skin_force");
@@ -163,14 +162,14 @@ static void init_strings()
 void free_strings(void)
 {
     LOG(llevDebug, "Freeing shared strings.\n");
-    FreeStrings(sizeof(shstr_cons), (shstr **)&shstr_cons);
+    FreeStrings(sizeof(shstr_cons), (shstr_t **)&shstr_cons);
     /* See commands.c */
-    FreeStrings(sizeof(subcommands), (shstr **)&subcommands);
+    FreeStrings(sizeof(subcommands), (shstr_t **)&subcommands);
 }
 
-static void FreeStrings(size_t nrof, shstr **ptr)
+static void FreeStrings(size_t nrof, shstr_t **ptr)
 {
-    sint16 i = nrof / sizeof(shstr *) - 1;
+    sint16 i = nrof / sizeof(shstr_t *) - 1;
 
     for(; i >= 0; i--)
     {
@@ -505,70 +504,6 @@ static void usage()
     LOG(llevInfo, "Usage: daimonin_server [-h] [-<flags>]...\n");
 }
 
-
-/*
- * Initializes the gametime and TOD counters
- * Called by init_library().
- */
-
-static void init_clocks()
-{
-    char        filename[MEDIUM_BUF];
-    FILE       *fp;
-    static int  has_been_done   = 0;
-
-    if (has_been_done)
-        return;
-    else
-        has_been_done = 1;
-
-    sprintf(filename, "%s/clockdata", settings.localdir);
-    LOG(llevSystem, "Reading clockdata from %s...", filename);
-
-    if ((fp = fopen(filename, "r")) == NULL)
-    {
-        LOG(llevBug, "BUG: Can't open %s.\n", filename);
-        tadtick = 0;
-        write_tadclock();
-
-        return;
-    }
-
-#ifdef WIN32
-    if (fscanf(fp, "%I64u", &tadtick) != 1)
-    {
-        tadtick = 0;
-        LOG(llevSystem, "failed! tadtick defaults to %I64u\n", tadtick);
-    }
-    else
-    {
-        LOG(llevSystem, "tadtick=%I64u\n", tadtick);
-    }
-#elif SIZEOF_LONG == 8
-    if (fscanf(fp, "%lu", &tadtick) != 1)
-    {
-        tadtick = 0;
-        LOG(llevSystem, "failed! tadtick defaults to %lu\n", tadtick);
-    }
-    else
-    {
-        LOG(llevSystem, "tadtick=%lu\n", tadtick);
-    }
-#elif SIZEOF_LONG_LONG == 8
-    if (fscanf(fp, "%llu", &tadtick) != 1)
-    {
-        tadtick = 0;
-        LOG(llevSystem, "failed! tadtick defaults to %llu\n", tadtick);
-    }
-    else
-    {
-        LOG(llevSystem, "tadtick=%llu\n", tadtick);
-    }
-#endif
-
-    fclose(fp);
-}
-
 static void set_logfile(char *val)
 {
     char *cp = strchr(val, ',');
@@ -835,7 +770,7 @@ static void init_signals()
 #endif /* win32 */
 }
 
-static void add_ai_to_racelist(const char *race_name, archetype *op)
+static void add_ai_to_racelist(const char *race_name, archetype_t *op)
 {
     racelink   *race;
 
@@ -855,7 +790,7 @@ static void add_ai_to_racelist(const char *race_name, archetype *op)
     }
 }
 
-static void add_corpse_to_racelist(const char *race_name, archetype *op)
+static void add_corpse_to_racelist(const char *race_name, archetype_t *op)
 {
     racelink   *race;
 
@@ -880,7 +815,7 @@ static racelink * get_racelist()
     list->name = NULL;
     list->corpse = NULL;
     list->nrof = 0;
-    list->member = get_objectlink(OBJLNK_FLAG_OB);
+    list->member = objectlink_get(OBJLNK_FLAG_OB);
     list->next = NULL;
     list->ai = NULL;
     list->first_start_location = -1;
@@ -893,23 +828,25 @@ static racelink * get_racelist()
  */
 void free_racelists()
 {
-    racelink   *list, *next;
-    objectlink *tmp;
+    racelink     *list,
+                 *next;
+    objectlink_t *tmp;
+
     for (list = first_race; list; list = next)
     {
         next = list->next;
         FREE_ONLY_HASH(list->name);
-        /* we use free_objectlink_simple() because our race
-         * list ius sorting the arch list object which are not used
-         * as normal allocated objects
-         */
+
         for (tmp = list->member; tmp; tmp = tmp->next)
-            free_objectlink_simple(tmp);
+        {
+            return_poolchunk(tmp, pool_objectlink);
+        }
+
         free(list);
     }
 }
 
-static void add_to_racelist(const char *race_name, object *op)
+static void add_to_racelist(const char *race_name, object_t *op)
 {
     racelink   *race;
 
@@ -929,7 +866,7 @@ static void add_to_racelist(const char *race_name, object *op)
 
     if (race->member->objlink.ob)
     {
-        objectlink *tmp = get_objectlink(OBJLNK_FLAG_OB);
+        objectlink_t *tmp = objectlink_get(OBJLNK_FLAG_OB);
         tmp->next = race->member;
         race->member = tmp;
     }
@@ -941,7 +878,7 @@ static void add_to_racelist(const char *race_name, object *op)
 static void dump_races()
 {
     racelink   *list;
-    objectlink *tmp;
+    objectlink_t *tmp;
     for (list = first_race; list; list = list->next)
     {
         LOG(llevInfo, "\nRACE %s (%s - %d member): ", list->name, list->corpse->name, list->nrof);
@@ -960,7 +897,7 @@ static void dump_races()
 
 void init_races()
 {
-    archetype  *at;
+    archetype_t  *at;
     racelink   *list;
     static int  init_done   = 0;
     int i, prev_index;
@@ -988,6 +925,8 @@ void init_races()
         }
     };
 
+    /* last action: for all races without a special defined corpse
+     * add our corpse_default arch to it. */
     for (list = first_race; list; list = list->next)
     {
         /* For all races without a special defined corpse
@@ -1057,65 +996,63 @@ void init_races()
 void compile_info()
 {
     int i   = 0;
-    LOG(llevInfo, "Setup info:\n");
-    LOG(llevInfo, "Non-standard include files:\n");
+    LOG(llevSystem, "Non-standard include files:\n");
 #if !defined (__STRICT_ANSI__) || defined (__sun__)
 #if !defined (Mips)
-    LOG(llevInfo, "<stdlib.h>\n");
+    LOG(llevSystem, "<stdlib.h>\n");
     i = 1;
 #endif
 #if !defined (MACH) && !defined (sony)
-    LOG(llevInfo, "<malloc.h>\n");
+    LOG(llevSystem, "<malloc.h>\n");
     i = 1;
 #endif
 #endif
 #ifndef __STRICT_ANSI__
 #ifndef MACH
-    LOG(llevInfo, "<memory.h\n");
+    LOG(llevSystem, "<memory.h\n");
     i = 1;
 #endif
 #endif
 #ifndef sgi
-    LOG(llevInfo, "<sys/timeb.h>\n");
+    LOG(llevSystem, "<sys/timeb.h>\n");
     i = 1;
 #endif
     if (!i)
-        LOG(llevInfo, "(none)\n");
+        LOG(llevSystem, "(none)\n");
 #ifdef SECURE
-    LOG(llevInfo, "Secure:\t\t<true>\n");
+    LOG(llevSystem, "Secure:\t\t<true>\n");
 #else
-    LOG(llevInfo, "Secure:\t\t<false>\n");
+    LOG(llevSystem, "Secure:\t\t<false>\n");
 #endif
-    LOG(llevInfo, "Datadir:\t%s\n", settings.datadir);
-    LOG(llevInfo, "Localdir:\t%s\n", settings.localdir);
-    LOG(llevInfo, "Save player:\t<true>\n");
-    LOG(llevInfo, "Save mode:\t%4.4o\n", SAVE_MODE);
-    LOG(llevInfo, "Playerdir:\t%s/%s\n", settings.localdir, settings.playerdir);
-    LOG(llevInfo, "Instancedir:\t%s/%s\n", settings.localdir, settings.instancedir);
-    LOG(llevInfo, "Itemsdir:\t%s/%s\n", settings.localdir, settings.uniquedir);
-    LOG(llevInfo, "Tmpdir:\t\t%s\n", settings.tmpdir);
+    LOG(llevSystem, "Datadir:\t%s\n", settings.datadir);
+    LOG(llevSystem, "Localdir:\t%s\n", settings.localdir);
+    LOG(llevSystem, "Save player:\t<true>\n");
+    LOG(llevSystem, "Save mode:\t%4.4o\n", SAVE_MODE);
+    LOG(llevSystem, "Playerdir:\t%s/%s\n", settings.localdir, settings.playerdir);
+    LOG(llevSystem, "Instancedir:\t%s/%s\n", settings.localdir, settings.instancedir);
+    LOG(llevSystem, "Itemsdir:\t%s/%s\n", settings.localdir, settings.uniquedir);
+    LOG(llevSystem, "Tmpdir:\t\t%s\n", settings.tmpdir);
+    LOG(llevSystem, "Tlogfilename:\t%s, Clogfilename:\t%s (llev:%d)\n", settings.tlogfilename, settings.clogfilename, settings.debug);
+    LOG(llevSystem, "Max_time:\t%ld (%u)\n", pticks_ums, pticks_second);
 #ifdef MAP_MAXOBJECTS
-    LOG(llevInfo, "Maps swap when too many objects are in memory:\t%u\n",
+    LOG(llevSystem, "Maps swap when too many objects are in memory:\t%u\n",
         MAP_MAXOBJECTS);
 #else
-    LOG(llevInfo, "Maps swap when a timeout is reached:\t%u/%u/%u\n",
+    LOG(llevSystem, "Maps swap when a timeout is reached:\t%u/%u/%u\n",
          MAP_MINSWAP, MAP_DEFSWAP, MAP_MAXSWAP);
 #endif
 #ifdef MAP_RESET
-    LOG(llevInfo, "Maps reset when a timeout is reached:\t%u/%u\n",
+    LOG(llevSystem, "Maps reset when a timeout is reached:\t%u/%u\n",
         MAP_DEFRESET, MAP_MAXRESET);
 #else
-    LOG(llevInfo, "Maps never reset.");
+    LOG(llevSystem, "Maps never reset.");
 #endif
-    LOG(llevInfo, "Max_time:\t%ld (%u)\n", pticks_ums, pticks_second);
-    LOG(llevInfo, "Tlogfilename:\t%s, Clogfilename:\t%s (llev:%d)\n", settings.tlogfilename, settings.clogfilename, settings.debug);
-    LOG(llevInfo, "ObjectSize:\t%lu (living: %lu)\n", sizeof(object), sizeof(living));
-    LOG(llevInfo, "MapStructSize:\t%lu\n", sizeof(mapstruct));
-    LOG(llevInfo, "MapSpaceSize:\t%lu\n", sizeof(MapSpace));
-    LOG(llevInfo, "PlayerSize:\t%lu\n", sizeof(player) + MAXSOCKBUF_IN);
-    LOG(llevInfo, "SocketSize:\t%lu\n", sizeof(NewSocket) + MAXSOCKBUF_IN);
-
-    LOG(llevInfo, "Setup info: Done.\n");
+    LOG(llevSystem, "object_t is %lu bytes.\n", sizeof(object_t));
+    LOG(llevSystem, "living_t is %lu bytes.\n", sizeof(living_t));
+    LOG(llevSystem, "map_t is %lu bytes.\n", sizeof(map_t));
+    LOG(llevSystem, "msp_t is %lu bytes.\n", sizeof(msp_t));
+    LOG(llevSystem, "PlayerSize:\t%lu\n", sizeof(player_t) + MAXSOCKBUF_IN);
+    LOG(llevSystem, "SocketSize:\t%lu\n", sizeof(NewSocket) + MAXSOCKBUF_IN);
 }
 
 /*
@@ -1265,7 +1202,7 @@ static void init_beforeplay()
     pool_mob_knownobj->destructor = (chunk_destructor) cleanup_mob_known_obj;
     pool_mob_behaviourset->destructor = (chunk_destructor) cleanup_behaviourset;
 
-    init_spells();     /* If not called before, links archtypes used by spells */
+    init_spells();     /* If not called before, links archetype_types used by spells */
     init_races();      /* overwrite race designations using entries in lib/races file */
     init_gods();        /* init linked list of gods from archs*/
     init_readable();    /* inits useful arrays for readable texts */
@@ -1385,13 +1322,8 @@ void init(int argc, char **argv)
     }
 
     init_library();             /* Must be called early */
+    init_tadclock();
     load_settings();            /* Load the settings file */
-
-    /* So we don't add an hour every reboot. */
-    if (tadtick > 0)
-        tadtick--;
-
-    tick_tadclock();
     SRANDOM((uint32)time(NULL));
     global_map_tag = (uint32) RANDOM();
     init_signals();     /* Sets up signal interceptions */
@@ -1486,7 +1418,7 @@ void init_lists_and_tables()
     /* Add sentinels to the global activelist */
     active_objects = get_object();
     FREE_AND_COPY_HASH(active_objects->name, "<global activelist sentinel>");
-    insert_ob_in_ob(active_objects, &void_container); /* Avoid gc of the object */
+    insert_ob_in_ob(active_objects, &void_container); /* Avoid gc of the object_t */
 
     /* Set up object initializers */
     init_object_initializers();
@@ -1498,7 +1430,7 @@ void init_lists_and_tables()
 void init_library()
 {
     init_environ();
-    init_hash_table(); /* inits the shstr system */
+    init_hash_table(); /* inits the shstr_t system */
     init_globals();
     init_mempools();   /* Inits the mempool manager and the object system */
     init_vars();
@@ -1508,7 +1440,6 @@ void init_library()
     ReadBmapNames();
     init_anim();        /* Must be after we read in the bitmaps */
     init_archetypes();  /* Reads all archetypes from file */
-    init_clocks();
     init_sounds();
     init_lists_and_tables(); /* Initializes some global lists and tables */
 }

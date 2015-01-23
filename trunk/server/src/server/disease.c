@@ -137,7 +137,7 @@ spread to other live objects.  Symptoms are what actually damage the player:
 these are their own object. */
 
 /* check if victim is susceptible to disease. */
-static int is_susceptible_to_disease(object *victim, object *disease)
+static int is_susceptible_to_disease(object_t *victim, object_t *disease)
 {
     if (!IS_LIVE(victim))
         return 0;
@@ -151,7 +151,7 @@ static int is_susceptible_to_disease(object *victim, object *disease)
     return 0;
 }
 
-int move_disease(object *disease)
+int move_disease(object_t *disease)
 {
     /*  first task is to determine if the disease is inside or outside of someone.
     If outside, we decrement 'hp' until we're gone. */
@@ -195,13 +195,13 @@ int move_disease(object *disease)
 
 /* remove any symptoms of disease */
 
-int remove_symptoms(object *disease)
+int remove_symptoms(object_t *disease)
 {
-    object *symptom;
+    object_t *symptom;
     symptom = find_symptom(disease);
     if (symptom != NULL)
     {
-        object *victim  = symptom->env;
+        object_t *victim  = symptom->env;
         destruct_ob(symptom);
         if (victim)
             FIX_PLAYER(victim ,"remove symptoms ");
@@ -210,51 +210,60 @@ int remove_symptoms(object *disease)
 }
 
 /* argument is a disease */
-object * find_symptom(object *disease)
+object_t * find_symptom(object_t *disease)
 {
-    object *walk;
-    char    symptom_name[256];
-    sprintf(symptom_name, "%s", disease->name);
+    object_t *walk,
+           *next;
 
     /* check the inventory for symptoms */
-    for (walk = disease->env->inv; walk; walk = walk->below)
-        if (walk->name == disease->name && walk->type == SYMPTOM)
+    FOREACH_OBJECT_IN_OBJECT(walk, disease->env, next)
+    {
+        if (walk->name == disease->name &&
+            walk->type == SYMPTOM)
+        {
             return walk;
+        }
+    }
+
     return NULL;
 }
 
 /*  searches around for more victims to infect */
-int check_infection(object *disease)
+int check_infection(object_t *disease)
 {
-    int         x, y, i, j, range, xt, yt;
-    mapstruct  *map, *mt;
-    object     *tmp;
+    object_t     *outbreak = (disease->env) ? disease->env : disease;
+    sint16      x,
+                y;
+    int         range;
 
-    range = abs(disease->magic);
-    if (disease->env)
+    if (!outbreak->map)
     {
-        x = disease->env->x; y = disease->env->y;map = disease->env->map;
-    }
-    else
-    {
-        x = disease->x; y = disease->y; map = disease->map;
-    };
-
-    if (map == NULL)
         return 0;
-    for (i = x - range; i < x + range; i++)
+    }
+
+    range = ABS(disease->magic);
+
+    for (x = outbreak->x - range; x < outbreak->x + range; x++)
     {
-        for (j = y - range; j < y + range; j++)
+        for (y = outbreak->y - range; y < outbreak->y + range; y++)
         {
-            xt = i;
-            yt = j;
-            if ((mt = out_of_map(map, &xt, &yt)))
+            map_t *m = outbreak->map;
+            msp_t  *msp = MSP_GET(m, x, y);
+            object_t    *this,
+                      *next;
+
+            if (!msp)
             {
-                for (tmp = GET_MAP_OB(mt, xt, yt); tmp; tmp = tmp->above)
-                    infect_object(tmp, disease, 0);
+                continue;
+            }
+
+            FOREACH_OBJECT_IN_MSP(this, msp, next)
+            {
+                infect_object(this, disease, 0);
             }
         }
     }
+
     return 1;
 }
 
@@ -265,10 +274,11 @@ int check_infection(object *disease)
      dead objects aren't infectable.
      undead objects are infectible only if specifically named.
 */
-int infect_object(object *victim, object *disease, int force)
+int infect_object(object_t *victim, object_t *disease, int force)
 {
-    object *tmp;
-    object *new_disease;
+    object_t *tmp,
+           *next;
+    object_t *new_disease;
 
     /* only use the head */
     if (victim->head)
@@ -287,7 +297,7 @@ int infect_object(object *victim, object *disease, int force)
     if (!force && (random_roll(0, 126) >= disease->stats.wc))
         return 0;
 
-    for (tmp = victim->inv; tmp; tmp = tmp->below)
+    FOREACH_OBJECT_IN_OBJECT(tmp, victim, next)
     {
         if (tmp->type == SIGN || tmp->type == DISEASE)  /* possibly an immunity, or diseased*/
             if (tmp->name == disease->name && tmp->level >= disease->level)
@@ -316,7 +326,7 @@ int infect_object(object *victim, object *disease, int force)
         /* for diseases which are passed by hitting, set owner and praying skill*/
         if (disease->env && disease->env->type == PLAYER)
         {
-            object *player  = disease->env;
+            object_t *player  = disease->env;
 
             /* hm, we should for hit use the weapon? or the skill attached to this
                * specific disease? hmmm
@@ -343,12 +353,12 @@ int infect_object(object *victim, object *disease, int force)
         else
             sprintf(buf, "You infect %s with your disease, %s!", victim->name, new_disease->name);
         if (victim->type == PLAYER)
-            new_draw_info(NDI_UNIQUE | NDI_RED, 0, new_disease->owner, "%s", buf);
+            ndi(NDI_UNIQUE | NDI_RED, 0, new_disease->owner, "%s", buf);
         else
-            new_draw_info(0, 4, new_disease->owner, "%s", buf);
+            ndi(0, 4, new_disease->owner, "%s", buf);
     }
     if (victim->type == PLAYER)
-        new_draw_info(NDI_UNIQUE | NDI_RED, 0, victim, "You suddenly feel ill.");
+        ndi(NDI_UNIQUE | NDI_RED, 0, victim, "You suddenly feel ill.");
     return 1;
 }
 
@@ -358,11 +368,11 @@ int infect_object(object *victim, object *disease, int force)
 causes symptoms, and modifies existing symptoms in the case of
 existing diseases.  */
 
-int do_symptoms(object *disease)
+int do_symptoms(object_t *disease)
 {
-    object *symptom;
-    object *victim;
-    object *tmp;
+    object_t *symptom;
+    object_t *victim;
+    object_t *tmp;
     victim = disease->env;
     /* This is a quick hack - for whatever reason, disease->env will point
      * back to disease, causing endless loops.  Why this happens really needs
@@ -373,7 +383,7 @@ int do_symptoms(object *disease)
     symptom = find_symptom(disease);
     if (symptom == NULL) /* no symptom?  need to generate one! */
     {
-        object *new_symptom;
+        object_t *new_symptom;
         /* first check and see if the carrier of the disease
         is immune.  If so, no symptoms!  */
         if (!is_susceptible_to_disease(victim, disease))
@@ -382,7 +392,7 @@ int do_symptoms(object *disease)
         /* check for an actual immunity */
 
         /* do an immunity check */
-        /* hm, disease should be NEVER in a tail of a multi part object */
+        /* hm, disease should be NEVER in a tail of a multi part object_t */
         if (victim->head)
             tmp = victim->head->inv;
         else
@@ -479,15 +489,18 @@ int do_symptoms(object *disease)
 
 
 /*  grants immunity to plagues we've seen before.  */
-int grant_immunity(object *disease)
+int grant_immunity(object_t *disease)
 {
-    object *immunity;
-    object *walk;
+    object_t *immunity;
+    object_t *walk,
+           *next;
+
     /* Don't give immunity to this disease if last_heal is set. */
     if (disease->last_heal)
         return 0;
+
     /*  first, search for an immunity of the same name */
-    for (walk = disease->env->inv; walk; walk = walk->below)
+    FOREACH_OBJECT_IN_OBJECT(walk, disease->env, next)
     {
         if (walk->type == 98 && disease->name == walk->name)
         {
@@ -495,6 +508,7 @@ int grant_immunity(object *disease)
             return 1; /* just update the existing immunity. */
         }
     }
+
     immunity = get_archetype("immunity");
     FREE_AND_COPY_HASH(immunity->name, disease->name);
     immunity->level = disease->level;
@@ -506,10 +520,10 @@ int grant_immunity(object *disease)
 
 /*  make the symptom do the nasty things it does  */
 
-int move_symptom(object *symptom)
+int move_symptom(object_t *symptom)
 {
-    object *victim  = symptom->env;
-    object *new_ob;
+    object_t *victim  = symptom->env;
+    object_t *new_ob;
     int     sp_reduce;
     if (victim == NULL || victim->map == NULL)
     {
@@ -536,7 +550,7 @@ int move_symptom(object *symptom)
         return 0;
     if (symptom->other_arch)
     {
-        object *tmp;
+        object_t *tmp;
         tmp = victim;
         if (tmp->head != NULL)
             tmp = tmp->head;
@@ -550,38 +564,52 @@ int move_symptom(object *symptom)
         }
     }
     if (victim->type == PLAYER)
-        new_draw_info(NDI_UNIQUE | NDI_RED, 0, victim, "%s", symptom->msg);
+        ndi(NDI_UNIQUE | NDI_RED, 0, victim, "%s", symptom->msg);
 
     return 1;
 }
 
 
 /*  possibly infect due to direct physical contact */
-int check_physically_infect(object *victim, object *hitter)
+int check_physically_infect(object_t *victim, object_t *hitter)
 {
-    object *walk;
+    object_t *walk,
+           *next;
+
     /* search for diseases, give every disease a chance to infect */
-    for (walk = hitter->inv; walk != NULL; walk = walk->below)
+    FOREACH_OBJECT_IN_OBJECT(walk, hitter, next)
+    {
         if (walk->type == DISEASE)
+        {
             infect_object(victim, walk, 0);
+        }
+    }
+
     return 1;
 }
 
 /*  find a disease in someone*/
-object * find_disease(object *victim)
+object_t * find_disease(object_t *victim)
 {
-    object *walk;
-    for (walk = victim->inv; walk; walk = walk->below)
+    object_t *walk,
+           *next;
+
+    FOREACH_OBJECT_IN_OBJECT(walk, victim, next)
+    {
         if (walk->type == DISEASE)
+        {
             return walk;
+        }
+    }
+
     return NULL;
 }
 
 /* do the cure disease stuff, from the spell "cure disease" */
 
-int cure_disease(object *sufferer, object *caster)
+int cure_disease(object_t *sufferer, object_t *caster)
 {
-    object *disease, *next;
+    object_t *disease, *next;
     int     casting_level, is_disease = 0;
 
     if (caster)
@@ -592,13 +620,11 @@ int cure_disease(object *sufferer, object *caster)
         casting_level = 1000;  /* if null caster, CURE all.  */
     }
     if (caster != sufferer && sufferer->type == PLAYER)
-        new_draw_info(NDI_UNIQUE, 0, sufferer, "%s casts cure disease on you!",
+        ndi(NDI_UNIQUE, 0, sufferer, "%s casts cure disease on you!",
                              caster->name ? caster->name : "someone");
 
-    for (disease = sufferer->inv; disease; disease = next)
+    FOREACH_OBJECT_IN_OBJECT(disease, sufferer, next)
     {
-        next = disease->below;
-
         if (disease->type == DISEASE)
         {
             /* attempt to cure this disease */
@@ -612,9 +638,9 @@ int cure_disease(object *sufferer, object *caster)
              || (!(random_roll(0, (disease->level - casting_level - 1)))))
             {
                 if (sufferer->type == PLAYER)
-                    new_draw_info(NDI_UNIQUE, 0, sufferer, "You are healed from disease %s.", disease->name);
+                    ndi(NDI_UNIQUE, 0, sufferer, "You are healed from disease %s.", disease->name);
                 if (sufferer != caster && caster->type == PLAYER)
-                    new_draw_info(NDI_UNIQUE, 0, caster, "You heal %s from disease %s.", sufferer->name,
+                    ndi(NDI_UNIQUE, 0, caster, "You heal %s from disease %s.", sufferer->name,
                                          disease->name);
                 remove_symptoms(disease);
                 remove_ob(disease);
@@ -625,19 +651,19 @@ int cure_disease(object *sufferer, object *caster)
             else
             {
                 if (sufferer->type == PLAYER)
-                    new_draw_info(NDI_UNIQUE, 0, sufferer, "The disease %s resists the cure prayer!",
+                    ndi(NDI_UNIQUE, 0, sufferer, "The disease %s resists the cure prayer!",
                                          disease->name);
                 if (sufferer != caster && caster->type == PLAYER)
-                    new_draw_info(NDI_UNIQUE, 0, caster, "The disease %s resists the cure prayer!", disease->name);
+                    ndi(NDI_UNIQUE, 0, caster, "The disease %s resists the cure prayer!", disease->name);
             }
         }
     }
     if (!is_disease)
     {
         if (sufferer->type == PLAYER)
-            new_draw_info(NDI_UNIQUE, 0, sufferer, "You are not diseased!");
+            ndi(NDI_UNIQUE, 0, sufferer, "You are not diseased!");
         if (sufferer != caster && caster->type == PLAYER)
-            new_draw_info(NDI_UNIQUE, 0, caster, "%s is not diseased!",
+            ndi(NDI_UNIQUE, 0, caster, "%s is not diseased!",
                                  sufferer->name ? sufferer->name : "someone");
     }
     return 1;
@@ -647,12 +673,13 @@ int cure_disease(object *sufferer, object *caster)
  * return true if we actually reduce a disease.
  */
 
-int reduce_symptoms(object *sufferer, int reduction)
+int reduce_symptoms(object_t *sufferer, int reduction)
 {
-    object *walk;
+    object_t *walk,
+           *next;
     int     success = 0;
 
-    for (walk = sufferer->inv; walk; walk = walk->below)
+    FOREACH_OBJECT_IN_OBJECT(walk, sufferer, next)
     {
         if (walk->type == SYMPTOM)
         {
@@ -667,7 +694,7 @@ int reduce_symptoms(object *sufferer, int reduction)
         }
     }
     if (success)
-        new_draw_info(NDI_UNIQUE, 0, sufferer, "Your illness seems less severe.");
+        ndi(NDI_UNIQUE, 0, sufferer, "Your illness seems less severe.");
     return success;
 }
 

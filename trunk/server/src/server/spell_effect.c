@@ -22,7 +22,14 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
+/* TODO: The generic name for (wizard) spells and (divine) prayers is
+ * castables, so the filenames/prefixes will be changed accordingly.
+ *
+ * -- Smacky 20140815 */
+
 #include <global.h>
+
+static int Detection(int type, object_t *this);
 
 /*
  * spell_failure()  handles the various effects for differing degrees
@@ -33,48 +40,44 @@
 /* Might be a better way to do this, but this should work */
 #define ISQRT(val) ((int)sqrt((double) val))
 
-void spell_failure(object *op, int failure, int power)
+void spell_failure(object_t *op, int failure, int power)
 {
     if (failure <= -20 && failure > -40) /* wonder */
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "Your spell causes an unexpected effect.");
+        ndi(NDI_UNIQUE, 0, op, "Your spell causes an unexpected effect.");
         cast_cone(op, op, 0, 10, SP_WOW, spellarch[SP_WOW], SK_level(op),, 0);
     }
     else if (failure <= -40 && failure > -60) /* confusion */
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "Your magic recoils on you!");
+        ndi(NDI_UNIQUE, 0, op, "Your magic recoils on you!");
         confuse_player(op, op, 160);
     }
     else if (failure <= -60 && failure > -80) /* paralysis */
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "Your magic recoils on you!");
+        ndi(NDI_UNIQUE, 0, op, "Your magic recoils on you!");
         paralyze_player(op, op, 99);
     }
     else if (failure <= -80) /* blast the immediate area */
     {
-        object *tmp;
+        msp_t *msp = MSP_KNOWN(op);
+        object_t *tmp;
+
         /* Safety check to make sure we don't get any mana storms in scorn */
-        if (blocks_magic(op->map, op->x, op->y))
+        if ((msp->flags & MSP_FLAG_NO_SPELLS))
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "The magic warps and you are turned inside out!");
+            ndi(NDI_UNIQUE, 0, op, "The magic warps and you are turned inside out!");
             damage_ob(tmp, 9998, op, ENV_ATTACK_CHECK);
         }
         else
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "You lose control of the mana!  The uncontrolled magic blasts you!");
+            ndi(NDI_UNIQUE, 0, op, "You lose control of the mana!  The uncontrolled magic blasts you!");
             tmp = get_archetype("loose_magic");
             tmp->level = SK_level(op);
-            tmp->x = op->x;tmp->y = op->y;
-
-            /* increase the area of destruction a little for more powerful spells */
-            tmp->stats.hp += ISQRT(power);
-
-            if (power > 25)
-                tmp->stats.dam = 25 + ISQRT(power);
-            else
-                tmp->stats.dam = power; /* nasty recoils! */
-
             tmp->stats.maxhp = tmp->count; /*??*/
+            tmp->stats.hp += ISQRT(power); // increase the area of destruction a little for more powerful spells
+            tmp->stats.dam = (power > 25) ? 25 + ISQRT(power) : power; /* nasty recoils! */
+            tmp->x = op->x;
+            tmp->y = op->y;
             insert_ob_in_map(tmp, op->map, NULL, 0);
         }
     }
@@ -83,7 +86,7 @@ void spell_failure(object *op, int failure, int power)
 
 /* Oct 95 - hacked on this to bring in cosmetic differences for MULTIPLE_GOD hack -b.t. */
 
-void prayer_failure(object *op, int failure, int power)
+void prayer_failure(object_t *op, int failure, int power)
 {
     const char *godname;
 
@@ -92,40 +95,38 @@ void prayer_failure(object *op, int failure, int power)
 
     if (failure <= -20 && failure > -40) /* wonder */
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "%s gives a sign to renew your faith.", godname);
+        ndi(NDI_UNIQUE, 0, op, "%s gives a sign to renew your faith.", godname);
         cast_cone(op, op, 0, 10, SP_WOW, spellarch[SP_WOW], SK_level(op), 0);
     }
     else if (failure <= -40 && failure > -60) /* confusion */
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "Your diety touches your mind!");
+        ndi(NDI_UNIQUE, 0, op, "Your diety touches your mind!");
         confuse_player(op, op, 160);
     }
     else if (failure <= -60 && failure > -150) /* paralysis */
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "%s requires you to pray NOW.", godname);
-        new_draw_info(NDI_UNIQUE, 0, op, "You comply, ignoring all else.");
+        ndi(NDI_UNIQUE, 0, op, "%s requires you to pray NOW.", godname);
+        ndi(NDI_UNIQUE, 0, op, "You comply, ignoring all else.");
         paralyze_player(op, op, 99);
     }
     else if (failure <= -150) /* blast the immediate area */
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "%s smites you!", godname);
+        ndi(NDI_UNIQUE, 0, op, "%s smites you!", godname);
         cast_magic_storm(op, get_archetype("god_power"), power);
     }
 }
 
 /* Should really just replace all calls to cast_mana_storm to call
- * cast_magic_storm directly.
- */
-
-void cast_mana_storm(object *op, int lvl)
+ * cast_magic_storm directly. */
+void cast_mana_storm(object_t *op, int lvl)
 {
-    object *tmp = get_archetype("loose_magic");
+    object_t *tmp = get_archetype("loose_magic");
 
     cast_magic_storm(op, tmp, lvl);
 }
 
 
-void cast_magic_storm(object *op, object *tmp, int lvl)
+void cast_magic_storm(object_t *op, object_t *tmp, int lvl)
 {
     if (!tmp)
         return; /* error */
@@ -137,25 +138,26 @@ void cast_magic_storm(object *op, object *tmp, int lvl)
     insert_ob_in_map(tmp, op->map, op, 0);
 }
 
-int recharge(object *op)
+int recharge(object_t *op)
 {
-    object *wand;
+    object_t *wand,
+           *next;
 
-    for (wand = op->inv; wand; wand = wand->below)
+    FOREACH_OBJECT_IN_OBJECT(wand, op, next)
     {
         if (wand->type == WAND &&
             QUERY_FLAG(wand, FLAG_APPLIED))
         {
             if (!(random_roll(0, 3)))
             {
-                new_draw_info(NDI_UNIQUE, 0, op, "%s vibrates violently, then explodes!",
+                ndi(NDI_UNIQUE, 0, op, "%s vibrates violently, then explodes!",
                     QUERY_SHORT_NAME(wand, op));
-                play_sound_map(op->map, op->x, op->y, SOUND_OB_EXPLODE, SOUND_NORMAL);
+                play_sound_map(MSP_KNOWN(op), SOUND_OB_EXPLODE, SOUND_NORMAL);
                 destruct_ob(wand);
             }
             else
             {
-                new_draw_info(NDI_UNIQUE, 0, op, "%s glows with power.",
+                ndi(NDI_UNIQUE, 0, op, "%s glows with power.",
                     QUERY_SHORT_NAME(wand, op));
                 wand->stats.food += random_roll(1, spells[wand->stats.sp].charges);
 
@@ -175,28 +177,33 @@ int recharge(object *op)
     return 0;
 }
 
-int probe(object *op)
+int probe(object_t *op)
 {
-    object *this,
-           *owner;
+    msp_t *msp = MSP_KNOWN(op);
+    object_t   *this,
+             *next;
 
-    for (this = GET_MAP_OB(op->map, op->x, op->y); this; this = this->above)
+    FOREACH_OBJECT_IN_MSP(this, msp, next)
     {
-        if (IS_LIVE(this) &&
+        object_t *head = (this->head) ? this->head : this,
+               *owner;
+
+        if (IS_LIVE(head) &&
             (owner = get_owner(op)) &&
             owner->type == PLAYER)
         {
 #ifdef DEBUG_PROBE_IS_CHARM
             /* Temporarily made probe into charm to test pet code */
-            if (add_pet(owner, this, 0) == 0)
+            if (add_pet(owner, head, 0) == 0)
             {
-                new_draw_info(NDI_UNIQUE, 0, owner, "Your probe charms %s.",
-                    QUERY_SHORT_NAME(this, owner));
+                ndi(NDI_UNIQUE, 0, owner, "Your probe charms %s.",
+                    QUERY_SHORT_NAME(head, owner));
             }
+
 #else
-            new_draw_info(NDI_UNIQUE, 0, owner, "Your probe analyse %s.",
-                QUERY_SHORT_NAME(this, owner));
-            examine(owner, (this->head) ? this->head : this, 1);
+            ndi(NDI_UNIQUE, 0, owner, "Your probe analyse%s.",
+                QUERY_SHORT_NAME(head, owner));
+            examine(owner, head, 1);
 #endif
             return 1;
         }
@@ -205,13 +212,13 @@ int probe(object *op)
     return 0;
 }
 
-int cast_invisible(object *op, object *caster, int spell_type)
+int cast_invisible(object_t *op, object_t *caster, int spell_type)
 {
-    /* object *tmp; */
+    /* object_t *tmp; */
 
     /*
     if(op->invisible>1000) {
-      new_draw_info(NDI_UNIQUE, 0,op,"You are already as invisible as you can get.");
+      ndi(NDI_UNIQUE, 0,op,"You are already as invisible as you can get.");
       return 0;
     }
     */
@@ -226,7 +233,7 @@ int cast_invisible(object *op, object *caster, int spell_type)
         case SP_IMPROVED_INVIS:
           break;
     }
-    new_draw_info(NDI_UNIQUE, 0, op, "You can't see your hands!");
+    ndi(NDI_UNIQUE, 0, op, "You can't see your hands!");
     update_object(op, UP_OBJ_FACE);
 
     /* Gecko: removed entirely. This is instead handled in mob AI core */
@@ -237,33 +244,33 @@ int cast_invisible(object *op, object *caster, int spell_type)
     return 1;
 }
 
-int perceive_self(object *op)
+int perceive_self(object_t *op)
 {
     char*cp = describe_item(op);
-    archetype              *at  = find_archetype("depletion");
-    object                 *tmp;
+    archetype_t              *at  = find_archetype("depletion");
+    object_t                 *tmp;
     int                     i;
 
     tmp = find_god(determine_god(op));
     if (tmp)
-        new_draw_info(NDI_UNIQUE, 0, op, "You worship %s", tmp->name);
+        ndi(NDI_UNIQUE, 0, op, "You worship %s", tmp->name);
     else
-        new_draw_info(NDI_UNIQUE, 0, op, "You worship no god");
+        ndi(NDI_UNIQUE, 0, op, "You worship no god");
 
     tmp = present_arch_in_ob(at, op);
 
     if (*cp == '\0' && tmp == NULL)
-        new_draw_info(NDI_UNIQUE, 0, op, "You feel very mundane");
+        ndi(NDI_UNIQUE, 0, op, "You feel very mundane");
     else
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "You have:\n%s", cp);
+        ndi(NDI_UNIQUE, 0, op, "You have:\n%s", cp);
         if (tmp != NULL)
         {
-            for (i = 0; i < NUM_STATS; i++)
+            for (i = 0; i < STAT_NROF; i++)
             {
                 if (get_stat_value(&tmp->stats, i) < 0)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, op, "Your %s is depleted by %d",
+                    ndi(NDI_UNIQUE, 0, op, "Your %s is depleted by %d",
                                   stat_name[i],
                                   -(get_stat_value(&tmp->stats, i)));
                 }
@@ -273,11 +280,11 @@ int perceive_self(object *op)
     return 1;
 }
 
-int cast_heal(object *op, int level, object *target, int spell_type)
+int cast_heal(object_t *op, int level, object_t *target, int spell_type)
 {
     int     heal = 0,
             success = 0;
-    /*object *tmp;*/
+    /*object_t *tmp;*/
 
     /*LOG(llevNoLog,"dir: %d (%s -> %s)\n", dir, op?op->name:"<no op>",tmp?tmp->name:"<no tmp>");*/
 
@@ -299,19 +306,19 @@ int cast_heal(object *op, int level, object *target, int spell_type)
           if (op->type == PLAYER)
           {
               if (heal > 0)
-                  new_draw_info(NDI_UNIQUE, 0, op, "The prayer heals %s for %d hp!",
+                  ndi(NDI_UNIQUE, 0, op, "The prayer heals %s for %d hp!",
                       (op == target) ? "you" : QUERY_SHORT_NAME(target, op), heal);
               else
-                  new_draw_info(NDI_UNIQUE, 0, op, "The healing prayer fails!");
+                  ndi(NDI_UNIQUE, 0, op, "The healing prayer fails!");
           }
 
           if (op != target && target->type == PLAYER)
           {
               if (heal > 0)
-                  new_draw_info(NDI_UNIQUE, 0, target, "%s casts minor healing on you healing %d hp!",
+                  ndi(NDI_UNIQUE, 0, target, "%s casts minor healing on you healing %d hp!",
                       QUERY_SHORT_NAME(target, op), heal);
               else
-                  new_draw_info(NDI_UNIQUE, 0, target, "%s casts minor healing on you but it fails!",
+                  ndi(NDI_UNIQUE, 0, target, "%s casts minor healing on you but it fails!",
                       QUERY_SHORT_NAME(target, op));
           }
 
@@ -375,15 +382,15 @@ int cast_heal(object *op, int level, object *target, int spell_type)
           /*
             case SP_MED_HEAL:
               heal=random_roll_roll(3, 6)+4;
-              new_draw_info(NDI_UNIQUE, 0,tmp, "Your wounds start to fade.");
+              ndi(NDI_UNIQUE, 0,tmp, "Your wounds start to fade.");
               break;
             case SP_MAJOR_HEAL:
-              new_draw_info(NDI_UNIQUE, 0,tmp, "Your skin looks as good as new!");
+              ndi(NDI_UNIQUE, 0,tmp, "Your skin looks as good as new!");
               heal=random_roll_roll(4, 8)+8;
               break;
             case SP_HEAL:
               heal=tmp->stats.maxhp;
-              new_draw_info(NDI_UNIQUE, 0,tmp, "You feel just fine!");
+              ndi(NDI_UNIQUE, 0,tmp, "You feel just fine!");
               break;
             */
     }
@@ -419,11 +426,12 @@ int cast_heal(object *op, int level, object *target, int spell_type)
     return success;
 }
 
-int cast_change_attr(object *op, object *caster, object *target, int dir, int spell_type)
+int cast_change_attr(object_t *op, object_t *caster, object_t *target, int dir, int spell_type)
 {
-    object *tmp     = target;
-    object *tmp2    = NULL;
-    object *force   = NULL;
+    object_t *tmp = target,
+           *this,
+           *next,
+           *force = NULL;
     int     is_refresh = 0, msg_flag = 1;
     int     atnr = 0, path = 0;        /* see protection spells */
     int     i;
@@ -432,33 +440,34 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
         return 0;
 
     /* we ID the buff force with spell_type... if we find one, we have old effect.
-     * if not, we create a fresh force.
-     */
-    for (tmp2 = tmp->inv; tmp2 != NULL; tmp2 = tmp2->below)
+     * if not, we create a fresh force. */
+    FOREACH_OBJECT_IN_OBJECT(this, tmp, next)
     {
-        if (tmp2->type == FORCE)
+        if (this->type == FORCE)
         {
-            if (tmp2->weight_limit == spell_type)
+            if (this->weight_limit == spell_type)
             {
-                force = tmp2;    /* the old effect will be "refreshed" */
+                force = this;    /* the old effect will be "refreshed" */
                 is_refresh = 1;
-                new_draw_info(NDI_UNIQUE, 0, op, "You recast the spell while in effect.");
+                ndi(NDI_UNIQUE, 0, op, "You recast the spell while in effect.");
             }
-            else if ((spell_type == SP_BLESS && tmp2->weight_limit == SP_HOLY_POSSESSION)
-                  || (spell_type == SP_HOLY_POSSESSION && tmp2->weight_limit == SP_BLESS))
+            else if ((spell_type == SP_BLESS &&
+                 this->weight_limit == SP_HOLY_POSSESSION) ||
+                (spell_type == SP_HOLY_POSSESSION &&
+                 this->weight_limit == SP_BLESS))
             {
                 /* both bless AND holy posession are not allowed! */
-                new_draw_info(NDI_UNIQUE, 0, op, "No more blessings for you.");
+                ndi(NDI_UNIQUE, 0, op, "No more blessings for you.");
                 return 0;
             }
         }
     }
+
     if (force == NULL)
         force = get_archetype("force");
     force->weight_limit = spell_type;  /* mark this force with the originating spell */
-
-
     i = 0;   /* (-> protection spells) */
+
     switch (spell_type)
     {
         case SP_STRENGTH:
@@ -466,25 +475,25 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
           if (tmp->type != PLAYER)
           {
               if (op->type == PLAYER)
-                  new_draw_info(NDI_UNIQUE, 0, op, "You can't cast this kind of spell on your target.");
+                  ndi(NDI_UNIQUE, 0, op, "You can't cast this kind of spell on your target.");
               return 0;
           }
           else if (op->type == PLAYER && op != tmp)
-              new_draw_info(NDI_UNIQUE, 0, tmp, "%s casts strength on you!", op->name ? op->name : "someone");
+              ndi(NDI_UNIQUE, 0, tmp, "%s casts strength on you!", op->name ? op->name : "someone");
 
 
           if (force->stats.Str < 2)
           {
               force->stats.Str++;
               if (op->type == PLAYER && op != tmp)
-                  new_draw_info(NDI_UNIQUE, 0, op, "%s get stronger.", tmp->name ? tmp->name : "someone");
+                  ndi(NDI_UNIQUE, 0, op, "%s get stronger.", tmp->name ? tmp->name : "someone");
           }
           else
           {
               msg_flag = 0;
-              new_draw_info(NDI_UNIQUE, 0, tmp, "You don't grow stronger but the spell is refreshed.");
+              ndi(NDI_UNIQUE, 0, tmp, "You don't grow stronger but the spell is refreshed.");
               if (op->type == PLAYER && op != tmp)
-                  new_draw_info(NDI_UNIQUE, 0, op, "%s don't grow stronger but the spell is refreshed.",
+                  ndi(NDI_UNIQUE, 0, op, "%s don't grow stronger but the spell is refreshed.",
                                        tmp->name ? tmp->name : "someone");
           }
 
@@ -820,9 +829,10 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
     return 1;
 }
 
-int remove_curse(object *op, object *target, int type, SpellTypeFrom src)
+int remove_curse(object_t *op, object_t *target, int type, SpellTypeFrom src)
 {
-    object *tmp;
+    object_t *tmp,
+           *next;
     int     success = 0;
 
     if (!op || !target)
@@ -832,20 +842,20 @@ int remove_curse(object *op, object *target, int type, SpellTypeFrom src)
     {
         if (op->type == PLAYER)
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "You cast remove %s on %s.",
+            ndi(NDI_UNIQUE, 0, op, "You cast remove %s on %s.",
                 (type == SP_REMOVE_CURSE) ? "curse" : "damnation",
                 QUERY_SHORT_NAME(target, op));
         }
         else if (target->type == PLAYER)
         {
-            new_draw_info(NDI_UNIQUE, 0, target, "%s casts remove %s on you.",
+            ndi(NDI_UNIQUE, 0, target, "%s casts remove %s on you.",
                 QUERY_SHORT_NAME(op, target),
                 (type == SP_REMOVE_CURSE) ? "curse" : "damnation");
         }
     }
 
     /* Player remove xx only removes applied stuff, npc remove clears ALL */
-    for (tmp = target->inv; tmp; tmp = tmp->below)
+    FOREACH_OBJECT_IN_OBJECT(tmp, target, next)
     {
         if ((src == spellNPC || QUERY_FLAG(tmp, FLAG_APPLIED))
          && (QUERY_FLAG(tmp, FLAG_CURSED) || (type == SP_REMOVE_DAMNATION && QUERY_FLAG(tmp, FLAG_DAMNED))))
@@ -864,13 +874,13 @@ int remove_curse(object *op, object *target, int type, SpellTypeFrom src)
             {
                 if (target->type == PLAYER)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, target, "The %s's curse is stronger than the prayer!",
+                    ndi(NDI_UNIQUE, 0, target, "The %s's curse is stronger than the prayer!",
                         query_name(tmp, target, ARTICLE_NONE, 0));
                 }
                 else if (op != target &&
                          op->type == PLAYER)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, op, "The %s's curse of %s is stronger than your prayer!",
+                    ndi(NDI_UNIQUE, 0, op, "The %s's curse of %s is stronger than your prayer!",
                         query_name(tmp, op, ARTICLE_NONE, 0),
                         QUERY_SHORT_NAME(target, op));
                 }
@@ -882,11 +892,11 @@ int remove_curse(object *op, object *target, int type, SpellTypeFrom src)
     {
         if (success)
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "Your prayer removes some curses.");
+            ndi(NDI_UNIQUE, 0, op, "Your prayer removes some curses.");
         }
         else
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "%s's items seem uncursed.",
+            ndi(NDI_UNIQUE, 0, op, "%s's items seem uncursed.",
                 QUERY_SHORT_NAME(target, op));
         }
     }
@@ -894,13 +904,13 @@ int remove_curse(object *op, object *target, int type, SpellTypeFrom src)
     if (target->type == PLAYER)
     {
         if (success)
-            new_draw_info(NDI_UNIQUE, 0, target, "You feel like someone is helping you.");
+            ndi(NDI_UNIQUE, 0, target, "You feel like someone is helping you.");
         else
         {
             if (src == spellNormal)
-                new_draw_info(NDI_UNIQUE, 0, target, "You are not using any cursed items.");
+                ndi(NDI_UNIQUE, 0, target, "You are not using any cursed items.");
             else
-                new_draw_info(NDI_UNIQUE, 0, target, "You hear manical laughter in the distance.");
+                ndi(NDI_UNIQUE, 0, target, "You hear manical laughter in the distance.");
         }
     }
 
@@ -917,9 +927,10 @@ int remove_curse(object *op, object *target, int type, SpellTypeFrom src)
  * if the item has a higher level as the identify then the item
  * can'T be identified from this spell/skills.
  */
-int cast_identify(object *op, int level, object *single_ob, int mode)
+int cast_identify(object_t *op, int level, object_t *single_ob, int mode)
 {
-    object *tmp;
+    object_t *tmp,
+           *next;
     int     success = 0, success2 = 0, random_val = 0;
     int     chance  = 8 + op->stats.Wis;
 
@@ -934,7 +945,8 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
     }
 
     insert_spell_effect(spells[SP_IDENTIFY].archname, op->map, op->x, op->y);
-    for (tmp = op->inv; tmp ; tmp = tmp->below)
+
+    FOREACH_OBJECT_IN_OBJECT(tmp, op, next)
     {
         inside_jump1:
         if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED) &&
@@ -947,7 +959,7 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
             {
                 if (op->type == PLAYER)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, op, "%s %s too powerful for this identify!",
+                    ndi(NDI_UNIQUE, 0, op, "%s %s too powerful for this identify!",
                         QUERY_SHORT_NAME(tmp, op), (tmp->nrof > 1) ? "are" : "is");
                 }
             }
@@ -956,12 +968,12 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
                 identify(tmp);
                 if (op->type == PLAYER)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, op, "You have %s.",
+                    ndi(NDI_UNIQUE, 0, op, "You have %s.",
                         QUERY_SHORT_NAME(tmp, op));
 
                     if (tmp->msg)
                     {
-                        new_draw_info(NDI_UNIQUE, 0, op, "The item has a story:\n%s", tmp->msg);
+                        ndi(NDI_UNIQUE, 0, op, "The item has a story:\n%s", tmp->msg);
                     }
                 }
 
@@ -983,7 +995,7 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
      *
     if(IDENTIFY_MODE_ALL)
     {
-        for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp; tmp = tmp->above)
+        for (tmp = MSP_GET_LAST(op->map, op->x, op->y); tmp; tmp = tmp->below)
         if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED) &&
             !QUERY_FLAG(tmp, FLAG_SYS_OBJECT) &&
             need_identify(tmp))
@@ -992,12 +1004,12 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
 
             if (op->type == PLAYER)
             {
-                new_draw_info(NDI_UNIQUE, 0, op, "On the ground %s %s.",
+                ndi(NDI_UNIQUE, 0, op, "On the ground %s %s.",
                     (tmp->nrof > 1) ? "are" : "is", QUERY_SHORT_NAME(tmp, op));
 
                 if (tmp->msg)
                 {
-                    new_draw_info(NDI_UNIQUE, 0, op, "The item has a story:\n%s",
+                    ndi(NDI_UNIQUE, 0, op, "The item has a story:\n%s",
                         tmp->msg);
                 }
 
@@ -1007,269 +1019,104 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
     }
     */
     if (op->type == PLAYER && (!success && !success2))
-        new_draw_info(NDI_UNIQUE, 0, op, "You can't reach anything unidentified in your inventory.");
+        ndi(NDI_UNIQUE, 0, op, "You can't reach anything unidentified in your inventory.");
 
     return success2;
 }
 
-/* gthe routine under this one is the old detect routine - i
- * rewrote it in many parts (and detect inv. works absolutly different now)
- */
-int cast_detection(object *op, object *target, int type)
+int cast_detection(object_t *op, object_t *target, int type)
 {
-    int         nx, ny, suc = FALSE;
-    object     *tmp = NULL;
-    mapstruct  *m = NULL;
+    int       suc = 0;
+    msp_t *msp = MSP_KNOWN(op);
+    object_t   *this,
+             *next;
 
-    switch (type)
+    if (op->type == PLAYER &&
+        target != op)
     {
-        case SP_DETECT_MAGIC:
-          if (op->type == PLAYER && target != op)
-              new_draw_info(NDI_UNIQUE, 0, op, "You cast detect magic on %s.",
-                                   target->name ? target->name : "someone");
-
-          if (target->type != PLAYER) /* only use self or players */
-          {
-              if (op->type == PLAYER)
-                  new_draw_info(NDI_UNIQUE, 0, op, "This spell works only on players.");
-              return 0;
-          }
-          if (target != op)
-              new_draw_info(NDI_UNIQUE, 0, target, "%s casts detect magic on you.",
-                                   op->name ? op->name : "someone");
-
-
-          /* detect targets inv */
-          for (tmp = target->inv; tmp; tmp = tmp->below)
-          {
-              if (!QUERY_FLAG(tmp, FLAG_SYS_OBJECT)
-               && (!QUERY_FLAG(tmp, FLAG_KNOWN_MAGICAL) && is_magical(tmp)))
-              {
-                  SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
-                  esrv_update_item(UPD_FLAGS, tmp);
-                  suc = TRUE;
-              }
-          }
-
-          nx = target->x;ny = target->y;
-          if (!(m = out_of_map(target->map, &nx, &ny)))
-              return 0;
-
-          for (tmp = GET_MAP_OB(m, nx, ny); tmp != NULL; tmp = tmp->above)
-          {
-              if (!QUERY_FLAG(tmp, FLAG_SYS_OBJECT)
-               && (!QUERY_FLAG(tmp, FLAG_KNOWN_MAGICAL) && is_magical(tmp)))
-              {
-                  SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
-                  esrv_update_item(UPD_FLAGS, tmp);
-                  suc = TRUE;
-              }
-          }
-          break;
-
-        case SP_DETECT_CURSE:
-          if (op->type == PLAYER && target != op)
-              new_draw_info(NDI_UNIQUE, 0, op, "You cast detect curse on %s.",
-                                   target->name ? target->name : "someone");
-
-          if (target->type != PLAYER) /* only use self or players */
-          {
-              if (op->type == PLAYER)
-                  new_draw_info(NDI_UNIQUE, 0, op, "This spell works only on players.");
-              return 0;
-          }
-          if (target != op)
-              new_draw_info(NDI_UNIQUE, 0, target, "%s casts detect curse on you.",
-                                   op->name ? op->name : "someone");
-
-          for (tmp = target->inv; tmp; tmp = tmp->below)
-          {
-              if (!QUERY_FLAG(tmp, FLAG_SYS_OBJECT)
-               && (!QUERY_FLAG(tmp, FLAG_KNOWN_CURSED) && (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))))
-              {
-                  SET_FLAG(tmp, FLAG_KNOWN_CURSED);
-                  esrv_update_item(UPD_FLAGS, tmp);
-                  suc = TRUE;
-              }
-          }
-          nx = target->x;ny = target->y;
-          if (!(m = out_of_map(target->map, &nx, &ny)))
-              return 0;
-
-          for (tmp = GET_MAP_OB(m, nx, ny); tmp != NULL; tmp = tmp->above)
-          {
-              if (!QUERY_FLAG(tmp, FLAG_SYS_OBJECT)
-               && (!QUERY_FLAG(tmp, FLAG_KNOWN_CURSED) && (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))))
-              {
-                  SET_FLAG(tmp, FLAG_KNOWN_CURSED);
-                  esrv_update_item(UPD_FLAGS, tmp);
-                  suc = TRUE;
-              }
-          }
-
-          break;
+        ndi(NDI_UNIQUE, 0, op, "You cast detect magic on %s.",
+            QUERY_SHORT_NAME(target, op));
     }
 
-    if (suc)
+    if (target->type != PLAYER) /* only use self or players */
     {
         if (op->type == PLAYER)
-            new_draw_info(NDI_UNIQUE, 0, op, "The spell detects something.");
-        if (target->type == PLAYER && target != op)
-            new_draw_info(NDI_UNIQUE, 0, target, "The spell detects something.");
-    }
-    else
-    {
-        if (op->type == PLAYER)
-            new_draw_info(NDI_UNIQUE, 0, op, "The spell detects nothing.");
-        if (target->type == PLAYER && target != op)
-            new_draw_info(NDI_UNIQUE, 0, target, "The spell detects nothing.");
-    }
+        {
+            ndi(NDI_UNIQUE, 0, op, "This spell works only on players.");
+        }
 
-    if (insert_spell_effect(spells[type].archname, target->map, target->x, target->y))
-        LOG(llevDebug, "insert_spell_effect() failed: spell:%d, obj:%s target:%s\n", type, STRING_OBJ_NAME(op),
-            STRING_OBJ_NAME(target));
-
-    return 1;
-}
-
-/* this size should really be based on level or spell parameter -
- * even if out of the view, the setting of these values can be useful
- * simply so that when you come across them they have already been
- * set for you.
- */
-/*
-static int cast_detection_old(object *op, object *target,int type) {
-    object *tmp, *last=NULL;
-    int x,y,done_one,nx,ny;
-    archetype *detect_arch;
-    mapstruct   *m;
-
-    detect_arch = find_archetype("detect_magic");
-    if (detect_arch == (archetype *) NULL)
-    {
-        LOG(llevBug, "BUG: Couldn't find archetype detect_magic (%s).\n", STRING_OBJ_NAME(op));
         return 0;
     }
 
-    for (x = op->x - MAP_CLIENT_X/2; x <= op->x + MAP_CLIENT_X/2; x++)
-    for (y = op->y - MAP_CLIENT_Y/2; y <= op->y + MAP_CLIENT_Y/2; y++) {
-
-        done_one = 0;
-        nx=x;
-        ny=y;
-        if(!(m = out_of_map(op->map, &nx, &ny)))
-            continue;
-
-        if (type==SP_SHOW_INVIS)
-            last = GET_MAP_OB(m, nx, ny);
-        else {
-        for (tmp=GET_MAP_OB(m, nx, ny); tmp; tmp=tmp->above) last=tmp;
-
-        for (tmp=last; tmp; tmp=tmp->below) {
-            if (tmp->type == FLOOR) break;
-            else last=tmp;
-        }
-
-        if (tmp) last=tmp->above;
-        }
-
-        for (tmp = last;
-        tmp && (!done_one || type==SP_DETECT_MAGIC || type==SP_DETECT_CURSE);
-        tmp=tmp->above) {
-
-        switch(type) {
-
-            case SP_DETECT_MAGIC:
-            if (!QUERY_FLAG(tmp,FLAG_KNOWN_MAGICAL) &&
-                is_magical(tmp)) {
-
-                SET_FLAG(tmp,FLAG_KNOWN_MAGICAL);
-                if(tmp->type==RUNE && tmp->attacktype&AT_MAGIC)
-                tmp->stats.Cha/=4;
-                done_one = 1;
-            }
-            break;
-
-            case SP_DETECT_MONSTER:
-            if ((QUERY_FLAG(tmp, FLAG_MONSTER) || tmp->type==PLAYER)) {
-                done_one = 2;
-                last=tmp;
-            }
-            break;
-
-
-            case SP_DETECT_EVIL:
-            done_one = 0;
-            if(QUERY_FLAG(tmp,FLAG_MONSTER) && tmp->race) {
-                object *god=find_god(determine_god(op));
-                if(god && god->slaying && strstr(god->slaying,tmp->race)) {
-                last=tmp;
-                done_one = 2;
-                }
-            }
-            break;
-
-            case SP_DETECT_CURSE:
-            if (!QUERY_FLAG(tmp, FLAG_KNOWN_CURSED) &&
-            (QUERY_FLAG(tmp, FLAG_CURSED) ||
-             QUERY_FLAG(tmp, FLAG_DAMNED))) {
-            SET_FLAG(tmp, FLAG_KNOWN_CURSED);
-            done_one = 1;
-            }
-            break;
-
-        }
-         }
-
-        if (done_one) {
-        object *detect_ob = arch_to_object(detect_arch);
-        detect_ob->x = x;
-        detect_ob->y = y;
-        if (done_one == 2 && last) {
-            detect_ob->face = last->face;
-            detect_ob->animation_id = last->animation_id;
-            detect_ob->anim_speed = last->anim_speed;
-            detect_ob->last_anim=0;
-            if (!QUERY_FLAG(last, FLAG_ANIMATE)) CLEAR_FLAG(detect_ob, FLAG_ANIMATE);
-        }
-        insert_ob_in_map(detect_ob, op->map, op,0);
-        }
+    if (target != op)
+    {
+        ndi(NDI_UNIQUE, 0, target, "%s casts detect magic on you.",
+            QUERY_SHORT_NAME(op, target));
     }
 
-    if ((type == SP_DETECT_MAGIC || type == SP_DETECT_CURSE) && op->type == PLAYER) {
-    done_one = 0;
-    for (tmp = op->inv; tmp; tmp = tmp->below) {
-        if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-
-        switch(type) {
-            case SP_DETECT_MAGIC:
-            if (is_magical(tmp) && !QUERY_FLAG(tmp,FLAG_KNOWN_MAGICAL)) {
-                SET_FLAG(tmp,FLAG_KNOWN_MAGICAL);
-                esrv_update_item(UPD_FLAGS, tmp);
-                done_one = 1;
-            }
-            break;
-
-            case SP_DETECT_CURSE:
-            if (!QUERY_FLAG(tmp, FLAG_KNOWN_CURSED) &&
-            (QUERY_FLAG(tmp, FLAG_CURSED) ||
-             QUERY_FLAG(tmp, FLAG_DAMNED))) {
-            SET_FLAG(tmp, FLAG_KNOWN_CURSED);
-            esrv_update_item(UPD_FLAGS, tmp);
-            done_one = 1;
-            }
-            break;
-        }
+    FOREACH_OBJECT_IN_OBJECT(this, target, next)
+    {
+        suc += Detection(type, this);
     }
+
+    FOREACH_OBJECT_IN_MSP(this, msp, next)
+    {
+        suc += Detection(type, this);
     }
+
+    if (insert_spell_effect(spells[type].archname, target->map, target->x, target->y))
+    {
+        LOG(llevInfo, "insert_spell_effect() failed: spell:%d, obj:%s target:%s\n",
+            type, STRING_OBJ_NAME(op), STRING_OBJ_NAME(target));
+    }
+
+    if (op->type == PLAYER)
+    {
+        ndi(NDI_UNIQUE, 0, op, "The spell detects %s.",
+            (suc) ? "something" : "nothing");
+    }
+
+    if (target->type == PLAYER && target != op)
+    {
+        ndi(NDI_UNIQUE, 0, target, "The spell detects %s.",
+            (suc) ? "something" : "nothing");
+    }
+
     return 1;
 }
-*/
+
+static int Detection(int type, object_t *this)
+{
+    if (QUERY_FLAG(this, FLAG_SYS_OBJECT))
+    {
+        return 0;
+    }
+
+    if (type == SP_DETECT_MAGIC &&
+        !QUERY_FLAG(this, FLAG_KNOWN_MAGICAL) &&
+        is_magical(this))
+    {
+        SET_FLAG(this, FLAG_KNOWN_MAGICAL);
+        esrv_update_item(UPD_FLAGS, this);
+        return 1;
+    }
+    else if (type == SP_DETECT_CURSE &&
+             !QUERY_FLAG(this, FLAG_KNOWN_CURSED) &&
+             (QUERY_FLAG(this, FLAG_CURSED) ||
+              QUERY_FLAG(this, FLAG_DAMNED)))
+    {
+        SET_FLAG(this, FLAG_KNOWN_CURSED);
+        esrv_update_item(UPD_FLAGS, this);
+        return 1;
+    }
+
+    return 0;
+}
 
 /* Neutralises effects like poisoning, blindness, and confusion. */
-object *cure_what_ails_you(object *op, uint8 st1)
+object_t *cure_what_ails_you(object_t *op, uint8 st1)
 {
-    object *tmp = op->inv;
+    object_t *tmp = op->inv;
 
     for (; tmp; tmp = tmp->below)
     {
@@ -1284,6 +1131,149 @@ object *cure_what_ails_you(object *op, uint8 st1)
     }
 
     return NULL;
+}
+
+/* if we are here, the arch (spell) we check was able to move
+ * to this place. Wall() has failed include reflection.
+ * now we look for a target.
+ */
+void check_fired_arch(object_t *op)
+{
+    msp_t  *msp;
+    object_t    *this,
+              *next,
+              *owner;
+    tag_t      op_tag;
+
+    /* we return here if we have NOTHING blocking here */
+    if (!msp_blocked(op, op->map, op->x, op->y))
+    {
+        return;
+    }
+
+    if (op->other_arch)
+    {
+        explode_object(op);
+        return;
+    }
+
+    if (op->stats.sp == SP_PROBE &&
+        op->type == BULLET)
+    {
+        probe(op);
+        remove_ob(op);
+        check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+        return;
+    }
+
+    if (!(owner = get_owner(op)))
+    {
+        owner = op;
+    }
+
+    op_tag = op->count;
+    msp = MSP_KNOWN(op);
+
+    FOREACH_OBJECT_IN_MSP(this, msp, next)
+    {
+        object_t *head = (this->head) ? this->head : this;
+        tag_t   this_tag;
+        int     dam;
+
+        /* we need a extra check for pets & golems here later
+         * but atm player & npc can't hit other friendly npc */
+        if (!IS_LIVE(head) ||
+            get_friendship(owner, head) >= FRIENDSHIP_HELP)
+        {
+            continue;
+        }
+
+        this_tag = this->count;
+        dam = damage_ob(this, op->stats.dam, op, ENV_ATTACK_CHECK);
+
+        if (was_destroyed(op, op_tag) ||
+            !was_destroyed(this, this_tag) ||
+            (op->stats.dam -= dam) < 0)
+        {
+            if (!QUERY_FLAG(op, FLAG_REMOVED))
+            {
+                remove_ob(op);
+                check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+                return;
+            }
+        }
+    }
+}
+
+void move_fired_arch(object_t *op)
+{
+    map_t *m = op->map;
+    sint16     x = op->x + OVERLAY_X(op->direction),
+               y = op->y + OVERLAY_Y(op->direction);
+    msp_t  *msp = MSP_GET(m, x, y);
+    tag_t      op_tag  = op->count;
+
+    /* peterm:  added to make comet leave a trail of burnouts
+    it's an unadulterated hack, but the effect is cool.    */
+    if (op->stats.sp == SP_METEOR)
+    {
+        replace_insert_ob_in_map("fire_trail", op);
+
+        if (was_destroyed(op, op_tag))
+        {
+            return;
+        }
+    }
+
+    /* the spell has reached a wall and/or the end of its moving points */
+    if (msp &&
+        (!op->last_sp-- ||
+         (!op->direction ||
+          MSP_IS_RESTRICTED(msp))) &&
+        op->other_arch)
+    {
+        explode_object(op);
+        return;
+    }
+
+    remove_ob(op);
+    check_walk_off(op, NULL, 0);
+
+    if (!msp ||
+        !op->other_arch)
+    {
+        return;
+    }
+
+    op->x = x;
+    op->y = y;
+
+    if (!insert_ob_in_map(op, m, op, 0))
+    {
+        return;
+    }
+
+    if (reflwall(msp, op))
+    {
+        if (op->type == BULLET &&
+            op->stats.sp == SP_PROBE)
+        {
+            if ((msp->flags & (MSP_FLAG_ALIVE | MSP_FLAG_PLAYER)))
+            {
+                probe(op);
+                remove_ob(op);
+                check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+                return;
+            }
+        }
+
+        op->direction = absdir(op->direction + 4);
+        update_turn_face(op);
+    }
+    else
+    {
+        check_fired_arch(op);
+    }
 }
 
 /* TODO: Reference only. Will be removed. */

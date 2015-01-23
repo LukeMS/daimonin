@@ -25,180 +25,210 @@
 
 #include <global.h>
 
-static object *spawn_monster(object *mob, object *spawn);
-static void RemoveStuff(object *where);
-static inline int spawn_point_darkness(object *spoint, int darkness);
-static void insert_spawn_mob_loot(object *op, object *mob, object *tmp);
-static inline objectlink *get_linked_spawn(object *spawn);
+static object_t *Spawn(object_t *mob, object_t *spawn);
+static void Autogen(object_t *monster, sint16 diff);
+static void RemoveStuff(object_t *where);
+static void InsertLoot(object_t *op, object_t *mob, object_t *tmp);
+static objectlink_t *get_linked_spawn(object_t *spawn);
 
 /* drop a monster on the map, by copying a monster object or
  * monster object head. Add treasures.
  */
-static object *spawn_monster(object *mob, object *spawn)
+static object_t *Spawn(object_t *mob, object_t *spawn)
 {
-    object     *head = NULL,
-               *prev = NULL,
-               *monster = NULL;
-    archetype  *at = mob->arch;
-    int         ins_flags = INS_NO_FORCE,
-                i,
-                diff = spawn->map->difficulty;
+    object_t     *monster = NULL;
+    uint8       oflags;
+    sint8       start,
+                stop,
+                i;
+    msp_t   *msp;
 
-    if (!spawn->last_heal)
+    /* TODO: The following overlay stuff should eventually be standardized and
+     * expanded and moved to a general overlay_foo function which can be called
+     * in all situations where something is responsible for putting something
+     * on a map (eg, exits, creators). For now the following provides backwards
+     * compatible functionality (that is, maps continue to work as they used
+     * to).
+     *
+     * -- Smacky 20140527 */
+    /* ->last_eat is a flag to specify whether the insertion should be
+     * within LOS. */
+    if (spawn->last_eat)
+    {
+         oflags = OVERLAY_WITHIN_LOS;
+    }
+    else
+    {
+         oflags = 0;
+    }
+
+    /* ->last_heal is the insertion mode and may be:
+     *   0: <do not insert>
+     *   1: first available location
+     *   2: fixed location
+     *   3: random location, 1 square radius
+     *   4: random location, 2 squares radius
+     *   5: random location, 3 squares radius
+     *   6: random location, progressive radius */
+    switch (spawn->last_heal)
+    {
+        case 0:
         return NULL;
 
-    if (spawn->last_eat)
-        ins_flags |= INS_WITHIN_LOS;
+        case 1:
+        oflags |= OVERLAY_FIRST_AVAILABLE;
+        start = 0;
+        stop = OVERLAY_7X7;
+        break;
 
-    i = check_insertion_allowed(mob, spawn->map, spawn->x, spawn->y,
-                                spawn->last_heal, ins_flags);
+        case 2:
+        oflags |= OVERLAY_FORCE;
+        start = 0;
+        stop = 1;
+        break;
+
+        case 3:
+        start = 1;
+        stop = OVERLAY_3X3;
+        break;
+
+        case 4:
+        start = OVERLAY_3X3;
+        stop = OVERLAY_5X5;
+        break;
+
+        case 5:
+        start = OVERLAY_5X5;
+        stop = OVERLAY_7X7;
+        break;
+
+        case 6:
+        start = 0;
+        stop = OVERLAY_7X7;
+        break;
+
+    }
+
+    msp = MSP_KNOWN(spawn);
+    i = overlay_find_free(msp, mob, start, stop, oflags);
 
     /* No free spot? No spawn. */
     if (i == -1)
-        return NULL;
-
-    while (at)
     {
-        object *part = get_object();
-        int     x, y;
-
-        if (!head) /* copy single/head from spawn inventory */
-        {
-            mob->type = MONSTER;
-            copy_object(mob, part);
-            mob->type = SPAWN_POINT_MOB;
-            monster = part;
-        }
-        else /* but the tails for multi arch from the clones */
-        {
-            copy_object(&at->clone, part);
-        }
-
-        /* out_of_map() will check and adjust map,x,y so that spawn points on
-         * or near the edge of a map will spawn a mob with the correct values
-         * on a tiled map (ie, the point is at map_0000 5 0 and the mob spawns
-         * on the northeast square -- this is map_0001 6 23, not map_0000 6 -1)
-         * The check_insertion_allowed() call above should, AFAICS, catch any
-         * problems with multiparts that are too big to fit on a map, but I
-         * have not tested this specifically.
-         * -- Smacky 20131205 */
-        x = spawn->x + freearr_x[i] + at->clone.x;
-        y = spawn->y + freearr_y[i] + at->clone.y;
-        part->map = out_of_map(spawn->map, &x, &y);
-        part->x = x;
-        part->y = y;
-
-        if (head)
-        {
-            part->head = head;
-            prev->more = part;
-        }
-
-        if (OBJECT_FREE(part))
-            return NULL;
-
-        if (!head)
-            head = part;
-
-        prev = part;
-        at = at->more;
+        return NULL;
     }
+
+    /* We're not actually (re)moving mob, just temporarily setting ->env,
+     * ->map, ->x, and ->y so that when it is cloned to monster, monster
+     * will have sensible values. */
+    mob->env = NULL;
+    mob->map = spawn->map;
+    mob->x = spawn->x + OVERLAY_X(i);
+    mob->y = spawn->y + OVERLAY_Y(i);
+    monster = clone_object(mob, MODE_INVENTORY);
+    mob->env = spawn;
+    mob->map = NULL;
 
     if (monster)
     {
-        /* TODO: Would it be better to stick the autogen stuff in the
-         * spawnpoint rather than each spawn mob?
-         * PROS: * Probably more unclaimed attributes to play with in
-         *         spawnpoints.
-         *       * Easier/quicker for mappers (which is half the point) to set
-         *         the autogen stuff once for spawnpoints with multiple
-         *         potential spawns.
-         *       * Can be simply nullified/changed from a script, though it is
-         *         perfectly possible for a script to change the autogen values
-         *         per mob, just an extra step.
-         * CONS: * Less flexible to do it per spawnpoint than per mob. */
-
-        /* monster->item_quality autogenerates the mob's level as the
-         * appropriate colour for the map difficulty. */
-        if (monster->item_quality)
-        {
-            int level = MAX(1, MIN(monster->level, MAXMOBLEVEL)),
-                min,
-                max;
-
-            switch (monster->item_quality)
-            {
-                case 1: /* green */
-                    min = level_color[diff].green;
-                    max = level_color[diff].blue - 1;
-                    break;
-
-                case 2: /* blue*/
-                    min = level_color[diff].blue;
-                    max = level_color[diff].yellow - 1;
-                    break;
-
-                case 3: /* yellow */
-                    min = level_color[diff].yellow;
-                    max = level_color[diff].orange - 1;
-                    break;
-
-                case 4: /* orange */
-                    min = level_color[diff].orange;
-                    max = level_color[diff].red - 1;
-                    break;
-
-                case 5: /* red */
-                    min = level_color[diff].red;
-                    max = level_color[diff].purple - 1;
-                    break;
-
-                case 6: /* purple */
-                    min = level_color[diff].purple;
-                    max = min + 1;
-                    break;
-
-                default:
-                    min = level;
-                    max = min;
-            }
-
-            /* The old value of monster->level is the minimum the new value can
-             * be. */
-
-            /* FIXME: Currently the level cap is 127. This is because for some
-             * reason level is sint8 in object.h. Making it unsigned or more
-             * bits would seem a more sensible move, but as level is used all
-             * over the place for all sorts of things, I can't be bothered to
-             * do all the testing such a change would need, hence the cap. */
-            monster->level = random_roll(MAX(level, MIN(min, MAXMOBLEVEL)),
-                                         MAX(level, MIN(max, MAXMOBLEVEL)));
-        }
-
-        // The code in adjust_monster was directly included in this function
-        // but some of it is useful for command_spawn(), so has been separated out
-        adjust_monster(monster);
-
-        if (monster->randomitems)
-        {
-            /* Treasure used to be calculated according to map difficulty when
-             * mob level was 0. However, this makes little sense as mob's must
-             * have (and all do in their arch) positive level.
-             *
-             * The calculation in the fourth param, while unnecessary if
-             * relative level was set (it was basically already done above) is
-             * for mob's where relative level was not set.
-             * -- Smacky 20101222 */
-            create_treasure_list(monster->randomitems, monster, 0,
-                                 MAX(1, MIN(monster->level, MAXMOBLEVEL)),
-                                 ART_CHANCE_UNSET, 0);
-        }
+        monster->type = MONSTER;
+        Autogen(monster, spawn->map->difficulty);
     }
 
     return monster;
 }
 
-void adjust_monster(object *monster)
+/* TODO: Would it be better to stick the autogen stuff in the
+ * spawnpoint rather than each spawn mob?
+ * PROS: * Probably more unclaimed attributes to play with in
+ *         spawnpoints.
+ *       * Easier/quicker for mappers (which is half the point) to set
+ *         the autogen stuff once for spawnpoints with multiple
+ *         potential spawns.
+ *       * Can be simply nullified/changed from a script, though it is
+ *         perfectly possible for a script to change the autogen values
+ *         per mob, just an extra step.
+ * CONS: * Less flexible to do it per spawnpoint than per mob. */
+static void Autogen(object_t *monster, sint16 diff)
+{
+    /* monster->item_quality autogenerates the mob's level as the
+     * appropriate colour for the map difficulty. */
+    if (monster->item_quality)
+    {
+        sint16 level = MAX(1, MIN(monster->level, MAXMOBLEVEL)),
+               min,
+               max;
+
+        switch (monster->item_quality)
+        {
+            case 1: /* green */
+                min = level_color[diff].green;
+                max = level_color[diff].blue - 1;
+                break;
+
+            case 2: /* blue*/
+                min = level_color[diff].blue;
+                max = level_color[diff].yellow - 1;
+                break;
+
+            case 3: /* yellow */
+                min = level_color[diff].yellow;
+                max = level_color[diff].orange - 1;
+                break;
+
+            case 4: /* orange */
+                min = level_color[diff].orange;
+                max = level_color[diff].red - 1;
+                break;
+
+            case 5: /* red */
+                min = level_color[diff].red;
+                max = level_color[diff].purple - 1;
+                break;
+
+            case 6: /* purple */
+                min = level_color[diff].purple;
+                max = min + 1;
+                break;
+
+            default:
+                min = level;
+                max = min;
+        }
+
+        /* The old value of monster->level is the minimum the new value can
+         * be. */
+
+        /* FIXME: Currently the level cap is 127. This is because for some
+         * reason level is sint8 in object.h. Making it unsigned or more
+         * bits would seem a more sensible move, but as level is used all
+         * over the place for all sorts of things, I can't be bothered to
+         * do all the testing such a change would need, hence the cap. */
+        monster->level = random_roll(MAX(level, MIN(min, MAXMOBLEVEL)),
+                                     MAX(level, MIN(max, MAXMOBLEVEL)));
+    }
+
+    // The code in adjust_monster was directly included in this function
+    // but some of it is useful for command_spawn(), so has been separated out
+    adjust_monster(monster);
+
+    if (monster->randomitems)
+    {
+        /* Treasure used to be calculated according to map difficulty when
+         * mob level was 0. However, this makes little sense as mob's must
+         * have (and all do in their arch) positive level.
+         *
+         * The calculation in the fourth param, while unnecessary if
+         * relative level was set (it was basically already done above) is
+         * for mob's where relative level was not set.
+         * -- Smacky 20101222 */
+        create_treasure_list(monster->randomitems, monster, 0,
+                             MAX(1, MIN(monster->level, MAXMOBLEVEL)),
+                             ART_CHANCE_UNSET, 0);
+    }
+}
+
+void adjust_monster(object_t *monster)
 {
     int i;
 
@@ -235,70 +265,28 @@ void adjust_monster(object *monster)
     }
 }
 
-/* check the current darkness on this map allows to spawn
- * 0: not allowed, 1: allowed
- */
-/* Why are we only interested in the map darkness level for spawns,
- * not the actual darkness on the square? -- Smacky 20080130 */
-static inline int spawn_point_darkness(object *spoint, int darkness)
-{
-    int map_light = MAP_DARKNESS(spoint->map),
-        success = 0;
-
-    if (!spoint->map)
-        return 0;
-
-    if (MAP_OUTDOORS(spoint->map))
-    {
-        if (MAP_DARKNESS(spoint->map) <= 0 ||
-            MAP_DARKNESS(spoint->map) > world_darkness)
-            map_light = world_darkness;
-    }
-    else
-    {
-        if (MAP_DARKNESS(spoint->map) == -1)
-            map_light = MAX_DARKNESS;
-    }
-
-    if (darkness < 0)
-    {
-        if (map_light <= -darkness)
-            success = 1;
-    }
-    else
-    {
-        if (map_light >= darkness)
-            success = 1;
-    }
-
-#if 0
-    LOG(llevDebug, "DEBUG: %s/spawn_point_darkness(): darkness=%d, map_light=%d, map_darkness=%d, world darkness=%d - %s!\n",
-        __FILE__, darkness, map_light, MAP_DARKNESS(spoint->map), world_darkness, (success) ?  "SUCCESS" : "FAILURE");
-#endif
-
-    return success;
-}
-
-
 /* we have a mob - now insert a copy of all items the spawn point mob has.
  * take care about RANDOM DROP objects.
  * usually these items are put from the map maker inside the spawn mob inv.
  * remember that these are additional items to the treasures list ones.
  */
-static void insert_spawn_mob_loot(object *op, object *mob, object *tmp)
+static void InsertLoot(object_t *op, object_t *mob, object_t *tmp)
 {
-    object *tmp2, *next, *next2, *item;
+    object_t *tmp2,
+           *next,
+           *next2,
+           *item;
 
     for (; tmp; tmp = next)
     {
         next = tmp->below;
+
         if (tmp->type == TYPE_RANDOM_DROP)
         {
             if (!tmp->weight_limit || !(RANDOM() % (tmp->weight_limit + 1))) /* skip this container - drop the ->inv */
             {
-                for (tmp2 = tmp->inv; tmp2; tmp2 = next2)
+                FOREACH_OBJECT_IN_OBJECT(tmp2, tmp, next2)
                 {
-                    next2 = tmp2->below;
                     if (tmp2->type == TYPE_RANDOM_DROP)
                         LOG(llevDebug,
                             "DEBUG:: Spawn:: RANDOM_DROP (102) not allowed inside RANDOM_DROP.mob:>%s< map:%s (%d,%d)\n",
@@ -311,7 +299,7 @@ static void insert_spawn_mob_loot(object *op, object *mob, object *tmp)
                         copy_object(tmp2, item);
                         insert_ob_in_ob(item, mob);      /* and put it in the mob */
                         if(tmp2->inv)
-                            insert_spawn_mob_loot(op, item, tmp2->inv);
+                            InsertLoot(op, item, tmp2->inv);
                     }
                 }
             }
@@ -322,7 +310,7 @@ static void insert_spawn_mob_loot(object *op, object *mob, object *tmp)
             copy_object(tmp, item);
             insert_ob_in_ob(item, mob);      /* and put it in the mob */
             if(tmp->inv)
-                insert_spawn_mob_loot(op, item, tmp->inv);
+                InsertLoot(op, item, tmp->inv);
         }
     }
 }
@@ -331,10 +319,16 @@ static void insert_spawn_mob_loot(object *op, object *mob, object *tmp)
 /* central spawn point function.
  * Control, generate or remove the generated object.
  */
-void spawn_point(object *op)
+void spawn_point(object_t *op)
 {
-    int     rmt, tag;
-    object *tmp, *mob, *next, *loot;
+    msp_t *msp;
+    sint16    b;
+    int       rmt,
+              tag;
+    object_t   *tmp,
+             *mob,
+             *next,
+             *loot;
 
     if (op->enemy)
     {
@@ -342,9 +336,13 @@ void spawn_point(object *op)
         {
             if (op->last_eat) /* check darkness if needed */
             {
-                /* 1 = darkness is ok */
-                if (spawn_point_darkness(op, op->last_eat))
+                msp = MSP_KNOWN(op);
+                b = brightness[ABS(op->last_eat)] * ((op->last_eat < 0) ? -1 : 1);
+
+                if (MSP_IS_APPROPRIATE_BRIGHTNESS(msp, b))
+                {
                     return;
+                }
 
                 /* darkness has changed - now remove the spawned monster */
                 remove_ob(op->enemy);
@@ -393,10 +391,11 @@ void spawn_point(object *op)
     /* now we move through the spawn point inventory and
      * get the mob with a number under this value AND nearest.
      */
-    for (rmt = 0,mob = NULL,tmp = op->inv; tmp; tmp = next)
-    {
-        next = tmp->below;
+    rmt = 0;
+    mob = NULL;
 
+    FOREACH_OBJECT_IN_OBJECT(tmp, op, next)
+    {
         /* ignore events (scripts) and beacons */
         if (tmp->type == TYPE_EVENT_OBJECT ||
             tmp->type == TYPE_BEACON)
@@ -414,9 +413,13 @@ void spawn_point(object *op)
             /* we have a possible hit - control special settings now */
             if (tmp->last_eat) /* darkness */
             {
-                /* 1: darkness on map of spawn point is ok */
-                if (!spawn_point_darkness(op, tmp->last_eat))
+                msp = MSP_KNOWN(op);
+                b = brightness[ABS(tmp->last_eat)] * ((tmp->last_eat < 0) ? -1 : 1);
+
+                if (!MSP_IS_APPROPRIATE_BRIGHTNESS(msp, b))
+                {
                     continue;
+                }
             }
 
             rmt = (int) tmp->enemy_count;
@@ -435,10 +438,10 @@ void spawn_point(object *op)
      * the items it is specifically given in a map file, *not* randomitems. */
     loot = arch_to_object(archetype_global._loot_container);
     FREE_AND_COPY_HASH(loot->name, mob->name);
-    /* Use insert_spawn_mob_loot() to extract the loot into the loot singularity. */
-    insert_spawn_mob_loot(op, loot, mob->inv);
+    /* Use InsertLoot() to extract the loot into the loot singularity. */
+    InsertLoot(op, loot, mob->inv);
 
-    if (!(mob = spawn_monster(mob, op)))
+    if (!(mob = Spawn(mob, op)))
     {
         mark_object_removed(loot);
 
@@ -457,7 +460,7 @@ void spawn_point(object *op)
         if (!was_destroyed(mob, tag))
         {
             mob->last_eat = 0;
-            insert_spawn_mob_loot(op, mob, loot->inv);
+            InsertLoot(op, mob, loot->inv);
             make_mob_homeless(mob);
         }
 
@@ -475,7 +478,7 @@ void spawn_point(object *op)
         mob->last_eat = 0;
     }
 
-    insert_spawn_mob_loot(op, mob, loot->inv);
+    InsertLoot(op, mob, loot->inv);
     mark_object_removed(loot);
 
     op->last_sp = rmt; /* this is the last rand() for what we have spawned! */
@@ -556,7 +559,7 @@ void spawn_point(object *op)
  *     about eating up processing time. While this is unlikely to be a problem
  *     in practice, we take a precaution by adding an IS_USED_UP fuse to
  *     homeless mobs (which is kind of nice anyway). */
-void make_mob_homeless(object *mob)
+void make_mob_homeless(object_t *mob)
 {
     RemoveStuff(mob);
     CLEAR_MULTI_FLAG(mob, FLAG_SPAWN_MOB);
@@ -579,22 +582,20 @@ void make_mob_homeless(object *mob)
 
 /* RemoveStuff() is a recursive function to remove all 'dangerous' objects from
  * where. */
-static void RemoveStuff(object *where)
+static void RemoveStuff(object_t *where)
 {
-    object *this,
+    object_t *this,
            *next;
 
-    for (this = where->inv; this; this = next)
+    FOREACH_OBJECT_IN_OBJECT(this, where, next)
     {
-        next = this->below;
-
         if (this->type == TYPE_BEACON)
         {
             remove_ob(this);
         }
         else if (this->type == SPAWN_POINT_INFO)
         {
-            object *owner = get_owner(this);
+            object_t *owner = get_owner(this);
 
             if (owner)
             {
@@ -636,9 +637,9 @@ static void RemoveStuff(object *where)
 
 /* This is the basic implementation. MT-07.2005 */
 
-static inline objectlink *get_linked_spawn(object *spawn)
+static objectlink_t *get_linked_spawn(object_t *spawn)
 {
-    objectlink        *ol;
+    objectlink_t        *ol;
 
     for(ol = spawn->map->linked_spawn_list;ol;ol = ol->next)
     {
@@ -655,14 +656,14 @@ static inline objectlink *get_linked_spawn(object *spawn)
  * are in a LIFO queue too
  * called when a map with linked spawn is loaded
  */
-objectlink *add_linked_spawn(object *spawn)
+objectlink_t *add_linked_spawn(object_t *spawn)
 {
-    objectlink        *ol;
+    objectlink_t        *ol;
 
     ol = get_linked_spawn(spawn);
     if(!ol) /* new one? create base link */
     {
-        ol = get_objectlink(OBJLNK_FLAG_OB);
+        ol = objectlink_get(OBJLNK_FLAG_OB);
         ol->next = spawn->map->linked_spawn_list;
         spawn->map->linked_spawn_list = ol; /* add base link it to the map */
     }
@@ -680,9 +681,9 @@ objectlink *add_linked_spawn(object *spawn)
 /* remove the link spawn base link list.
  * called when a map struct is removed.
  */
-void remove_linked_spawn_list(mapstruct *map)
+void remove_linked_spawn_list(map_t *map)
 {
-    objectlink *ol, *tmp;
+    objectlink_t *ol, *tmp;
 
     if(!(ol = map->linked_spawn_list))
         return;
@@ -694,7 +695,7 @@ void remove_linked_spawn_list(mapstruct *map)
     for(;ol;ol = tmp)
     {
         tmp = ol->next;
-        free_objectlink_simple(ol);
+        return_poolchunk(ol, pool_objectlink);
     }
 
     map->linked_spawn_list = NULL;
@@ -702,9 +703,9 @@ void remove_linked_spawn_list(mapstruct *map)
 
 /* send a signal through the linked mobs
 */
-void send_link_spawn_signal(object *spawn, object *target, int signal)
+void send_link_spawn_signal(object_t *spawn, object_t *target, int signal)
 {
-    objectlink        *ol = get_linked_spawn(spawn);
+    objectlink_t        *ol = get_linked_spawn(spawn);
 
     if(!ol) /* sanity check */
     {
@@ -716,7 +717,7 @@ void send_link_spawn_signal(object *spawn, object *target, int signal)
     /* Assign an enemy to all linked spawns */
     if(signal & LINK_SPAWN_ENEMY)
     {
-        object *obj;
+        object_t *obj;
 
         for(obj=ol->objlink.ob; obj; obj = obj->attacked_by)
         {

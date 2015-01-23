@@ -33,7 +33,7 @@
  * this func. Why not simply call trigger_object_plugin_event() directly below?
  * -- Smacky 20090403
  */
-static int talk_to_object(object *op, object *npc, char *txt)
+static int talk_to_object(object_t *op, object_t *npc, char *txt)
 {
     return (trigger_object_plugin_event(EVENT_SAY,
                                         npc, op, NULL, txt,
@@ -44,85 +44,97 @@ static int talk_to_object(object *op, object *npc, char *txt)
 /* This function is not to understimate when player talk alot
  * in areas which alot if map objects... This is one of this little extra cpu eaters
  * which adds cpu time here and there.
- * i added P_MAGIC_EAR as map flag - later we should use a chained list in the map headers
+ * i added MSP_FLAG_MAGIC_EAR as map flag - later we should use a chained list in the map headers
  * perhaps. I also removed the npcs from the map search and use the target system.
  * This IS needed because in alot of cases in the past you was not able to target the
  * npc you want - if the search routine find another npc first, the other was silenced.
  * MT-2003
  */
-void communicate(object *op, char *txt)
+void communicate(object_t *op, char *txt)
 {
-    object     *npc;
-    mapstruct  *m;
-    int         flags, i, xt, yt;
-//    char        buf[HUGE_BUF];
+    object_t    *npc;
+    int        flags,
+               i;
 
     if (!txt)
-        return;
-
-    /* npc chars can hook in here with
-     * monster.Communicate("/kiss Fritz")
-     * we need to catch the emote here.
-     */
-    if (*txt == '/' && op->type != PLAYER)
     {
-        CommArray_s    *csp;
-        char           *cp  = NULL;
+        return;
+    }
+
+    /* npc chars can hook in here with monster:Communicate("/kiss Fritz"). */
+    if (*txt == '/' &&
+        op->type != PLAYER)
+    {
+        CommArray_s *csp;
+        char        *cp  = NULL;
 
         /* remove the command from the parameters */
         if ((cp = strchr(++txt, ' ')))
         {
             *(cp++) = '\0';
             cp = cleanup_string(cp);
-            if (cp && *cp == '\0')
+
+            if (cp &&
+                *cp == '\0')
+            {
                 cp = NULL;
+            }
         }
 
         if ((csp = find_command_element(txt, EmoteCommands, EmoteCommandsSize)))
         {
             csp->func(op, cp);
-
-            return;
         }
 
         return;
     }
 
     /* Players can chat with a marked object in their inventory */
-    if(op->type == PLAYER && (npc = find_marked_object(op)))
+    if(op->type == PLAYER &&
+       (npc = find_marked_object(op)))
     {
         /* If script returns 1, the say is not passed on.
          * This simulates the player whispering to something in his inv. */
-        if (trigger_object_plugin_event(EVENT_SAY,
-                                        npc, op, NULL, txt,
-                                        NULL, NULL, NULL,
-                                        SCRIPT_FIX_ACTIVATOR))
+        if (trigger_object_plugin_event(EVENT_SAY, npc, op, NULL, txt, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+        {
             return;
+        }
     }
 
     /* Search nearby for NPCs and magic ears. */
-    for (i = 0; i <= SIZEOFFREE2; i++)
+    for (i = 0; i <= OVERLAY_5X5; i++)
     {
-        xt = op->x + freearr_x[i];
-        yt = op->y + freearr_y[i];
-        if ((m = out_of_map(op->map, &xt, &yt)))
+        map_t *m = op->map;
+        sint16     x = op->x + OVERLAY_X(i),
+                   y = op->y + OVERLAY_Y(i);
+        msp_t  *msp = MSP_GET(m, x, y);
+
+        if (!msp)
         {
-            if (GET_MAP_FLAGS(m, xt, yt) & (P_MAGIC_EAR | P_IS_ALIVE)) /* quick check we have a magic ear */
+            continue;
+        }
+
+        if (msp->flags & (MSP_FLAG_MAGIC_EAR | MSP_FLAG_ALIVE)) /* quick check we have a magic ear */
+        {
+            object_t *next;
+
+            /* ok, browse now only on demand */
+            FOREACH_OBJECT_IN_MSP(npc, msp, next)
             {
-                /* ok, browse now only on demand */
-                for (npc = GET_MAP_OB(m, xt, yt); npc != NULL; npc = npc->above)
+                /* search but avoid talking to self */
+                if ((npc->type == MAGIC_EAR ||
+                     QUERY_FLAG(npc, FLAG_ALIVE)) &&
+                    op != npc)
                 {
-                    /* search but avoid talking to self */
-                    if ((npc->type == MAGIC_EAR || QUERY_FLAG(npc, FLAG_ALIVE)) && op != npc)
+                    /* If script returns 1, the say is not passed on.
+                     * Mappers must take care when a say script return 1
+                     * because subsequent say scripts in the area won't get
+                     * a look in and players will not hear the message!
+                     * TODO: Prioritise which objects get to react to
+                     * SAYs -- eg, NPCs first then magic ears. */
+                    if (talk_to_object(op, npc, txt))
                     {
-                        /* If script returns 1, the say is not passed on.
-                         * Mappers must take care when a say script return 1
-                         * because subsequent say scripts in the area won't get
-                         * a look in and players will not hear the message!
-                         * TODO: Prioritise which objects get to react to
-                         * SAYs -- eg, NPCs first then magic ears. */
-                        if (talk_to_object(op, npc, txt))
-                            return;
+                        return;
                     }
                 }
             }
@@ -132,10 +144,12 @@ void communicate(object *op, char *txt)
     /* Broadcast the say to others (players) nearby. */
     flags = NDI_WHITE;
 
-    if(op->type == PLAYER)
+    if (op->type == PLAYER)
+    {
         flags |= (NDI_SAY | NDI_PLAYER);
+    }
 
-    new_info_map(flags, op->map, op->x, op->y, MAP_INFO_NORMAL, "%s says: %s",
+    ndi_map(flags, MSP_KNOWN(op), MAP_INFO_NORMAL, NULL, NULL, "%s says: %s",
         QUERY_SHORT_NAME(op, NULL), txt);
 }
 
@@ -158,9 +172,9 @@ void communicate(object *op, char *txt)
  * If it is in range, we run the attached talk script, if any, as normal. After
  * this is run we wake up the mob. This means the script can check me.f_sleep
  * and respond accordingly if the player woke up the mob. ;) */
-void talk_to_npc(player *pl, char *topic)
+void talk_to_npc(player_t *pl, char *topic)
 {
-    object *t_obj;
+    object_t *t_obj;
 
     /* this happens when whitespace only string was submited */
 //    if (!topic ||
@@ -196,7 +210,7 @@ void talk_to_npc(player *pl, char *topic)
      * range (modified if it is asleep), talk to it. */
     if (OBJECT_VALID(pl->target_object, pl->target_object_count))
     {
-        rv_vector rv;
+        rv_t rv;
 
         t_obj = pl->target_object;
 
@@ -230,12 +244,12 @@ void talk_to_npc(player *pl, char *topic)
 
                         if(t_obj->msg)
                         {
-                            new_draw_info(NDI_NAVY | NDI_UNIQUE, 0, pl->ob, "%s",
+                            ndi(NDI_NAVY | NDI_UNIQUE, 0, pl->ob, "%s",
                                           t_obj->msg);
                         }
                         else
                         {
-                            new_draw_info(NDI_NAVY | NDI_UNIQUE, 0,
+                            ndi(NDI_NAVY | NDI_UNIQUE, 0,
                                                  pl->ob, "%s has nothing to say.",
                                                  QUERY_SHORT_NAME(t_obj, pl->ob));
                         }
@@ -257,18 +271,18 @@ void talk_to_npc(player *pl, char *topic)
     /* If we have a target, it must be out of range. */
     if (t_obj)
     {
-        new_draw_info(NDI_UNIQUE, 0, pl->ob, "Your talk target is not in range!");
+        ndi(NDI_UNIQUE, 0, pl->ob, "Your talk target is not in range!");
     }
     else
     {
-        new_draw_info(NDI_UNIQUE, 0, pl->ob, "There's no-one around to talk to!");
+        ndi(NDI_UNIQUE, 0, pl->ob, "There's no-one around to talk to!");
     }
 
     return;
 }
 
 /* open a (npc) gui communication interface */
-void gui_npc(object *who, uint8 mode, const char *text)
+void gui_npc(object_t *who, uint8 mode, const char *text)
 {
     NewSocket *ns = &CONTR(who)->socket;
 

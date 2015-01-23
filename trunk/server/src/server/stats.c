@@ -178,11 +178,5 @@ void stats_event(stats_event_type type, ...)
     va_start(ap, type);
     vsprintf(buf, format[type], ap);
     va_end(ap);
-#ifdef WIN32
-    fprintf(fp, "%ld\t%ld\t%I64u\t%d%s\n", event_id, (long)time_now, tadtick, type, buf);
-#elif SIZEOF_LONG == 8
-    fprintf(fp, "%ld\t%ld\t%lu\t%d%s\n", event_id, (long)time_now, tadtick, type, buf);
-#elif SIZEOF_LONG_LONG == 8
-    fprintf(fp, "%ld\t%ld\t%llu\t%d%s\n", event_id, (long)time_now, tadtick, type, buf);
-#endif
+    fprintf(fp, "%ld\t%ld\t%hu\t%d%s\n", event_id, (long)time_now, tadtick, type, buf);
 }

@@ -264,7 +264,7 @@ static int get_attribute(lua_State *L, lua_object *obj, struct attribute_decl *a
     char   *str;
     void   *field_ptr2;
     tag_t   tag;
-    object *tmp;
+    object_t *tmp;
 
     switch (attrib->type)
     {
@@ -303,18 +303,18 @@ static int get_attribute(lua_State *L, lua_object *obj, struct attribute_decl *a
           return 1;
         case FIELDTYPE_MAP:
           /* Can return nil */
-          if((*(mapstruct **)field_ptr) == NULL || (*(mapstruct **)field_ptr)->in_memory != MAP_ACTIVE )
+          if((*(map_t **)field_ptr) == NULL || (*(map_t **)field_ptr)->in_memory != MAP_MEMORY_ACTIVE )
           {
               lua_pushnil(L);
               return 1;
           }
-          return push_object(L, &Map, *(mapstruct * *) field_ptr);
+          return push_object(L, &Map, *(map_t * *) field_ptr);
         case FIELDTYPE_OBJECT:
-          return push_object(L, &GameObject, *(object * *) field_ptr);
+          return push_object(L, &GameObject, *(object_t * *) field_ptr);
         case FIELDTYPE_OBJECTREF:
           /* returns nil if objectref is invalid */
           field_ptr2 = (void *) ((char *) obj->data.anything + attrib->extra_data);
-          tmp = *(object * *) field_ptr;
+          tmp = *(object_t * *) field_ptr;
           tag = *(tag_t *) field_ptr2;
           return push_object(L, &GameObject, OBJECT_VALID_OR_REMOVED(tmp, tag) ? tmp : NULL);
 

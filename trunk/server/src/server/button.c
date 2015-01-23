@@ -25,18 +25,18 @@
 
 #include <global.h>
 
-static objectlink *get_first_button_link(object *button, uint8 mode);
+static objectlink_t *get_first_button_link(object_t *button, uint8 mode);
 
 /* When a map is loaded, its buttons are synced. We don't want
  * to trigger scripts then so we use this global to indicate it */
 static int ignore_trigger_events = 0;
 
 /* Send signal from op to connection ol */
-void signal_connection(object *op, object *activator, object *originator, mapstruct *m)
+void signal_connection(object_t *op, object_t *activator, object_t *originator, map_t *m)
 {
-    objectlink *olp,
+    objectlink_t *olp,
                *ol;
-    object     *tmp;
+    object_t     *tmp;
     int         raceval = 0,
                 sound_id,
                 connection;
@@ -50,7 +50,7 @@ void signal_connection(object *op, object *activator, object *originator, mapstr
     {
         if (m && m != op->map)
         {
-            oblinkpt *oblp;
+            objectlink_t *oblp;
 
             for (oblp = m->buttons, olp = NULL; oblp; oblp = oblp->next)
             {
@@ -150,7 +150,8 @@ void signal_connection(object *op, object *activator, object *originator, mapstr
               {
                   /* Don't send null buffer if sound only */
                   if (tmp->msg)
-                      new_info_map(NDI_UNIQUE | NDI_NAVY, tmp->map, tmp->x, tmp->y, MAP_INFO_NORMAL, "%s", tmp->msg);
+                      ndi_map(NDI_UNIQUE | NDI_NAVY, MSP_KNOWN(tmp), MAP_INFO_NORMAL, NULL, NULL, "%s",
+                          tmp->msg);
                   if (tmp->stats.food)
                       tmp->last_eat++;
               }
@@ -161,7 +162,7 @@ void signal_connection(object *op, object *activator, object *originator, mapstr
                   {
                       sound_id = lookup_sound(raceval-1, tmp->slaying);
                       if (sound_id >= 0)
-                          play_sound_map(tmp->map, tmp->x, tmp->y, sound_id, raceval-1);
+                          play_sound_map(MSP_KNOWN(tmp), sound_id, raceval-1);
                   }
               }
 
@@ -290,12 +291,13 @@ void signal_connection(object *op, object *activator, object *originator, mapstr
  * Remove button down checks to separate function
  * (called by update_button)
  */
-int check_button_down(object *what)
+int check_button_down(object_t *what)
 {
     uint32    fly,
               move;
-    MapSpace *msp;
-    object   *this;
+    msp_t *msp;
+    object_t   *this,
+             *next;
 
     if (!what ||
         !what->map)
@@ -305,15 +307,15 @@ int check_button_down(object *what)
 
     fly = QUERY_FLAG(what, FLAG_FLY_ON);
     move = QUERY_FLAG(what, FLAG_WALK_ON);
-    msp = GET_MAP_SPACE_PTR(what->map, what->x, what->y);
+    msp = MSP_KNOWN(what);
 
     if (what->type == BUTTON)
     {
         sint32 total_weight = 0;
 
-        for (this = GET_MAP_SPACE_FIRST(msp); this; this = this->above)
+        FOREACH_OBJECT_IN_MSP(this, msp, next)
         {
-            object *head = (this->head) ? this->head : this;
+            object_t *head = (this->head) ? this->head : this;
 
             if (this != what &&
                 ((IS_AIRBORNE(head)) ? fly : move))
@@ -330,9 +332,9 @@ int check_button_down(object *what)
     {
         what->weight_limit = 0;
 
-        for (this = GET_MAP_SPACE_FIRST(msp); this; this = this->above)
+        FOREACH_OBJECT_IN_MSP(this, msp, next)
         {
-            object *head = (this->head) ? this->head : this;
+            object_t *head = (this->head) ? this->head : this;
 
             if (this != what &&
                 ((IS_AIRBORNE(head)) ? fly : move) &&
@@ -356,12 +358,12 @@ int check_button_down(object *what)
  * to make sure that all gates and other buttons connected to the
  * button reacts to the (eventual) change of state.
  */
-void update_button(object *op, object *activator, object *originator)
+void update_button(object_t *op, object_t *activator, object_t *originator)
 {
-    object     *tmp;
+    object_t     *tmp;
     int         any_down = 0;
     sint32      old_value = op->weight_limit;
-    objectlink *ol;
+    objectlink_t *ol;
     int         has_links = 0;
 
     /* LOG(llevDebug, "update_button: %s (%d)\n", op->name, op->count); */
@@ -403,20 +405,20 @@ void update_button(object *op, object *activator, object *originator)
  * This is only done when a map loads.
  */
 
-void update_buttons(mapstruct *m)
+void update_buttons(map_t *m)
 {
-    oblinkpt *obp;
+    objectlink_t *obp;
 
     /* Don't trigger plugin events from this function */
     ignore_trigger_events = 1;
 
     for (obp = m->buttons; obp; obp = obp->next)
     {
-        objectlink *ol;
+        objectlink_t *ol;
 
         for (ol = obp->objlink.link; ol; ol = ol->next)
         {
-            object *link = ol->objlink.ob;
+            object_t *link = ol->objlink.ob;
             uint8   type;
 
             if (!link ||
@@ -441,10 +443,11 @@ void update_buttons(mapstruct *m)
             {
                 uint32    fly = QUERY_FLAG(link, FLAG_FLY_ON),
                           move = QUERY_FLAG(link, FLAG_WALK_ON);
-                MapSpace *msp = GET_MAP_SPACE_PTR(link->map, link->x, link->y);
-                object   *this;
+                msp_t *msp = MSP_KNOWN(link);
+                object_t   *this,
+                         *next;
 
-                for (this = GET_MAP_SPACE_FIRST(msp); this; this = this->above)
+                FOREACH_OBJECT_IN_MSP(this, msp, next)
                 {
                     if (this != link &&
                         (IS_AIRBORNE(this) ? fly : move))
@@ -480,7 +483,7 @@ void update_buttons(mapstruct *m)
     ignore_trigger_events = 0;
 }
 
-static void use_trigger(object *op, object *user)
+static void use_trigger(object_t *op, object_t *user)
 {
     /* Toggle value */
     op->weight_limit = !op->weight_limit;
@@ -501,7 +504,7 @@ static void use_trigger(object *op, object *user)
  * we can do all the things our animation can do - means also in frame animation of
  * our turning objects and so on. MT 2003.
  */
-void animate_turning(object *op) /* only one part objects */
+void animate_turning(object_t *op) /* only one part objects */
 {
     /* here we move through or frames - we animate the animation */
     /* state animation should be done from our animation handler now -
@@ -525,7 +528,7 @@ void animate_turning(object *op) /* only one part objects */
  * objects on the same space that take the same sacrifice.
  */
 
-int check_altar_sacrifice(object *altar, object *sacrifice)
+int check_altar_sacrifice(object_t *altar, object_t *sacrifice)
 {
     if (!IS_LIVE(sacrifice) && !QUERY_FLAG(sacrifice, FLAG_IS_LINKED))
     {
@@ -555,7 +558,7 @@ int check_altar_sacrifice(object *altar, object *sacrifice)
  * remaining sacrifice, or is set to NULL if the sacrifice was used up.
  */
 
-int operate_altar(object *altar, object **sacrifice)
+int operate_altar(object_t *altar, object_t **sacrifice)
 {
     if (!altar->map)
     {
@@ -585,11 +588,15 @@ int operate_altar(object *altar, object **sacrifice)
         *sacrifice = decrease_ob_nr(*sacrifice, NROF_SACRIFICE(altar));
 
     if (altar->msg)
-        new_info_map(NDI_WHITE, altar->map, altar->x, altar->y, MAP_INFO_NORMAL, "%s", altar->msg);
+    {
+        ndi_map(NDI_WHITE, MSP_KNOWN(altar), MAP_INFO_NORMAL, NULL, NULL, "%s",
+            altar->msg);
+    }
+
     return 1;
 }
 
-void trigger_move(object *op, int state, object *originator) /* 1 down and 0 up */
+void trigger_move(object_t *op, int state, object_t *originator) /* 1 down and 0 up */
 {
     op->stats.wc = state;
     if (state)
@@ -622,7 +629,7 @@ void trigger_move(object *op, int state, object *originator) /* 1 down and 0 up 
  *
  * TRIGGER_BUTTON, TRIGGER_PEDESTAL: Returns 0.
  */
-int check_trigger(object *op, object *cause, object *originator)
+int check_trigger(object_t *op, object_t *cause, object_t *originator)
 {
     int     push = 0, tot = 0;
     int     in_movement = op->stats.wc || op->speed;
@@ -636,12 +643,13 @@ int check_trigger(object *op, object *cause, object *originator)
               {
                   uint32    fly = QUERY_FLAG(op, FLAG_FLY_ON),
                             move = QUERY_FLAG(op, FLAG_WALK_ON);
-                  MapSpace *msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
-                  object   *this;
+                  msp_t *msp = MSP_KNOWN(op);
+                  object_t   *this,
+                           *next;
 
-                  for (this = GET_MAP_SPACE_FIRST(msp); this; this = this->above)
+                  FOREACH_OBJECT_IN_MSP(this, msp, next)
                   {
-                       object *head = (this->head) ? this->head : this;
+                       object_t *head = (this->head) ? this->head : this;
 
                        if (this != op &&
                            ((IS_AIRBORNE(head)) ? fly : move))
@@ -681,12 +689,13 @@ int check_trigger(object *op, object *cause, object *originator)
           {
               uint32    fly = QUERY_FLAG(op, FLAG_FLY_ON),
                         move = QUERY_FLAG(op, FLAG_WALK_ON);
-              MapSpace *msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
-              object   *this;
+              msp_t *msp = MSP_KNOWN(op);
+              object_t   *this,
+                       *next;
 
-              for (this = GET_MAP_SPACE_FIRST(msp); this; this = this->above)
+              FOREACH_OBJECT_IN_MSP(this, msp, next)
               {
-                  object *head = (this->head) ? this->head : this;
+                  object_t *head = (this->head) ? this->head : this;
 
                  if (this != op &&
                      ((IS_AIRBORNE(head)) ? fly : move) &&
@@ -792,7 +801,7 @@ int check_trigger(object *op, object *cause, object *originator)
 }
 
 /* Parse a comma-separated list of connections and add the button to each of them */
-void add_button_links(object *button, mapstruct *map, char *connected)
+void add_button_links(object_t *button, map_t *map, char *connected)
 {
     char *pos = connected;
 
@@ -812,10 +821,10 @@ void add_button_links(object *button, mapstruct *map, char *connected)
 }
 
 /* Add a button to a single connection */
-void add_button_link(object *button, mapstruct *map, int connected)
+void add_button_link(object_t *button, map_t *map, int connected)
 {
-    oblinkpt   *obp;
-    objectlink *ol  = get_objectlink(OBJLNK_FLAG_OB);
+    objectlink_t   *obp;
+    objectlink_t *ol  = objectlink_get(OBJLNK_FLAG_OB);
 
     if (!map)
     {
@@ -841,7 +850,7 @@ void add_button_link(object *button, mapstruct *map, int connected)
     }
     else
     {
-        obp = get_objectlinkpt();
+        obp = objectlink_get(OBJLNK_FLAG_LINK);
         obp->value = connected;
 
         obp->next = map->buttons;
@@ -855,10 +864,10 @@ void add_button_link(object *button, mapstruct *map, int connected)
  * This is only needed by editors.
  */
 
-void remove_button_link(object *op)
+void remove_button_link(object_t *op)
 {
-    oblinkpt   *obp;
-    objectlink **olp, *ol;
+    objectlink_t   *obp;
+    objectlink_t **olp, *ol;
     int foundone = 0;
 
     if (op->map == NULL)
@@ -879,7 +888,7 @@ void remove_button_link(object *op)
                            obp->weight_limit, op->name, op->map->path);
                 */
                 *olp = ol->next;
-                free_objectlink_simple(ol);
+                return_poolchunk(ol, pool_objectlink);
                 foundone = 1;
             }
     if(! foundone) {
@@ -891,10 +900,10 @@ void remove_button_link(object *op)
 /* Return the first objectlink in the objects linked to this one. mode is a bit
  * of a hack. If 1 then in the case of CONN_SENSORS, make sure the return is
  * the output link. */
-static objectlink *get_first_button_link(object *button, uint8 mode)
+static objectlink_t *get_first_button_link(object_t *button, uint8 mode)
 {
-    oblinkpt   *obp;
-    objectlink *ol;
+    objectlink_t   *obp;
+    objectlink_t *ol;
 
     if (!button->map)
     {
@@ -928,10 +937,10 @@ static objectlink *get_first_button_link(object *button, uint8 mode)
  */
 
 /* Get the "connection id" for a button */
-int get_button_value(object *button)
+int get_button_value(object_t *button)
 {
-    oblinkpt   *obp;
-    objectlink *ol;
+    objectlink_t   *obp;
+    objectlink_t *ol;
 
     if (!button)
     {
@@ -969,11 +978,11 @@ int get_button_value(object *button)
 /* TODO: this needs to be updated for the new AI system if it is going to
  * be used at all. Gecko 2005-04-30 */
 #if 0
-void do_mood_floor(object *op, object *op2)
+void do_mood_floor(object_t *op, object_t *op2)
 {
     LOG(llevBug, "BUG: mood floor used (not implemented yet)\n");
-    object *tmp;
-    object *tmp2;
+    object_t *tmp;
+    object_t *tmp2;
 
     for (tmp = op->above; tmp; tmp = tmp->above)
         if (QUERY_FLAG(tmp, FLAG_MONSTER))
@@ -1026,8 +1035,8 @@ void do_mood_floor(object *op, object *op2)
           if (op == op2)
               break;         /* only if 'connected' */
 
-          for (tmp2 = GET_MAP_OB(op2->map, op2->x, op2->y); /* finding an owner */
-                                  tmp2->type != PLAYER; tmp2 = tmp2->above)
+          for (tmp2 = MSP_GET_LAST(op2->map, op2->x, op2->y); /* finding an owner */
+                                  tmp2->type != PLAYER; tmp2 = tmp2->below)
               if (tmp2->above == NULL)
                   break;
 
@@ -1056,11 +1065,13 @@ void do_mood_floor(object *op, object *op2)
  *      if FLAG_SEE_INVISIBLE, require all non-empty fields to match
  */
 
-object * check_inv_recursive(object *op, object *trig)
+object_t * check_inv_recursive(object_t *op, object_t *trig)
 {
-    object *tmp, *ret = NULL;
+    object_t *tmp,
+           *next,
+           *ret = NULL;
 
-    for (tmp = op->inv; tmp; tmp = tmp->below)
+    FOREACH_OBJECT_IN_OBJECT(tmp, op, next)
     {
         int match_type = 0;
         int match_slaying = 0;
@@ -1106,9 +1117,9 @@ object * check_inv_recursive(object *op, object *trig)
  * -b.t. (thomas@nomad.astro.psu.edu
  */
 
-void check_inv(object *op, object *trig)
+void check_inv(object_t *op, object_t *trig)
 {
-    object *match;
+    object_t *match;
 
     if (op->type != PLAYER)
         return;
@@ -1128,10 +1139,10 @@ void check_inv(object *op, object *trig)
  * map.  All it really does it much sure the object id link that is set
  * matches what the object has.
  */
-void verify_button_links(mapstruct *map)
+void verify_button_links(map_t *map)
 {
-    oblinkpt   *obp;
-    objectlink *ol;
+    objectlink_t   *obp;
+    objectlink_t *ol;
 
     if (!map)
         return;

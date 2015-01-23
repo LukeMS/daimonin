@@ -170,11 +170,11 @@ void init_mempools()
 #ifdef MEMPOOL_TRACKING
     pool_puddle = create_mempool("puddles", 10, sizeof(struct puddle_info), MEMPOOL_ALLOW_FREEING, NULL, NULL, NULL, NULL);
 #endif
-    pool_object = create_mempool("objects", OBJECT_EXPAND, sizeof(object), 0, NULL, NULL,
+    pool_object = create_mempool("objects", OBJECT_EXPAND, sizeof(object_t), 0, NULL, NULL,
             (chunk_constructor) initialize_object, (chunk_destructor) destroy_object);
-    pool_player = create_mempool("players", 50, sizeof(player), MEMPOOL_BYPASS_POOLS, NULL, NULL, NULL,
+    pool_player = create_mempool("players", 50, sizeof(player_t), MEMPOOL_BYPASS_POOLS, NULL, NULL, NULL,
         (chunk_destructor) destroy_player_struct);
-    pool_map = create_mempool("maps", 50, sizeof(mapstruct), 0, NULL, NULL, NULL, NULL);
+    pool_map = create_mempool("maps", 50, sizeof(map_t), 0, NULL, NULL, NULL, NULL);
     pool_map_bfs= create_mempool("map BFS nodes", 16, sizeof(struct mapsearch_node), 0, NULL, NULL, NULL, NULL);
     pool_path_segment= create_mempool("path segments", 500, sizeof(struct path_segment), 0, NULL, NULL, NULL, NULL);
     pool_mob_data= create_mempool("mob brains", 100, sizeof(struct mobdata), 0, NULL, NULL, NULL, NULL);
@@ -182,10 +182,10 @@ void init_mempools()
     pool_mob_behaviourset = create_mempool("mob behaviour sets", 100, sizeof(struct mob_behaviourset), 0, NULL, NULL, NULL, NULL);
     pool_mob_behaviour = create_mempool("mob behaviours", 100, sizeof(struct mob_behaviour), 0, NULL, NULL, NULL, NULL);
     pool_mob_behaviourparam = create_mempool("mob behaviour parameter", 100, sizeof(struct mob_behaviour_param), 0, NULL, NULL, NULL, NULL);
-    pool_objectlink = create_mempool("object links", 500, sizeof(objectlink), 0, NULL, NULL, NULL, NULL);
+    pool_objectlink = create_mempool("object links", 500, sizeof(objectlink_t), 0, NULL, NULL, NULL, NULL);
 
     pool_gmasters = create_mempool("gmaster entries", 10, sizeof(gmaster_struct), 0, NULL, NULL, NULL, NULL);
-    pool_bannode = create_mempool("ban node entries", 25, sizeof(struct ban_struct), 0, NULL, NULL, NULL, NULL);
+    pool_bannode = create_mempool("ban node entries", 25, sizeof(struct ban_t), 0, NULL, NULL, NULL, NULL);
 
     pool_tlist_tweak = create_mempool("treasure list tweak", 100, sizeof(tlist_tweak), 0, NULL, NULL, NULL, NULL);
 
@@ -411,7 +411,7 @@ void return_poolchunk_array_real(void *data, uint32 arraysize_exp, struct mempoo
  * @param sum_used total number of bytes actively in use from mempools (OUTPUT)
  * @param sum_alloc total number of bytes allocated by the mempool system (OUTPUT)
  */
-void dump_mempool_statistics(object *op, int *sum_used, int *sum_alloc)
+void dump_mempool_statistics(object_t *op, int *sum_used, int *sum_alloc)
 {
     int j, k;
 
@@ -461,7 +461,7 @@ void check_use_object_list(void)
         #endif
         if (chunk->pool == pool_object)
         {
-            object *tmp2, *tmp = MEM_USERDATA(chunk);
+            object_t *tmp = MEM_USERDATA(chunk);
 
             /*LOG(llevDebug,"DEBUG_OBJ:: object >%s< (%d)\n",  STRING_OBJ_NAME(tmp), chunk->id);*/
 
@@ -470,15 +470,21 @@ void check_use_object_list(void)
 
             if (tmp->map) /* we are on a map */
             {
-                if (tmp->map->in_memory != MAP_ACTIVE)
+                if (tmp->map->in_memory != MAP_MEMORY_ACTIVE)
                     LOG(llevDebug, "BUG:DEBUG_OBJ:: object >%s< (%d) has invalid map! >%d<!\n", STRING_OBJ_NAME(tmp),
                         tmp->map->name ? tmp->map->name : "NONE", chunk->id);
                 else
                 {
-                    for (tmp2 = GET_MAP_OB(tmp->map, tmp->x, tmp->y); tmp2; tmp2 = tmp2->above)
+                    msp_t *msp = MSP_KNOWN(tmp);
+                    object_t  *this,
+                            *next;
+
+                    FOREACH_OBJECT_IN_MSP(this, msp, next)
                     {
-                        if (tmp2 == tmp)
+                        if (this == tmp)
+                        {
                             goto goto_object_found;
+                        }
                     }
 
                     LOG(llevDebug, "BUG:DEBUG_OBJ:: object >%s< (%d) has invalid map! >%d<!\n", STRING_OBJ_NAME(tmp),
@@ -487,11 +493,16 @@ void check_use_object_list(void)
             }
             else if (tmp->env)
             {
+                object_t  *this,
+                        *next;
+
                 /* object claims to be here... lets check it IS here */
-                for (tmp2 = tmp->env->inv; tmp2; tmp2 = tmp2->below)
+                FOREACH_OBJECT_IN_OBJECT(this, tmp->env, next)
                 {
-                    if (tmp2 == tmp)
+                    if (this == tmp)
+                    {
                         goto goto_object_found;
+                    }
                 }
 
                 LOG(llevDebug, "BUG:DEBUG_OBJ:: object >%s< (%d) has invalid env >%d<!\n", STRING_OBJ_NAME(tmp),
@@ -504,7 +515,7 @@ void check_use_object_list(void)
         }
         else if (chunk->pool == pool_player)
         {
-            player *tmp = MEM_USERDATA(chunk);
+            player_t *tmp = MEM_USERDATA(chunk);
 
             /*LOG(llevDebug,"DEBUG_OBJ:: player >%s< (%d)\n",  tmp->ob?STRING_OBJ_NAME(tmp->ob):"NONE", chunk->id);*/
         }
@@ -694,8 +705,8 @@ void free_empty_puddles(struct mempool *pool)
       for(ii=0; ii<mempools[pool].expand_size; ii++) {
         chunk = (struct mempool_chunk *)((char *)(puddle->first_chunk) + chunksize_real * ii);
         /* Find free chunks. (Notice special case for objects here. Yuck!) */
-        if((pool == POOL_OBJECT && OBJECT_FREE((object *)MEM_USERDATA(chunk))) ||
-                (pool != POOL_OBJECT && CHUNK_FREE((object *)MEM_USERDATA(chunk)))) {
+        if((pool == POOL_OBJECT && OBJECT_FREE((object_t *)MEM_USERDATA(chunk))) ||
+                (pool != POOL_OBJECT && CHUNK_FREE((object_t *)MEM_USERDATA(chunk)))) {
             if(puddle->nrof_free == 0) {
                 puddle->first_free = chunk;
                 puddle->last_free = chunk;

@@ -78,7 +78,7 @@ void dump_objects()
 #ifdef MEMPOOL_TRACKING
     struct puddle_info *puddle = pool_object->first_puddle_info;
     int i;
-    object *obj;
+    object_t *obj;
     while(puddle)
     {
         for(i=0; i<pool_object->expand_size; i++)
@@ -122,7 +122,7 @@ void dump_objlinks()
     struct mempool * pool = pool_objectlink;
     struct puddle_info *puddle = pool->first_puddle_info;
     int i;
-    objectlink *objlink;
+    objectlink_t *objlink;
     while(puddle)
     {
         for(i=0; i<pool->expand_size; i++)
@@ -144,10 +144,10 @@ void dump_objlinks()
 }
 
 
-/* Shallowly dump the inventory of an object */
-void dump_inventory(object *op)
+/* Shallowly dump the inventory of an object_t */
+void dump_inventory(object_t *op)
 {
-    object *tmp;
+    object_t *tmp;
     LOG(llevDebug, "inventory of %s:\n", STRING_OBJ_NAME(op));
     for(tmp = op->inv; tmp; tmp = tmp->below)
     {

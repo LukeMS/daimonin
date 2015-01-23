@@ -37,18 +37,18 @@
 #define QSTAT_DONE     4
 #define QSTAT_DISALLOW 5
 
-extern void insert_quest_item(struct obj *quest_trigger, struct obj *target);
-extern void add_quest_containers(struct obj *op);
-extern void add_quest_trigger(struct obj *who, struct obj *trigger);
-extern void set_quest_status(struct obj *trigger, int q_status, int q_type);
-extern int quest_get_active_status(player *pl, object *trigger);
-extern int update_quest(struct obj *trigger, uint8 subtype, struct obj *info, char *text, char *vim);
-extern void check_kill_quest_event(struct obj *pl, struct obj *op);
-extern void check_cont_quest_event(struct obj *pl, struct obj *op);
-extern uint32 get_nrof_quest_item(const struct obj *target, const char *aname, const char *name, const char *title);
-extern int quest_count_pending(const struct obj *pl);
-extern struct obj *quest_find_name(const struct obj *pl, const char *name);
-extern void send_quest_list(struct obj *pl);
-extern void quest_list_command(struct obj *pl, char *cmd);
+extern void insert_quest_item(object_t *quest_trigger, object_t *target);
+extern void add_quest_containers(object_t *op);
+extern void add_quest_trigger(object_t *who, object_t *trigger);
+extern void set_quest_status(object_t *trigger, int q_status, int q_type);
+extern int quest_get_active_status(player_t *pl, object_t *trigger);
+extern int update_quest(object_t *trigger, uint8 subtype, object_t *info, char *text, char *vim);
+extern void check_kill_quest_event(object_t *pl, object_t *op);
+extern void check_cont_quest_event(object_t *pl, object_t *op);
+extern uint32 get_nrof_quest_item(const object_t *target, const char *aname, const char *name, const char *title);
+extern int quest_count_pending(const object_t *pl);
+extern object_t *quest_find_name(const object_t *pl, const char *name);
+extern void send_quest_list(object_t *pl);
+extern void quest_list_command(object_t *pl, char *cmd);
 
 #endif /* ifndef __QUEST_H */

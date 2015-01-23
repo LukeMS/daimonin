@@ -166,7 +166,7 @@ int lookup_sound(int type_id, const char* soundname)
     return id;
 }
 
-void play_sound_player_only(player *pl, int soundnum, int soundtype, int x, int y)
+void play_sound_player_only(player_t *pl, int soundnum, int soundtype, int x, int y)
 {
     NewSocket *ns = &pl->socket;
 
@@ -182,105 +182,115 @@ void play_sound_player_only(player *pl, int soundnum, int soundtype, int x, int 
 
 }
 
+/* CHECKPLAYERS() is a convenience macro used in play_sound_map() to avoid
+ * large areas of repeat code. Essentially it finds all the players within
+ * range of the sound and calls play_sound_player_only() for them. */
+#define CHECKPLAYERS(_O_, _M_, _X_, _Y_, _N_, _T_) \
+    for ((_O_) = (_M_)->player_first; (_O_); (_O_) = CONTR((_O_))->map_above) \
+    { \
+        if (POW2((_O_)->x - (_X_)) + POW2((_O_)->y - (_Y_)) <= MAX_SOUND_DISTANCE_SQUARED) \
+        { \
+            play_sound_player_only(CONTR((_O_)), (_N_), (_T_), (_X_) - (_O_)->x, (_Y_) - (_O_)->y); \
+        } \
+    }
+
 /* Plays some sound on map at x,y using a distance counter.
  * This is now nicely optimized - we use the player map list
  * and testing only the main map and the possible 8 attached maps.
  * Now, we don't must fear about increasing performance lose with
- * high player numbers. mt - 04.02.04
- * the function looks a bit bloated, but for speed reasons, we just
- * cloned all the 8 loops with native settings for each direction.
- */
-void play_sound_map(mapstruct *map, int x, int y, int sound_num, int sound_type)
+ * high player numbers. mt - 04.02.04 */
+void play_sound_map(msp_t *msp, int sound_num, int sound_type)
 {
-    int     xt, yt;
-    object *tmp;
+    map_t    *m,
+             *m2;
+    sint16    x,
+              y,
+              x2,
+              y2;
+    object_t *this;
 
-    if (!map || map->in_memory != MAP_ACTIVE)
+    if (!msp ||
+        msp->map->in_memory != MAP_MEMORY_ACTIVE)
+    {
         return;
-
-    if (map->player_first) /* any player on this map? */
-    {
-        for (tmp = map->player_first; tmp; tmp = CONTR(tmp)->map_above)
-        {
-            if ((POW2(tmp->x - x) + POW2(tmp->y - y)) <= MAX_SOUND_DISTANCE_SQUARED)
-                play_sound_player_only(CONTR(tmp), sound_num, sound_type, x - tmp->x, y - tmp->y);
-        }
     }
 
-    if (map->tile_map[TILED_MAPS_NORTH] && map->tile_map[TILED_MAPS_NORTH]->in_memory == MAP_ACTIVE && map->tile_map[TILED_MAPS_NORTH]->player_first)
+    m = msp->map;
+    x = msp->x;
+    y = msp->y;
+    CHECKPLAYERS(this, m, x, y, sound_num, sound_type);
+
+    if ((m2 = m->tiling.tile_map[TILING_DIRECTION_NORTH]) &&
+        m2->in_memory == MAP_MEMORY_ACTIVE &&
+        m2->player_first)
     {
-        yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTH]);
-        for (tmp = map->tile_map[TILED_MAPS_NORTH]->player_first; tmp; tmp = CONTR(tmp)->map_above)
-        {
-            if ((POW2(tmp->x - x) + POW2(tmp->y - yt)) <= MAX_SOUND_DISTANCE_SQUARED)
-                play_sound_player_only(CONTR(tmp), sound_num, sound_type, x - tmp->x, yt - tmp->y);
-        }
+        x2 = x;
+        y2 = y + m2->height;
+        CHECKPLAYERS(this, m2, x2, y2, sound_num, sound_type);
     }
-    if (map->tile_map[TILED_MAPS_EAST] && map->tile_map[TILED_MAPS_EAST]->in_memory == MAP_ACTIVE && map->tile_map[TILED_MAPS_EAST]->player_first)
+
+    if ((m2 = m->tiling.tile_map[TILING_DIRECTION_EAST]) &&
+        m2->in_memory == MAP_MEMORY_ACTIVE &&
+        m2->player_first)
     {
-        xt = x - MAP_WIDTH(map);
-        for (tmp = map->tile_map[TILED_MAPS_EAST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
-        {
-            if ((POW2(tmp->x - xt) + POW2(tmp->y - y)) <= MAX_SOUND_DISTANCE_SQUARED)
-                play_sound_player_only(CONTR(tmp), sound_num, sound_type, xt - tmp->x, y - tmp->y);
-        }
+        x2 = x - m->width;
+        y2 = y;
+        CHECKPLAYERS(this, m2, x2, y2, sound_num, sound_type);
     }
-    if (map->tile_map[TILED_MAPS_SOUTH] && map->tile_map[TILED_MAPS_SOUTH]->in_memory == MAP_ACTIVE && map->tile_map[TILED_MAPS_SOUTH]->player_first)
+
+    if ((m2 = m->tiling.tile_map[TILING_DIRECTION_SOUTH]) &&
+        m2->in_memory == MAP_MEMORY_ACTIVE &&
+        m2->player_first)
     {
-        yt = y - MAP_HEIGHT(map);
-        for (tmp = map->tile_map[TILED_MAPS_SOUTH]->player_first; tmp; tmp = CONTR(tmp)->map_above)
-        {
-            if ((POW2(tmp->x - x) + POW2(tmp->y - yt)) <= MAX_SOUND_DISTANCE_SQUARED)
-                play_sound_player_only(CONTR(tmp), sound_num, sound_type, x - tmp->x, yt - tmp->y);
-        }
+        x2 = x;
+        y2 = y - m->height;
+        CHECKPLAYERS(this, m2, x2, y2, sound_num, sound_type);
     }
-    if (map->tile_map[TILED_MAPS_WEST] && map->tile_map[TILED_MAPS_WEST]->in_memory == MAP_ACTIVE && map->tile_map[TILED_MAPS_WEST]->player_first)
+
+    if ((m2 = m->tiling.tile_map[TILING_DIRECTION_WEST]) &&
+        m2->in_memory == MAP_MEMORY_ACTIVE &&
+        m2->player_first)
     {
-        xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_WEST]);
-        for (tmp = map->tile_map[TILED_MAPS_WEST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
-        {
-            if ((POW2(tmp->x - xt) + POW2(tmp->y - y)) <= MAX_SOUND_DISTANCE_SQUARED)
-                play_sound_player_only(CONTR(tmp), sound_num, sound_type, xt - tmp->x, y - tmp->y);
-        }
+        x2 = x + m2->width;
+        y2 = y;
+        CHECKPLAYERS(this, m2, x2, y2, sound_num, sound_type);
     }
-    if (map->tile_map[TILED_MAPS_NORTHEAST] && map->tile_map[TILED_MAPS_NORTHEAST]->in_memory == MAP_ACTIVE && map->tile_map[TILED_MAPS_NORTHEAST]->player_first)
+
+    if ((m2 = m->tiling.tile_map[TILING_DIRECTION_NORTHEAST]) &&
+        m2->in_memory == MAP_MEMORY_ACTIVE &&
+        m2->player_first)
     {
-        yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTHEAST]);
-        xt = x - MAP_WIDTH(map);
-        for (tmp = map->tile_map[TILED_MAPS_NORTHEAST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
-        {
-            if ((POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= MAX_SOUND_DISTANCE_SQUARED)
-                play_sound_player_only(CONTR(tmp), sound_num, sound_type, xt - tmp->x, yt - tmp->y);
-        }
+        x2 = x - m->width;
+        y2 = y + m2->height;
+        CHECKPLAYERS(this, m2, x2, y2, sound_num, sound_type);
     }
-    if (map->tile_map[TILED_MAPS_SOUTHEAST] && map->tile_map[TILED_MAPS_SOUTHEAST]->in_memory == MAP_ACTIVE && map->tile_map[TILED_MAPS_SOUTHEAST]->player_first)
+
+    if ((m2 = m->tiling.tile_map[TILING_DIRECTION_SOUTHEAST]) &&
+        m2->in_memory == MAP_MEMORY_ACTIVE &&
+        m2->player_first)
     {
-        xt = x - MAP_WIDTH(map);
-        yt = y - MAP_HEIGHT(map);
-        for (tmp = map->tile_map[TILED_MAPS_SOUTHEAST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
-        {
-            if ((POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= MAX_SOUND_DISTANCE_SQUARED)
-                play_sound_player_only(CONTR(tmp), sound_num, sound_type, xt - tmp->x, yt - tmp->y);
-        }
+        x2 = x - m->width;
+        y2 = y - m->height;
+        CHECKPLAYERS(this, m2, x2, y2, sound_num, sound_type);
     }
-    if (map->tile_map[TILED_MAPS_SOUTHWEST] && map->tile_map[TILED_MAPS_SOUTHWEST]->in_memory == MAP_ACTIVE && map->tile_map[TILED_MAPS_SOUTHWEST]->player_first)
+
+    if ((m2 = m->tiling.tile_map[TILING_DIRECTION_SOUTHWEST]) &&
+        m2->in_memory == MAP_MEMORY_ACTIVE &&
+        m2->player_first)
     {
-        xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_SOUTHWEST]);
-        yt = y - MAP_HEIGHT(map);
-        for (tmp = map->tile_map[TILED_MAPS_SOUTHWEST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
-        {
-            if ((POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= MAX_SOUND_DISTANCE_SQUARED)
-                play_sound_player_only(CONTR(tmp), sound_num, sound_type, xt - tmp->x, yt - tmp->y);
-        }
+        x2 = x + m2->width;
+        y2 = y - m->height;
+        CHECKPLAYERS(this, m2, x2, y2, sound_num, sound_type);
     }
-    if (map->tile_map[TILED_MAPS_NORTHWEST] && map->tile_map[TILED_MAPS_NORTHWEST]->in_memory == MAP_ACTIVE && map->tile_map[TILED_MAPS_NORTHWEST]->player_first)
+
+    if ((m2 = m->tiling.tile_map[TILING_DIRECTION_NORTHWEST]) &&
+        m2->in_memory == MAP_MEMORY_ACTIVE &&
+        m2->player_first)
     {
-        xt = x + MAP_WIDTH(map->tile_map[TILED_MAPS_NORTHWEST]);
-        yt = y + MAP_HEIGHT(map->tile_map[TILED_MAPS_NORTHWEST]);
-        for (tmp = map->tile_map[TILED_MAPS_NORTHWEST]->player_first; tmp; tmp = CONTR(tmp)->map_above)
-        {
-            if ((POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= MAX_SOUND_DISTANCE_SQUARED)
-                play_sound_player_only(CONTR(tmp), sound_num, sound_type, xt - tmp->x, yt - tmp->y);
-        }
+        x2 = x + m2->width;
+        y2 = y + m2->height;
+        CHECKPLAYERS(this, m2, x2, y2, sound_num, sound_type);
     }
 }
+
+#undef CHECKPLAYERS

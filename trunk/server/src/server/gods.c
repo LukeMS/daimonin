@@ -23,6 +23,8 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
+#include "global.h"
+
 /* TODO: Reference only. Will be removed. */
 /* Note that somewhat stripped down versions of the essentials are at the end.
  * What has been stripped out has often been removed just to keep things a bit
@@ -1073,13 +1075,10 @@ int lookup_god_by_name(const char *name)
 
 /* Determines if op worships a god. Returns the godname if they do. In the case
  * of an NPC, if they have no god, we give them a random one. */
-const char *determine_god(object *op)
+const char *determine_god(object_t *op)
 {
     /* Spells. */
-    if ((op->type == FBULLET ||
-         op->type == CONE ||
-         op->type == FBALL ||
-         op->type == SWARM_SPELL) &&
+    if (IS_GOD_SPELL(op) &&
         op->title)
     {
         if (lookup_god_by_name(op->title) >= 0)
@@ -1093,9 +1092,10 @@ const char *determine_god(object *op)
      * skill). */
     if (op->type == PLAYER)
     {
-        object *this;
+        object_t *this,
+               *next;
 
-        for (this = op->inv; this; this = this->below)
+        FOREACH_OBJECT_IN_OBJECT(this, op, next)
         {
             /* Gecko: we should actually only need to check either
              * this->stats.Wis or this->sub_type1, but to avoid future
@@ -1143,9 +1143,9 @@ const char *determine_god(object *op)
     return shstr_cons.none;
 }
 
-object * find_god(const char *name)
+object_t * find_god(const char *name)
 {
-    object *god = NULL;
+    object_t *god = NULL;
 
     if (name && name != shstr_cons.none)
     {
@@ -1159,9 +1159,9 @@ object * find_god(const char *name)
     return god;
 }
 
-void pray_at_altar(object *pl, object *altar)
+void pray_at_altar(object_t *pl, object_t *altar)
 {
-    object *pl_god  = find_god(determine_god(pl));
+    object_t *pl_god  = find_god(determine_god(pl));
 
     /* If non consecrate altar, don't do anything */
     if (!altar->other_arch)
@@ -1179,7 +1179,7 @@ void pray_at_altar(object *pl, object *altar)
         /* pray at your gods altar */
         int bonus   = ((pl->stats.Wis / 10) + (SK_level(pl) / 10));
 
-        new_draw_info(NDI_UNIQUE, 0, pl, "You feel the powers of your deity %s.", pl_god->name);
+        ndi(NDI_UNIQUE, 0, pl, "You feel the powers of your deity %s.", pl_god->name);
 
         /* we can get neg grace up faster */
         if (pl->stats.grace < 0)
@@ -1224,13 +1224,13 @@ void pray_at_altar(object *pl, object *altar)
             {
                 /* you really screwed up */
                 angry = 3;
-                new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, pl, "Foul Priest! %s punishes you!", pl_god->name);
+                ndi(NDI_UNIQUE | NDI_NAVY, 0, pl, "Foul Priest! %s punishes you!", pl_god->name);
                 cast_mana_storm(pl, pl_god->level + 20);
             }
-            new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, pl, "Foolish heretic! %s is livid!", pl_god->name);
+            ndi(NDI_UNIQUE | NDI_NAVY, 0, pl, "Foolish heretic! %s is livid!", pl_god->name);
         }
         else
-            new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, pl, "Heretic! %s is angered!", pl_god->name);
+            ndi(NDI_UNIQUE | NDI_NAVY, 0, pl, "Heretic! %s is angered!", pl_god->name);
 
         /* May switch Gods, but its random chance based on our current level
          * note it gets harder to swap gods the higher we get */
@@ -1241,7 +1241,7 @@ void pray_at_altar(object *pl, object *altar)
         else
         {
             /* toss this player off the altar.  He can try again. */
-            new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, pl, "A divine force pushes you off the altar.");
+            ndi(NDI_UNIQUE | NDI_NAVY, 0, pl, "A divine force pushes you off the altar.");
             move_player(pl, absdir(pl->facing + 4), TRUE); /* back him off the way he came. */
         } /* didn't successfully change, so forced off altar. */
     } /* If prayed at altar to other god */
@@ -1253,10 +1253,10 @@ void pray_at_altar(object *pl, object *altar)
  * that happen to the player, including the removal of godgiven
  * items (from the former cult).
  */
-void become_follower(object *op, object *new_god)
+void become_follower(object_t *op, object_t *new_god)
 {
-    object     *skillgroup = op->chosen_skill->skillgroup; /* obj. containing god data */
-    object     *old_god = NULL;                      /* old god */
+    object_t     *skillgroup = op->chosen_skill->skillgroup; /* obj. containing god data */
+    object_t     *old_god = NULL;                      /* old god */
     int         i;
 
     if (!op || !new_god)
@@ -1269,18 +1269,18 @@ void become_follower(object *op, object *new_god)
 
     if (op->race && new_god->slaying && strstr(op->race, new_god->slaying))
     {
-        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "Fool! %s detests your kind!", new_god->name);
+        ndi(NDI_UNIQUE | NDI_NAVY, 0, op, "Fool! %s detests your kind!", new_god->name);
         if (random_roll(0, op->level - 1) - 5 > 0)
             cast_mana_storm(op, new_god->level + 10);
         return;
     }
 
-    new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "You become a follower of %s!", new_god->name);
+    ndi(NDI_UNIQUE | NDI_NAVY, 0, op, "You become a follower of %s!", new_god->name);
 
     if (skillgroup->title)
     {
         /* get rid of old god */
-        new_draw_info(NDI_UNIQUE, 0, op, "%s's blessing is withdrawn from you.", skillgroup->title);
+        ndi(NDI_UNIQUE, 0, op, "%s's blessing is withdrawn from you.", skillgroup->title);
         CLEAR_FLAG(skillgroup, FLAG_APPLIED);
         change_abil(op, skillgroup);
         FREE_AND_CLEAR_HASH2(skillgroup->title);
@@ -1300,7 +1300,7 @@ void become_follower(object *op, object *new_god)
         if (skillgroup->resist[i] > 30 && (i == ATNR_FIRE || i == ATNR_COLD || i == ATNR_ELECTRICITY || i == ATNR_POISON))
             skillgroup->resist[i] = 30;
 
-    new_draw_info(NDI_UNIQUE, 0, op, "You are bathed in %s's aura.", new_god->name);
+    ndi(NDI_UNIQUE, 0, op, "You are bathed in %s's aura.", new_god->name);
     SET_FLAG(skillgroup, FLAG_APPLIED);
     change_abil(op, skillgroup);
 }

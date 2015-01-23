@@ -46,7 +46,7 @@ static void teardown()
 START_TEST (treasurelist_memleak)
 {
     const char *path = add_string("/dev/unit_tests/test_treasurelists");
-    mapstruct *map;
+    map_t *map;
 
     map = ready_map_name(path, NULL, MAP_STATUS_MULTI, NULL);
 

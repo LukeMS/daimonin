@@ -58,61 +58,73 @@ static uint32 exp_calc_tag=1; /* used to tag the player/group */
  * This is used for AoE spells and other target synchronized damage dealers
  * Return: NULL or damage info object for hitter.
  */
-struct obj *aggro_get_damage(struct obj *target, struct obj *hitter)
+object_t *aggro_get_damage(object_t *target, object_t *hitter)
 {
-    struct obj *tmp, *tmp2;
+    object_t *this,
+           *next;
+
     /* damage objects are in a 2nd aggro_history object inside the base aggro history. */
-    for(tmp=target->inv;tmp;tmp=tmp->below) /* get 1st container object */
+    FOREACH_OBJECT_IN_OBJECT(this, target, next)
     {
-        if(tmp->type == TYPE_AGGRO_HISTORY )
+        if (this->type == TYPE_AGGRO_HISTORY)
         {
-            for(tmp=tmp->inv;tmp;tmp=tmp->below)/* the special damage container - also AGGRO_HIST */
+            FOREACH_OBJECT_IN_OBJECT(this, this, next)
             {
-                if(tmp->type == TYPE_AGGRO_HISTORY)
+                if (this->type == TYPE_AGGRO_HISTORY)
                 {
-                    for(tmp=tmp->inv;tmp;tmp=tmp2) /* here are the damage infos */
+                    FOREACH_OBJECT_IN_OBJECT(this, this, next) /* here are the damage infos */
                     {
-                        tmp2=tmp->below;
-                        if(tmp->type == TYPE_DAMAGE_INFO)
+                        if (this->type == TYPE_DAMAGE_INFO)
                         {
-                            if(tmp->weight_limit == hitter->weight_limit)
-                                return tmp;
+                            if (this->weight_limit == hitter->weight_limit)
+                            {
+                                return this;
+                            }
                             /* because we have this sucker accessed...lets do some gc on the fly */
-                            if (tmp->damage_round_tag+DEFAULT_DMG_INVALID_TIME < ROUND_TAG)
-                                remove_ob(tmp);
+                            else if (this->damage_round_tag + DEFAULT_DMG_INVALID_TIME < ROUND_TAG)
+                            {
+                                remove_ob(this);
+                            }
                         }
                     }
+
                     break;
                 }
             }
+
             break;
         }
     }
-    return tmp;
+
+    return this;
 }
 
 /*
  *
  */
-struct obj *aggro_insert_damage(struct obj *target, struct obj *hitter)
+object_t *aggro_insert_damage(object_t *target, object_t *hitter)
 {
-    struct obj *tmp_t, *tmp;
+    object_t *tmp_t,
+           *next,
+           *tmp;
 
     /* find or insert base container */
-    for(tmp_t=target->inv;tmp_t;tmp_t=tmp_t->below)
+    FOREACH_OBJECT_IN_OBJECT(tmp_t, target, next)
     {
         if(tmp_t->type == TYPE_AGGRO_HISTORY )
             break;
     }
+
     if(!tmp_t)
         tmp_t = insert_ob_in_ob(arch_to_object(archetype_global._aggro_history), target);
 
     /* find or insert 2nd damage info container */
-    for(tmp=tmp_t->inv;tmp;tmp=tmp->below)
+    FOREACH_OBJECT_IN_OBJECT(tmp, tmp_t, next)
     {
         if(tmp->type == TYPE_AGGRO_HISTORY)
             break;
     }
+
     if(!tmp)
         tmp = insert_ob_in_ob(arch_to_object(archetype_global._aggro_history),  tmp_t);
 
@@ -132,9 +144,12 @@ struct obj *aggro_insert_damage(struct obj *target, struct obj *hitter)
  * This is the main setting function to update for a target the damage & aggro marker AFTER aggro and damage
  * is done from the hitter to the
  */
-struct obj *aggro_update_info(struct obj *target, struct obj *hitter, struct obj *hitter_owner, int dmg)
+object_t *aggro_update_info(object_t *target, object_t *hitter, object_t *hitter_owner, int dmg)
 {
-    struct obj *history = NULL, *aggro = NULL, *tmp = NULL;
+    object_t *history,
+           *next,
+           *aggro = NULL,
+           *tmp;
     int skill_nr = 0;
 
     /* no legal hitter, no need for aggro.
@@ -150,10 +165,10 @@ struct obj *aggro_update_info(struct obj *target, struct obj *hitter, struct obj
 
     /* debug...
     if(hitter && hitter->chosen_skill)
-        new_draw_info( NDI_UNIQUE, 0, hitter->type!=PLAYER?hitter_owner:hitter, "SKILL-hitter: %s (%d)",
+        ndi( NDI_UNIQUE, 0, hitter->type!=PLAYER?hitter_owner:hitter, "SKILL-hitter: %s (%d)",
         hitter->chosen_skill->name, hitter->chosen_skill->stats.sp);
     if(hitter_owner && hitter_owner->chosen_skill)
-        new_draw_info( NDI_UNIQUE, 0, hitter->type!=PLAYER?hitter_owner:hitter, "SKILL-howner: %s (%d)",
+        ndi( NDI_UNIQUE, 0, hitter->type!=PLAYER?hitter_owner:hitter, "SKILL-howner: %s (%d)",
         hitter_owner->chosen_skill->name, hitter_owner->chosen_skill->stats.sp);
     */
 
@@ -168,7 +183,7 @@ struct obj *aggro_update_info(struct obj *target, struct obj *hitter, struct obj
     if(target->type == MONSTER)
     {
         /* Update hittee's friendship level towards hitter */
-        object                 *root_hitter = hitter_owner ? hitter_owner : hitter;
+        object_t                 *root_hitter = hitter_owner ? hitter_owner : hitter;
         struct mob_known_obj   *enemy       = update_npc_knowledge(target, root_hitter, -dmg, 0);
 
         /* Attacking someone neutral always makes you an enemy (for now) */
@@ -182,9 +197,8 @@ struct obj *aggro_update_info(struct obj *target, struct obj *hitter, struct obj
      */
     if(IS_LIVE(target))
     {
-
         /* get or create a aggro history container */
-        for(history=target->inv;history;history=history->below)
+        FOREACH_OBJECT_IN_OBJECT(history, target, next)
         {
             if(history->type == TYPE_AGGRO_HISTORY)
                 break;
@@ -205,10 +219,9 @@ struct obj *aggro_update_info(struct obj *target, struct obj *hitter, struct obj
 
         if(hitter)
         {
-            /* check for aggro history of this object */
-            for(aggro=history->inv;aggro;aggro=tmp)
+            /* check for aggro history of this object_t */
+            FOREACH_OBJECT_IN_OBJECT(aggro, history, next)
             {
-                tmp=aggro->below;
                 if(aggro->type == TYPE_DAMAGE_INFO)
                 {
                     if(aggro->enemy_count == hitter->count)
@@ -238,7 +251,7 @@ struct obj *aggro_update_info(struct obj *target, struct obj *hitter, struct obj
             /* for players, we want to store the used skills */
             if(hitter->type == PLAYER)
             {
-                for(tmp=aggro->inv;tmp;tmp=tmp->below)
+                FOREACH_OBJECT_IN_OBJECT(tmp, aggro, next)
                 {
                     if(tmp->type == TYPE_DAMAGE_INFO && tmp->last_heal == skill_nr)
                         break;
@@ -271,16 +284,17 @@ struct obj *aggro_update_info(struct obj *target, struct obj *hitter, struct obj
 /* calc active skill dmg.
  * Analyze the dmg done by skills and return the most used 1-3 skills.
  */
-static inline void calc_active_skill_dmg(object *op, int *skill1, int *skill2, int *skill3)
+static inline void calc_active_skill_dmg(object_t *op, int *skill1, int *skill2, int *skill3)
 {
-    object *skilldmg;
-    player *hitter = CONTR(op->enemy);
+    object_t *skilldmg,
+           *next;
+    player_t *hitter = CONTR(op->enemy);
     int d1=0,d2=0,d3=0;
 
     *skill1 = *skill2 = *skill3 = -1;
     op->level = 0;
 
-    for(skilldmg=op->inv;skilldmg;skilldmg=skilldmg->below)
+    FOREACH_OBJECT_IN_OBJECT(skilldmg, op, next)
     {
         if(! hitter->skill_ptr[skilldmg->last_heal])
             continue;
@@ -317,9 +331,9 @@ static inline void calc_active_skill_dmg(object *op, int *skill1, int *skill2, i
     }
 }
 
-static int give_default_guild_exp(player *pl, int base_exp)
+static int give_default_guild_exp(player_t *pl, int base_exp)
 {
-    object *skill;
+    object_t *skill;
     int e1 = 0;
     int e2 = 0;
     int e3 = 0;
@@ -353,7 +367,7 @@ static int give_default_guild_exp(player *pl, int base_exp)
 
     if (e1 > 0 || e2 > 0 || e3 > 0)
     {
-        new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, pl->ob, "You didn't fight this time.\nYou trained your default guild skills.");
+        ndi(NDI_UNIQUE | NDI_WHITE, 0, pl->ob, "You didn't fight this time.\nYou trained your default guild skills.");
     }
 
     return 1;
@@ -361,10 +375,10 @@ static int give_default_guild_exp(player *pl, int base_exp)
 
 /* calc exp for a single player.
  */
-static inline int aggro_exp_single(object *victim, object *aggro, int base)
+static inline int aggro_exp_single(object_t *victim, object_t *aggro, int base)
 {
-    object *hitter = aggro->enemy;
-    player *pl = CONTR(hitter);
+    object_t *hitter = aggro->enemy;
+    player_t *pl = CONTR(hitter);
     int s1=-1,s2,s3, e1 = 0, e2, e3, exp=0;
 
     /* calc active dmg */
@@ -436,7 +450,7 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
     /* if *all* possible skill exp has been zero because mob was to low - drop a message */
     if (!e1)
     {
-        new_draw_info(NDI_UNIQUE | NDI_GREY, 0, hitter, "Your enemy was too low for exp.");
+        ndi(NDI_UNIQUE | NDI_GREY, 0, hitter, "Your enemy was too low for exp.");
     }
 
     return e1;
@@ -447,10 +461,10 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
  * If the group member is not near, it gets no exp.
  * We avoid in this way multi spot farming
  */
-static inline int in_group_exp_range(object *victim, object *hitter, object *member)
+static inline int in_group_exp_range(object_t *victim, object_t *hitter, object_t *member)
 {
     int i;
-    mapstruct *tmp_map, *map = member->map;
+    map_t *tmp_map, *map = member->map;
 
     /* we do 2 tests: Is member on the map or a DIRECT attached map
      * from victim or hitter? If not - no exp.
@@ -483,9 +497,9 @@ static inline int in_group_exp_range(object *victim, object *hitter, object *mem
     }
 
 
-    for (tmp_map = victim->map, i = 0; i < TILED_MAPS; i++)
+    for (tmp_map = victim->map, i = 0; i < TILING_DIRECTION_NROF; i++)
     {
-        if (tmp_map->tile_map[i] == map)
+        if (tmp_map->tiling.tile_map[i] == map)
         {
 #ifdef DEBUG_AGGRO
             LOG(llevNoLog,"->%s on attached map from victim!\n", STRING_OBJ_NAME(member));
@@ -496,9 +510,9 @@ static inline int in_group_exp_range(object *victim, object *hitter, object *mem
 
     if(hitter)
     {
-        for (tmp_map = hitter->map, i = 0; i < TILED_MAPS; i++)
+        for (tmp_map = hitter->map, i = 0; i < TILING_DIRECTION_NROF; i++)
         {
-            if (tmp_map->tile_map[i] == map)
+            if (tmp_map->tiling.tile_map[i] == map)
             {
 #ifdef DEBUG_AGGRO
                     LOG(llevNoLog,"->%s on attached map from hitter!\n", STRING_OBJ_NAME(member));
@@ -521,12 +535,12 @@ static inline int in_group_exp_range(object *victim, object *hitter, object *mem
 /* calc exp for a group
  * CONTR() will access here always players
  */
-static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
+static inline int aggro_exp_group(object_t *victim, object_t *aggro, char *kill_msg)
 {
-    object *leader = CONTR(aggro->enemy)->group_leader;
-    object *high = leader, *tmp;
+    object_t *leader = CONTR(aggro->enemy)->group_leader;
+    object_t *high = leader, *tmp;
     int exp=0, t;
-    object *force;
+    object_t *force;
     int tmp_drain_level = 0, high_drain_level = 0;
 
     /* here comes the bad news for group playing:
@@ -584,7 +598,7 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
          */
         for(tmp=leader;tmp;tmp=CONTR(tmp)->group_next)
         {
-            player *pl = CONTR(tmp);
+            player_t *pl = CONTR(tmp);
 
             if(!in_group_exp_range(victim, aggro->enemy == tmp?NULL:aggro->enemy, tmp))
                 pl->group_status |= GROUP_STATUS_NOQUEST; /* outside map range */
@@ -605,7 +619,7 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
     /* at last ... part the exp to the group members */
     for(tmp=leader;tmp;tmp=CONTR(tmp)->group_next)
     {
-        player *pl = CONTR(tmp);
+        player_t *pl = CONTR(tmp);
         /* skip exp when we are not in range to victim/hitter.
          * mark group_status as NO_EXP - thats important and used
          * from the quest item function (= no quest item for leecher)
@@ -623,7 +637,7 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
          * the exp gain messages... ugly, but well, better as double calc the exp gain
          */
         if(kill_msg && aggro->enemy != tmp)
-            new_draw_info(NDI_YELLOW, 0, tmp, "%s", kill_msg);
+            ndi(NDI_YELLOW, 0, tmp, "%s", kill_msg);
 
         pl->group_status &= ~GROUP_STATUS_NOQUEST;
 
@@ -652,9 +666,13 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
  *  We decide here what we will do in that cases.
  *  Return: The corpse owner (NULL: There is no owner, target was to low, NPC kill...)
  */
-object *aggro_calculate_exp(struct obj *victim, struct obj *slayer, char *kill_msg)
+object_t *aggro_calculate_exp(object_t *victim, object_t *slayer, char *kill_msg)
 {
-    object *tmp, *tmp2, *tmp3, *history, *highest_hitter=NULL;
+    object_t *tmp,
+           *tmp3,
+           *history,
+           *next,
+           *highest_hitter = NULL;
     int ret, total_dmg=0,total_dmg_all=0, highest_dmg;
 
     /* slayer is not a player (if the kill hitter was a pet, slayer was set to owner) */
@@ -663,7 +681,7 @@ object *aggro_calculate_exp(struct obj *victim, struct obj *slayer, char *kill_m
 
     /* TODO: don't give exp for player pets - lets add a "iam a pet" flag here later */
 
-    for(history=victim->inv;history;history=history->below)
+    FOREACH_OBJECT_IN_OBJECT(history, victim, next)
     {
         if(history->type == TYPE_AGGRO_HISTORY )
             break;
@@ -683,9 +701,8 @@ object *aggro_calculate_exp(struct obj *victim, struct obj *slayer, char *kill_m
     }
 
     /* lets sort out every illegal damage which would count */
-    for(tmp=history->inv;tmp;tmp=tmp2)
+    FOREACH_OBJECT_IN_OBJECT(tmp, history, next)
     {
-        tmp2 = tmp->below;
         total_dmg_all += tmp->stats.hp;
         /* remove illegal enemy pointer and/or non player dmg */
         if(tmp->type != TYPE_DAMAGE_INFO || tmp->damage_round_tag+DEFAULT_DMG_INVALID_TIME < ROUND_TAG ||
@@ -729,9 +746,8 @@ object *aggro_calculate_exp(struct obj *victim, struct obj *slayer, char *kill_m
                  * we can safely remove the group members - we still can
                  * access them over the group links
                  */
-                for(tmp3=history->inv;tmp3;tmp3=tmp2)
+                FOREACH_OBJECT_IN_OBJECT(tmp3, history, next)
                 {
-                    tmp2 = tmp3->below;
                     if(CONTR(tmp3->enemy)->group_id == tag)
                     {
                         g_dmg+=tmp3->stats.hp;

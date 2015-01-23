@@ -33,7 +33,7 @@ static int AI_ForgetKnownObjects(lua_State *L);
 static int AI_ReloadBehaviourlist(lua_State *L);
 static int AI_GetBehaviourlist(lua_State *L);
 
-/* Available python methods for the GameObject object */
+/* Available python methods for the GameObject object_t */
 static struct method_decl   AI_methods[]            =
 {
     /* Movement response functions */
@@ -71,7 +71,7 @@ struct attribute_decl       AI_attributes[]         =
 };
 
 /* Utility function */
-static struct mob_known_obj *find_known_obj(object *source, object *target)
+static struct mob_known_obj *find_known_obj(object_t *source, object_t *target)
 {
     struct mob_known_obj *tmp;
 
@@ -244,7 +244,7 @@ static int AI_MoveRespondCoordinate(lua_State *L)
 /*****************************************************************************/
 /* Name   : AI_MoveRespondObject                                             */
 /* Lua    : ai:MoveRespondObject(obj)                                        */
-/* Info   : In a movement behaviour, set the reponse to the specified object */
+/* Info   : In a movement behaviour, set the reponse to the specified object_t */
 /*          The pathfinding system will then take over to find the best way  */
 /* Status : Tested/Stable                                                    */
 /*****************************************************************************/

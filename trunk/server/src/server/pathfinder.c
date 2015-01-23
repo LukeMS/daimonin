@@ -56,7 +56,7 @@ static int  pathfinder_queue_first  = 0;
 static int  pathfinder_queue_last   = 0;  /* the one after the last actually */
 static struct
 {
-    object             *op; /* who asked */
+    object_t             *op; /* who asked */
     tag_t               op_count;
 } pathfinder_queue[PATHFINDER_QUEUE_SIZE];
 
@@ -64,6 +64,10 @@ static struct
 #define PATHFINDER_NODEBUF 300
 static int          pathfinder_nodebuf_next                 = 0;
 static path_node    pathfinder_nodebuf[PATHFINDER_NODEBUF];
+
+static int FindNeighbours(path_node *node, path_node **open_list,
+    path_node **closed_list, path_node *start, path_node *goal, object_t *op,
+    uint32 id);
 
 /*
  * Possible enhancements (profile and identify need before spending time on):
@@ -78,7 +82,7 @@ static path_node    pathfinder_nodebuf[PATHFINDER_NODEBUF];
  */
 
 /* enqueue a waypoint for path computation */
-int pathfinder_queue_enqueue(object *op)
+int pathfinder_queue_enqueue(object_t *op)
 {
     /* Queue full? */
     if (pathfinder_queue_last == pathfinder_queue_first - 1
@@ -95,9 +99,9 @@ int pathfinder_queue_enqueue(object *op)
 }
 
 /* Get the first waypoint from the queue (or NULL if empty) */
-object * pathfinder_queue_dequeue(tag_t *count)
+object_t * pathfinder_queue_dequeue(tag_t *count)
 {
-    object *op;
+    object_t *op;
 
     /* Queue empty? */
     if (pathfinder_queue_last == pathfinder_queue_first)
@@ -113,7 +117,7 @@ object * pathfinder_queue_dequeue(tag_t *count)
 }
 
 /* Request a new path */
-void request_new_path(object *op)
+void request_new_path(object_t *op)
 {
     if (op == NULL || op->type != MONSTER || MOB_DATA(op) == NULL ||
             QUERY_FLAG(MOB_PATHDATA(op), PATHFINDFLAG_PATH_REQUESTED))
@@ -132,9 +136,9 @@ void request_new_path(object *op)
 }
 
 /* Get the next (valid) mob that have requested a path is requested */
-object * get_next_requested_path()
+object_t * get_next_requested_path()
 {
-    object *op;
+    object_t *op;
     tag_t   count;
 
     /* Find next still valid request */
@@ -161,7 +165,7 @@ object * get_next_requested_path()
  */
 
 /* Allocate and initialize a node */
-static path_node * make_node(mapstruct *map, sint16 x, sint16 y, uint16 cost, path_node *parent)
+static path_node * make_node(map_t *map, sint16 x, sint16 y, uint16 cost, path_node *parent)
 {
     path_node  *node;
 
@@ -304,7 +308,7 @@ path_node * compress_path(path_node *path)
 {
     path_node  *tmp, *next;
     int         last_dir;
-    rv_vector   v;
+    rv_t   v;
 
 #ifdef DEBUG_PATHFINDING
     int         removed_nodes = 0, total_nodes = 2;
@@ -368,9 +372,9 @@ path_node * compress_path(path_node *path)
  * get_rangevector can fail here if there is no maptile path between start and goal.
  * if it does, we have to return an error value (HEURISTIC_ERROR)
  */
-float distance_heuristic(path_node *start, path_node *current, path_node *goal, object *op1, object *op2)
+float distance_heuristic(path_node *start, path_node *current, path_node *goal, object_t *op1, object_t *op2)
 {
-    rv_vector   v1, v2;
+    rv_t   v1, v2;
     float       h;
 
     /* Diagonal distance (not manhattan distance or euclidian distance!) */
@@ -400,85 +404,13 @@ float distance_heuristic(path_node *start, path_node *current, path_node *goal, 
     return h;
 }
 
-/* Find untraversed neighbours of the node and add to the open_list
- *
- * Returns FALSE if we ran into a limit of any kind and cannot continue,
- * or TRUE if everything was ok.
- */
-int find_neighbours(path_node *node, path_node **open_list, path_node **closed_list, path_node *start, path_node *goal,
-                    object *op, uint32 id)
-{
-    int         i, x2, y2;
-    mapstruct  *map;
-    int         block;
-
-    for (i = 1; i < 9; i++)
-    {
-        x2 = node->x + freearr_x[i];
-        y2 = node->y + freearr_y[i];
-
-        map = out_of_map(node->map, &x2, &y2);
-
-        if (map && !QUERY_MAP_TILE_VISITED(map, x2, y2, id))
-        {
-            SET_MAP_TILE_VISITED(map, x2, y2, id);
-
-#ifdef DEBUG_PATHFINDING
-            searched_nodes++;
-#endif
-
-            /* Multi-arch or not? (blocked_link works for normal archs too, but is more expensive) */
-            if (op->head || op->more)
-                block = blocked_link(op, map, x2, y2);
-            /* TODO: handle doors for multi-archs. Will require some modification to
-             * blocked_link i guess: (don't return as soon as we find a block: if
-             * that block is P_DOOR_CLOSED, keep searching and add P_DOOR_CLOSED to the return
-             * value.)
-             */
-            else
-            {
-                block = blocked(op, map, x2, y2, op->terrain_flag);
-                /* Check for possible door openening */
-                /* TODO: increase path cost if we have to open doors? */
-                if (block == P_DOOR_CLOSED && open_door(op, map, x2, y2, 0))
-                    block = 0;
-            }
-
-            if (!block)
-            {
-                path_node  *new_node;
-                if ((new_node = make_node(map, (sint16) x2, (sint16) y2, (uint16) (node->cost + 1), node)))
-                {
-                    new_node->heuristic = distance_heuristic(start, new_node, goal, op, NULL);
-
-                    if (new_node->heuristic == HEURISTIC_ERROR)
-                        return FALSE;
-
-                    insert_priority_node(new_node, open_list);
-                }
-                else
-                    return FALSE;
-            }
-
-            /* TODO: might need to reopen neighbour nodes if their cost can be lowered from the new node.
-             * (This requires us to store pointers to the tiles instead of bitmap.)
-             * (Probably only required if we add different path costs to different terrains,
-             * or support for doors/teleporters)
-             */
-        }
-    }
-
-    return TRUE;
-}
-
 /* Find a path for op from location (x1,y1) on map1 to location (x2,y2) on map2 */
-path_node * find_path(object *op, mapstruct *map1, int x1, int y1, mapstruct *map2, int x2, int y2)
+path_node * find_path(object_t *op, map_t *map1, int x1, int y1, map_t *map2, int x2, int y2)
 {
     /* Closed nodes have been examined. Open are to be examined */
     path_node      *open_list, *closed_list;
     path_node      *found_path      = NULL;
     path_node       start, goal;
-
     static uint32   traversal_id    = 0;
 
     /* sanity check */
@@ -488,24 +420,34 @@ path_node * find_path(object *op, mapstruct *map1, int x1, int y1, mapstruct *ma
     /* Avoid overflow of traversal_id */
     if (traversal_id == 4294967295U /* UINT_MAX */)
     {
-        mapstruct  *m;
+        map_t  *m;
         for (m = first_map; m != NULL; m = m->next)
             m->pathfinding_id = 0;
         traversal_id = 0;
         LOG(llevDebug, "find_path(): resetting traversal id\n");
     }
+
     traversal_id++;
-
     pathfinder_nodebuf_next = 0;
-
-    start.x = x1; start.y = y1; start.map = map1;
-    goal.x = x2; goal.y = y2; goal.map = map2;
+    start.x = x1;
+    start.y = y1;
+    start.map = map1;
+    goal.x = x2;
+    goal.y = y2;
+    goal.map = map2;
 
     /* The initial tile */
     open_list = make_node(map1, (sint16) x1, (sint16) y1, 0, NULL);
     open_list->heuristic = distance_heuristic(&start, open_list, &goal, op, NULL);
     closed_list = NULL;
-    SET_MAP_TILE_VISITED(map1, x1, y1, traversal_id);
+
+    if (map1->pathfinding_id != traversal_id)
+    {
+        map1->pathfinding_id = traversal_id;
+        memset(map1->bitmap, 0, ((MAP_WIDTH(map1) + 31) / 32) * MAP_HEIGHT(map1) * sizeof(uint32));
+    }
+
+    map1->bitmap[x1 / 32 + ((MAP_WIDTH(map1) + 31) / 32) * y1] |= (1U << (x1 % 32));
 
     if (open_list->heuristic == HEURISTIC_ERROR)
     {
@@ -540,7 +482,7 @@ path_node * find_path(object *op, mapstruct *map1, int x1, int y1, mapstruct *ma
         }
         else
         {
-            if (!find_neighbours(tmp, &open_list, &closed_list, &start, &goal, op, traversal_id))
+            if (!FindNeighbours(tmp, &open_list, &closed_list, &start, &goal, op, traversal_id))
                 break;
         }
     }
@@ -582,15 +524,99 @@ path_node * find_path(object *op, mapstruct *map1, int x1, int y1, mapstruct *ma
     /* This writes out the explored tiles on the source map. Useful for heuristic tweaking */
     /*
     {
-        int y, x;
-        for(y=0; y<map1->height; y++) {
-            for(x=0; x<map1->height; x++)
-                printf("%c", (map1->bitmap[y] & (1U << x)) ? 'X' : '-');
-            printf("\n");
+        sint16 y,
+               x;
+
+        for (y = 0; y < MAP_HEIGHT(map1); y++)
+        {
+            for (x = 0; x < MAP_HEIGHT(map1); x++)
+            {
+                LOG(llevInfo, "%c", (map1->bitmap[y] & (1U << x)) ? 'X' : '-');
+            }
+
+            LOG(llevInfo, "\n");
         }
     }
     */
 #endif
 
     return found_path;
+}
+
+/* Find untraversed neighbours of the node and add to the open_list
+ *
+ * Returns FALSE if we ran into a limit of any kind and cannot continue,
+ * or TRUE if everything was ok. */
+static int FindNeighbours(path_node *node, path_node **open_list,
+    path_node **closed_list, path_node *start, path_node *goal, object_t *op,
+    uint32 id)
+{
+    uint8 i;
+
+    for (i = 1; i < 9; i++)
+    {
+        map_t *m = node->map;
+        sint16     x = node->x + OVERLAY_X(i),
+                   y = node->y + OVERLAY_Y(i);
+#if 0
+        msp_t  *msp = MSP_GET(m, x, y);
+#else
+        msp_t  *msp = MSP_GET2(m, x, y);
+#endif
+
+        if (!msp)
+        {
+            continue;
+        }
+
+        if (m->pathfinding_id != id ||
+            !(m->bitmap[x / 32 + ((MAP_WIDTH(m) + 31) / 32) * y] & (1U << (x % 32))))
+        {
+            uint32 block;
+
+            if (m->pathfinding_id != id)
+            {
+                m->pathfinding_id = id;
+                memset(m->bitmap, 0, ((MAP_WIDTH(m) + 31) / 32) * MAP_HEIGHT(m) * sizeof(uint32));
+            }
+
+            m->bitmap[x / 32 + ((MAP_WIDTH(m) + 31) / 32) * y] |= (1U << (x % 32));
+#ifdef DEBUG_PATHFINDING
+            searched_nodes++;
+#endif
+            block = msp_blocked(op, NULL, OVERLAY_X(i), OVERLAY_Y(i));
+
+            /* msp_blocked() returnis MSP_FLAG_DOOR_CLOSED if the msp is
+             * blocked ONLY by a door which op CAN open. */
+            /* TODO: increase path cost if we have to open doors? */
+            if (!block ||
+                block == MSP_FLAG_DOOR_CLOSED)
+            {
+                path_node *new_node;
+
+                if ((new_node = make_node(m, x, y, (uint16) (node->cost + 1), node)))
+                {
+                    new_node->heuristic = distance_heuristic(start, new_node, goal, op, NULL);
+
+                    if (new_node->heuristic == HEURISTIC_ERROR)
+                    {
+                        return FALSE;
+                    }
+
+                    insert_priority_node(new_node, open_list);
+                }
+                else
+                {
+                    return FALSE;
+                }
+            }
+
+            /* TODO: might need to reopen neighbour nodes if their cost can be
+             * lowered from the new node --requires pointers to the msp instead
+             * of bitmap but probably only necessary if we add different path
+             * costs to different terrains, or support for doors/teleporters) */
+        }
+    }
+
+    return TRUE;
 }

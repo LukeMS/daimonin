@@ -31,7 +31,7 @@
 
 /* owner fires op (which is a rod, horn or wand)
 */
-float fire_magic_tool(object *op, object *weap, int dir)
+float fire_magic_tool(object_t *op, object_t *weap, int dir)
 {
     float ticks = 0.0f;
 
@@ -42,11 +42,11 @@ float fire_magic_tool(object *op, object *weap, int dir)
         if (weap->stats.food <= 0)
         {
             play_sound_player_only(CONTR(op), SOUND_WAND_POOF, SOUND_NORMAL, 0, 0);
-            new_draw_info(NDI_UNIQUE, 0, op, "The wand says poof.");
+            ndi(NDI_UNIQUE, 0, op, "The wand says poof.");
         }
         else /* the wands fire the spell */
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "fire wand");
+            ndi(NDI_UNIQUE, 0, op, "fire wand");
             if (cast_spell(op, weap, dir, weap->stats.sp, 0, spellWand, NULL))
             {
                 SET_FLAG(op, FLAG_BEEN_APPLIED); /* You now know something about it */
@@ -71,13 +71,13 @@ float fire_magic_tool(object *op, object *weap, int dir)
         {
             play_sound_player_only(CONTR(op), SOUND_WAND_POOF, SOUND_NORMAL, 0, 0);
             if (weap->type == ROD)
-                new_draw_info(NDI_UNIQUE, 0, op, "The rod whines for a while, but nothing happens.");
+                ndi(NDI_UNIQUE, 0, op, "The rod whines for a while, but nothing happens.");
             else
-                new_draw_info(NDI_UNIQUE, 0, op, "No matter how hard you try you can't get another note out.");
+                ndi(NDI_UNIQUE, 0, op, "No matter how hard you try you can't get another note out.");
         }
         else
         {
-            /*new_draw_info(NDI_ALL|NDI_UNIQUE,5,NULL,"Use %s - cast spell %d\n",weap->name,weap->stats.sp);*/
+            /*ndi(NDI_ALL|NDI_UNIQUE,5,NULL,"Use %s - cast spell %d\n",weap->name,weap->stats.sp);*/
             if (cast_spell(op, weap, dir, weap->stats.sp, 0, weap->type == ROD ? spellRod : spellHorn, NULL))
             {
                 SET_FLAG(op, FLAG_BEEN_APPLIED); /* You now know something about it */
@@ -99,9 +99,9 @@ float fire_magic_tool(object *op, object *weap, int dir)
  * but without invoking the spell.
  */
 
-int command_cast_spell(object *op, char *params)
+int command_cast_spell(object_t *op, char *params)
 {
-    player *pl;
+    player_t *pl;
     int     spnum;
     int     value;
 
@@ -136,7 +136,7 @@ int command_cast_spell(object *op, char *params)
     /* we don't know this spell name */
     if ((spnum = look_up_spell_by_name(op, params)) == -1)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "You don't know the spell %s.", params);
+        ndi(NDI_UNIQUE, 0, op, "You don't know the spell %s.", params);
         return 0;
     }
 

@@ -9,7 +9,7 @@ extern int word_lengths[];
 extern void read_words(void); /* Can be used as a text fixture */
 
 /* Debug helpers */
-void dump_inventory(object *op);
+void dump_inventory(object_t *op);
 void dump_objects();
 void dump_objlinks();
 void dump_treasurelist_tweaks();

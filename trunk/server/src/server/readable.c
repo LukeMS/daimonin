@@ -104,7 +104,7 @@ arttypename;
 /* booklist is the buffer of books read in from the bookarch file */
 static titlelist   *booklist                    = NULL;
 
-static objectlink  *first_mon_info              = NULL;
+static objectlink_t  *first_mon_info              = NULL;
 
 /* these are needed for creation of a linked list of
  * pointers to all (hostile) monster objects */
@@ -119,7 +119,7 @@ static int          nrofmsg                     = 0;
 /* first_msg is the started of the linked list of messages as read from
  * the messages file
  */
-static linked_char *first_msg                   = NULL;
+static shstr_linked_t *first_msg                   = NULL;
 
 /*
  * Spellpath information
@@ -368,7 +368,7 @@ static titlelist * get_titlelist(int i)
 }
 
 /* HANDMADE STRING FUNCTIONS.., perhaps these belong in another file
- * (shstr.c ?), but the quantity BOOK_BUF will need to be defined. */
+ * (shstr_t.c ?), but the quantity BOOK_BUF will need to be defined. */
 
 /* nstrtok() - simple routine to return the number of list
  * items in buf1 as separated by the value of buf2
@@ -456,7 +456,7 @@ static void init_msgfile(void)
 
     if ((fp = fopen(fname, "r")) != NULL)
     {
-        linked_char    *tmp = NULL;
+        shstr_linked_t    *tmp = NULL;
         while (fgets(buf, MEDIUM_BUF, fp) != NULL)
         {
             if (*buf == '#' || *buf == '\0')
@@ -484,7 +484,7 @@ static void init_msgfile(void)
             }
             else if (!strncmp(cp, "MSG", 3))
             {
-                tmp = (linked_char *) malloc(sizeof(linked_char));
+                tmp = (shstr_linked_t *) malloc(sizeof(shstr_linked_t));
                 strcpy(msgbuf, " ");    /* reset msgbuf for new message */
                 continue;
             }
@@ -607,7 +607,7 @@ static void init_book_archive(void)
 
 static void init_mon_info(void)
 {
-    archetype  *at;
+    archetype_t  *at;
     static int  did_init_mon_info   = 0;
 
     if (did_init_mon_info)
@@ -620,7 +620,7 @@ static void init_mon_info(void)
         if (QUERY_FLAG(&at->clone, FLAG_MONSTER) /*&& !QUERY_FLAG(&at->clone, FLAG_FRIENDLY)*/
          && !QUERY_FLAG(&at->clone, FLAG_CHANGING))
         {
-            objectlink *mon = get_objectlink(OBJLNK_FLAG_OB);
+            objectlink_t *mon = objectlink_get(OBJLNK_FLAG_OB);
             mon->objlink.ob = &at->clone;
             mon->id = nrofmon;
             mon->next = first_mon_info;
@@ -666,7 +666,7 @@ void init_readable(void)
  * book matches something already there.  IF so, return that title.
  */
 
-static title * find_title(object *book, int msgtype)
+static title * find_title(object_t *book, int msgtype)
 {
     title      *t       = NULL;
     titlelist  *tl      = get_titlelist(msgtype);
@@ -699,7 +699,7 @@ static title * find_title(object *book, int msgtype)
  * is given is based on various criteria
  */
 
-static void new_text_name(object *book, int msgtype)
+static void new_text_name(object_t *book, int msgtype)
 {
     int     nbr;
     char    name[MEDIUM_BUF];
@@ -761,7 +761,7 @@ static void new_text_name(object *book, int msgtype)
  * A lot like new_text_name above, but instead chooses an author
  * and sets op->title to that value
  */
-static void add_author(object *op, int msgtype)
+static void add_author(object_t *op, int msgtype)
 {
     char    title[MEDIUM_BUF], name[MEDIUM_BUF];
     int     nbr = sizeof(book_author) / sizeof(char *);
@@ -811,7 +811,7 @@ static void add_author(object *op, int msgtype)
  * a match, then unique_book returns true (because inst unique).
  */
 
-static int unique_book(object *book, int msgtype)
+static int unique_book(object_t *book, int msgtype)
 {
     title  *test;
 
@@ -831,7 +831,7 @@ static int unique_book(object *book, int msgtype)
 
 /* add_book_to_list() */
 
-static void add_book_to_list(object *book, int msgtype)
+static void add_book_to_list(object_t *book, int msgtype)
 {
     titlelist  *tl  = get_titlelist(msgtype);
     title      *t;
@@ -873,7 +873,7 @@ static void add_book_to_list(object *book, int msgtype)
 
 #define MAX_TITLE_CHECK 20
 
-void change_book(object *book, int msgtype)
+void change_book(object_t *book, int msgtype)
 {
     int     nbr = sizeof(book_descrpt) / sizeof(char *);
     char    name[MEDIUM_BUF];
@@ -893,7 +893,7 @@ void change_book(object *book, int msgtype)
 
               if ((strlen(book->msg) > 5) && (t = find_title(book, msgtype)))
               {
-                  object   *tmpbook;
+                  object_t   *tmpbook;
 
                   /* alter book properties */
                   if ((tmpbook = get_archetype(t->archname)) != NULL)
@@ -1038,14 +1038,14 @@ void change_book(object *book, int msgtype)
  * Changed 971225 to be greater than equal to level passed.  Also
  * made choosing by level more random.
  */
-object * get_random_mon(int level)
+object_t * get_random_mon(int level)
 {
-    objectlink *mon = first_mon_info;
+    objectlink_t *mon = first_mon_info;
     int         i = 0, monnr;
 
     /* safety check.  Problem w/ init_mon_info list? */
     if (!nrofmon || !mon)
-        return (object *) NULL;
+        return (object_t *) NULL;
 
     /* lets get a random monster from the mon_info linked list */
     monnr = RANDOM() % nrofmon;
@@ -1066,7 +1066,7 @@ object * get_random_mon(int level)
 /*
  * Returns a description of the monster.
  */
-char * mon_desc(object *mon)
+char * mon_desc(object_t *mon)
 {
     static char retbuf[HUGE_BUF];
 
@@ -1082,9 +1082,9 @@ char * mon_desc(object *mon)
  * calling function (mon_info_msg) seems to expect that.
  */
 
-object * get_next_mon(object *tmp)
+object_t * get_next_mon(object_t *tmp)
 {
-    objectlink *mon;
+    objectlink_t *mon;
 
     for (mon = first_mon_info; mon; mon = mon->next)
         if (mon->objlink.ob == tmp)
@@ -1109,7 +1109,7 @@ char * mon_info_msg(int level, int booksize)
 {
     static char retbuf[BOOK_BUF];
     char        tmpbuf[HUGE_BUF];
-    object     *tmp;
+    object_t     *tmp;
     int count=0, desc_num= (RANDOM()%5)+3;
 
     /*preamble */
@@ -1161,7 +1161,7 @@ char * artifact_msg(int level, int booksize)
     int             book_entries    = level > 5 ? RANDOM() % 3 + RANDOM() % 3 + 2 : RANDOM() % level + 1;
     char           *ch, name[MEDIUM_BUF], buf[BOOK_BUF], sbuf[MEDIUM_BUF];
     static char     retbuf[BOOK_BUF];
-    object         *tmp             = NULL;
+    object_t         *tmp             = NULL;
 
     /* values greater than 5 create msg buffers that are too big! */
     if (book_entries > 5)
@@ -1381,7 +1381,7 @@ char * spellpath_msg(int level, int booksize)
  * of a randomly selected alchemical formula.
  */
 
-void make_formula_book(object *book, int level)
+void make_formula_book(object_t *book, int level)
 {
     char        retbuf[BOOK_BUF], title[MEDIUM_BUF];
     recipelist *fl;
@@ -1429,7 +1429,7 @@ void make_formula_book(object *book, int level)
          * of the formula. */
 
         const char *op_name = NULL;
-        archetype  *at;
+        archetype_t  *at;
         int         nindex  = nstrtok(formula->arch_name, ",");
 
         /* construct name of object to be made */
@@ -1449,7 +1449,7 @@ void make_formula_book(object *book, int level)
         else
             op_name = formula->arch_name;
 
-        if ((at = find_archetype(op_name)) != (archetype *) NULL)
+        if ((at = find_archetype(op_name)) != (archetype_t *) NULL)
             op_name = at->clone.name;
         else
             LOG(llevBug, "BUG: formula_msg() can't find arch %s for formula.", op_name);
@@ -1485,7 +1485,7 @@ void make_formula_book(object *book, int level)
         /* ingredients to make it */
         if (formula->ingred != NULL)
         {
-            linked_char    *next;
+            shstr_linked_t    *next;
             strcat(retbuf, " may be made using the \nfollowing ingredients:\n");
             for (next = formula->ingred; next != NULL; next = next->next)
             {
@@ -1512,7 +1512,7 @@ char * msgfile_msg(int level, int booksize)
 {
     static char     retbuf[BOOK_BUF];
     int             i, msgnum;
-    linked_char    *msg = NULL;
+    shstr_linked_t    *msg = NULL;
 
     /* get a random message for the 'book' from linked list */
     if (nrofmsg > 1)
@@ -1547,7 +1547,7 @@ char * god_info_msg(int level, int booksize)
     const char *name    = NULL;
     char        buf[BOOK_BUF];
     int         i, introlen;
-    object     *god     = pntr_to_god_obj(get_rand_god());
+    object_t     *god     = pntr_to_god_obj(get_rand_god());
 
     if (!god)
         return "\n *indecipherable text*"; /* Problem. but avoid returning NULL */
@@ -1752,7 +1752,7 @@ char * god_info_msg(int level, int booksize)
  *
  */
 
-void tailor_readable_ob(object *book, int msg_type)
+void tailor_readable_ob(object_t *book, int msg_type)
 {
     char    msgbuf[BOOK_BUF];
     int     level   = book->level ? (RANDOM() % book->level) + 1 : 1;
@@ -1840,8 +1840,8 @@ void free_all_readable()
 {
     titlelist      *tlist, *tnext;
     title          *title1, *titlenext;
-    linked_char    *lmsg, *nextmsg;
-    objectlink     *monlink, *nextmon;
+    shstr_linked_t    *lmsg, *nextmsg;
+    objectlink_t     *monlink, *nextmon;
 
     LOG(llevDebug, "freeing all book information\n");
 
@@ -1868,7 +1868,7 @@ void free_all_readable()
     for (monlink = first_mon_info; monlink; monlink = nextmon)
     {
         nextmon = monlink->next;
-        free_objectlink_simple(monlink);
+        return_poolchunk(monlink, pool_objectlink);
     }
 }
 

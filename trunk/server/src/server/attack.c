@@ -76,7 +76,7 @@ attack_name_t attack_name[NROFATTACKS] =
 /* If you want to weight things so certain resistances show up more often than
  * others, just add more entries in the table for the protections you want to
  * show up. */
-int resist_table[] =
+attack_nr_t resist_table[] =
 {
     ATNR_SLASH, ATNR_CLEAVE, ATNR_PIERCE, ATNR_IMPACT, ATNR_CHANNELLING, ATNR_FIRE, ATNR_ELECTRICITY, ATNR_COLD,
     ATNR_CONFUSION, ATNR_ACID, ATNR_DRAIN, ATNR_SHADOW, ATNR_POISON, ATNR_SLOW, ATNR_PARALYZE, ATNR_LIGHT, ATNR_FEAR,
@@ -89,16 +89,16 @@ int resist_table[] =
 };
 
 /* some static defines */
-static int GetAttackMode(object **target, object **hitter, int *env_attack);
-static int  AbortAttack(object *target, object *hitter, int env_attack);
-static void SendAttackMsg(object *op, object *hitter, int attacknum, int dam,
+static int GetAttackMode(object_t **target, object_t **hitter, attack_envmode_t *env_attack);
+static attack_envmode_t  AbortAttack(object_t *target, object_t *hitter, attack_envmode_t env_attack);
+static void SendAttackMsg(object_t *op, object_t *hitter, int attacknum, int dam,
                           int damage);
-static int  HitPlayerAttacktype(object *op, object *hitter, int *flags, int damage, uint32 attacknum, int magic);
+static int  HitPlayerAttacktype(object_t *op, object_t *hitter, int *flags, int damage, uint32 attacknum, int magic);
 
 /* check and adjust all pre-attack issues like checking attack is valid,
  * attack objects are in the right state and such.
  */
-static int GetAttackMode(object **target, object **hitter, int *env_attack)
+static int GetAttackMode(object_t **target, object_t **hitter, attack_envmode_t *env_attack)
 {
     if (OBJECT_FREE(*target) || OBJECT_FREE(*hitter))
     {
@@ -114,10 +114,11 @@ static int GetAttackMode(object **target, object **hitter, int *env_attack)
         *env_attack = ENV_ATTACK_YES;
         return 0;
     }
-    if (QUERY_FLAG(*target, FLAG_REMOVED)
-        || QUERY_FLAG(*hitter, FLAG_REMOVED)
-        || (*hitter)->map == NULL
-        || !on_same_tileset((*hitter), (*target)))
+
+    if (QUERY_FLAG(*target, FLAG_REMOVED) ||
+        QUERY_FLAG(*hitter, FLAG_REMOVED) ||
+        !(*hitter)->map ||
+        !on_same_tileset((*hitter)->map, (*target)->map))
     {
         LOG(llevBug, "BUG:: %s/GetAttackMode(): hitter (%s[%d]) with no relation to target (%s[%d])!\n",
             __FILE__, STRING_OBJ_NAME(*hitter), TAG(*hitter),
@@ -132,9 +133,9 @@ static int GetAttackMode(object **target, object **hitter, int *env_attack)
  * Like the attacker is invisible - adjust the roll depending on the
  * fact the target can see invisible or not - just as a example.
  */
-static inline int adj_attackroll(object *hitter, object *target, int adjust)
+static inline int adj_attackroll(object_t *hitter, object_t *target, int adjust)
 {
-    object *attacker    = hitter;
+    object_t *attacker    = hitter;
 
     /* aimed missiles use the owning object's sight */
     if (is_aimed_missile(hitter))
@@ -169,11 +170,12 @@ static inline int adj_attackroll(object *hitter, object *target, int adjust)
 /* here we decide a attack will happen and how. blocking, parry, missing is handled
  * here inclusive the sounds. All whats needed before we count damage and say "hit you".
  */
-int attack_ob(object *target, object *hitter, object *hit_obj)
+int attack_ob(object_t *target, object_t *hitter, object_t *hit_obj)
 {
-    int     hitdam, env_attack, roll;
+    attack_envmode_t env_attack;
+    int     hitdam, roll;
     tag_t   op_tag, hitter_tag;
-    object *owner;
+    object_t *owner;
 
     /* GetAttackMode will pre-check and adjust *ANY* topic.
      * Including setting ->head objects and checking maps
@@ -181,8 +183,7 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
     if (GetAttackMode(&target, &hitter, &env_attack))
         goto error;
 
-    if(trigger_object_plugin_event(EVENT_ATTACK,
-            target, hitter, hitter, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
+    if(trigger_object_plugin_event(EVENT_ATTACK, target, hitter, hitter, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
         goto error;
 
     if(!hit_obj)
@@ -202,7 +203,7 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
         (owner = get_owner(hit_obj)) &&
         !mob_can_see_obj(target, owner, MOB_DATA(target)->known_mobs))
     {
-        new_draw_info(NDI_ORANGE, 0, owner, "Stealth attack direct hit! (+50%% damage)");
+        ndi(NDI_ORANGE, 0, owner, "Stealth attack direct hit! (+50%% damage)");
         hitdam = (int)((double)hitdam * 1.5);
 
         goto force_direct_hit;
@@ -217,9 +218,9 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
 
 #ifdef ATTACK_DEBUG
     if (hitter->type == PLAYER)
-        new_draw_info(NDI_RED, 0, hitter, "You roll: %d thac m:%d 0:%d (wc/roll: %d(%d) ac:%d)!", roll,hitter->stats.thac0,hitter->stats.thacm, hit_obj->stats.wc,hit_obj->stats.wc+roll,target->stats.ac);
+        ndi(NDI_RED, 0, hitter, "You roll: %d thac m:%d 0:%d (wc/roll: %d(%d) ac:%d)!", roll,hitter->stats.thac0,hitter->stats.thacm, hit_obj->stats.wc,hit_obj->stats.wc+roll,target->stats.ac);
     if (target->type == PLAYER)
-        new_draw_info(NDI_RED, 0, target, "Hitter roll: %d thac m:%d 0:%d (wc/roll: %d(%d) ac:%d)!", roll,hitter->stats.thac0,hitter->stats.thacm, hit_obj->stats.wc,hit_obj->stats.wc+roll,target->stats.ac);
+        ndi(NDI_RED, 0, target, "Hitter roll: %d thac m:%d 0:%d (wc/roll: %d(%d) ac:%d)!", roll,hitter->stats.thac0,hitter->stats.thacm, hit_obj->stats.wc,hit_obj->stats.wc+roll,target->stats.ac);
 #endif
 
     if (hitter->type == PLAYER)
@@ -228,7 +229,7 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
     /* Force player to face enemy */
     if (hitter->type == PLAYER)
     {
-        rv_vector   dir;
+        rv_t   dir;
         if(get_rangevector(hitter, target, &dir, RV_NO_DISTANCE))
         {
             if (hitter->head)
@@ -259,14 +260,14 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
         if (hitter->type == MONSTER || hitter->type == PLAYER)
         {
             if (target->type == PLAYER)
-                new_draw_info(NDI_PURPLE, 0, target, "%s fumbles!", hitter->name);
+                ndi(NDI_PURPLE, 0, target, "%s fumbles!", hitter->name);
             if (hitter->type == PLAYER)
-                new_draw_info(NDI_ORANGE, 0, hitter, "You fumble!");
+                ndi(NDI_ORANGE, 0, hitter, "You fumble!");
 
             if (hitter->type == PLAYER)
-                play_sound_map(hitter->map, hitter->x, hitter->y, SOUND_MISS_PLAYER, SOUND_NORMAL);
+                play_sound_map(MSP_KNOWN(hitter), SOUND_MISS_PLAYER, SOUND_NORMAL);
             else
-                play_sound_map(hitter->map, hitter->x, hitter->y, SOUND_MISS_MOB, SOUND_NORMAL);
+                play_sound_map(MSP_KNOWN(hitter), SOUND_MISS_MOB, SOUND_NORMAL);
         }
     }
     /* Fight Step 3 - 2nd part: if thac0 is >= roll then don't use AC/WC - we call it a DIRECT HIT */
@@ -278,9 +279,9 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
         if (hitter->type == MONSTER || hitter->type == PLAYER)
         {
             if (target->type == PLAYER)
-                new_draw_info(NDI_PURPLE, 0, target, "%s Direct Hit! (+20%% damage)", hitter->name);
+                ndi(NDI_PURPLE, 0, target, "%s Direct Hit! (+20%% damage)", hitter->name);
             if (hitter->type == PLAYER)
-                new_draw_info(NDI_ORANGE, 0, hitter, "Direct Hit! (+20%% damage)");
+                ndi(NDI_ORANGE, 0, hitter, "Direct Hit! (+20%% damage)");
             hitdam = (int) (hitdam * 1.2f);
         }
 
@@ -296,17 +297,17 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
 
         /* i don't use sub_type atm - using it should be smarter in the future */
         if (hitter->type == ARROW)
-            play_sound_map(hitter->map, hitter->x, hitter->y, SOUND_ARROW_HIT, SOUND_NORMAL);
+            play_sound_map(MSP_KNOWN(hitter), SOUND_ARROW_HIT, SOUND_NORMAL);
         else
         {
             if (hitter->attack[ATNR_SLASH])
-                play_sound_map(hitter->map, hitter->x, hitter->y, SOUND_HIT_SLASH, SOUND_NORMAL);
+                play_sound_map(MSP_KNOWN(hitter), SOUND_HIT_SLASH, SOUND_NORMAL);
             else if (hitter->attack[ATNR_CLEAVE])
-                play_sound_map(hitter->map, hitter->x, hitter->y, SOUND_HIT_CLEAVE, SOUND_NORMAL);
+                play_sound_map(MSP_KNOWN(hitter), SOUND_HIT_CLEAVE, SOUND_NORMAL);
             else if (hitter->attack[ATNR_IMPACT])
-                play_sound_map(hitter->map, hitter->x, hitter->y, SOUND_HIT_IMPACT, SOUND_NORMAL);
+                play_sound_map(MSP_KNOWN(hitter), SOUND_HIT_IMPACT, SOUND_NORMAL);
             else
-                play_sound_map(hitter->map, hitter->x, hitter->y, SOUND_HIT_PIERCE, SOUND_NORMAL);
+                play_sound_map(MSP_KNOWN(hitter), SOUND_HIT_PIERCE, SOUND_NORMAL);
         }
 
         /* we hook thrown potions and stuff in here? we should perhaps move this */
@@ -316,8 +317,9 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
                 cast_spell(hitter, hitter, hitter->direction, hitter->stats.sp, 1, spellPotion, NULL); /* apply potion ALWAYS fire on the spot the applier stands - good for healing - bad for firestorm */
             decrease_ob_nr(hitter, 1);
 
-            if (was_destroyed(hitter, hitter_tag) || was_destroyed(target, op_tag)
-                || AbortAttack(target, hitter, env_attack))
+            if (was_destroyed(hitter, hitter_tag) ||
+                was_destroyed(target, op_tag) ||
+                AbortAttack(target, hitter, env_attack))
                 goto leave;
         }
 
@@ -332,14 +334,17 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
         {
             damage_ob(hitter, random_roll(0, target->stats.dam), target, env_attack);
 
-            if (was_destroyed(target, op_tag) || was_destroyed(hitter, hitter_tag)
-                || AbortAttack(target, hitter, env_attack))
+            if (was_destroyed(target, op_tag) ||
+                was_destroyed(hitter, hitter_tag) ||
+                AbortAttack(target, hitter, env_attack))
                 goto leave;
         }
 
         /* the damage is between 70 and 100% of the (adjusted) base damage */
         hitdam = damage_ob(target, random_roll((int)(hitdam*0.7f)+1, hitdam), hitter, env_attack);
-        if (was_destroyed(target, op_tag) || was_destroyed(hitter, hitter_tag) || AbortAttack(target, hitter, env_attack))
+        if (was_destroyed(target, op_tag) ||
+            was_destroyed(hitter, hitter_tag) ||
+            AbortAttack(target, hitter, env_attack))
             goto leave;
     }
     else /* we missed, dam=0 */
@@ -348,14 +353,14 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
         if (hitter->type != ARROW)
         {
             if (target->type == PLAYER)
-                new_draw_info(NDI_PURPLE, 0, target, "%s misses you!", hitter->name);
+                ndi(NDI_PURPLE, 0, target, "%s misses you!", hitter->name);
             if (hitter->type == PLAYER)
-                new_draw_info(NDI_ORANGE, 0, hitter, "you miss %s!", target->name);
+                ndi(NDI_ORANGE, 0, hitter, "you miss %s!", target->name);
 
             if (hitter->type == PLAYER)
-                play_sound_map(hitter->map, hitter->x, hitter->y, SOUND_MISS_PLAYER, SOUND_NORMAL);
+                play_sound_map(MSP_KNOWN(hitter), SOUND_MISS_PLAYER, SOUND_NORMAL);
             else
-                play_sound_map(hitter->map, hitter->x, hitter->y, SOUND_MISS_MOB, SOUND_NORMAL);
+                play_sound_map(MSP_KNOWN(hitter), SOUND_MISS_MOB, SOUND_NORMAL);
         }
     }
 
@@ -370,9 +375,9 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
 /* damage_ob() (old: hit_player()) is called to generate damage - its the main hit function
  * when a monster, player or other "attackable" object is really damaged in terms of hp.
  */
-int damage_ob(object *op, int dam, object *hitter, int env_attack)
+int damage_ob(object_t *op, int dam, object_t *hitter, attack_envmode_t env_attack)
 {
-    object *hit_obj, *target_obj, *aggro_obj, *dmg_obj=NULL;
+    object_t *hit_obj, *target_obj, *aggro_obj, *dmg_obj=NULL;
     int     maxdam      = 0, flags = 0;
     int     attacknum, hit_level;
     tag_t   op_tag, hitter_tag;
@@ -413,7 +418,7 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
     if (hit_level == 0 ||
         target_obj->level == 0) /* very useful sanity check! */
     {
-        object *hown = get_owner(hitter),
+        object_t *hown = get_owner(hitter),
                *town = get_owner(target_obj);
 
         LOG(llevDebug, "DEBUG:: %s/damage_ob(): hit or target object level == 0 (h:%s[%d] o:%s[%d] l->%d, t:%s[%d] o:%s[%d] l->%d)!\n",
@@ -643,7 +648,7 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
         int     i;
         int     friendly        = QUERY_FLAG(op, FLAG_FRIENDLY);
         int     unaggressive    = QUERY_FLAG(op, FLAG_UNAGGRESSIVE);
-        object *owner           = get_owner(op);
+        object_t *owner           = get_owner(op);
 
         if (!op->other_arch)
         {
@@ -655,11 +660,13 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
         remove_ob(op);
         if (check_walk_off(op, NULL, MOVE_APPLY_VANISHED) == CHECK_WALK_OK)
         {
+            msp_t *msp = MSP_KNOWN(op);
+
             for (i = 0; i < NROFNEWOBJS(op); i++)
             {
                 /* This doesn't handle op->more yet */
-                object *tmp = arch_to_object(op->other_arch);
-                int     j;
+                object_t *tmp = arch_to_object(op->other_arch);
+                sint8   j;
 
                 tmp->stats.hp = op->stats.hp;
                 if (friendly)
@@ -670,12 +677,13 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
                 }
                 if (unaggressive)
                     SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
-                j = find_first_free_spot(tmp->arch, tmp, op->map, op->x, op->y);
-                if (j >= 0)
+                j = overlay_find_free(msp, tmp, 1, OVERLAY_7X7, 0);
+                if (j != -1)
                 {
                     /* Found spot to put this monster */
-                    tmp->x = op->x + freearr_x[j],tmp->y = op->y + freearr_y[j];
-                    insert_ob_in_map(tmp, op->map, NULL, 0);
+                    tmp->x = op->x + OVERLAY_X(j);
+                    tmp->y = op->y + OVERLAY_Y(j);
+                    (void)insert_ob_in_map(tmp, op->map, NULL, 0);
                 }
             }
         }
@@ -687,11 +695,13 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
  * they move from tile to tile. Every time they check the object they
  * "hit on this map tile". If they find some - we are here.
  */
-int hit_map(object *op, int dir)
+int hit_map(object_t *op, int dir)
 {
-    object     *tmp, *next, *tmp_obj;
-    mapstruct  *map;
-    int         x, y;
+    object_t     *tmp, *next, *tmp_obj;
+    map_t  *m;
+    sint16      x,
+                y;
+    msp_t   *msp;
     int         mflags, retflag = 0;  /* added this flag..  will return 1 if it hits a monster */
     tag_t       op_tag, next_tag = 0;
 
@@ -714,14 +724,19 @@ int hit_map(object *op, int dir)
     }
 
     op_tag = op->count;
-    x = op->x + freearr_x[dir];
-    y = op->y + freearr_y[dir];
-    if (!(map = out_of_map(op->map, &x, &y)))
+    m = op->map;
+    x = op->x + OVERLAY_X(dir);
+    y = op->y + OVERLAY_Y(dir);
+    msp = MSP_GET(m, x, y);
+
+    if (!msp)
+    {
         return 0;
+    }
 
-    mflags = GET_MAP_FLAGS(map, x, y);
+    mflags = msp->flags;
+    next = msp->last;
 
-    next = GET_MAP_OB(map, x, y);
     if (next)
         next_tag = next->count;
 
@@ -763,7 +778,7 @@ int hit_map(object *op, int dir)
          * For example, 'tmp' was put in an icecube.
          * This is one of the few cases where on_same_map should not be used.
          */
-        if (tmp->map != map || tmp->x != x || tmp->y != y)
+        if (tmp->map != m || tmp->x != x || tmp->y != y)
             continue;
 
         /* monsters on the same side don't hurt each other */
@@ -774,10 +789,24 @@ int hit_map(object *op, int dir)
          if(!IS_LIVE(tmp))
             continue;
 
+#if 0
         damage_ob(tmp, op->stats.dam, op, ENV_ATTACK_CHECK);
         retflag |= 1;
         if (was_destroyed(op, op_tag))
             break;
+#else
+        if (!trigger_object_plugin_event(EVENT_ATTACK, tmp, op, op, NULL, NULL,
+            NULL, NULL, SCRIPT_FIX_ALL))
+        {
+            damage_ob(tmp, op->stats.dam, op, ENV_ATTACK_CHECK);
+            retflag |= 1;
+
+            if (was_destroyed(op, op_tag))
+            {
+                break;
+            }
+        }
+#endif
     }
 
     return 0;
@@ -786,16 +815,16 @@ int hit_map(object *op, int dir)
 /* we need this called spread in the function before because sometimes we want drop
 * a message BEFORE we tell the damage and sometimes we want a message after it.
 */
-static inline void send_resist_msg(object *op, object *hitter, int attacknum)
+static inline void send_resist_msg(object_t *op, object_t *hitter, int attacknum)
 {
     if (op->type == PLAYER)
     {
-        new_draw_info(NDI_GREY, 0, op, "You resist the %s attack!", attack_name[attacknum].name);
+        ndi(NDI_GREY, 0, op, "You resist the %s attack!", attack_name[attacknum].name);
     }
     /* i love C... ;) */
     if (hitter->type == PLAYER || ((hitter = get_owner(hitter)) && hitter->type == PLAYER))
     {
-        new_draw_info(NDI_GREY, 0, hitter, "%s resists the %s attack!", op->name, attack_name[attacknum].name);
+        ndi(NDI_GREY, 0, hitter, "%s resists the %s attack!", op->name, attack_name[attacknum].name);
     }
 }
 
@@ -805,7 +834,7 @@ static inline void send_resist_msg(object *op, object *hitter, int attacknum)
  * take.  However, it will do other effects (paralyzation, slow, etc.)
  * Note - changed for PR code - we now pass the attack number and not
  * the attacktype.  Makes it easier for the PR code.  */
-static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damage, uint32 attacknum, int magic)
+static int HitPlayerAttacktype(object_t *op, object_t *hitter, int *flags, int damage, uint32 attacknum, int magic)
 {
     double dam = (double) damage;
     int    doesnt_slay = 1;
@@ -1021,7 +1050,7 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
             {
                 if (op->type == PLAYER)
                 {
-                    new_draw_info(NDI_UNIQUE | NDI_RED, 0, op, "%s's acid corrodes %s!",
+                    ndi(NDI_UNIQUE | NDI_RED, 0, op, "%s's acid corrodes %s!",
                         QUERY_SHORT_NAME(hitter, NULL),
                         QUERY_SHORT_NAME(tmp, op));
                 }
@@ -1157,17 +1186,17 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
             if(hitter->attack[attacknum] > (RANDOM()%100)) /* we hit with effect? */
             {
                 if (hitter->type == PLAYER)
-                    new_draw_info(NDI_ORANGE, 0, hitter, "You drain %s!", op->name);
+                    ndi(NDI_ORANGE, 0, hitter, "You drain %s!", op->name);
                 if (op->type == PLAYER)
-                    new_draw_info(NDI_PURPLE, 0, op, "%s drains you!", hitter->name);
+                    ndi(NDI_PURPLE, 0, op, "%s drains you!", hitter->name);
 
                 /* give the target the chance to resist */
                 if(op->resist[attacknum] > (RANDOM()%100)) /* resisted? */
                 {
                     if (hitter->type == PLAYER)
-                        new_draw_info(NDI_YELLOW, 0, hitter, "%s resists the drain!", op->name);
+                        ndi(NDI_YELLOW, 0, hitter, "%s resists the drain!", op->name);
                     if (op->type == PLAYER)
-                        new_draw_info(NDI_YELLOW, 0, op, "You resist!");
+                        ndi(NDI_YELLOW, 0, op, "You resist!");
                 }
                 else /* effect has hit! */
                     drain_level(op, 1, op->type == PLAYER?0:1, 85+(RANDOM()%70));
@@ -1179,17 +1208,17 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
             if(hitter->attack[attacknum] > (RANDOM()%100)) /* we hit with effect? */
             {
                 if (hitter->type == PLAYER)
-                    new_draw_info(NDI_ORANGE, 0, hitter, "You deplete %s!", op->name);
+                    ndi(NDI_ORANGE, 0, hitter, "You deplete %s!", op->name);
                 if (op->type == PLAYER)
-                    new_draw_info(NDI_PURPLE, 0, op, "%s depletes you!", hitter->name);
+                    ndi(NDI_PURPLE, 0, op, "%s depletes you!", hitter->name);
 
                 /* give the target the chance to resist */
                 if(op->resist[attacknum] > (RANDOM()%100)) /* resisted? */
                 {
                     if (hitter->type == PLAYER)
-                        new_draw_info(NDI_YELLOW, 0, hitter, "%s resists depletion!", op->name);
+                        ndi(NDI_YELLOW, 0, hitter, "%s resists depletion!", op->name);
                     if (op->type == PLAYER)
-                        new_draw_info(NDI_YELLOW, 0, op, "You resist!");
+                        ndi(NDI_YELLOW, 0, op, "You resist!");
                 }
                 else /* effect has hit! */
                     drain_stat(op);
@@ -1200,17 +1229,17 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
             if(hitter->attack[attacknum] > (RANDOM()%100)) /* we hit with effect? */
             {
                 if (hitter->type == PLAYER)
-                    new_draw_info(NDI_ORANGE, 0, hitter, "You confuse %s!", op->name);
+                    ndi(NDI_ORANGE, 0, hitter, "You confuse %s!", op->name);
                 if (op->type == PLAYER)
-                    new_draw_info(NDI_PURPLE, 0, op, "%s confuses you!", hitter->name);
+                    ndi(NDI_PURPLE, 0, op, "%s confuses you!", hitter->name);
 
                 /* give the target the chance to resist */
                 if(op->resist[attacknum] > (RANDOM()%100)) /* resisted? */
                 {
                     if (hitter->type == PLAYER)
-                        new_draw_info(NDI_YELLOW, 0, hitter, "%s resist!", op->name);
+                        ndi(NDI_YELLOW, 0, hitter, "%s resist!", op->name);
                     if (op->type == PLAYER)
-                        new_draw_info(NDI_YELLOW, 0, op, "You resists confusion!");
+                        ndi(NDI_YELLOW, 0, op, "You resists confusion!");
                 }
                 else /* effect has hit! */
                     confuse_player(op, hitter, 160);
@@ -1221,17 +1250,17 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
             if(hitter->attack[attacknum] > (RANDOM()%100)) /* we hit with effect? */
             {
                 if (hitter->type == PLAYER)
-                    new_draw_info(NDI_ORANGE, 0, hitter, "You slow %s!", op->name);
+                    ndi(NDI_ORANGE, 0, hitter, "You slow %s!", op->name);
                 if (op->type == PLAYER)
-                    new_draw_info(NDI_PURPLE, 0, op, "%s slows you!", hitter->name);
+                    ndi(NDI_PURPLE, 0, op, "%s slows you!", hitter->name);
 
                 /* give the target the chance to resist */
                 if(op->resist[attacknum] > (RANDOM()%100)) /* resisted? */
                 {
                     if (hitter->type == PLAYER)
-                        new_draw_info(NDI_YELLOW, 0, hitter, "%s resist the slow effect!", op->name);
+                        ndi(NDI_YELLOW, 0, hitter, "%s resist the slow effect!", op->name);
                     if (op->type == PLAYER)
-                        new_draw_info(NDI_YELLOW, 0, op, "You resist!");
+                        ndi(NDI_YELLOW, 0, op, "You resist!");
                 }
                 else /* effect has hit! */
                     slow_player(op,hitter, 5);
@@ -1242,17 +1271,17 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
             if(hitter->attack[attacknum] > (RANDOM()%100)) /* we hit with effect? */
             {
                 if (hitter->type == PLAYER)
-                    new_draw_info(NDI_ORANGE, 0, hitter, "You scared %s!", op->name);
+                    ndi(NDI_ORANGE, 0, hitter, "You scared %s!", op->name);
                 if (op->type == PLAYER)
-                    new_draw_info(NDI_PURPLE, 0, op, "%s scares you!", hitter->name);
+                    ndi(NDI_PURPLE, 0, op, "%s scares you!", hitter->name);
 
                 /* give the target the chance to resist */
                 if(op->resist[attacknum] > (RANDOM()%100)) /* resisted? */
                 {
                     if (hitter->type == PLAYER)
-                        new_draw_info(NDI_YELLOW, 0, hitter, "%s resists fear!", op->name);
+                        ndi(NDI_YELLOW, 0, hitter, "%s resists fear!", op->name);
                     if (op->type == PLAYER)
-                        new_draw_info(NDI_YELLOW, 0, op, "You resist!");
+                        ndi(NDI_YELLOW, 0, op, "You resist!");
                 }
                 else /* effect has hit! */
                     fear_player(op,hitter, 5);
@@ -1263,17 +1292,17 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
             if(hitter->attack[attacknum] > (RANDOM()%100)) /* we hit with effect? */
             {
                 if (hitter->type == PLAYER)
-                    new_draw_info(NDI_ORANGE, 0, hitter, "You snared %s!", op->name);
+                    ndi(NDI_ORANGE, 0, hitter, "You snared %s!", op->name);
                 if (op->type == PLAYER)
-                    new_draw_info(NDI_PURPLE, 0, op, "%s snares you!", hitter->name);
+                    ndi(NDI_PURPLE, 0, op, "%s snares you!", hitter->name);
 
                 /* give the target the chance to resist */
                 if(op->resist[attacknum] > (RANDOM()%100)) /* resisted? */
                 {
                     if (hitter->type == PLAYER)
-                        new_draw_info(NDI_YELLOW, 0, hitter, "%s resists the snare!", op->name);
+                        ndi(NDI_YELLOW, 0, hitter, "%s resists the snare!", op->name);
                     if (op->type == PLAYER)
-                        new_draw_info(NDI_YELLOW, 0, op, "You resist!");
+                        ndi(NDI_YELLOW, 0, op, "You resist!");
                 }
                 else /* effect has hit! */
                     snare_player(op,hitter, 5);
@@ -1285,17 +1314,17 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
             if(hitter->attack[attacknum] > (RANDOM()%100)) /* we hit with effect? */
             {
                 if (hitter->type == PLAYER)
-                    new_draw_info(NDI_ORANGE, 0, hitter, "You paralyzed %s!", op->name);
+                    ndi(NDI_ORANGE, 0, hitter, "You paralyzed %s!", op->name);
                 if (op->type == PLAYER)
-                    new_draw_info(NDI_PURPLE, 0, op, "%s paralyzes you!", hitter->name);
+                    ndi(NDI_PURPLE, 0, op, "%s paralyzes you!", hitter->name);
 
                 /* give the target the chance to resist */
                 if(op->resist[attacknum] > (RANDOM()%100)) /* resisted? */
                 {
                     if (hitter->type == PLAYER)
-                        new_draw_info(NDI_YELLOW, 0, hitter, "%s resists the paralyzation effect!", op->name);
+                        ndi(NDI_YELLOW, 0, hitter, "%s resists the paralyzation effect!", op->name);
                     if (op->type == PLAYER)
-                        new_draw_info(NDI_YELLOW, 0, op, "You resist!");
+                        ndi(NDI_YELLOW, 0, op, "You resist!");
 
                     if(!(*flags&HIT_FLAG_PARALYZED_ADD) && QUERY_FLAG(op,FLAG_PARALYZED)) /* well, shit happens */
                         remove_paralyze(op);
@@ -1314,17 +1343,17 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
             if(hitter->attack[attacknum] > (RANDOM()%100)) /* we hit with effect? */
             {
                 if (hitter->type == PLAYER)
-                    new_draw_info(NDI_ORANGE, 0, hitter, "You use countermagic on %s!", op->name);
+                    ndi(NDI_ORANGE, 0, hitter, "You use countermagic on %s!", op->name);
                 if (op->type == PLAYER)
-                    new_draw_info(NDI_PURPLE, 0, op, "%s uses countermagic on you!", hitter->name);
+                    ndi(NDI_PURPLE, 0, op, "%s uses countermagic on you!", hitter->name);
 
                 /* give the target the chance to resist */
                 if(1 && op->resist[attacknum] > (RANDOM()%100)) /* resisted? */
                 {
                     if (hitter->type == PLAYER)
-                        new_draw_info(NDI_YELLOW, 0, hitter, "%s resists the countermagic!", op->name);
+                        ndi(NDI_YELLOW, 0, hitter, "%s resists the countermagic!", op->name);
                     if (op->type == PLAYER)
-                        new_draw_info(NDI_YELLOW, 0, op, "You resist!");
+                        ndi(NDI_YELLOW, 0, op, "You resist!");
                 }
                 else /* effect has hit! */
                 {
@@ -1337,17 +1366,17 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
             if(hitter->attack[attacknum] > (RANDOM()%100)) /* we hit with effect? */
             {
                 if (hitter->type == PLAYER)
-                    new_draw_info(NDI_ORANGE, 0, hitter, "You cancellate %s!", op->name);
+                    ndi(NDI_ORANGE, 0, hitter, "You cancellate %s!", op->name);
                 if (op->type == PLAYER)
-                    new_draw_info(NDI_PURPLE, 0, op, "%s cancellates you!", hitter->name);
+                    ndi(NDI_PURPLE, 0, op, "%s cancellates you!", hitter->name);
 
                 /* give the target the chance to resist */
                 if(1 && op->resist[attacknum] > (RANDOM()%100)) /* resisted? */
                 {
                     if (hitter->type == PLAYER)
-                        new_draw_info(NDI_YELLOW, 0, hitter, "%s resist the cancellation!", op->name);
+                        ndi(NDI_YELLOW, 0, hitter, "%s resist the cancellation!", op->name);
                     if (op->type == PLAYER)
-                        new_draw_info(NDI_YELLOW, 0, op, "You resist!");
+                        ndi(NDI_YELLOW, 0, op, "You resist!");
                 }
                 else /* effect has hit! */
                 {
@@ -1367,7 +1396,7 @@ static int HitPlayerAttacktype(object *op, object *hitter, int *flags, int damag
 /* we need this called spread in the function before because sometimes we want drop
  * a message BEFORE we tell the damage and sometimes we want a message after it.
  */
-static void SendAttackMsg(object *op, object *hitter, int attacknum, int dam,
+static void SendAttackMsg(object_t *op, object_t *hitter, int attacknum, int dam,
                           int damage)
 {
     /* TODO: This is a bit hacky because we need to maintain compatibility with
@@ -1377,7 +1406,7 @@ static void SendAttackMsg(object *op, object *hitter, int attacknum, int dam,
     /* The basic of this is to communicate the attack to 0.10.6 clients. */
     if (op->type == PLAYER)
     {
-        new_draw_info(NDI_PURPLE, 0, op, "%s hits you for %d (%+d) damage with %s.",
+        ndi(NDI_PURPLE, 0, op, "%s hits you for %d (%+d) damage with %s.",
                       hitter->name, (int)dam, ((int)dam) - damage,
                       attack_name[attacknum].name);
     }
@@ -1386,7 +1415,7 @@ static void SendAttackMsg(object *op, object *hitter, int attacknum, int dam,
         ((hitter = get_owner(hitter)) &&
         hitter->type == PLAYER))
     {
-        new_draw_info(NDI_ORANGE, 0, hitter, "You hit %s for %d (%+d) damage with %s.",
+        ndi(NDI_ORANGE, 0, hitter, "You hit %s for %d (%+d) damage with %s.",
                       op->name, (int)dam, ((int)dam) - damage,
                       attack_name[attacknum].name);
     }
@@ -1401,12 +1430,10 @@ static void SendAttackMsg(object *op, object *hitter, int attacknum, int dam,
 /* ok, when i have finished the different attacks i must clean this up here too
  * looks like some artifact code in here - MT-2003
  */
-int kill_object(object *op, int dam, object *hitter, int typeX)
+int kill_object(object_t *op, int dam, object_t *hitter, int typeX)
 {
-    object     *corpse_owner, *owner, *old_hitter; /* this is used in case of servant monsters */
+    object_t     *corpse_owner, *owner, *old_hitter; /* this is used in case of servant monsters */
     int         maxdam              = 0;
-    int         battleg             = 0;    /* true if op standing on battleground */
-    mapstruct  *map;
     char        group_buf[MEDIUM_BUF] = "";
 
     /* Object has been killed.  Lets clean it up */
@@ -1450,16 +1477,17 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
 
         if (op->damage_round_tag == ROUND_TAG)
         {
-            /* is on map */
-            if ((map = op->map)) /* hm, can we sure we are on a legal map position... hope so */
+            if (op->map) /* hm, can we sure we are on a legal map position... hope so */
             {
-                SET_MAP_DAMAGE(op->map, op->x, op->y, op->last_damage);
-                SET_MAP_RTAG(op->map, op->x, op->y, ROUND_TAG);
+                msp_t *msp = MSP_KNOWN(op);
+
+                msp->last_damage = op->last_damage;
+                msp->round_tag = ROUND_TAG;
             }
         }
 
         if (op->map)
-            play_sound_map(op->map, op->x, op->y, SOUND_PLAYER_KILLS, SOUND_NORMAL);
+            play_sound_map(MSP_KNOWN(op), SOUND_PLAYER_KILLS, SOUND_NORMAL);
 
         /* old golem/npc code
         if (QUERY_FLAG(op, FLAG_FRIENDLY) && op->type != PLAYER)
@@ -1479,7 +1507,6 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
         /* do some checks */
         if ((owner = get_owner(hitter)) == NULL)
             owner = hitter;
-        battleg = op_on_battleground(op, NULL, NULL);
 
         /* Create kill message */
         if (owner->type == PLAYER)
@@ -1488,7 +1515,7 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
             {
                 if (hitter->type == MONSTER)
                 {
-                    new_draw_info(NDI_WHITE, 0, owner, "%s killed %s!",
+                    ndi(NDI_WHITE, 0, owner, "%s killed %s!",
                         query_name(hitter, NULL, ARTICLE_POSSESSIVE, 1),
                         QUERY_SHORT_NAME(op, NULL));
                     sprintf(group_buf, "%s's %s killed %s.",
@@ -1498,7 +1525,7 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
                 }
                 else
                 {
-                    new_draw_info(NDI_WHITE, 0, owner, "You killed %s with %s!",
+                    ndi(NDI_WHITE, 0, owner, "You killed %s with %s!",
                         QUERY_SHORT_NAME(op, NULL),
                         query_name(hitter, NULL, ARTICLE_NONE, 1));
                     sprintf(group_buf, "%s killed %s with %s.",
@@ -1512,7 +1539,7 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
             }
             else
             {
-                new_draw_info(NDI_WHITE, 0, owner, "You killed %s!",
+                ndi(NDI_WHITE, 0, owner, "You killed %s!",
                     QUERY_SHORT_NAME(op, NULL));
                 sprintf(group_buf, "%s killed %s.",
                     QUERY_SHORT_NAME(owner, NULL),
@@ -1523,9 +1550,7 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
         /* Give exp and create the corpse. Decide we get a loot or not */
         if (op->type != PLAYER)
         {
-            if (!battleg)
-                corpse_owner = aggro_calculate_exp(op, owner, (group_buf[0] != '\0') ? group_buf : NULL);
-
+            corpse_owner = aggro_calculate_exp(op, owner, (group_buf[0] != '\0') ? group_buf : NULL);
             op->speed = 0;
             update_ob_speed(op); /* remove from active list (if on) */
 
@@ -1567,23 +1592,21 @@ int kill_object(object *op, int dam, object *hitter, int typeX)
 }
 
 
-static int AbortAttack(object *target, object *hitter, int env_attack)
+/* Check if target and hitter are still in a relation similar to the one
+ * determined by GetAttackMode(). */
+static attack_envmode_t AbortAttack(object_t *target, object_t *hitter, attack_envmode_t env_attack)
 {
-    /* Check if target and hitter are still in a relation similar to the one
-     * determined by GetAttackMode().  Returns true if the relation has changed.
-     */
-    int new_mode;
+    if (QUERY_FLAG(target, FLAG_REMOVED) ||
+        QUERY_FLAG(hitter, FLAG_REMOVED) ||
+        !(hitter->env == target &&
+          target->env == hitter &&
+          hitter->map &&
+          on_same_tileset(hitter->map, target->map)))
+    {
+        return ENV_ATTACK_YES;
+    }
 
-    if (hitter->env == target || target->env == hitter)
-        new_mode = 1;
-    else if (QUERY_FLAG(target, FLAG_REMOVED)
-          || QUERY_FLAG(hitter, FLAG_REMOVED)
-          || hitter->map == NULL
-          || !on_same_tileset(hitter, target))
-        return 1;
-    else
-        new_mode = 0;
-    return new_mode != env_attack;
+    return env_attack != ENV_ATTACK_NO;
 }
 
 /* hit_with_arrow() disassembles the missile, attacks the victim and
@@ -1602,9 +1625,9 @@ static int AbortAttack(object *target, object *hitter, int env_attack)
  * we call stop_missile() which will handle all the stuff like disassemble
  * and putting arrows and map and all.
  */
-object * hit_with_arrow(object *op, object *victim)
+object_t * hit_with_arrow(object_t *op, object_t *victim)
 {
-    object *hitter;
+    object_t *hitter;
     int     hit_something   = 0;
     tag_t   hitter_tag;
 
@@ -1636,7 +1659,7 @@ object * hit_with_arrow(object *op, object *victim)
 }
 
 /* ATM no tear down wall in the game, function must be checked first MT -09.2005 */
-void tear_down_wall(object *op)
+void tear_down_wall(object_t *op)
 {
     int perc    = 0;
 
@@ -1676,7 +1699,7 @@ void tear_down_wall(object *op)
     }
 }
 
-void poison_player(object *op, object *hitter, float dam)
+void poison_player(object_t *op, object_t *hitter, float dam)
 {
 
 /* TODO: i have not the time now - but later we should do this: a marker value
@@ -1690,8 +1713,8 @@ void poison_player(object *op, object *hitter, float dam)
  *           Poison object stats are still handled the same way, though.
  */
 
-    archetype  *at  = find_archetype("poisoning");
-    object     *tmp = present_arch_in_ob(at, op);
+    archetype_t  *at  = find_archetype("poisoning");
+    object_t     *tmp = present_arch_in_ob(at, op);
 
     /* this is to avoid stacking poison forces... Like we get hit 10 times
      * by a spell and sword and get 10 poison force in us
@@ -1750,7 +1773,7 @@ void poison_player(object *op, object *hitter, float dam)
                 if (hitter->type == POISON)
                 {
                     //create_food_buf_force(op, hitter, tmp); /* this calculates the food force and inserts it into the player */
-                    new_draw_info(NDI_UNIQUE, 0, op, "You suddenly feel very ill.");
+                    ndi(NDI_UNIQUE, 0, op, "You suddenly feel very ill.");
                 }
                 else /* and here we have hit with weapon or something */
                 {
@@ -1791,7 +1814,7 @@ void poison_player(object *op, object *hitter, float dam)
                         tmp->stats.Wis *= -1;
                     }
 
-                    new_draw_info(NDI_UNIQUE, 0, op, "%s has poisoned you!",
+                    ndi(NDI_UNIQUE, 0, op, "%s has poisoned you!",
                         QUERY_SHORT_NAME(hitter, NULL));
                 }
                 tmp = check_obj_stat_buffs(tmp, op);
@@ -1810,10 +1833,10 @@ void poison_player(object *op, object *hitter, float dam)
                     SET_FLAG(tmp, FLAG_APPLIED);
                     fix_monster(op);
                     if (hitter->type == PLAYER)
-                        new_draw_info(NDI_UNIQUE, 0, hitter, "You poisoned %s!",
+                        ndi(NDI_UNIQUE, 0, hitter, "You poisoned %s!",
                             QUERY_SHORT_NAME(op, NULL));
                     else if (get_owner(hitter) && hitter->owner->type == PLAYER)
-                        new_draw_info(NDI_UNIQUE, 0, hitter->owner, "%s poisoned %s!",
+                        ndi(NDI_UNIQUE, 0, hitter->owner, "%s poisoned %s!",
                             QUERY_SHORT_NAME(hitter, NULL),
                             QUERY_SHORT_NAME(op, NULL));
                 }
@@ -1824,10 +1847,10 @@ void poison_player(object *op, object *hitter, float dam)
         tmp->stats.food++;
 }
 
-void slow_player(object *op, object *hitter, int dam)
+void slow_player(object_t *op, object_t *hitter, int dam)
 {
-    static archetype  *at  = NULL;
-    object     *tmp;
+    static archetype_t  *at  = NULL;
+    object_t     *tmp;
     int        max_slow = FALSE;
 
     if (!at)
@@ -1864,20 +1887,25 @@ void slow_player(object *op, object *hitter, int dam)
 
     if(!max_slow)
     {
-        if (op->type == PLAYER)
-            new_draw_info(NDI_UNIQUE, 0, op, "The world suddenly moves faster!");
-        if (!QUERY_FLAG(op, FLAG_CONFUSED) && op->map)
-            new_info_map_except(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s suddenly moves slower!", STRING_SAFE(op->name));
+        ndi(NDI_UNIQUE, 0, op, "The world suddenly moves faster!");
+
+        if (!QUERY_FLAG(op, FLAG_CONFUSED) &&
+             op->map)
+        {
+            ndi_map(NDI_UNIQUE | NDI_GREY, MSP_KNOWN(op), MAP_INFO_NORMAL, NULL, op, "%s suddenly moves slower!",
+                QUERY_SHORT_NAME(op, NULL));
+        }
+
         SET_FLAG(tmp, FLAG_APPLIED);
         FIX_PLAYER(op ," attack - slow"); /* will set FLAG_SLOWED */
     }
 
 }
 
-void fear_player(object *op, object *hitter, int dam)
+void fear_player(object_t *op, object_t *hitter, int dam)
 {
-    static archetype  *at  = NULL;
-    object     *tmp;
+    static archetype_t  *at  = NULL;
+    object_t     *tmp;
     int        max_slow = FALSE;
 
     if (!at)
@@ -1905,20 +1933,25 @@ void fear_player(object *op, object *hitter, int dam)
 
     if(!max_slow)
     {
-        if (op->type == PLAYER)
-            new_draw_info(NDI_UNIQUE, 0, op, "You are scared to death!");
-        if (!QUERY_FLAG(op, FLAG_CONFUSED) && op->map)
-            new_info_map_except(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s suddenly looks scared!", STRING_SAFE(op->name));
+        ndi(NDI_UNIQUE, 0, op, "You are scared to death!");
+
+        if (!QUERY_FLAG(op, FLAG_CONFUSED) &&
+            op->map)
+        {
+            ndi_map(NDI_UNIQUE | NDI_GREY, MSP_KNOWN(op), MAP_INFO_NORMAL, NULL, op, "%s suddenly looks scared!",
+                QUERY_SHORT_NAME(op, NULL));
+        }
+
         SET_FLAG(tmp, FLAG_APPLIED);
         FIX_PLAYER(op ,"attack fear"); /* will set FLAG_FEAR */
     }
 
 }
 
-void snare_player(object *op, object *hitter, int dam)
+void snare_player(object_t *op, object_t *hitter, int dam)
 {
-    static archetype  *at  = NULL;
-    object     *tmp;
+    static archetype_t  *at  = NULL;
+    object_t     *tmp;
     int        max_slow = FALSE;
 
     if (!at)
@@ -1957,30 +1990,27 @@ void snare_player(object *op, object *hitter, int dam)
 
     if(!max_slow)
     {
-        if (op->type == PLAYER)
+       ndi(NDI_UNIQUE, 0, op, "You are %s!",
+           (tmp->last_heal < 100) ? "snared" : "rooted");
+
+        if (!QUERY_FLAG(op, FLAG_CONFUSED) &&
+            op->map)
         {
-            if(tmp->last_heal < 100)
-                new_draw_info(NDI_UNIQUE, 0, op, "You are snared!");
-            else
-                new_draw_info(NDI_UNIQUE, 0, op, "You are rooted!");
+            ndi_map(NDI_UNIQUE | NDI_GREY, MSP_KNOWN(op), MAP_INFO_NORMAL, NULL, op, "%s suddenly %s!",
+                QUERY_SHORT_NAME(op, NULL)                                                              ,
+                (tmp->last_heal < 100) ? "walks slower" : "stops walking");
         }
-        if (!QUERY_FLAG(op, FLAG_CONFUSED) && op->map)
-        {
-            if(tmp->last_heal < 100)
-                new_info_map_except(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s suddenly walks slower!", STRING_SAFE(op->name));
-            else
-                new_info_map_except(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s suddenly stops walking!", STRING_SAFE(op->name));
-        }
+
         SET_FLAG(tmp, FLAG_APPLIED);
         FIX_PLAYER(op ,"attack snear "); /* will set FLAG_SNEAR */
     }
 
 }
 
-void confuse_player(object *op, object *hitter, int ticks)
+void confuse_player(object_t *op, object_t *hitter, int ticks)
 {
-    static archetype  *at  = NULL;
-    object     *tmp;
+    static archetype_t  *at  = NULL;
+    object_t     *tmp;
 
     if (!at)
     {
@@ -2004,19 +2034,23 @@ void confuse_player(object *op, object *hitter, int ticks)
     if(tmp->stats.food >= 25)
         tmp->stats.food = 25;
 
-    if (op->type == PLAYER)
-        new_draw_info(NDI_UNIQUE, 0, op, "You suddenly feel very confused!");
-    if (!QUERY_FLAG(op, FLAG_CONFUSED) && op->map)
-        new_info_map_except(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s looks confused!", STRING_SAFE(op->name));
+    ndi(NDI_UNIQUE, 0, op, "You suddenly feel very confused!");
+
+    if (!QUERY_FLAG(op, FLAG_CONFUSED) &&
+        op->map)
+    {
+        ndi_map(NDI_UNIQUE | NDI_GREY, MSP_KNOWN(op), MAP_INFO_NORMAL, NULL, op, "%s looks confused!",
+            QUERY_SHORT_NAME(op, NULL));
+    }
 
     SET_FLAG(tmp, FLAG_APPLIED);
     SET_FLAG(op, FLAG_CONFUSED);
 }
 
-void blind_player(object *op, object *hitter, int dam)
+void blind_player(object_t *op, object_t *hitter, int dam)
 {
-    static archetype  *at  = NULL;
-    object     *tmp;
+    static archetype_t  *at  = NULL;
+    object_t     *tmp;
 
     if (!at)
     {
@@ -2040,20 +2074,24 @@ void blind_player(object *op, object *hitter, int dam)
     if(tmp->stats.food >= 25)
         tmp->stats.food = 25;
 
-    if (op->type == PLAYER)
-        new_draw_info(NDI_UNIQUE, 0, op, "You suddenly are blinded!");
-    if (!QUERY_FLAG(op, FLAG_CONFUSED) && op->map)
-        new_info_map_except(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s looks blinded!", STRING_SAFE(op->name));
+    ndi(NDI_UNIQUE, 0, op, "You suddenly are blinded!");
+
+    if (!QUERY_FLAG(op, FLAG_CONFUSED) &&
+         op->map)
+    {
+        ndi_map(NDI_UNIQUE | NDI_GREY, MSP_KNOWN(op), MAP_INFO_NORMAL, NULL, op, "%s looks blinded!",
+            QUERY_SHORT_NAME(op, NULL));
+    }
 
     SET_FLAG(tmp, FLAG_APPLIED);
     SET_FLAG(op, FLAG_BLIND);
 }
 
 
-void paralyze_player(object *op, object *hitter, int dam)
+void paralyze_player(object_t *op, object_t *hitter, int dam)
 {
-    static archetype  *at  = NULL;
-    object     *tmp;
+    static archetype_t  *at  = NULL;
+    object_t     *tmp;
 
     if (!at)
     {
@@ -2078,10 +2116,14 @@ void paralyze_player(object *op, object *hitter, int dam)
         return;
     }
 
-    if (op->type == PLAYER)
-        new_draw_info(NDI_UNIQUE, 0, op, "You suddenly feel paralyzed!");
-    if (!QUERY_FLAG(op, FLAG_CONFUSED) && op->map)
-        new_info_map_except(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s looks paralyzed!", STRING_SAFE(op->name));
+    ndi(NDI_UNIQUE, 0, op, "You suddenly feel paralyzed!");
+
+    if (!QUERY_FLAG(op, FLAG_CONFUSED) &&
+        op->map)
+    {
+        ndi_map(NDI_UNIQUE | NDI_GREY, MSP_KNOWN(op), MAP_INFO_NORMAL, NULL, op, "%s looks paralyzed!",
+            QUERY_SHORT_NAME(op, NULL));
+    }
 
     SET_FLAG(tmp, FLAG_APPLIED);
     FIX_PLAYER(op ,"attach paralyze"); /* will set FLAG_PARALYZE */
@@ -2091,10 +2133,10 @@ void paralyze_player(object *op, object *hitter, int dam)
  * Note: This is for explicit remove - in time.c the force can
  * auto destruct itself without calling this function. This.
 */
-void remove_paralyze(object *op)
+void remove_paralyze(object_t *op)
 {
-    static archetype  *at  = NULL;
-    object     *tmp;
+    static archetype_t  *at  = NULL;
+    object_t     *tmp;
 
     CLEAR_FLAG(op,FLAG_PARALYZED);
 
@@ -2113,22 +2155,27 @@ void remove_paralyze(object *op)
         return;
 
     remove_ob(tmp);
+    ndi(NDI_UNIQUE, 0, op, "You can move again.");
 
-    if (op->type == PLAYER)
-        new_draw_info(NDI_UNIQUE, 0, op, "You can move again.");
     if (op->map)
-        new_info_map_except(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s can move again!", STRING_SAFE(op->name));
+    {
+        ndi_map(NDI_UNIQUE | NDI_GREY, MSP_KNOWN(op), MAP_INFO_NORMAL, NULL, op, "%s can move again!",
+            QUERY_SHORT_NAME(op, NULL));
+    }
 
     FIX_PLAYER(op ,"attack - remove paralyze");
 }
 
 /* determine if the object is an 'aimed' missile */
-int is_aimed_missile(object *op)
+int is_aimed_missile(object_t *op)
 {
-    if (op
-     && QUERY_FLAG(op, FLAG_FLYING)
-     && (op->type == ARROW || op->type == THROWN_OBJ || op->type == FBULLET || op->type == FBALL))
+    if (op &&
+        QUERY_FLAG(op, FLAG_FLYING) &&
+        IS_ARROW(op))
+    {
         return 1;
+    }
+
     return 0;
 }
 
@@ -2140,26 +2187,32 @@ int is_aimed_missile(object *op)
  * 1: target is in range and we face it.
  * TODO: 2: target is range but not in front.
  * TODO: 3: target is in back
- * NOTE: check for valid target outside here.
- */
-int is_melee_range(object *hitter, object *enemy)
+ * NOTE: check for valid target outside here. */
+int is_melee_range(object_t *hitter, object_t *enemy)
 {
-    int         xt, yt, s;
-    object     *tmp;
-    mapstruct  *mt;
+    uint8 i;
 
-    for (s = 0; s < 9; s++) /* check squares around AND our own position */
+    for (i = 0; i < 9; i++) /* check squares around AND our own position */
     {
-        xt = hitter->x + freearr_x[s];
-        yt = hitter->y + freearr_y[s];
+        map_t *m = hitter->map;
+        sint16     x = hitter->x + OVERLAY_X(i),
+                   y = hitter->y + OVERLAY_Y(i);
+        msp_t  *msp = MSP_GET(m, x, y);
+        object_t    *this;
 
-        if (!(mt = out_of_map(hitter->map, &xt, &yt)))
-            continue;
-
-        for (tmp = enemy; tmp != NULL; tmp = tmp->more)
+        if (!msp)
         {
-            if (tmp->map == mt && tmp->x == xt && tmp->y == yt) /* strike! */
+            continue;
+        }
+
+        for (this = enemy; this; this = this->more)
+        {
+            if (this->map == m &&
+                this->x == x &&
+                this->y == y)
+            {
                 return 1;
+            }
         }
     }
 

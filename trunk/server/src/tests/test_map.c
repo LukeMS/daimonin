@@ -43,7 +43,7 @@ static void setup()
 START_TEST (map_loading)
 {
     const char *path = add_string("/dev/unit_tests/test_maploader");
-    mapstruct *map;
+    map_t *map;
 
 
     fail_unless(map_is_in_memory(path) == NULL, "Map already loaded");

@@ -42,7 +42,7 @@
 #ifndef __COMMANDS_H
 #define __COMMANDS_H
 
-typedef int (*CommFunc)(object *op, char *params);
+typedef int (*CommFunc)(object_t *op, char *params);
 
 typedef struct
 {
@@ -56,16 +56,16 @@ typedef struct
 
 typedef struct _subcommand
 {
-    shstr *add;
-    shstr *cancel;
-    shstr *list;
-    shstr *remove;
-    shstr *verbose;
-    shstr *restart;
-    shstr *shutdown;
-    shstr *showtime;
-    shstr *showdate;
-    shstr *showseason;
+    shstr_t *add;
+    shstr_t *cancel;
+    shstr_t *list;
+    shstr_t *remove;
+    shstr_t *verbose;
+    shstr_t *restart;
+    shstr_t *shutdown;
+    shstr_t *showtime;
+    shstr_t *showdate;
+    shstr_t *showseason;
 }
 _subcommand;
 

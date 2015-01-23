@@ -33,8 +33,8 @@
 #include <aiconfig.h>
 
 /* Those behaviours are called from other behaviours (ugly, I know...) */
-void ai_choose_enemy(object *op, struct mob_behaviour_param *params);
-void ai_move_towards_owner(object *op, struct mob_behaviour_param *params, move_response *response);
+void ai_choose_enemy(object_t *op, struct mob_behaviour_param *params);
+void ai_move_towards_owner(object_t *op, struct mob_behaviour_param *params, move_response *response);
 
 /*
  * A few random unsorted utility functions
@@ -44,18 +44,18 @@ void ai_move_towards_owner(object *op, struct mob_behaviour_param *params, move_
 /* known_obj is optional but increases efficiency somewhat
  * by using caching data in the known_obj struct
  */
-int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
+int mob_can_see_obj(object_t *op, object_t *obj, struct mob_known_obj *known_obj)
 {
     int     aggro_range,
             stealth_range;
-    player *pl;
+    player_t *pl;
 
     /* Cache values */
     static tag_t cached_op_tag, cached_obj_tag;
     static uint32 cache_time;
     static int cached_result;
 
-    rv_vector   rv, *rv_p = NULL;
+    rv_t   rv, *rv_p = NULL;
 
     /* Quick answer if possible */
     if (known_obj && known_obj->last_seen == ROUND_TAG)
@@ -127,14 +127,14 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
 
 /* TODO: make a real behaviour... */
 #if 0
-void npc_call_for_help(object *op) {
+void npc_call_for_help(object_t *op) {
   struct mob_known_obj *friend;
 
   /* TODO: remember to check that the called has MOB_DATA set up before doing anything else... */
   /* TODO: use tmp_friendship? */
   for(friend = MOB_DATA(op)->friends; friend; friend=friend->next) {
       if(friend->friendship >= FRIENDSHIP_HELP && friend->ob->enemy == NULL)  {
-          rv_vector *rv = get_known_obj_rv(op, friend, MAX_KNOWN_OBJ_RV_AGE);
+          rv_t *rv = get_known_obj_rv(op, friend, MAX_KNOWN_OBJ_RV_AGE);
           if(rv && rv->distance < 4) {
               /* TODO: also check reverse friendship */
               /* TODO: -friendship here dependant on +friendship towards tmp */
@@ -146,7 +146,7 @@ void npc_call_for_help(object *op) {
 #endif
 
 /** Test if ob1 can hit ob2 with a melee attack */
-int can_hit_melee(object *ob1, object *ob2, rv_vector *rv)
+int can_hit_melee(object_t *ob1, object_t *ob2, rv_t *rv)
 {
     if (QUERY_FLAG(ob1, FLAG_CONFUSED) && !(RANDOM() % 3))
         return 0;
@@ -165,7 +165,7 @@ int can_hit_melee(object *ob1, object *ob2, rv_vector *rv)
  * @todo rename to is_in_line_of_fire
  * @todo actually perform a rough line of sight calculation
  */
-int can_hit_missile(object *ob1, object *ob2, rv_vector *rv, int mode)
+int can_hit_missile(object_t *ob1, object_t *ob2, rv_t *rv, int mode)
 {
 
     switch (mode)
@@ -190,22 +190,22 @@ int can_hit_missile(object *ob1, object *ob2, rv_vector *rv, int mode)
 /** Test if the given coordinate is in the line of fire from op1.
  * @see can_hit_missile()
  */
-int mapcoord_in_line_of_fire(object *op1, mapstruct *map, int x, int y, int mode)
+int mapcoord_in_line_of_fire(object_t *op1, map_t *map, int x, int y, int mode)
 {
-    rv_vector rv;
+    rv_t rv;
     get_rangevector_full(op1, op1->map, op1->x, op1->y, NULL, map, x, y, &rv, RV_DIAGONAL_DISTANCE);
     return can_hit_missile(op1, NULL, &rv, mode);
 }
 
-int mapcoord_in_line_of_missile(object *op, mapstruct *map, int x, int y)
+int mapcoord_in_line_of_missile(object_t *op, map_t *map, int x, int y)
 {
-    rv_vector rv;
+    rv_t rv;
     get_rangevector_full(op, op->map, op->x, op->y, NULL, map, x, y, &rv, RV_DIAGONAL_DISTANCE);
     return can_hit_missile(op, NULL, &rv, 1) && op->direction == rv.direction;
 }
 
 /* scary function - need rework. even in crossfire its changed now */
-void monster_check_apply(object *mon, object *item)
+void monster_check_apply(object_t *mon, object_t *item)
 {
     /* this function is simply to bad - for example will potions applied
      * not depending on the situation... why applying a heal potion when
@@ -218,7 +218,7 @@ void monster_check_apply(object *mon, object *item)
 /** Callback function for successful moves toward a waypoint.
  * Updates the monster's "home" position to its current position,
  * if it got closer to the waypoint than it has been before */
-static void update_home_position_for_wp_move(object *op, int last_movement_dir)
+static void update_home_position_for_wp_move(object_t *op, int last_movement_dir)
 {
     /* TODO: this needs more testing */
 //    LOG(llevDebug, "%s: best dist %d, last best: %d\n", STRING_OBJ_NAME(op),MOB_PATHDATA(op)->best_distance, MOB_PATHDATA(op)->last_best_distance);
@@ -226,7 +226,7 @@ static void update_home_position_for_wp_move(object *op, int last_movement_dir)
             || MOB_PATHDATA(op)->last_best_distance == -1
             || MOB_PATHDATA(op)->best_distance <  MOB_PATHDATA(op)->last_best_distance)
     {
-        object *base = insert_base_info_object(op);
+        object_t *base = insert_base_info_object(op);
         base->x = op->x;
         base->y = op->y;
         FREE_AND_ADD_REF_HASH(base->slaying, op->map->orig_path);
@@ -250,7 +250,7 @@ static void update_home_position_for_wp_move(object *op, int last_movement_dir)
  *  A defenseless tiny creature (smoething like a real-life fly)
  *  should have a combat strength of 0.
  */
-int estimate_combat_strength(object *op, object *other)
+int estimate_combat_strength(object_t *op, object_t *other)
 {
     int level = other->level;
     int health = (op->stats.hp * 100) / op->stats.maxhp; /* health in % */
@@ -273,7 +273,7 @@ int estimate_combat_strength(object *op, object *other)
  *   >100 other is stronger (200: other is twice as strong as op),
  *   <100 op is stronger (50: op is twice as strong as other).
  */
-int relative_combat_strength(object *op, object *other)
+int relative_combat_strength(object_t *op, object_t *other)
 {
     /* Update own combat strength if needed */
     if(MOB_DATA(op)->combat_strength == -1)
@@ -295,7 +295,7 @@ int relative_combat_strength(object *op, object *other)
  *         if positive, the coordinate is safe. The size of the value
  *         indicates the relative combat strength around the point.
  */
-int assess_tactical_situation(object *op, int *dx, int *dy)
+int assess_tactical_situation(object_t *op, int *dx, int *dy)
 {
     struct mob_known_obj *tmp;
     int weight_sum = 0;
@@ -307,7 +307,7 @@ int assess_tactical_situation(object *op, int *dx, int *dy)
 
     for(tmp = MOB_DATA(op)->known_mobs; tmp; tmp = tmp->next)
     {
-        rv_vector *rv = get_known_obj_rv(op, tmp, MAX_KNOWN_OBJ_RV_AGE);
+        rv_t *rv = get_known_obj_rv(op, tmp, MAX_KNOWN_OBJ_RV_AGE);
         if(rv && rv->distance < max_distance)
         {
             /* Let the attraction/fear fall off by the square of the distance */
@@ -343,7 +343,7 @@ int assess_tactical_situation(object *op, int *dx, int *dy)
  * Any suggestions?
  * @see the "attraction" behaviour.
  */
-int get_npc_object_attraction(object *op, object *other)
+int get_npc_object_attraction(object_t *op, object_t *other)
 {
     int attraction = 0;
     struct mob_behaviour_param *attractions;
@@ -439,10 +439,10 @@ int get_npc_object_attraction(object *op, object *other)
  * @return a positive (friendship) or negative (hate) value, or zero (neutral)
  * @see the "friendship" behaviour.
  */
-int get_npc_attitude(object *op, object *other)
+int get_npc_attitude(object_t *op, object_t *other)
 {
     int friendship = 0;
-    object *owner;
+    object_t *owner;
     struct mob_behaviour_param *attitudes;
     struct mob_behaviour_param *tmp;
 
@@ -607,7 +607,7 @@ int get_npc_attitude(object *op, object *other)
 * @todo this belongs to another file, but which one?
 * @todo handle groups
 */
-int get_friendship(object *op, object *other)
+int get_friendship(object_t *op, object_t *other)
 {
     if(op == NULL || other == NULL)
     {
@@ -653,20 +653,24 @@ int get_friendship(object *op, object *other)
             return get_friendship(other, op);
         else if (other->type == PLAYER)
         {
+            msp_t  *msp_op = MSP_KNOWN(op),
+                      *msp_other = MSP_KNOWN(other);
+
             /* Check for PvP. TODO: group PvP */
-            if ((GET_MAP_FLAGS(op->map, op->x, op->y) & P_IS_PVP || op->map->map_flags & MAP_FLAG_PVP)
-                    && ((GET_MAP_FLAGS(other->map, other->x, other->y) & P_IS_PVP) || (other->map->map_flags & MAP_FLAG_PVP)))
+            if ((msp_op->flags & MSP_FLAG_PVP) &&
+                (msp_other->flags & MSP_FLAG_PVP))
             {
 // If PvP is enabled, see if op and other are friends (same group).
 #ifdef USE_PVP
                 // Loop through the group and if other is in it, op and other are friends.
-                if (CONTR(op)->group_status & GROUP_STATUS_GROUP)
+                if ((CONTR(op)->group_status & GROUP_STATUS_GROUP))
                 {
-                    player *tmp;
+                    player_t *tmp;
 
                     for (tmp = CONTR(CONTR(op)->group_leader); tmp->group_next; tmp = CONTR(tmp->group_next))
                     {
-                        if (tmp && tmp->ob == other)
+                        if (tmp &&
+                            tmp->ob == other)
                         {
                             return FRIENDSHIP_HELP;
                         }
@@ -701,7 +705,7 @@ int get_friendship(object *op, object *other)
  * Mutually exclusive movement behaviours
  */
 
-void ai_stand_still(object *op, struct mob_behaviour_param *params, move_response *response)
+void ai_stand_still(object_t *op, struct mob_behaviour_param *params, move_response *response)
 {
     if(op->owner)
     {
@@ -713,7 +717,7 @@ void ai_stand_still(object *op, struct mob_behaviour_param *params, move_respons
     response->data.direction = 0;
 }
 
-void ai_sleep(object *op, struct mob_behaviour_param *params, move_response *response)
+void ai_sleep(object_t *op, struct mob_behaviour_param *params, move_response *response)
 {
     if (QUERY_FLAG(op, FLAG_SLEEP))
     {
@@ -730,10 +734,10 @@ void ai_sleep(object *op, struct mob_behaviour_param *params, move_response *res
 
 #define dir_turn(dir, n) ((((dir) - 1 + (n)) & 7) + 1)
 
-int ai_only_keep_possible_dirs(int aDirWeight[9], object *op, struct mob_behaviour_param *params){
-object *base;
-mapstruct *basemap;
-rv_vector rv;
+int ai_only_keep_possible_dirs(int aDirWeight[9], object_t *op, struct mob_behaviour_param *params){
+object_t *base;
+map_t *basemap;
+rv_t rv;
 int nXRange = 0, nYRange = 0;
 unsigned int nLimitXY;
 int nret;
@@ -773,81 +777,81 @@ int nret;
 			case 0:
 				break;
 			case 1:
-				if(	op->map->tile_map[TILED_MAPS_SOUTH] &&
-					((op->map->tile_map[TILED_MAPS_SOUTH] == basemap->tile_map[TILED_MAPS_NORTH]) ||
-					(op->map->tile_map[TILED_MAPS_SOUTH] == basemap->tile_map[TILED_MAPS_NORTHEAST]) ||
-					(op->map->tile_map[TILED_MAPS_SOUTH] == basemap->tile_map[TILED_MAPS_NORTHWEST]))){
+				if(	op->map->tiling.tile_map[TILING_DIRECTION_SOUTH] &&
+					((op->map->tiling.tile_map[TILING_DIRECTION_SOUTH] == basemap->tiling.tile_map[TILING_DIRECTION_NORTH]) ||
+					(op->map->tiling.tile_map[TILING_DIRECTION_SOUTH] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHEAST]) ||
+					(op->map->tiling.tile_map[TILING_DIRECTION_SOUTH] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHWEST]))){
 					aDirWeight[dir_turn(op->direction, 4)] = 1;
 					return 1;
 				}
 				break;
 			case 2:
-				if(	op->map->tile_map[TILED_MAPS_SOUTHWEST] &&
-					((op->map->tile_map[TILED_MAPS_SOUTHWEST] == basemap->tile_map[TILED_MAPS_NORTH]) ||
-					(op->map->tile_map[TILED_MAPS_SOUTHWEST] == basemap->tile_map[TILED_MAPS_NORTHEAST]) ||
-					(op->map->tile_map[TILED_MAPS_SOUTHWEST] == basemap->tile_map[TILED_MAPS_NORTHWEST]) ||
-					(op->map->tile_map[TILED_MAPS_SOUTHWEST] == basemap->tile_map[TILED_MAPS_EAST]) ||
-					(op->map->tile_map[TILED_MAPS_SOUTHWEST] == basemap->tile_map[TILED_MAPS_SOUTHEAST]))){
+				if(	op->map->tiling.tile_map[TILING_DIRECTION_SOUTHWEST] &&
+					((op->map->tiling.tile_map[TILING_DIRECTION_SOUTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTH]) ||
+					(op->map->tiling.tile_map[TILING_DIRECTION_SOUTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHEAST]) ||
+					(op->map->tiling.tile_map[TILING_DIRECTION_SOUTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHWEST]) ||
+					(op->map->tiling.tile_map[TILING_DIRECTION_SOUTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_EAST]) ||
+					(op->map->tiling.tile_map[TILING_DIRECTION_SOUTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHEAST]))){
 					aDirWeight[dir_turn(op->direction, 4)] = 1;
 					return 1;
 				}
 				break;
 			case 3:
-				if(	op->map->tile_map[TILED_MAPS_WEST] &&
-					((op->map->tile_map[TILED_MAPS_WEST] == basemap->tile_map[TILED_MAPS_EAST]) ||
-					(op->map->tile_map[TILED_MAPS_WEST] == basemap->tile_map[TILED_MAPS_NORTHEAST]) ||
-					(op->map->tile_map[TILED_MAPS_WEST] == basemap->tile_map[TILED_MAPS_SOUTHEAST]))){
+				if(	op->map->tiling.tile_map[TILING_DIRECTION_WEST] &&
+					((op->map->tiling.tile_map[TILING_DIRECTION_WEST] == basemap->tiling.tile_map[TILING_DIRECTION_EAST]) ||
+					(op->map->tiling.tile_map[TILING_DIRECTION_WEST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHEAST]) ||
+					(op->map->tiling.tile_map[TILING_DIRECTION_WEST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHEAST]))){
 					aDirWeight[dir_turn(op->direction, 4)] = 1;
 					return 1;
 				}
 				break;
 			case 4:
-				if(	op->map->tile_map[TILED_MAPS_NORTHWEST] &&
-					((op->map->tile_map[TILED_MAPS_NORTHWEST] == basemap->tile_map[TILED_MAPS_SOUTH]) ||
-					(op->map->tile_map[TILED_MAPS_NORTHWEST] == basemap->tile_map[TILED_MAPS_NORTHEAST]) ||
-					(op->map->tile_map[TILED_MAPS_NORTHWEST] == basemap->tile_map[TILED_MAPS_SOUTHEAST]) ||
-					(op->map->tile_map[TILED_MAPS_NORTHWEST] == basemap->tile_map[TILED_MAPS_EAST]) ||
-					(op->map->tile_map[TILED_MAPS_NORTHWEST] == basemap->tile_map[TILED_MAPS_SOUTHWEST]))){
+				if(	op->map->tiling.tile_map[TILING_DIRECTION_NORTHWEST] &&
+					((op->map->tiling.tile_map[TILING_DIRECTION_NORTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTH]) ||
+					(op->map->tiling.tile_map[TILING_DIRECTION_NORTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHEAST]) ||
+					(op->map->tiling.tile_map[TILING_DIRECTION_NORTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHEAST]) ||
+					(op->map->tiling.tile_map[TILING_DIRECTION_NORTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_EAST]) ||
+					(op->map->tiling.tile_map[TILING_DIRECTION_NORTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHWEST]))){
 					aDirWeight[dir_turn(op->direction, 4)] = 1;
 					return 1;
 				}
 				break;
 			case 5:
-				if(	op->map->tile_map[TILED_MAPS_NORTH] &&
-					((op->map->tile_map[TILED_MAPS_NORTH] == basemap->tile_map[TILED_MAPS_SOUTH]) ||
-					(op->map->tile_map[TILED_MAPS_NORTH] == basemap->tile_map[TILED_MAPS_SOUTHEAST]) ||
-					(op->map->tile_map[TILED_MAPS_NORTH] == basemap->tile_map[TILED_MAPS_SOUTHWEST]))){
+				if(	op->map->tiling.tile_map[TILING_DIRECTION_NORTH] &&
+					((op->map->tiling.tile_map[TILING_DIRECTION_NORTH] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTH]) ||
+					(op->map->tiling.tile_map[TILING_DIRECTION_NORTH] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHEAST]) ||
+					(op->map->tiling.tile_map[TILING_DIRECTION_NORTH] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHWEST]))){
 					aDirWeight[dir_turn(op->direction, 4)] = 1;
 					return 1;
 				}
 				break;
 			case 6:
-				if(	op->map->tile_map[TILED_MAPS_NORTHEAST] &&
-					((op->map->tile_map[TILED_MAPS_NORTHEAST] == basemap->tile_map[TILED_MAPS_SOUTH]) ||
-					(op->map->tile_map[TILED_MAPS_NORTHEAST] == basemap->tile_map[TILED_MAPS_NORTHWEST]) ||
-					(op->map->tile_map[TILED_MAPS_NORTHEAST] == basemap->tile_map[TILED_MAPS_SOUTHEAST]) ||
-					(op->map->tile_map[TILED_MAPS_NORTHEAST] == basemap->tile_map[TILED_MAPS_WEST]) ||
-					(op->map->tile_map[TILED_MAPS_NORTHEAST] == basemap->tile_map[TILED_MAPS_SOUTHWEST]))){
+				if(	op->map->tiling.tile_map[TILING_DIRECTION_NORTHEAST] &&
+					((op->map->tiling.tile_map[TILING_DIRECTION_NORTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTH]) ||
+					(op->map->tiling.tile_map[TILING_DIRECTION_NORTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHWEST]) ||
+					(op->map->tiling.tile_map[TILING_DIRECTION_NORTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHEAST]) ||
+					(op->map->tiling.tile_map[TILING_DIRECTION_NORTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_WEST]) ||
+					(op->map->tiling.tile_map[TILING_DIRECTION_NORTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHWEST]))){
 					aDirWeight[dir_turn(op->direction, 4)] = 1;
 					return 1;
 				}
 				break;				
 			case 7:
-				if(	op->map->tile_map[TILED_MAPS_EAST] &&
-					((op->map->tile_map[TILED_MAPS_EAST] == basemap->tile_map[TILED_MAPS_WEST]) ||
-					(op->map->tile_map[TILED_MAPS_EAST] == basemap->tile_map[TILED_MAPS_NORTHWEST]) ||
-					(op->map->tile_map[TILED_MAPS_EAST] == basemap->tile_map[TILED_MAPS_SOUTHWEST]))){
+				if(	op->map->tiling.tile_map[TILING_DIRECTION_EAST] &&
+					((op->map->tiling.tile_map[TILING_DIRECTION_EAST] == basemap->tiling.tile_map[TILING_DIRECTION_WEST]) ||
+					(op->map->tiling.tile_map[TILING_DIRECTION_EAST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHWEST]) ||
+					(op->map->tiling.tile_map[TILING_DIRECTION_EAST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHWEST]))){
 					aDirWeight[dir_turn(op->direction, 4)] = 1;
 					return 1;
 				}
 				break;
 			case 8:
-				if(	op->map->tile_map[TILED_MAPS_SOUTHEAST] &&
-					((op->map->tile_map[TILED_MAPS_SOUTHEAST] == basemap->tile_map[TILED_MAPS_NORTH]) ||
-					(op->map->tile_map[TILED_MAPS_SOUTHEAST] == basemap->tile_map[TILED_MAPS_NORTHEAST]) ||
-					(op->map->tile_map[TILED_MAPS_SOUTHEAST] == basemap->tile_map[TILED_MAPS_SOUTHWEST]) ||
-					(op->map->tile_map[TILED_MAPS_SOUTHEAST] == basemap->tile_map[TILED_MAPS_WEST]) ||
-					(op->map->tile_map[TILED_MAPS_SOUTHEAST] == basemap->tile_map[TILED_MAPS_NORTHWEST]))){
+				if(	op->map->tiling.tile_map[TILING_DIRECTION_SOUTHEAST] &&
+					((op->map->tiling.tile_map[TILING_DIRECTION_SOUTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTH]) ||
+					(op->map->tiling.tile_map[TILING_DIRECTION_SOUTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHEAST]) ||
+					(op->map->tiling.tile_map[TILING_DIRECTION_SOUTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHWEST]) ||
+					(op->map->tiling.tile_map[TILING_DIRECTION_SOUTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_WEST]) ||
+					(op->map->tiling.tile_map[TILING_DIRECTION_SOUTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHWEST]))){
 					aDirWeight[dir_turn(op->direction, 4)] = 1;
 					return 1;
 				}
@@ -899,7 +903,7 @@ int nret;
 /*	fill aDirWeight[9] with possible directions 
 	returns the max random number + 1
 */
-int ai_move_randomly_behaviour(int aDirWeight[9], object *op, struct mob_behaviour_param *params){
+int ai_move_randomly_behaviour(int aDirWeight[9], object_t *op, struct mob_behaviour_param *params){
 int nStandStill = 246; /* todo: get this value from params */
 int nLastDir;
 int nret;
@@ -949,48 +953,56 @@ int nret;
 }
 
 
-void ai_move_randomly(object *op, struct mob_behaviour_param *params, move_response *response)
+void ai_move_randomly(object_t *op, struct mob_behaviour_param *params, move_response *response)
 {
-	int aDirWeight[9]; /* 8 directions + stand still */
-	int nMaxRand;
-	int n, i;
+    int aDirWeight[9]; /* 8 directions + stand still */
+    int nMaxRand;
+    int n, i;
 
-    if(op->owner){
+    if (op->owner)
+    {
         ai_move_towards_owner(op, NULL, response);
         return;
     }
 
-	nMaxRand = ai_move_randomly_behaviour(aDirWeight, op, params);
+    nMaxRand = ai_move_randomly_behaviour(aDirWeight, op, params);
 
-	while(nMaxRand){
-		n = RANDOM() % nMaxRand;
-		for(i = 0;i < 9;i++){
-			if((n -= aDirWeight[i]) < 0){
-				if(!blocked_link(op, NULL, freearr_x[i], freearr_y[i])){
-					response->type = MOVE_RESPONSE_DIR;
-					response->data.direction = i;
-					/* LOG(llevDebug, "move_randomly(): name: %s, dir: %d\n", op->name, i);*/
-					//            LOG(llevDebug, "move_randomly(): i=%d, dirs={%d,%d,%d,%d,%d,%d,%d,%d}\n",
-					//                    i, dirs[0], dirs[1], dirs[2], dirs[3], dirs[4], dirs[5], dirs[6], dirs[7]);
-					return;
-				}
-				nMaxRand -= aDirWeight[i];
-				aDirWeight[i] = 0;
-				break;
-			}
-		}
-	}
-	response->type = MOVE_RESPONSE_DIR;
-	response->data.direction = 0;
+    while (nMaxRand)
+    {
+        n = RANDOM() % nMaxRand;
+
+        for (i = 0; i < 9; i++)
+        {
+            if ((n -= aDirWeight[i]) < 0)
+            {
+                if (!msp_blocked(op, NULL, OVERLAY_X(i), OVERLAY_Y(i)))
+                {
+                    response->type = MOVE_RESPONSE_DIR;
+                    response->data.direction = i;
+                    /* LOG(llevDebug, "move_randomly(): name: %s, dir: %d\n", op->name, i);*/
+                    //            LOG(llevDebug, "move_randomly(): i=%d, dirs={%d,%d,%d,%d,%d,%d,%d,%d}\n",
+                    //                    i, dirs[0], dirs[1], dirs[2], dirs[3], dirs[4], dirs[5], dirs[6], dirs[7]);
+                    return;
+                }
+
+                nMaxRand -= aDirWeight[i];
+                aDirWeight[i] = 0;
+                break;
+            }
+        }
+    }
+
+    response->type = MOVE_RESPONSE_DIR;
+    response->data.direction = 0;
 }
 
 
 /* This behaviour is also called from some terminal move behaviours to
  * allow charming of normal monsters without changing their behaviours */
-void ai_move_towards_owner(object *op, struct mob_behaviour_param *params, move_response *response)
+void ai_move_towards_owner(object_t *op, struct mob_behaviour_param *params, move_response *response)
 {
-    rv_vector *rv;
-    object *base = insert_base_info_object(op);
+    rv_t *rv;
+    object_t *base = insert_base_info_object(op);
 
     if(! OBJECT_VALID(op->owner, op->owner_count) || MOB_DATA(op)->owner == NULL)
     {
@@ -1044,9 +1056,9 @@ void ai_move_towards_owner(object *op, struct mob_behaviour_param *params, move_
     FREE_AND_ADD_REF_HASH(base->slaying, op->owner->map->orig_path);
 }
 
-void ai_move_towards_home(object *op, struct mob_behaviour_param *params, move_response *response)
+void ai_move_towards_home(object_t *op, struct mob_behaviour_param *params, move_response *response)
 {
-    object *base;
+    object_t *base;
 
     if(op->owner)
     {
@@ -1060,7 +1072,7 @@ void ai_move_towards_home(object *op, struct mob_behaviour_param *params, move_r
         /* If mob isn't already home */
         if (op->x != base->x || op->y != base->y || op->map->orig_path != base->slaying)
         {
-            mapstruct *map;
+            map_t *map;
 
             if (!(map = map_is_ready(base->slaying)))
             {
@@ -1077,7 +1089,7 @@ void ai_move_towards_home(object *op, struct mob_behaviour_param *params, move_r
 }
 
 /** Investigate the nearest(?), most attractive item */
-void ai_investigate_attraction(object *op, struct mob_behaviour_param *params, move_response *response)
+void ai_investigate_attraction(object_t *op, struct mob_behaviour_param *params, move_response *response)
 {
     int max_attraction = 0;
     struct mob_known_obj *max_attractor = NULL, *tmp;
@@ -1097,7 +1109,7 @@ void ai_investigate_attraction(object *op, struct mob_behaviour_param *params, m
 
     if(max_attractor)
     {
-        rv_vector  *rv  = get_known_obj_rv(op, max_attractor, MAX_KNOWN_OBJ_RV_AGE);
+        rv_t  *rv  = get_known_obj_rv(op, max_attractor, MAX_KNOWN_OBJ_RV_AGE);
         LOG(llevDebug, "  %s investigating %s\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(max_attractor->obj));
 
         if(rv)
@@ -1123,7 +1135,7 @@ void ai_investigate_attraction(object *op, struct mob_behaviour_param *params, m
 /** Avoid stepping on repulsive items.
  * @todo also parameterize trigger distance
  */
-void ai_avoid_repulsive_items(object *op, struct mob_behaviour_param *params, move_response *response)
+void ai_avoid_repulsive_items(object_t *op, struct mob_behaviour_param *params, move_response *response)
 {
     struct mob_known_obj *tmp;
 
@@ -1132,7 +1144,7 @@ void ai_avoid_repulsive_items(object *op, struct mob_behaviour_param *params, mo
     {
         if(tmp->attraction < 0)
         {
-            rv_vector *rv = get_known_obj_rv(op, tmp, MAX_KNOWN_OBJ_RV_AGE);
+            rv_t *rv = get_known_obj_rv(op, tmp, MAX_KNOWN_OBJ_RV_AGE);
             if(rv && rv->distance <= 1)
             {
                 response->forbidden |= (1 << rv->direction);
@@ -1143,12 +1155,12 @@ void ai_avoid_repulsive_items(object *op, struct mob_behaviour_param *params, mo
 
 /** Useful if mob is much slower than enemy?
  * @note experimental. not finished, tested or used */
-void ai_step_back_after_swing(object *op, struct mob_behaviour_param *params, move_response *response)
+void ai_step_back_after_swing(object_t *op, struct mob_behaviour_param *params, move_response *response)
 {
     if (op->weapon_speed_left > 0 && OBJECT_VALID(op->enemy, op->enemy_count)
             && mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
     {
-        rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
+        rv_t  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
 
         if (rv && rv->distance < (unsigned int) AIPARAM_INT(AIPARAM_KEEP_DISTANCE_TO_ENEMY_MIN_DIST))
         {
@@ -1165,7 +1177,7 @@ void ai_step_back_after_swing(object *op, struct mob_behaviour_param *params, mo
     }
 }
 
-void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_response *response)
+void ai_avoid_line_of_fire(object_t *op, struct mob_behaviour_param *params, move_response *response)
 {
     struct mob_known_obj *tmp;
 
@@ -1176,7 +1188,7 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
     /* Disable this behaviour if we are in a melee fight */
     if (OBJECT_VALID(op->enemy, op->enemy_count))
     {
-        rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
+        rv_t  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
         if (rv && rv->distance <= 1)
             return;
     }
@@ -1184,10 +1196,10 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
     /* Find relevant missiles */
     for(tmp = MOB_DATA(op)->known_objs; tmp; tmp = tmp->next)
     {
-        object *missile,
+        object_t *missile,
                *owner;
         int i;
-        rv_vector *rv;
+        rv_t *rv;
         if(! QUERY_FLAG(tmp, AI_OBJFLAG_IS_MISSILE))
             continue;
 
@@ -1221,10 +1233,12 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
             /* Straight-line-like missiles */
             case ARROW:
             case BULLET:
-            case MMISSILE:
             case THROWN_OBJ:
-            case FBULLET:
-            case FBALL:
+#if 0
+//            case MMISSILE:
+//            case FBULLET:
+//            case FBALL:
+#endif
                 /* Don't stand still in line of fire.
                  * TODO: should possibly do a random throw against the mob's reaction
                  * time, intelligence or somesuch */
@@ -1235,13 +1249,13 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
                 /* Don't move into line of fire (note: this may fail if
                  * firing into the back of an enemy. That is a good thing :) */
                 for(i=-2; i<=2; i++) {
-                    mapstruct *m;
+                    map_t *m;
                     int d = absdir(op->direction + i);
-                    int x = op->x + freearr_x[d];
-                    int y = op->y + freearr_y[d];
+                    sint16 x = op->x + OVERLAY_X(d),
+                           y = op->y + OVERLAY_Y(d);
 
                     /* Avoid moving into line of fire */
-                    if ((m = out_of_map(op->map, &x, &y)))
+                    if ((m = OUT_OF_MAP(op->map, x, y)))
                     {
                         if(mapcoord_in_line_of_missile(tmp->obj, m, x, y))
                             response->forbidden |= (1 << d);
@@ -1261,7 +1275,7 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
                         response->forbidden |= (1 << 0);
                     } else {
                         /* stats.sp is the cone's direction. We check if the mob is in a
-                         * cone of the found object */
+                         * cone of the found object_t */
                         if(tmp->obj->stats.sp == 0 ||
                                 dirdiff(absdir(rv->direction + 4), tmp->obj->stats.sp) <= 1)
                         {
@@ -1298,7 +1312,7 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
     }
 }
 
-void ai_optimize_line_of_fire(object *op, struct mob_behaviour_param *params, move_response *response)
+void ai_optimize_line_of_fire(object_t *op, struct mob_behaviour_param *params, move_response *response)
 {
     /* TODO: not correct for multi-tile mobs, the in_line_of_fire() functions simply don't
      * work for them. Possible solutions: 1) disable for multi-tile mobs (what do big monsters care
@@ -1315,7 +1329,7 @@ void ai_optimize_line_of_fire(object *op, struct mob_behaviour_param *params, mo
             int i;
             int good_directions = 0, ok_directions = 0;
 
-            rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
+            rv_t  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
 
             /* Too close or too far to care? */
             if(rv->distance <= 2 || rv->distance > 8)
@@ -1333,13 +1347,13 @@ void ai_optimize_line_of_fire(object *op, struct mob_behaviour_param *params, mo
              * the mob starts zipping between two "half-good" spots */
             for(i=-2; i<=2; i++)
             {
-                mapstruct *m;
+                map_t *m;
                 int dir = absdir(rv->direction+i);
-                int x = op->x + freearr_x[dir];
-                int y = op->y + freearr_y[dir];
+                sint16 x = op->x + OVERLAY_X(dir),
+                       y = op->y + OVERLAY_Y(dir);
 
                 /* Find a spot in or near line of fire, and forbid movements to other spots */
-                if ((m = out_of_map(op->map, &x, &y)))
+                if ((m = OUT_OF_MAP(op->map, x, y)))
                 {
                     if(mapcoord_in_line_of_fire(op->enemy, m, x, y, 1)) /* good spot? */
                         good_directions |= (1 << dir);
@@ -1366,9 +1380,9 @@ void ai_optimize_line_of_fire(object *op, struct mob_behaviour_param *params, mo
 }
 
 
-void ai_move_towards_enemy(object *op, struct mob_behaviour_param *params, move_response *response)
+void ai_move_towards_enemy(object_t *op, struct mob_behaviour_param *params, move_response *response)
 {
-    rv_vector  *rv;
+    rv_t  *rv;
 
     if (!OBJECT_VALID(op->enemy, op->enemy_count) || !mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
         return;
@@ -1412,11 +1426,11 @@ void ai_move_towards_enemy(object *op, struct mob_behaviour_param *params, move_
     response->data.target.obj_count = op->enemy_count;
 }
 
-void ai_keep_distance_to_enemy(object *op, struct mob_behaviour_param *params, move_response *response)
+void ai_keep_distance_to_enemy(object_t *op, struct mob_behaviour_param *params, move_response *response)
 {
     if (OBJECT_VALID(op->enemy, op->enemy_count) && mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
     {
-        rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
+        rv_t  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
 
         if (rv)
         {
@@ -1453,13 +1467,13 @@ void ai_keep_distance_to_enemy(object *op, struct mob_behaviour_param *params, m
     }
 }
 
-void ai_move_towards_enemy_last_known_pos(object *op, struct mob_behaviour_param *params, move_response *response)
+void ai_move_towards_enemy_last_known_pos(object_t *op, struct mob_behaviour_param *params, move_response *response)
 {
     if (OBJECT_VALID(op->enemy, op->enemy_count) && MOB_DATA(op)->enemy->last_map)
     {
-        rv_vector               rv;
+        rv_t               rv;
         struct mob_known_obj   *enemy   = MOB_DATA(op)->enemy;
-        mapstruct              *map     = map_is_ready(enemy->last_map);
+        map_t              *map     = map_is_ready(enemy->last_map);
 
         if (map && get_rangevector_full(op, op->map, op->x, op->y,
                     enemy->obj, map, enemy->last_x, enemy->last_y,
@@ -1478,7 +1492,7 @@ void ai_move_towards_enemy_last_known_pos(object *op, struct mob_behaviour_param
 }
 
 /* Stupid behaviour that moves around randomly looking for a lost enemy */
-void ai_search_for_lost_enemy(object *op, struct mob_behaviour_param *params, move_response *response)
+void ai_search_for_lost_enemy(object_t *op, struct mob_behaviour_param *params, move_response *response)
 {
     if (OBJECT_VALID(op->enemy, op->enemy_count) && MOB_DATA(op)->enemy->last_map)
     {
@@ -1489,7 +1503,7 @@ void ai_search_for_lost_enemy(object *op, struct mob_behaviour_param *params, mo
         {
             r = RANDOM() % 8 + 1;
 
-            if (!blocked_link(op, NULL, freearr_x[r], freearr_y[r]))
+            if (!msp_blocked(op, NULL, OVERLAY_X(r), OVERLAY_Y(r)))
             {
                 response->type = MOVE_RESPONSE_DIR;
                 response->data.direction = r;
@@ -1499,17 +1513,17 @@ void ai_search_for_lost_enemy(object *op, struct mob_behaviour_param *params, mo
     }
 }
 
-void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, move_response *response)
+void ai_move_towards_waypoint(object_t *op, struct mob_behaviour_param *params, move_response *response)
 {
-    object     *wp;
-    rv_vector   rv;
+    object_t     *wp;
+    rv_t   rv;
     int         try_next_wp = 0;
-    object     *target = NULL;
+    object_t     *target = NULL;
 
     wp = get_active_waypoint(op);
     if (wp)
     {
-        mapstruct  *destmap = NULL;
+        map_t  *destmap = NULL;
         int wp_x, wp_y;
 
         if(WP_BEACON(wp))
@@ -1658,7 +1672,7 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
 }
 
 /* Makes sure the mob doesn't stand still to long */
-void ai_dont_stand_still(object *op, struct mob_behaviour_param *params, move_response *response)
+void ai_dont_stand_still(object_t *op, struct mob_behaviour_param *params, move_response *response)
 {
     if(MOB_DATA(op)->idle_time >= AIPARAM_INT(AIPARAM_DONT_STAND_STILL_MAX_IDLE_TIME))
         response->forbidden |= (1 << 0);
@@ -1669,9 +1683,9 @@ void ai_dont_stand_still(object *op, struct mob_behaviour_param *params, move_re
  * Sets scared if low hp
  * Clears scared if high enough hp OR after a random time
  */
-void ai_run_away_from_enemy(object *op, struct mob_behaviour_param *params, move_response *response)
+void ai_run_away_from_enemy(object_t *op, struct mob_behaviour_param *params, move_response *response)
 {
-    rv_vector  *rv;
+    rv_t  *rv;
 
     /* Become scared or regain senses according to hp. */
     if (op->stats.maxhp &&
@@ -1718,9 +1732,9 @@ void ai_run_away_from_enemy(object *op, struct mob_behaviour_param *params, move
  * Sets scared if repulsion is > repulsion_threshold and distance < distance_threshold
  * Clears scared a some random time after distance > distance_threshold
  */
-void ai_run_away_from_repulsive_object(object *op, struct mob_behaviour_param *params, move_response *response)
+void ai_run_away_from_repulsive_object(object_t *op, struct mob_behaviour_param *params, move_response *response)
 {
-    rv_vector  *rv = NULL;
+    rv_t  *rv = NULL;
     struct mob_known_obj *tmp, *most_repulsive = NULL;
 
     for(tmp = MOB_DATA(op)->known_mobs; tmp; tmp = tmp->next)
@@ -1764,13 +1778,13 @@ void ai_run_away_from_repulsive_object(object *op, struct mob_behaviour_param *p
  * Ensures the mob doesn't move too far away from its home position. Not meant for antilure
  * usage.
  */
-void ai_stay_near_home(object *op, struct mob_behaviour_param *params, move_response *response)
+void ai_stay_near_home(object_t *op, struct mob_behaviour_param *params, move_response *response)
 {
-    object *base;
-    rv_vector rv;
+    object_t *base;
+    rv_t rv;
     int distflags;
     int maxdist = AIPARAM_INT(AIPARAM_STAY_NEAR_HOME_MAX_DIST);
-    mapstruct  *map;
+    map_t  *map;
 
     /* Disabled for pets */
     if(op->owner)
@@ -1813,7 +1827,7 @@ void ai_stay_near_home(object *op, struct mob_behaviour_param *params, move_resp
 }
 
 /* AI <-> plugin interface for movement behaviours */
-void ai_plugin_move(object *op, struct mob_behaviour_param *params, move_response *response)
+void ai_plugin_move(object_t *op, struct mob_behaviour_param *params, move_response *response)
 {
 #ifdef PLUGINS
     CFParm  CFP;
@@ -1842,7 +1856,7 @@ void ai_plugin_move(object *op, struct mob_behaviour_param *params, move_respons
  */
 
 /* Dummy function for some special processes */
-void ai_fake_process(object *op, struct mob_behaviour_param *params)
+void ai_fake_process(object_t *op, struct mob_behaviour_param *params)
 {
 }
 
@@ -1854,11 +1868,11 @@ void ai_fake_process(object *op, struct mob_behaviour_param *params)
  * We also must remember to periodically check the already known objects to see if they
  * have moved or disappeared and to update their memory timeout
  * XXX: currently very experimental */
-void ai_look_for_objects(object *op, struct mob_behaviour_param *params)
+void ai_look_for_objects(object_t *op, struct mob_behaviour_param *params)
 {
-    int dx, dy, x, y;
     int sense_range;
-    mapstruct *m;
+    map_t *m;
+    sint16 dx, dy, x, y;
 
     /* initialize hashtable if needed */
     if(MOB_DATA(op)->known_objs_ht == NULL)
@@ -1876,43 +1890,51 @@ void ai_look_for_objects(object *op, struct mob_behaviour_param *params)
     {
         for(dy = -sense_range; dy <= sense_range; dy++)
         {
+            msp_t *msp;
+            object_t   *tmp,
+                     *next;
+
+            m = op->map;
             x = op->x + dx;
             y = op->y + dy;
-            m = out_of_map(op->map, &x, &y);
-            if(m)
-            {
-                object *tmp = GET_MAP_OB(m,x,y);
-                for(; tmp; tmp = tmp->above)
-                {
-                    struct mob_known_obj *known;
-                    /* TODO: filter out pointless objects
-                     * (monster, player, sys_invisible, decoration, etc) */
-                    if(tmp->type == MONSTER || tmp->type == PLAYER ||
-                            QUERY_FLAG(tmp, FLAG_SYS_OBJECT) || tmp == op)
-                        continue;
-                    /* TODO: what is best - to first see if the object is
-                     * "interesting" or to first see if we already know it? */
-                    known = hashtable_find(MOB_DATA(op)->known_objs_ht, tmp);
-                    if(! known)
-                    {
-                        int attraction = get_npc_object_attraction(op, tmp);
-                        if(attraction) {
-                            register_npc_known_obj(op, tmp, 0, attraction, 1);
-#if defined DEBUG_AI
-                            LOG(llevDebug, "attraction of '%s' -> '%s': %d\n",
-                                    STRING_OBJ_NAME(op), STRING_OBJ_NAME(tmp), attraction);
-#endif
-                        }
+            msp = MSP_GET(m, x, y);
 
-                    } else
-                        update_npc_known_obj(known, 0, 0);
-                }
+            if (!msp)
+            {
+                continue;
             }
+
+            FOREACH_OBJECT_IN_MSP(tmp, msp, next)
+            {
+                struct mob_known_obj *known;
+                /* TODO: filter out pointless objects
+                 * (monster, player, sys_invisible, decoration, etc) */
+                if(tmp->type == MONSTER || tmp->type == PLAYER ||
+                        QUERY_FLAG(tmp, FLAG_SYS_OBJECT) || tmp == op)
+                    continue;
+                /* TODO: what is best - to first see if the object is
+                 * "interesting" or to first see if we already know it? */
+                known = hashtable_find(MOB_DATA(op)->known_objs_ht, tmp);
+                if(! known)
+                {
+                    int attraction = get_npc_object_attraction(op, tmp);
+                    if(attraction) {
+                        register_npc_known_obj(op, tmp, 0, attraction, 1);
+#if defined DEBUG_AI
+                        LOG(llevDebug, "attraction of '%s' -> '%s': %d\n",
+                                STRING_OBJ_NAME(op), STRING_OBJ_NAME(tmp), attraction);
+#endif
+                    }
+
+                } else
+                    update_npc_known_obj(known, 0, 0);
+            }
+            
         }
     }
 }
 
-static void maps_in_range(object *op, int range, int *maps)
+static void maps_in_range(object_t *op, int range, int *maps)
 {
     if (op->y - range < 0)
         maps[0] = 1; /* North */
@@ -1936,7 +1958,7 @@ static void maps_in_range(object *op, int range, int *maps)
 
 /** Scans the nearby area for enemy missiles, bullets, storms etc.
  * XXX: currently very experimental */
-void ai_look_for_enemy_missiles(object *op, struct mob_behaviour_param *params)
+void ai_look_for_enemy_missiles(object_t *op, struct mob_behaviour_param *params)
 {
     int sense_range;
     int tilenr;
@@ -1948,7 +1970,7 @@ void ai_look_for_enemy_missiles(object *op, struct mob_behaviour_param *params)
     /* Disable this behaviour if we are in a melee fight */
     if (OBJECT_VALID(op->enemy, op->enemy_count))
     {
-        rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
+        rv_t  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
         if (rv && rv->distance <= 1)
             return;
     }
@@ -1967,13 +1989,13 @@ void ai_look_for_enemy_missiles(object *op, struct mob_behaviour_param *params)
     maps_in_range(op, sense_range, check_maps);
 
     /* Scan for acvtive enemy missiles in each marked map */
-    for (tilenr=0; tilenr < TILED_MAPS + 1; tilenr++)
+    for (tilenr=0; tilenr < TILING_DIRECTION_NROF + 1; tilenr++)
     {
-        object *obj;
-        if(tilenr == TILED_MAPS)
+        object_t *obj;
+        if(tilenr == TILING_DIRECTION_NROF)
             obj = op->map->active_objects->active_next; /* Always scan op's map */
-        else if (op->map->tile_map[tilenr] && op->map->tile_map[tilenr]->in_memory == MAP_ACTIVE && check_maps[tilenr])
-            obj = op->map->tile_map[tilenr]->active_objects->active_next;
+        else if (op->map->tiling.tile_map[tilenr] && op->map->tiling.tile_map[tilenr]->in_memory == MAP_MEMORY_ACTIVE && check_maps[tilenr])
+            obj = op->map->tiling.tile_map[tilenr]->active_objects->active_next;
         else
             continue;
 
@@ -1981,22 +2003,23 @@ void ai_look_for_enemy_missiles(object *op, struct mob_behaviour_param *params)
         {
             switch(obj->type) {
                 case BULLET:
-                case MMISSILE:
                 case THROWN_OBJ:
                 case ARROW:
-                case FBULLET:
-                case FBALL:
-                case POISONCLOUD:
                 case LIGHTNING:
                 case CONE:
-                case BOMB:
-
+#if 0
+//                case MMISSILE:
+//                case FBULLET:
+//                case FBALL:
+//                case POISONCLOUD:
+//                case BOMB:
+#endif
                     if (obj->owner == NULL || get_friendship(op, obj->owner) <= FRIENDSHIP_ATTACK)
                     {
                         struct mob_known_obj *known = hashtable_find(MOB_DATA(op)->known_objs_ht, obj);
                         if(! known)
                         {
-                            rv_vector rv;
+                            rv_t rv;
                             if (get_rangevector(op, obj, &rv, RV_DIAGONAL_DISTANCE) &&
                                     (int)rv.distance <= sense_range)
                                 known = register_npc_known_obj(op, obj, 0, -10, 1);
@@ -2011,7 +2034,7 @@ void ai_look_for_enemy_missiles(object *op, struct mob_behaviour_param *params)
     }
 }
 
-void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
+void ai_look_for_other_mobs(object_t *op, struct mob_behaviour_param *params)
 {
     int tilenr;
     int sense_range;
@@ -2054,13 +2077,13 @@ void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
     maps_in_range(op, sense_range, check_maps);
 
     /* Scan for mobs and players in each marked map */
-    for (tilenr=0; tilenr < TILED_MAPS + 1; tilenr++)
+    for (tilenr=0; tilenr < TILING_DIRECTION_NROF + 1; tilenr++)
     {
-        object *obj;
-        if(tilenr == TILED_MAPS)
+        object_t *obj;
+        if(tilenr == TILING_DIRECTION_NROF)
             obj = op->map->active_objects->active_next; /* Always scan op's map */
-        else if (op->map->tile_map[tilenr] && op->map->tile_map[tilenr]->in_memory == MAP_ACTIVE && check_maps[tilenr])
-            obj = op->map->tile_map[tilenr]->active_objects->active_next;
+        else if (op->map->tiling.tile_map[tilenr] && op->map->tiling.tile_map[tilenr]->in_memory == MAP_MEMORY_ACTIVE && check_maps[tilenr])
+            obj = op->map->tiling.tile_map[tilenr]->active_objects->active_next;
         else
             continue;
 
@@ -2095,10 +2118,10 @@ void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
 }
 
 /** Update friendship level of each known mob */
-void ai_friendship(object *op, struct mob_behaviour_param *params)
+void ai_friendship(object_t *op, struct mob_behaviour_param *params)
 {
     struct mob_known_obj   *tmp;
-    object *owner_enemy = NULL;
+    object_t *owner_enemy = NULL;
     struct mob_known_obj   *known_owner_enemy = NULL;
 
     if(OBJECT_VALID(op->owner, op->owner_count) && op->owner->enemy)
@@ -2132,10 +2155,10 @@ void ai_friendship(object *op, struct mob_behaviour_param *params)
 }
 
 /** Update attraction/fear level of each known mob */
-void ai_attraction(object *op, struct mob_behaviour_param *params)
+void ai_attraction(object_t *op, struct mob_behaviour_param *params)
 {
     struct mob_known_obj *tmp;
-    object               *owner;
+    object_t               *owner;
 
     for (tmp = MOB_DATA(op)->known_mobs; tmp; tmp = tmp->next)
     {
@@ -2184,13 +2207,13 @@ void ai_attraction(object *op, struct mob_behaviour_param *params)
 /* TODO: parameterize MAX_IDLE_TIME */
 #define MAX_IDLE_TIME 5
 #define ANTILURE_TIMER_MAX 5
-void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
+void ai_choose_enemy(object_t *op, struct mob_behaviour_param *params)
 {
-    object                 *oldenemy    = op->enemy;
+    object_t                 *oldenemy    = op->enemy;
     struct mob_known_obj   *tmp, *worst_enemy = NULL;
     int antilure_dist_2 = AIPARAM_INT(AIPARAM_CHOOSE_ENEMY_ANTILURE_DISTANCE);
-    object *base = NULL;
-    mapstruct *base_map = NULL;
+    object_t *base = NULL;
+    map_t *base_map = NULL;
 
     /* We won't look for enemies if we are unaggressive */
     if(QUERY_FLAG(op, FLAG_UNAGGRESSIVE) || QUERY_FLAG(op, FLAG_SURRENDERED))
@@ -2213,7 +2236,7 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
         {
             if(base->slaying)
                 if ((base_map = map_is_in_memory(base->slaying)))
-                    if (base_map->in_memory != MAP_ACTIVE)
+                    if (base_map->in_memory != MAP_MEMORY_ACTIVE)
                         base_map = NULL;
 
             /* square distance for fast euclidian distance comparisons */
@@ -2232,14 +2255,14 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
             if ((worst_enemy == NULL || tmp->tmp_friendship < worst_enemy->tmp_friendship))
             {
                 /* Ignore if we can't get to it at all */
-                rv_vector  *rv  = get_known_obj_rv(op, tmp, MAX_KNOWN_OBJ_RV_AGE);
+                rv_t  *rv  = get_known_obj_rv(op, tmp, MAX_KNOWN_OBJ_RV_AGE);
                 if (! rv)
                     continue;
 
                 /* Ignore enemy if too far from home position */
-                if(base_map && tmp->obj->map && tmp->obj->map->in_memory == MAP_ACTIVE)
+                if(base_map && tmp->obj->map && tmp->obj->map->in_memory == MAP_MEMORY_ACTIVE)
                 {
-                    rv_vector base_rv;
+                    rv_t base_rv;
                     /* TODO: actually use tmp->last_map, last_x, last_y */
                     if(get_rangevector_from_mapcoords(tmp->obj->map, tmp->obj->x, tmp->obj->y, base_map, base->x, base->y, &base_rv, RV_FAST_EUCLIDIAN_DISTANCE))
                     {
@@ -2293,17 +2316,17 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
 
         if (op->enemy)
         {
-            object *owner;
+            object_t *owner;
 
             if (!QUERY_FLAG(op, FLAG_FRIENDLY) && op->map)
-                play_sound_map(op->map, op->x, op->y, SOUND_GROWL, SOUND_NORMAL);
+                play_sound_map(MSP_KNOWN(op), SOUND_GROWL, SOUND_NORMAL);
 
             /* Notify player about target */
             if (op->type == MONSTER &&
                 (owner = get_owner(op)) &&
                 owner->type == PLAYER)
             {
-                new_draw_info(NDI_UNIQUE, 0, owner, "%s is attacking %s.",
+                ndi(NDI_UNIQUE, 0, owner, "%s is attacking %s.",
                     query_name(op, owner, ARTICLE_POSSESSIVE, 0),
                     QUERY_SHORT_NAME(op->enemy, owner));
             }
@@ -2333,7 +2356,7 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
 }
 
 /* AI <-> plugin interface for processes */
-void ai_plugin_process(object *op, struct mob_behaviour_param *params)
+void ai_plugin_process(object_t *op, struct mob_behaviour_param *params)
 {
 #ifdef PLUGINS
     CFParm  CFP;
@@ -2360,9 +2383,9 @@ void ai_plugin_process(object *op, struct mob_behaviour_param *params)
 /*
  * Attack behaviours
  */
-int ai_melee_attack_enemy(object *op, struct mob_behaviour_param *params)
+int ai_melee_attack_enemy(object_t *op, struct mob_behaviour_param *params)
 {
-    rv_vector  *rv;
+    rv_t  *rv;
 
     if (!OBJECT_VALID(op->enemy, op->enemy_count)
      || QUERY_FLAG(op, FLAG_SCARED)
@@ -2392,44 +2415,50 @@ int ai_melee_attack_enemy(object *op, struct mob_behaviour_param *params)
     return TRUE;
 }
 
-int ai_bow_attack_enemy(object *op, struct mob_behaviour_param *params)
+int ai_bow_attack_enemy(object_t *op, struct mob_behaviour_param *params)
 {
-    object*bow =    NULL, *arrow = NULL, *target = op->enemy;
-    rv_vector      *rv;
-    int             direction;
+    object_t    *bow,
+              *next,
+              *arrow,
+              *target = op->enemy;
+    rv_t *rv;
+    int        direction;
 
-    if (!OBJECT_VALID(op->enemy, op->enemy_count)
-     || QUERY_FLAG(op, FLAG_UNAGGRESSIVE)
-     || QUERY_FLAG(op, FLAG_SCARED)
-     || !QUERY_FLAG(op, FLAG_READY_BOW)
-     || op->weapon_speed_left > 0
-     || op->map == NULL)
-        return FALSE;
+    if (!OBJECT_VALID(op->enemy, op->enemy_count) ||
+        QUERY_FLAG(op, FLAG_UNAGGRESSIVE) ||
+        QUERY_FLAG(op, FLAG_SCARED) ||
+        !QUERY_FLAG(op, FLAG_READY_BOW) ||
+        op->weapon_speed_left > 0 ||
+        !op->map)
+    {
+        return 0;
+    }
 
     /* TODO: choose another target if this or next test fails */
     if (!(rv = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE)))
-        return FALSE;
+    {
+        return 0;
+    }
+
     /* TODO: also check distance and LOS */
-    if (!can_hit_missile(op, target, rv, 2) || !mob_can_see_obj(op, target, MOB_DATA(op)->enemy))
-        return FALSE;
+    if (!can_hit_missile(op, target, rv, 2) ||
+        !mob_can_see_obj(op, target, MOB_DATA(op)->enemy))
+    {
+        return 0;
+    }
 
     //    LOG(llevDebug,"ai_distance_attack_enemy(): '%s' -> '%s'\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(op->enemy));
-
     op->anim_enemy_dir = rv->direction;
-    direction = rv->direction;
-    if (QUERY_FLAG(op, FLAG_CONFUSED))
-        direction = absdir(direction + RANDOM() % 5 - 2);
+    direction = (QUERY_FLAG(op, FLAG_CONFUSED)) ? absdir(rv->direction + RANDOM() % 5 - 2) : rv->direction;
 
     /* Find the applied bow */
-    for (bow = op->inv; bow != NULL; bow = bow->below)
+    FOREACH_OBJECT_IN_OBJECT(bow, op, next)
     {
-        if (bow->type == BOW && QUERY_FLAG(bow, FLAG_APPLIED))
+        if (bow->type == BOW &&
+            QUERY_FLAG(bow, FLAG_APPLIED))
         {
             /* Select suitable arrows */
-            if(bow->sub_type1 == 128) /* ability bow type */
-                arrow = bow->inv;
-            else
-                arrow = find_arrow(op, bow->race);
+            arrow = (bow->sub_type1 == 128) ? bow->inv : find_arrow(op, bow->race);
 
             if(!arrow)
             {
@@ -2437,11 +2466,12 @@ int ai_bow_attack_enemy(object *op, struct mob_behaviour_param *params)
                 manual_apply(op, bow, 0);
                 bow = NULL;
             }
+
             break;
         }
     }
 
-    if (bow == NULL)
+    if (!bow)
     {
         /*LOG(llevBug, "BUG: Monster %s (%d) has READY_BOW without bow.\n", STRING_OBJ_NAME(op), op->count);*/
         CLEAR_FLAG(op, FLAG_READY_BOW);
@@ -2451,7 +2481,8 @@ int ai_bow_attack_enemy(object *op, struct mob_behaviour_param *params)
     /* thats a infinitve arrow! dupe it. */
     if (QUERY_FLAG(arrow, FLAG_SYS_OBJECT))
     {
-        object *new_arrow   = get_object();
+        object_t *new_arrow = get_object();
+
         copy_object(arrow, new_arrow);
         CLEAR_FLAG(new_arrow, FLAG_SYS_OBJECT);
         new_arrow->nrof = 1;
@@ -2461,11 +2492,15 @@ int ai_bow_attack_enemy(object *op, struct mob_behaviour_param *params)
         arrow = new_arrow;
     }
     else
+    {
         arrow = get_split_ob(arrow, 1);
+    }
 
-	/* setup arrow stats basing on the mob op */
-	if(!(arrow = create_missile(op, bow, arrow, rv->direction)))
-		return 0;
+    /* setup arrow stats basing on the mob op */
+    if (!(arrow = create_missile(op, bow, arrow, rv->direction)))
+    {
+        return 0;
+    }
 
     op->weapon_speed_left += FABS(op->weapon_speed);
 
@@ -2478,41 +2513,56 @@ int ai_bow_attack_enemy(object *op, struct mob_behaviour_param *params)
      * to the enemy should be allowed. This is not a question of reality of not - this will
      * destroy not only game play but also every map design and is a critical misbehaviour.
      */
-    op->speed_left-=2.0f;
+    op->speed_left -= 2.0;
     return 1;
 }
 
 #define MAX_KNOWN_SPELLS 20
 
 /* TODO: slightly rework this */
-object * monster_choose_random_spell(object *monster)
+object_t * monster_choose_random_spell(object_t *monster)
 {
-    object *altern[MAX_KNOWN_SPELLS];
-    object *tmp;
+    object_t *altern[MAX_KNOWN_SPELLS];
+    object_t *tmp,
+           *next;
     spell  *spell;
     int     i = 0, j;
 
-    for (tmp = monster->inv; tmp != NULL; tmp = tmp->below)
-        if (tmp->type == ABILITY || tmp->type == SPELLBOOK)
+    FOREACH_OBJECT_IN_OBJECT(tmp, monster, next)
+    {
+        if (tmp->type == ABILITY ||
+            tmp->type == SPELLBOOK)
         {
             /*  Check and see if it's actually a useful spell */
-            if ((spell = find_spell(tmp->stats.sp)) != NULL
-             && !(spell->path & (PATH_ABJURATION | PATH_TRANSMUTATION | PATH_LIGHT)))
+            if ((spell = find_spell(tmp->stats.sp)) &&
+                !(spell->path & (PATH_ABJURATION | PATH_TRANSMUTATION | PATH_LIGHT)))
             {
                 if (tmp->stats.maxsp)
+                {
                     for (j = 0; i < MAX_KNOWN_SPELLS && j < tmp->stats.maxsp; j++)
+                    {
                         altern[i++] = tmp;
+                    }
+                }
                 else
+                {
                     altern[i++] = tmp;
+                }
+
                 if (i == MAX_KNOWN_SPELLS)
+                {
                     break;
+                }
             }
         }
+    }
 
-    if (!i)
-        return NULL;
+    if (i)
+    {
+        return altern[RANDOM() % i];
+    }
 
-    return altern[RANDOM() % i];
+    return NULL;
 }
 
 /* op is the basic mob doing anything
@@ -2523,10 +2573,10 @@ object * monster_choose_random_spell(object *monster)
  * sp_type is the id of the spell (a spell_item may have several spells
  * for different distances etc)
  */
-static int monster_cast_spell(object *op, object *part, int dir, object *target, object *spell_item, int sp_type)
+static int monster_cast_spell(object_t *op, object_t *part, int dir, object_t *target, object_t *spell_item, int sp_type)
 {
     spell  *sp;
-    object *tmp_enemy = NULL;
+    object_t *tmp_enemy = NULL;
     tag_t   tmp_enemy_tag = 0;
     int     ability, sp_cost;
 
@@ -2587,11 +2637,11 @@ static int monster_cast_spell(object *op, object *part, int dir, object *target,
     return TRUE;
 }
 
-int ai_spell_attack_enemy(object *op, struct mob_behaviour_param *params)
+int ai_spell_attack_enemy(object_t *op, struct mob_behaviour_param *params)
 {
     int direction, sp_type;
-    rv_vector  *rv;
-    object     *spell_item;
+    rv_t  *rv;
+    object_t     *spell_item;
 
     if (!OBJECT_VALID(op->enemy, op->enemy_count)
      || QUERY_FLAG(op, FLAG_SCARED)
@@ -2640,13 +2690,14 @@ int ai_spell_attack_enemy(object *op, struct mob_behaviour_param *params)
     return monster_cast_spell(op, rv->part, direction, op->enemy, spell_item, sp_type);
 }
 
-int ai_heal_friend(object *op, struct mob_behaviour_param *params)
+int ai_heal_friend(object_t *op, struct mob_behaviour_param *params)
 {
-    object     *tmp;
+    object_t *tmp,
+           *next;
     /* Selected target and spell for healing */
-    object *target = NULL, *spell = NULL;
+    object_t *target = NULL, *spell = NULL;
     /* Spell items for the different spell types */
-    object *heal = NULL, *cure_poison = NULL, *cure_disease = NULL;
+    object_t *heal = NULL, *cure_poison = NULL, *cure_disease = NULL;
 
     int best_friendship = 0;
 
@@ -2663,22 +2714,27 @@ int ai_heal_friend(object *op, struct mob_behaviour_param *params)
      * but we can that delay that until we know we have a target) */
 
     /* See what spells we actually know... */
-    for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
-        if (tmp->type == ABILITY || tmp->type == SPELLBOOK)
+    FOREACH_OBJECT_IN_OBJECT(tmp, op, next)
+    {
+        if (tmp->type == ABILITY ||
+            tmp->type == SPELLBOOK)
         {
             switch(tmp->stats.sp)
             {
                 case SP_MINOR_HEAL:
-                    heal = tmp;
-                    break;
+                heal = tmp;
+                break;
+
                 case SP_CURE_POISON:
-                    cure_poison = tmp;
-                    break;
+                cure_poison = tmp;
+                break;
+
                 case SP_CURE_DISEASE:
-                    cure_disease = tmp;
-                    break;
+                cure_disease = tmp;
+                break;
             }
         }
+    }
 
     if(heal == NULL &&  cure_poison == NULL && cure_disease == NULL)
         return FALSE;
@@ -2720,7 +2776,7 @@ int ai_heal_friend(object *op, struct mob_behaviour_param *params)
 
 
 /* AI <-> plugin interface for actions */
-int ai_plugin_action(object *op, struct mob_behaviour_param *params)
+int ai_plugin_action(object_t *op, struct mob_behaviour_param *params)
 {
     int ret = 0;
 #ifdef PLUGINS

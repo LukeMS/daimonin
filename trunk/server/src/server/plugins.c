@@ -66,8 +66,6 @@ struct plugin_hooklist  hooklist    =
     drop_to_floor,
     /* E */
     enter_map,
-    enter_map_by_exit,
-    enter_map_by_name,
     enumerate_coins,
     esrv_send_or_del_item,
     esrv_update_item,
@@ -126,22 +124,21 @@ struct plugin_hooklist  hooklist    =
     lua_channel_message,
 #endif
     /* M */
-    map_brightness,
     map_check_in_memory,
     map_is_in_memory,
     map_player_link,
     map_player_unlink,
     map_save,
-    map_set_slayers,
     map_transfer_apartment_items,
     material_repair_cost,
     material_repair_item,
     move_ob,
+    msp_rebuild_slices_with,
+    msp_rebuild_slices_without,
     /* N */
+    ndi,
+    ndi_map,
     nearest_pow_two_exp,
-    new_draw_info,
-    new_info_map,
-    new_info_map_except,
     normalize_path,
     normalize_path_direct,
     /* O */
@@ -169,7 +166,6 @@ struct plugin_hooklist  hooklist    =
     return_poolchunk_array_real,
     /* S */
     save_life,
-    set_map_darkness,
     set_personal_light,
     set_quest_status,
     shop_pay_amount,
@@ -186,7 +182,6 @@ struct plugin_hooklist  hooklist    =
     update_object,
     /* V */
     /* W */
-    wall,
     /* X */
     /* Y */
     /* Z */
@@ -195,8 +190,8 @@ struct plugin_hooklist  hooklist    =
     &animations,
     &archetype_global,
     behaviourclasses,
+    brightness,
     coins_arch,
-    global_darkness_table,
     &global_instance_id,
     &new_faces,
     new_levels,
@@ -205,6 +200,7 @@ struct plugin_hooklist  hooklist    =
     &settings,
     &shstr_cons,
     spells,
+    &tadtick,
 };
 
 CFPlugin                PlugList[PLUGINS_MAX_NROF];
@@ -215,16 +211,16 @@ int                     PlugNR      = 0;
  * get a inserted script object from it.
  * 1: object
  * 2: EVENT_NR
- * return: script object matching EVENT_NR
- */
-object * get_event_object(object *op, int event_nr)
+ * return: script object matching EVENT_NR */
+/* for this first implementation we simply browse
+ * through the inventory of object op and stop
+ * when we find a script object from type event_nr. */
+object_t *get_event_object(object_t *op, int event_nr)
 {
-    register object * tmp;
-    /* for this first implementation we simply browse
-     * through the inventory of object op and stop
-     * when we find a script object from type event_nr.
-     */
-    for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
+    register object_t *tmp,
+                    *next;
+
+    FOREACH_OBJECT_IN_OBJECT(tmp, op, next)
     {
         if (tmp->type == TYPE_EVENT_OBJECT && tmp->sub_type1 == event_nr)
             return tmp;
@@ -234,13 +230,13 @@ object * get_event_object(object *op, int event_nr)
 
 int trigger_object_plugin_event(
         int event_type,
-        object *const me, object *const activator, object *const other,
+        object_t *const me, object_t *const activator, object_t *const other,
         const char *msg,
         int *parm1, int *parm2, int *parm3,
         int flags)
 {
     CFParm  CFP;
-    object *event_obj;
+    object_t *event_obj;
     int plugin;
 
     if(me == NULL || !(me->event_flags & EVENT_FLAG(event_type)))
@@ -316,7 +312,7 @@ int trigger_object_plugin_event(
 /* Note that find_plugin_command is called *before* the internal commands are*/
 /* checked, meaning that you can "overwrite" them.                           */
 /*****************************************************************************/
-int find_plugin_command(const char *cmd, object *op, CommArray_s *RTNCmd)
+int find_plugin_command(const char *cmd, object_t *op, CommArray_s *RTNCmd)
 {
     CFParm              CmdParm;
     int                 i;
@@ -341,19 +337,19 @@ int find_plugin_command(const char *cmd, object *op, CommArray_s *RTNCmd)
 /* Displays a list of loaded plugins (keystrings and description) in the     */
 /* game log window.                                                          */
 /*****************************************************************************/
-void displayPluginsList(object *op)
+void displayPluginsList(object_t *op)
 {
     char    buf[MEDIUM_BUF];
     int     i;
 
-    new_draw_info(NDI_UNIQUE, 0, op, "List of loaded plugins:");
-    new_draw_info(NDI_UNIQUE, 0, op, "-----------------------");
+    ndi(NDI_UNIQUE, 0, op, "List of loaded plugins:");
+    ndi(NDI_UNIQUE, 0, op, "-----------------------");
     for (i = 0; i < PlugNR; i++)
     {
         strcpy(buf, PlugList[i].id);
         strcat(buf, ", ");
         strcat(buf, PlugList[i].fullname);
-        new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
+        ndi(NDI_UNIQUE, 0, op, "%s", buf);
     }
 }
 
@@ -705,7 +701,7 @@ void removePlugins(void)
     if (PlugNR)
     {
         int i;
-        shstr *ids[32];
+        shstr_t *ids[32];
 
 		for (i = 0; i != 32; ++i)
 			ids[i] = NULL;
@@ -734,7 +730,7 @@ CFParm * CFWCmdRSkill(CFParm *PParm)
     static int  val;
     CFParm     *CFP;
     CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    val = command_rskill((object *) (PParm->Value[0]), (char *) (PParm->Value[1]));
+    val = command_rskill((object_t *) (PParm->Value[0]), (char *) (PParm->Value[1]));
     CFP->Value[0] = (void *) (&val);
     return CFP;
 }
@@ -747,7 +743,7 @@ CFParm * CFWCmdRSkill(CFParm *PParm)
 /*****************************************************************************/
 CFParm * CFWBecomeFollower(CFParm *PParm)
 {
-    become_follower((object *) (PParm->Value[0]), (object *) (PParm->Value[1]));
+    become_follower((object_t *) (PParm->Value[0]), (object_t *) (PParm->Value[1]));
     return NULL;
 }
 
@@ -759,43 +755,15 @@ CFParm * CFWBecomeFollower(CFParm *PParm)
 /*****************************************************************************/
 CFParm * CFWGetMapObject(CFParm *PParm)
 {
-    object         *val = NULL;
-    static CFParm   CFP;
+    static CFParm  CFP;
+    map_t     *m = (map_t *)PParm->Value[0];
+    sint16         x = *(sint16 *)PParm->Value[1],
+                   y = *(sint16 *)PParm->Value[2];
+    msp_t      *msp = MSP_GET(m, x, y);
 
-    mapstruct      *mt  = (mapstruct *) PParm->Value[0];
-    int             x   = *(int *) PParm->Value[1];
-    int             y   = *(int *) PParm->Value[2];
-
-    /*    CFP = (CFParm*)(malloc(sizeof(CFParm))); */
-
-    /* Gecko: added tiled map check */
-    if ((mt = out_of_map(mt, &x, &y)))
-        val = GET_MAP_OB(mt, x, y);
-
-    CFP.Value[0] = (void *) (val);
+    CFP.Value[0] = (void *)msp->last;
     return &CFP;
 }
-
-/*****************************************************************************/
-/* out_of_map wrapper .                                                      */
-/*****************************************************************************/
-/* 0 - start map                                                             */
-/* 1 - x                                                                     */
-/* 2 - y                                                                     */
-/*****************************************************************************/
-CFParm * CFWOutOfMap(CFParm *PParm)
-{
-    static CFParm   CFP;
-
-    mapstruct      *mt  = (mapstruct *) PParm->Value[0];
-    int            *x   = (int *) PParm->Value[1];
-    int            *y   = (int *) PParm->Value[2];
-
-    CFP.Value[0] = (void *) out_of_map(mt, x, y);
-
-    return &CFP;
-}
-
 
 /*****************************************************************************/
 /* find_player wrapper.                                                      */
@@ -804,7 +772,7 @@ CFParm * CFWOutOfMap(CFParm *PParm)
 /*****************************************************************************/
 CFParm * CFWFindPlayer(CFParm *PParm)
 {
-    player *pl;
+    player_t *pl;
     CFParm *CFP;
     CFP = (CFParm *) (malloc(sizeof(CFParm)));
     pl = find_player((char *) (PParm->Value[0]));
@@ -824,7 +792,7 @@ CFParm * CFWManualApply(CFParm *PParm)
     CFParm     *CFP;
     static int  val;
     CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    val = manual_apply((object *) (PParm->Value[0]), (object *) (PParm->Value[1]), *(int *) (PParm->Value[2]));
+    val = manual_apply((object_t *) (PParm->Value[0]), (object_t *) (PParm->Value[1]), *(int *) (PParm->Value[2]));
     CFP->Value[0] = &val;
     return CFP;
 }
@@ -841,7 +809,7 @@ CFParm * CFWCheckSpellKnown(CFParm *PParm)
     CFParm     *CFP;
     static int  val;
     CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    val = check_spell_known((object *) (PParm->Value[0]), *(int *) (PParm->Value[1]));
+    val = check_spell_known((object_t *) (PParm->Value[0]), *(int *) (PParm->Value[1]));
     CFP->Value[0] = &val;
     return CFP;
 }
@@ -858,11 +826,11 @@ CFParm * CFWDoLearnSpell(CFParm *PParm)
     /* if mode = 1, unlearn - if mode =0 learn */
     if (*(int *) (PParm->Value[2]))
     {
-        do_forget_spell((object *) (PParm->Value[0]), *(int *) (PParm->Value[1]));
+        do_forget_spell((object_t *) (PParm->Value[0]), *(int *) (PParm->Value[1]));
     }
     else
     {
-        do_learn_spell((object *) (PParm->Value[0]), *(int *) (PParm->Value[1]), 0);
+        do_learn_spell((object_t *) (PParm->Value[0]), *(int *) (PParm->Value[1]), 0);
         /* The 0 parameter is marker for special_prayer - godgiven spells,
          * which will be deleted when player changes god.
          */
@@ -887,7 +855,7 @@ CFParm * CFWDoLearnSkill(CFParm *PParm)
     }
     else
     {
-        learn_skill((object *) (PParm->Value[0]), *(int *) (PParm->Value[1]));
+        learn_skill((object_t *) (PParm->Value[0]), *(int *) (PParm->Value[1]));
     }
     return NULL;
 }
@@ -900,7 +868,7 @@ CFParm * CFWDoLearnSkill(CFParm *PParm)
 /*****************************************************************************/
 CFParm * CFWUpdateSpeed(CFParm *PParm)
 {
-    update_ob_speed((object *) (PParm->Value[0]));
+    update_ob_speed((object_t *) (PParm->Value[0]));
     return NULL;
 }
 
@@ -914,7 +882,7 @@ CFParm * CFWUpdateSpeed(CFParm *PParm)
 /*****************************************************************************/
 CFParm * CFWAddExp(CFParm *PParm)
 {
-    add_exp((object *) (PParm->Value[0]), *(int *) (PParm->Value[1]),
+    add_exp((object_t *) (PParm->Value[0]), *(int *) (PParm->Value[1]),
              *(int *) (PParm->Value[2]), *(int *) (PParm->Value[3]));
     return(PParm);
 }
@@ -929,7 +897,7 @@ CFParm * CFWDetermineGod(CFParm *PParm)
     CFParm     *CFP;
     const char *val;
     CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    val = determine_god((object *) (PParm->Value[0]));
+    val = determine_god((object_t *) (PParm->Value[0]));
     CFP->Value[0] = (void *) (val);
     return CFP;
 }
@@ -942,7 +910,7 @@ CFParm * CFWDetermineGod(CFParm *PParm)
 CFParm * CFWFindGod(CFParm *PParm)
 {
     CFParm *CFP;
-    object *val;
+    object_t *val;
     CFP = (CFParm *) (malloc(sizeof(CFParm)));
     val = find_god((char *) (PParm->Value[0]));
     CFP->Value[0] = (void *) (val);
@@ -962,7 +930,7 @@ CFParm * CFWDumpObject(CFParm *PParm)
     /*    object* ob; not used */
     val = (char *) (malloc(sizeof(char) * 10240));
     CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    dump_me((object *) (PParm->Value[0]), val, 10240);
+    dump_me((object_t *) (PParm->Value[0]), val, 10240);
     CFP->Value[0] = (void *) (val);
     return CFP;
 }
@@ -975,7 +943,7 @@ CFParm * CFWDumpObject(CFParm *PParm)
 CFParm * CFWLoadObject(CFParm *PParm)
 {
     CFParm *CFP;
-    object *val;
+    object_t *val;
 
     CFP = (CFParm *) (malloc(sizeof(CFParm)));
     val = load_object_str((char *) (PParm->Value[0]));
@@ -986,7 +954,7 @@ CFParm * CFWLoadObject(CFParm *PParm)
 
 CFParm * CFWSendCustomCommand(CFParm *PParm)
 {
-    send_plugin_custom_message((object *) (PParm->Value[0]), (char *) (PParm->Value[1]));
+    send_plugin_custom_message((object_t *) (PParm->Value[0]), (char *) (PParm->Value[1]));
     return NULL;
 }
 
@@ -1000,7 +968,7 @@ CFParm * CFWSendCustomCommand(CFParm *PParm)
 CFParm * CFWCommunicate(CFParm *PParm)
 {
     /*char buf[MEDIUM_BUF];*/
-    object *op      = (object *) PParm->Value[0];
+    object_t *op      = (object_t *) PParm->Value[0];
     char   *string  = (char *) PParm->Value[1];
     if ((!op) || (!string))
         return NULL;
@@ -1020,7 +988,7 @@ CFParm * CFWFindMarkedObject(CFParm *PParm)
 {
     static CFParm   CFP;
 
-    object         *op  = (object *) PParm->Value[0];
+    object_t         *op  = (object_t *) PParm->Value[0];
     if (op)
         op = find_marked_object(op);
 
@@ -1038,17 +1006,17 @@ CFParm * CFWFindMarkedObject(CFParm *PParm)
 /*****************************************************************************/
 CFParm * CFWIdentifyObject(CFParm *PParm)
 {
-    object *caster  = (object *) PParm->Value[0];
-    object *target  = (object *) PParm->Value[1];
-    object *op      = (object *) PParm->Value[2];
+    object_t *caster  = (object_t *) PParm->Value[0];
+    object_t *target  = (object_t *) PParm->Value[1];
+    object_t *op      = (object_t *) PParm->Value[2];
 
 
     cast_identify(target, caster->level, op, *(int *) (PParm->Value[3]));
 
     if (caster)
-        play_sound_map(caster->map, caster->x, caster->y, spells[SP_IDENTIFY].sound, SOUND_SPELL);
+        play_sound_map(MSP_KNOWN(caster), spells[SP_IDENTIFY].sound, SOUND_SPELL);
     else if (target)
-        play_sound_map(target->map, target->x, target->y, spells[SP_IDENTIFY].sound, SOUND_SPELL);
+        play_sound_map(MSP_KNOWN(target), spells[SP_IDENTIFY].sound, SOUND_SPELL);
 
     return NULL;
 }
@@ -1120,8 +1088,8 @@ void GlobalEvent(CFParm *PParm)
 CFParm * CFWCreateObject(CFParm *PParm)
 {
     CFParm         *CFP;
-    archetype      *arch;
-    object         *newobj;
+    archetype_t      *arch;
+    object_t         *newobj;
 
     CFP = (CFParm *)calloc(1, sizeof(CFParm));
 
@@ -1142,7 +1110,7 @@ CFParm * CFWCreateObject(CFParm *PParm)
     if(newobj->type == MONSTER)
         fix_monster(newobj);
 
-    newobj = insert_ob_in_map(newobj, (mapstruct *) (PParm->Value[1]), NULL, 0);
+    newobj = insert_ob_in_map(newobj, (map_t *) (PParm->Value[1]), NULL, 0);
 
     CFP->Value[0] = newobj;
     return (CFP);
@@ -1153,7 +1121,7 @@ CFParm * CFWCreateObject(CFParm *PParm)
 /* a player. Of course, the client need to know the command to be able to    */
 /* manage it !                                                               */
 /*****************************************************************************/
-void send_plugin_custom_message(object *pl, char *buf)
+void send_plugin_custom_message(object_t *pl, char *buf)
 {
 	/* we must add here binary_cmd! */
 }

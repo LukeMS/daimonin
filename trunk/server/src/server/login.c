@@ -26,13 +26,13 @@
 
 
 /* we save the current player status to file */
-int player_save(object *op)
+int player_save(object_t *op)
 {
     FILE   *fp;
     char    filename[MEDIUM_BUF], tmpfilename[MAXPATHLEN], backupfile[MEDIUM_BUF]="";
-    player *pl  = CONTR(op);
+    player_t *pl  = CONTR(op);
     int     tmp, have_file = TRUE, i;
-    object *force;
+    object_t *force;
     int drain_level = 0;
     Account *ac;
 
@@ -59,7 +59,7 @@ int player_save(object *op)
     fp = fopen(tmpfilename, "w");
     if (!fp)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "Can't open file for save.");
+        ndi(NDI_UNIQUE, 0, op, "Can't open file for save.");
         LOG(llevDebug, "Can't open file for save (%s).\n", tmpfilename);
         return 0;
     }
@@ -114,7 +114,7 @@ int player_save(object *op)
         fprintf(fp, "o_bed %s\n", pl->orig_savebed_map);
 
     fprintf(fp, "map_s %d\nbed_s %d\nmap_x %d\nmap_y %d\nbed_x %d\nbed_y %d\n",
-                MAP_STATUS_TYPE(pl->map_status), MAP_STATUS_TYPE(pl->bed_status), pl->map_x, pl->map_y, pl->bed_x, pl->bed_y);
+                MAP_STATUS_TYPE(pl->status), MAP_STATUS_TYPE(pl->bed_status), pl->map_x, pl->map_y, pl->bed_x, pl->bed_y);
 
     if(pl->instance_name)
     {
@@ -165,7 +165,7 @@ int player_save(object *op)
     if (fclose(fp) == EOF)
     {
         /* make sure the write succeeded */
-        new_draw_info(NDI_UNIQUE, 0, op, "Can't save character.");
+        ndi(NDI_UNIQUE, 0, op, "Can't save character.");
         unlink(tmpfilename);
         return 0;
     }
@@ -237,9 +237,9 @@ static int spell_sort(const char *a1, const char *a2)
  * player inventory. This will recursive reorder
  * the container inventories.
  */
-static void reorder_inventory(object *op)
+static void reorder_inventory(object_t *op)
 {
-    object *tmp, *tmp2;
+    object_t *tmp, *tmp2;
 
     tmp2 = op->inv->below;
     op->inv->above = NULL;
@@ -265,19 +265,19 @@ static void reorder_inventory(object *op)
  * get a player object and set neutral base values,
  * so the the player is virtual "valid"
  */
-static player *get_player_struct(void)
+static player_t *get_player_struct(void)
 {
-    player *p;
+    player_t *p;
     int     i;
 
-    p = (player *) get_poolchunk(pool_player);
+    p = (player_t *) get_poolchunk(pool_player);
 
     /* don't try any recovering here - oom means to leave ASAP */
     if (p == NULL)
         LOG(llevError, "ERROR: get_player(): out of memory\n");
 
     /* Initial value settings is zero ... */
-    memset(p, 0, sizeof(player));
+    memset(p, 0, sizeof(player_t));
 
     /* ... but init some more stuff with non zero values or macros */
     p->group_id = GROUP_NO;
@@ -327,8 +327,8 @@ static player *get_player_struct(void)
  */
 addme_login_msg player_load(NewSocket *ns, const char *name)
 {
-    player      *pl;
-    object      *op;
+    player_t      *pl;
+    object_t      *op;
     FILE        *fp;
     void        *mybuffer;
     char        filename[MEDIUM_BUF];
@@ -336,7 +336,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     int         i, value;
     time_t      elapsed_save_time   = 0;
     struct stat statbuf;
-    object     *tmp, *tmp2;
+    object_t     *tmp, *tmp2;
     int         mode_id = GMASTER_MODE_NO;
 #ifdef USE_CHANNELS
     int     with_channels = FALSE;
@@ -490,7 +490,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
             FREE_AND_COPY_HASH(pl->orig_savebed_map, buf);
         }
         else if (!strcmp(buf, "map_s"))
-            pl->map_status = value;
+            pl->status = value;
         else if (!strcmp(buf, "bed_s"))
             pl->bed_status = value;
         else if (!strcmp(buf, "map_x"))
@@ -671,8 +671,8 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
      /*
     if (is_dragon_pl(op) && op->inv != NULL)
     {
-        object *tmp, *abil = NULL, *skin = NULL;
-        for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
+        object_t *tmp, *abil = NULL, *skin = NULL;
+        FOREACH_OBJECT_IN_OBJECT(tmp, op)
         {
             if (tmp->type == FORCE)
             {
@@ -692,8 +692,8 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
      */
     if (!pl->guild_updated)
     {
-        object *obj;
-        archetype *arch;
+        object_t *obj;
+        archetype_t *arch;
 
         while (obj = present_arch_in_ob(archetype_global._guild_force, op))
             if (obj)
@@ -709,7 +709,6 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     }
 
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
-    FIX_PLAYER(op ,"check login - first fix");
     pl->last_save_tick = ROUND_TAG;
 
     /* we hook in here perm dead later - ATM we don't allow a player loaded which was dead */
@@ -783,7 +782,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     /* If pl is new, announce the newpl login to all players else if the pl has not requested privacy, announce the login to all players. */
     if (!pl->privacy)
     {
-        new_draw_info(NDI_UNIQUE | NDI_ALL, 0, NULL, "%s has entered the game%s.",
+        ndi(NDI_UNIQUE | NDI_ALL, 0, NULL, "%s has entered the game%s.",
             QUERY_SHORT_NAME(pl->ob, NULL),
             ((pl->state & ST_BORN)) ? " for the first time" : "");
     }
@@ -828,9 +827,14 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
 
     /* if we add more BORN, "first time used / first time loaded" stuff, do it before this line */
     pl->state &= ~ST_BORN;
+    (void)enter_map_by_name(op, pl->maplevel, pl->orig_map, pl->map_x, pl->map_y, pl->status);
 
-    /* and finally the player appears on the map */
-    enter_map_by_name(op, pl->maplevel, pl->orig_map, pl->map_x, pl->map_y, pl->map_status);
+    if (pl->tadoffset == 0)
+    {
+        (void)command_time(op, "verbose");
+    }
+
+    FIX_PLAYER(op ,"check login - first fix");
 
     /* Extra info for VOLs, GMs, and SAs (if any are online), but not if pl is
      * a privacy-seeking SA*/
@@ -841,7 +845,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
           pl->privacy))
     {
         char        buf[MEDIUM_BUF];
-        objectlink *ol;
+        objectlink_t *ol;
 
         buf[0] = '\0';
 
@@ -858,17 +862,17 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
 
         for (ol = gmaster_list_VOL; ol; ol = ol->next)
         {
-            new_draw_info(NDI_UNIQUE, 0, ol->objlink.ob, "%s", buf);
+            ndi(NDI_UNIQUE, 0, ol->objlink.ob, "%s", buf);
         }
 
         for (ol = gmaster_list_GM; ol; ol = ol->next)
         {
-            new_draw_info(NDI_UNIQUE, 0, ol->objlink.ob, "%s", buf);
+            ndi(NDI_UNIQUE, 0, ol->objlink.ob, "%s", buf);
         }
 
         for (ol = gmaster_list_SA; ol; ol = ol->next)
         {
-            new_draw_info(NDI_UNIQUE, 0, ol->objlink.ob, "%s", buf);
+            ndi(NDI_UNIQUE, 0, ol->objlink.ob, "%s", buf);
         }
     }
 
@@ -891,11 +895,11 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
  * If we fail, no player struct will be returned and it returns
  * with an error msg.
  */
-addme_login_msg player_create(NewSocket *ns, player **pl_ret, char *name, int race, int gender, int skill_nr)
+addme_login_msg player_create(NewSocket *ns, player_t **pl_ret, char *name, int race, int gender, int skill_nr)
 {
-    player          *pl = NULL;
-    object          *op = NULL;
-    archetype       *p_arch;
+    player_t          *pl = NULL;
+    object_t          *op = NULL;
+    archetype_t       *p_arch;
     int             skillnr[]       = {SK_MELEE_BASIC_SLASH, SK_MELEE_BASIC_IMPACT, SK_MELEE_BASIC_CLEAVE, SK_MELEE_BASIC_PIERCE};
 /*    char            *skillitem[]     = {"shortsword", "mstar_small", "axe_small", "dagger_large"}; */ /* unused */
 
@@ -906,7 +910,7 @@ addme_login_msg player_create(NewSocket *ns, player **pl_ret, char *name, int ra
         return ADDME_MSG_DISCONNECT;
 
     /* check we have a valid player race object arch. MUST fit too */
-    if(!(p_arch = player_arch_list[race].p_arch[gender]))
+    if(!(p_arch = player_template[race].p_arch[gender]))
         return ADDME_MSG_DISCONNECT;
 
     /* now check the skill ID */
@@ -929,13 +933,13 @@ addme_login_msg player_create(NewSocket *ns, player **pl_ret, char *name, int ra
     /* now we add our custom settings for this new character */
     FREE_AND_ADD_REF_HASH(pl->account_name, ns->pl_account.name);
     FREE_AND_COPY_HASH(op->name, name);
-    pl->orig_stats.Str = op->stats.Str = (sint8) player_arch_list[race].str;
-    pl->orig_stats.Dex = op->stats.Dex = (sint8) player_arch_list[race].dex;
-    pl->orig_stats.Con = op->stats.Con = (sint8) player_arch_list[race].con;
-    pl->orig_stats.Int = op->stats.Int = (sint8) player_arch_list[race].intel;
-    pl->orig_stats.Wis = op->stats.Wis = (sint8) player_arch_list[race].wis;
-    pl->orig_stats.Pow = op->stats.Pow = (sint8) player_arch_list[race].pow;
-    pl->orig_stats.Cha = op->stats.Cha = (sint8) player_arch_list[race].cha;
+    pl->orig_stats.Str = op->stats.Str = player_template[race].str;
+    pl->orig_stats.Dex = op->stats.Dex = player_template[race].dex;
+    pl->orig_stats.Con = op->stats.Con = player_template[race].con;
+    pl->orig_stats.Int = op->stats.Int = player_template[race].intel;
+    pl->orig_stats.Wis = op->stats.Wis = player_template[race].wis;
+    pl->orig_stats.Pow = op->stats.Pow = player_template[race].pow;
+    pl->orig_stats.Cha = op->stats.Cha = player_template[race].cha;
 
     /* setup start point and default maps */
     set_mappath_by_default(pl);
@@ -999,7 +1003,7 @@ void show_stream_info(NewSocket *ns)
     if ((fp = fopen(buf, "r")))
     {
         char  *cp;
-        shstr *hash;
+        shstr_t *hash;
 
         if (!fgets(buf, sizeof(buf), fp))
         {
@@ -1015,11 +1019,11 @@ void show_stream_info(NewSocket *ns)
 
         if ((hash = add_string(buf)) == shstr_cons.none)
         {
-            new_draw_info(NDI_UNIQUE, 0, ns->pl->ob, "Server compiled with trunk only.");
+            ndi(NDI_UNIQUE, 0, ns->pl->ob, "Server compiled with trunk only.");
         }
         else
         {
-            new_draw_info(NDI_UNIQUE, 0, ns->pl->ob, "Server compiled with ~%s~ stream.",
+            ndi(NDI_UNIQUE, 0, ns->pl->ob, "Server compiled with ~%s~ stream.",
                           buf);
 
             while (fgets(buf, sizeof(buf), fp))
@@ -1031,7 +1035,7 @@ void show_stream_info(NewSocket *ns)
 
                 if (buf[0])
                 {
-                    new_draw_info(NDI_UNIQUE, 0, ns->pl->ob, "%s", buf);
+                    ndi(NDI_UNIQUE, 0, ns->pl->ob, "%s", buf);
                 }
             }
         }

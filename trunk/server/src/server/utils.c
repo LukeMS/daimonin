@@ -231,7 +231,7 @@ int clipped_percent(int a, int b)
     return rv;
 }
 
-void NDI_LOG(LogLevel logLevel, int flags, int pri, object *ob, char *format, ...)
+void NDI_LOG(log_t logLevel, int flags, int pri, object_t *ob, char *format, ...)
 {
     va_list ap;
     char    buf[HUGE_BUF];
@@ -244,5 +244,5 @@ void NDI_LOG(LogLevel logLevel, int flags, int pri, object *ob, char *format, ..
 
     if (ob &&
         CONTR(ob))
-        new_draw_info(flags, pri, ob, "%s", buf);
+        ndi(flags, pri, ob, "%s", buf);
 }

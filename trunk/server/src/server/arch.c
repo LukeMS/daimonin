@@ -41,14 +41,14 @@ _archetype_global archetype_global;
  * Params:
  * - name: the name we're searching for (ex: "writing pen");
  * Return value:
- * - the archetype found or null if nothing was found.
+ * - the archetype_t found or null if nothing was found.
  */
-archetype * find_archetype_by_object_name(const char *name)
+archetype_t * find_archetype_by_object_name(const char *name)
 {
-    archetype  *at;
+    archetype_t  *at;
 
     if (name == NULL)
-        return (archetype *) NULL;
+        return (archetype_t *) NULL;
 
     for (at = first_archetype; at != NULL; at = at->next)
     {
@@ -66,9 +66,9 @@ archetype * find_archetype_by_object_name(const char *name)
  * Return value:
  * - a corresponding object if found; a singularity object if not found.
  */
-object * get_archetype_by_object_name(const char *name)
+object_t * get_archetype_by_object_name(const char *name)
 {
-    archetype  *at;
+    archetype_t  *at;
     char        tmpname[MEDIUM_BUF];
     int         i;
 
@@ -155,9 +155,9 @@ void init_archetypes()
  * used for archetypes has been in the static errmsg array.
  */
 
-void arch_info(object *op)
+void arch_info(object_t *op)
 {
-    new_draw_info(NDI_WHITE, 0, op, "%d searches and %d strcmp()'s", arch_search, arch_cmp);
+    ndi(NDI_WHITE, 0, op, "%d searches and %d strcmp()'s", arch_search, arch_cmp);
 }
 
 /*
@@ -175,7 +175,7 @@ void clear_archetable()
 
 void init_archetable()
 {
-    archetype  *at;
+    archetype_t  *at;
     LOG(llevDebug, " setting up archetable...");
     for (at = first_archetype; at != NULL; at = (at->more == NULL) ? at->next : at->more)
         add_arch(at);
@@ -186,7 +186,7 @@ void init_archetable()
  * Dumps an archetype to debug-level output.
  */
 
-void dump_arch(archetype *at)
+void dump_arch(archetype_t *at)
 {
     dump_object(&at->clone);
 }
@@ -199,7 +199,7 @@ void dump_arch(archetype *at)
 
 void dump_all_archetypes()
 {
-    archetype      *at;
+    archetype_t      *at;
     artifactlist   *al;
     artifact       *art = NULL;
 
@@ -228,7 +228,7 @@ void dump_all_archetypes()
 
 void free_all_archs()
 {
-    archetype  *at, *next;
+    archetype_t  *at, *next;
     int         i = 0, f = 0;
 
     for (at = first_archetype; at != NULL; at = next)
@@ -253,11 +253,11 @@ void free_all_archs()
  * Allocates, initialises and returns the pointer to an archetype structure.
  */
 
-archetype * get_archetype_struct()
+archetype_t * get_archetype_struct()
 {
-    archetype *new;
+    archetype_t *new;
 
-    MALLOC(new, sizeof(archetype));
+    MALLOC(new, sizeof(archetype_t));
 
     if (new == NULL)
         LOG(llevError, "get_archetype_struct() - out of memory\n");
@@ -273,9 +273,9 @@ archetype * get_archetype_struct()
  */
 void first_arch_pass(FILE *fp)
 {
-    object     *op;
+    object_t     *op;
     void       *mybuffer;
-    archetype  *at, *prev = NULL, *last_more = NULL;
+    archetype_t  *at, *prev = NULL, *last_more = NULL;
     int         i;
 
     op = get_object();
@@ -283,6 +283,41 @@ void first_arch_pass(FILE *fp)
     mybuffer = create_loader_buffer(fp);
     while ((i = load_object(fp, op, mybuffer, LO_REPEAT, MAP_STATUS_STYLE)))
     {
+        if (!QUERY_FLAG(op, FLAG_SYS_OBJECT))
+        {
+            if (op->layer == MSP_SLAYER_SYSTEM)
+            {
+                LOG(llevSystem, " ARCHBUG: Archetype %s has layer 0 but is not sys_object!\n",
+                    STRING_OBJ_ARCH_NAME(op));
+            }
+        }
+        else
+        {
+            if (op->layer != MSP_SLAYER_SYSTEM)
+            {
+                LOG(llevDebug, " WARNING: Archetype %s has layer %d (!=0) and is sys_object\n",
+                    STRING_OBJ_ARCH_NAME(op), op->layer);
+            }
+        }
+
+#ifdef USE_SLAYER_MONSTER
+        /* Do some on-the-fly layer correction. If we make this feature
+         * permanent the layers in the actual arches should be updated
+         * accordingly and this code removed. */
+        if (op->type == MONSTER)
+        {
+            op->layer = MSP_SLAYER_MONSTER;
+        }
+        else if (op->type == PLAYER)
+        {
+            op->layer = MSP_SLAYER_PLAYER;
+        }
+        else if (op->layer == 7)
+        {
+            op->layer = MSP_SLAYER_EFFECT;
+        }
+
+#endif
         /* use copy_object_data() - we don't want adjust any speed_left here! */
         copy_object_data(op, &at->clone);
 
@@ -291,11 +326,6 @@ void first_arch_pass(FILE *fp)
          * alter speed_left to have a random & senseful start value.
          */
 
-        if (!op->layer && !QUERY_FLAG(op, FLAG_SYS_OBJECT))
-            LOG(llevDebug, " WARNING: Archetype %s has layer 0 without be sys_object!\n", STRING_OBJ_ARCH_NAME(op));
-        if (op->layer && QUERY_FLAG(op, FLAG_SYS_OBJECT))
-            LOG(llevDebug, " WARNING: Archetype %s has layer %d (!=0) and is sys_object\n", STRING_OBJ_ARCH_NAME(op),
-                op->layer);
 
         switch (i)
         {
@@ -350,7 +380,7 @@ void second_arch_pass(FILE *fp_start)
 {
     FILE           *fp  = fp_start;
     char            buf[MEDIUM_BUF], *variable = buf, *argument, *cp;
-    archetype      *at =  NULL, *other;
+    archetype_t      *at =  NULL, *other;
 
     while (fgets(buf, MEDIUM_BUF, fp) != NULL)
     {
@@ -391,7 +421,7 @@ void second_arch_pass(FILE *fp_start)
 }
 
 /*
- * First initialises the archtype hash-table (init_archetable()).
+ * First initialises the archetype_type hash-table (init_archetable()).
  * Reads and parses the archetype file (with the first and second-pass
  * functions).
  * Then initialises treasures by calling load_treasures().
@@ -448,7 +478,7 @@ void load_archetypes()
      * randomitems (= treasurelists) to the arches.
      */
     load_artifacts(ARTIFACTS_FIRST_PASS);  /* If not called before, reads all artifacts from file */
-    add_artifact_archtype();
+    add_artifact_archetype_type();
     LOG(llevDebug, " loading treasure...\n");
     load_treasures();
     LOG(llevDebug, " done\n arch-pass 2...\n");
@@ -466,9 +496,9 @@ void load_archetypes()
  * This function returns NULL on failure.
  */
 
-object * arch_to_object(archetype *at)
+object_t * arch_to_object(archetype_t *at)
 {
-    object *op;
+    object_t *op;
     if (at == NULL)
     {
         LOG(llevBug, "BUG: arch_to_object(): archetype at at == NULL.\n");
@@ -491,9 +521,9 @@ object * arch_to_object(archetype *at)
  * an object, and never NULL.
  */
 
-object * create_singularity(const char *name)
+object_t * create_singularity(const char *name)
 {
-    object *op = arch_to_object(archetype_global._empty_archetype);
+    object_t *op = arch_to_object(archetype_global._empty_archetype);
 
     FREE_AND_COPY_HASH(op->name, name);
     FREE_AND_COPY_HASH(op->title, " (singularity)");
@@ -519,9 +549,9 @@ object * create_singularity(const char *name)
  * object containing a copy of the archetype.
  */
 
-object * get_archetype(const char *name)
+object_t * get_archetype(const char *name)
 {
-    archetype  *at;
+    archetype_t  *at;
     at = find_archetype(name);
     if (at == NULL)
         return create_singularity(name);
@@ -533,19 +563,19 @@ object * get_archetype(const char *name)
  * returns a pointer to the found archetype, otherwise NULL.
  */
 
-archetype * find_archetype(const char *name)
+archetype_t * find_archetype(const char *name)
 {
     if (name == NULL)
-        return (archetype *) NULL;
+        return (archetype_t *) NULL;
 
-    return (archetype *)hashtable_find(arch_table, name);
+    return (archetype_t *)hashtable_find(arch_table, name);
 }
 
 /*
  * Adds an archetype to the hashtable.
  */
 
-void add_arch(archetype *at)
+void add_arch(archetype_t *at)
 {
     if (! hashtable_insert(arch_table, at->name, at))
     {
@@ -558,9 +588,9 @@ void add_arch(archetype *at)
  * Used in treasure-generation.
  */
 
-archetype * type_to_archetype(int type)
+archetype_t * type_to_archetype(int type)
 {
-    archetype  *at;
+    archetype_t  *at;
 
     for (at = first_archetype; at != NULL; at = (at->more == NULL) ? at->next : at->more)
         if (at->clone.type == type)
@@ -574,10 +604,10 @@ archetype * type_to_archetype(int type)
  * Used in treasure-generation.
  */
 
-object * clone_arch(int type)
+object_t * clone_arch(int type)
 {
-    archetype  *at;
-    object     *op  = get_object();
+    archetype_t  *at;
+    object_t     *op  = get_object();
 
     if ((at = type_to_archetype(type)) == NULL)
     {

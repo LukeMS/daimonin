@@ -26,50 +26,16 @@
 #ifndef __LINKS_H
 #define __LINKS_H
 
-/* Used to link together several objects */
-
-/* I created this improved link structures using the
- * original objectlink and objectlinkpt structures.
- * It use now one multi structure and the mempool functions.
- * This link object system can easily be extended by adding new
- * entries in the union{}objlink part, It should be used everywhere
- * we want using lists of objects (examples are treasure lists,
- * friendly/enemy list, button link list...). MT-2004
- */
-typedef struct oblnk
-{
-    union
-    {
-        struct oblnk               *link;
-        object                     *ob;
-        struct treasureliststruct  *tl;
-        struct _gmaster_struct       *gm;
-        struct ban_struct           *ban;
-    } objlink;
-
-    struct oblnk               *prev;
-    struct oblnk               *next;
-
-    tag_t                       id;
-    int                         value;
-    uint32                      flags;
-    uint32                      ref_count;
-    union
-    {                                            /* a local link paramter */
-        struct _tlist_tweak        *tl_tweak;
-    } parmlink;
-} objectlink;
-
 /* oblink union is used as */
-#define OBJLNK_FLAG_OB      0x01
-#define OBJLNK_FLAG_LINK    0x02
-#define OBJLNK_FLAG_TL      0x04
-#define OBJLNK_FLAG_GM      0x08
-#define OBJLNK_FLAG_BAN     0x10
+#define OBJLNK_FLAG_OB      (1 << 0)
+#define OBJLNK_FLAG_LINK    (1 << 1)
+#define OBJLNK_FLAG_TL      (1 << 2)
+#define OBJLNK_FLAG_GM      (1 << 3)
+#define OBJLNK_FLAG_BAN     (1 << 4)
 
 /* The use of _STATIC and _REF defines how we handle instancing & freeing.
  * Example: When we loading the base arches, we
- * link the treasure lists with static set objectlink
+ * link the treasure lists with static set objectlink_t
  * structures. When we now creating a object as instance
  * from that base arch, the treasure list pointer is instanced.
  * If we free that object we skip freeing the treasure list
@@ -83,11 +49,46 @@ typedef struct oblnk
  * like we do with the hash list for strings. Its possible - perhaps
  * its useful and speed up things but atm we don't have to much of them.
  */
-#define OBJLNK_FLAG_STATIC  0x1000
-#define OBJLNK_FLAG_REF     0x2000
+#define OBJLNK_FLAG_STATIC  (1 << 12)
+#define OBJLNK_FLAG_REF     (1 << 13)
 
-#define free_objectlink_simple(_chunk_) return_poolchunk((_chunk_), pool_objectlink);
-#define free_objectlinkpt_simple(_chunk_) return_poolchunk((_chunk_), pool_objectlink);
-#define oblinkpt objectlink
+/* Used to link together several objects */
+
+/* I created this improved link structures using the
+ * original objectlink and objectlinkpt structures.
+ * It use now one multi structure and the mempool functions.
+ * This link object system can easily be extended by adding new
+ * entries in the union{}objlink part, It should be used everywhere
+ * we want using lists of objects (examples are treasure lists,
+ * friendly/enemy list, button link list...). MT-2004
+ */
+struct objectlink_t
+{
+    union
+    {
+        struct objectlink_t               *link;
+        object_t                     *ob;
+        struct treasureliststruct  *tl;
+        struct _gmaster_struct       *gm;
+        struct ban_t           *ban;
+    } objlink;
+
+    struct objectlink_t               *prev;
+    struct objectlink_t               *next;
+
+    tag_t                       id;
+    int                         value;
+    uint32                      flags;
+    uint32                      ref_count;
+    union
+    {                                            /* a local link paramter */
+        struct _tlist_tweak        *tl_tweak;
+    } parmlink;
+};
+
+extern objectlink_t *objectlink_get(int id);
+extern void          objectlink_free(objectlink_t *ol);
+extern objectlink_t *objectlink_link(objectlink_t **startptr, objectlink_t **endptr, objectlink_t *afterptr, objectlink_t *beforeptr, objectlink_t *objptr);
+extern objectlink_t *objectlink_unlink(objectlink_t **startptr, objectlink_t **endptr, objectlink_t *objptr);
 
 #endif /* ifndef __LINKS_H */

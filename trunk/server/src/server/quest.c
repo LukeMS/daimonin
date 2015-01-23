@@ -30,15 +30,16 @@ static char *skill_group_name[] = {
 };
 
 /* recursive check the inventory for a specific quest item */
-static object *find_quest_item(object *target, object *obj)
+static object_t *find_quest_item(object_t *target, object_t *obj)
 {
-    object *tmp;
+    object_t *tmp,
+           *next;
 
-    for (tmp = target->inv; tmp; tmp = tmp->below)
+    FOREACH_OBJECT_IN_OBJECT(tmp, target, next)
     {
         if(tmp->type == CONTAINER)
         {
-            object *item;
+            object_t *item;
 
             if ((item = find_quest_item(tmp, obj)))
             {
@@ -58,9 +59,9 @@ static object *find_quest_item(object *target, object *obj)
 }
 
 /* check the player we can drop a one-drop quest trigger item */
-static inline object *find_one_drop_quest_item(object *target, object *obj)
+static inline object_t *find_one_drop_quest_item(object_t *target, object_t *obj)
 {
-    object *tmp;
+    object_t *tmp;
 
     /* if we have a "fake" one drop item, we check the normal inventory it is there */
     if(!QUERY_FLAG(obj, FLAG_ONE_DROP))
@@ -68,7 +69,9 @@ static inline object *find_one_drop_quest_item(object *target, object *obj)
 
     if ((tmp=CONTR(target)->quest_one_drop) )
     {
-        for (tmp = tmp->inv; tmp; tmp = tmp->below)
+        object_t *next;
+
+        FOREACH_OBJECT_IN_OBJECT(tmp, tmp, next)
         {
             /* the race to arch compare is needed for faked items and to hold comp. to beta 3 and lower */
             if (tmp->name == obj->name && tmp->race == obj->arch->name && tmp->title == obj->title)
@@ -80,13 +83,15 @@ static inline object *find_one_drop_quest_item(object *target, object *obj)
 }
 
 
-static inline object *find_quest_trigger(object *target, object *obj)
+static inline object_t *find_quest_trigger(object_t *target, object_t *obj)
 {
-    object *tmp;
+    object_t *tmp;
 
     if ((tmp=CONTR(target)->quests_type_normal) )
     {
-        for (tmp = tmp->inv; tmp; tmp = tmp->below)
+        object_t *next;
+
+        FOREACH_OBJECT_IN_OBJECT(tmp, tmp, next)
         {
             if (tmp->name == obj->name && (tmp->magic == obj->magic || tmp->magic == obj->last_heal))
                 return tmp;
@@ -96,9 +101,9 @@ static inline object *find_quest_trigger(object *target, object *obj)
     return NULL;
 }
 
-static inline object *add_quest_item(object *target, object *obj)
+static inline object_t *add_quest_item(object_t *target, object_t *obj)
 {
-    object *q_tmp;
+    object_t *q_tmp;
 
     q_tmp = get_object();
     copy_object(obj, q_tmp);
@@ -115,14 +120,14 @@ static inline object *add_quest_item(object *target, object *obj)
  * items which will be added when the next quest step is triggered.
  * (most times from a quest script)
  */
-static inline object *add_one_drop_quest_item(object *target, object *obj)
+static inline object_t *add_one_drop_quest_item(object_t *target, object_t *obj)
 {
-    object *qt;
+    object_t *qt;
 
     /* only mark the item as "real" one drop if it has the flag */
     if(QUERY_FLAG(obj, FLAG_ONE_DROP))
     {
-        object *qc;
+        object_t *qc;
 
         if (!CONTR(target)->quest_one_drop)
             add_quest_containers(target);
@@ -150,7 +155,7 @@ static inline object *add_one_drop_quest_item(object *target, object *obj)
     return qt;
 }
 
-void insert_quest_item(struct obj *quest_trigger, struct obj *target)
+void insert_quest_item(object_t *quest_trigger, object_t *target)
 {
     if (!target || target->type != PLAYER)
         return;
@@ -168,17 +173,18 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
 
         if(quest_trigger->item_level <= tmp_lev)
         {
-            object *tmp;
+            object_t *tmp,
+                   *next;
 
-            for (tmp = quest_trigger->inv; tmp; tmp = tmp->below)
+            FOREACH_OBJECT_IN_OBJECT(tmp, quest_trigger, next)
             {
                 if(!find_one_drop_quest_item(target, tmp))
                 {
-                    object *qt = add_one_drop_quest_item(target, tmp);
+                    object_t *qt = add_one_drop_quest_item(target, tmp);
 
                     if (qt)
                     {
-                        new_draw_info(NDI_UNIQUE | NDI_NAVY | NDI_VIM, 0, target, "You found the %s drop %s!",
+                        ndi(NDI_UNIQUE | NDI_NAVY | NDI_VIM, 0, target, "You found the %s drop %s!",
                             (QUERY_FLAG(qt, FLAG_ONE_DROP)) ? "one" : "special",
                             query_name(qt, target, ARTICLE_NONE, 0));
                         play_sound_player_only(CONTR(target), SOUND_LEVEL_UP,
@@ -190,20 +196,22 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
     }
     else /* check the real quest stuff */
     {
-        object *tmp, *quest;
+        object_t *quest;
 
         if ((quest = find_quest_trigger(target, quest_trigger)) &&
             quest->magic != (sint8)quest_trigger->last_heal)
         {
-            char buf[MEDIUM_BUF] = "";
+            object_t *tmp,
+                   *next;
+            char    buf[MEDIUM_BUF] = "";
 
             quest->magic = (sint8)quest_trigger->last_heal;
 
             if(quest_trigger->msg)
-                new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, target, "%s",
+                ndi(NDI_UNIQUE | NDI_ORANGE, 0, target, "%s",
                               quest_trigger->msg);
 
-            for (tmp = quest->inv; tmp; tmp = tmp->below)
+            FOREACH_OBJECT_IN_OBJECT(tmp, quest, next)
             {
                 if(!find_quest_item(target, tmp))
                 {
@@ -224,10 +232,10 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
 }
 
 /* TODO: Temp function. Will do better in SEQSy */
-static inline void remove_quest_items(player *pl, object *op)
+static inline void remove_quest_items(player_t *pl, object_t *op)
 {
     int     nrof = (op->nrof) ? op->nrof : 1;
-    object *tmp;
+    object_t *tmp;
 
     while (nrof &&
            (tmp = find_quest_item(pl->ob, op)))
@@ -245,9 +253,9 @@ static inline void remove_quest_items(player *pl, object *op)
  * IMPORTANT! don't call this function BEFORE the player has been send to his
  * first fix_player() or we will double the containers.
  */
-void add_quest_containers(struct obj *op)
+void add_quest_containers(object_t *op)
 {
-    player *pl;
+    player_t *pl;
 
     if(op->type != PLAYER)
         return;
@@ -296,9 +304,9 @@ void add_quest_containers(struct obj *op)
 /* be sure trigger has the right settings which kind of trigger it is,
  * or the insert will FAIL.
  */
-void add_quest_trigger(struct obj *who, struct obj *trigger)
+void add_quest_trigger(object_t *who, object_t *trigger)
 {
-    player *pl;
+    player_t *pl;
 
     if (!trigger || trigger->type != TYPE_QUEST_TRIGGER)
     {
@@ -344,9 +352,9 @@ void add_quest_trigger(struct obj *who, struct obj *trigger)
  * 0 means the quest can be done once).
  * trigger->stats.food is the number of repeats left. When it reaches -1, the
  * quest is not repeatable. */
-void set_quest_status(struct obj *trigger, int q_status, int q_type)
+void set_quest_status(object_t *trigger, int q_status, int q_type)
 {
-    object *who = is_player_inv(trigger);
+    object_t *who = is_player_inv(trigger);
 
     if(!who)
     {
@@ -362,7 +370,7 @@ void set_quest_status(struct obj *trigger, int q_status, int q_type)
 
     if(trigger->stats.food == -1)
     {
-        object *target = NULL;
+        object_t *target = NULL;
 
         if (q_type == ST1_QUEST_TRIGGER_ITEM)
         {
@@ -378,7 +386,7 @@ void set_quest_status(struct obj *trigger, int q_status, int q_type)
             if (target->type == TYPE_QUEST_INFO ||
                 target->type == TYPE_QUEST_TRIGGER)
             {
-                object *item = target->inv;
+                object_t *item = target->inv;
 
                 for (; item; item = item->below)
                 {
@@ -395,7 +403,7 @@ void set_quest_status(struct obj *trigger, int q_status, int q_type)
     }
     else if (trigger->stats.food < trigger->last_eat)
     {
-        object *target = NULL;
+        object_t *target = NULL;
 
         if (q_type == ST1_QUEST_TRIGGER_ITEM)
         {
@@ -411,7 +419,7 @@ void set_quest_status(struct obj *trigger, int q_status, int q_type)
             if (target->type == TYPE_QUEST_INFO ||
                 target->type == TYPE_QUEST_TRIGGER)
             {
-                object *item = target->inv;
+                object_t *item = target->inv;
 
                 for (; item; item = item->below)
                 {
@@ -445,9 +453,10 @@ void set_quest_status(struct obj *trigger, int q_status, int q_type)
  * Additionally, where a quest has been done but is still repeatable, QSTAT_NO
  * is returned. Again, this does not imply actual eligibility, it just
  * differentiates the return from QSTAT_DONE. */
-int quest_get_active_status(player *pl, object *trigger)
+int quest_get_active_status(player_t *pl, object_t *trigger)
 {
-    object *this;
+    object_t *this,
+           *next;
 
     /* (1) Check that the quest is known to the player at all (that means he is
      * doing or has done it). */
@@ -513,7 +522,7 @@ int quest_get_active_status(player *pl, object *trigger)
          * targets (the current number is in ->level, the total is in
          * ->last_sp). */
         case ST1_QUEST_TRIGGER_KILL:
-        for (this = trigger->inv; this; this = this->below)
+        FOREACH_OBJECT_IN_OBJECT(this, trigger, next)
         {
             if (this->type != TYPE_QUEST_UPDATE &&
                 this->level < this->last_sp)
@@ -530,9 +539,9 @@ int quest_get_active_status(player *pl, object *trigger)
          * inv compared to the required number. */
         case ST1_QUEST_TRIGGER_KILL_ITEM:
         case ST1_QUEST_TRIGGER_ITEM:
-        for (this = trigger->inv; this; this = this->below)
+        FOREACH_OBJECT_IN_OBJECT(this, trigger, next)
         {
-            object *item = (trigger->sub_type1 == ST1_QUEST_TRIGGER_KILL_ITEM) ?
+            object_t *item = (trigger->sub_type1 == ST1_QUEST_TRIGGER_KILL_ITEM) ?
                 this->inv : this;
 
             if (this->type != TYPE_QUEST_UPDATE &&
@@ -552,11 +561,11 @@ int quest_get_active_status(player *pl, object *trigger)
     return QSTAT_SOLVED;
 }
 
-int update_quest(struct obj *trigger, uint8 subtype, struct obj *info, char *text, char *vim)
+int update_quest(object_t *trigger, uint8 subtype, object_t *info, char *text, char *vim)
 {
-    player        *pl;
-    object        *ob;
-    timeanddate_t  tad;
+    object_t    *ob;
+    player_t    *pl;
+    map_t *m;
 
     /* The trigger must be in a player's quest container. */
     if (!(ob = is_player_inv(trigger)) ||
@@ -584,8 +593,10 @@ int update_quest(struct obj *trigger, uint8 subtype, struct obj *info, char *tex
      * update. Non-arbitraries overwrite the previous update. */
     if (subtype != ST1_QUEST_UPDATE_ARBITRARY)
     {
+        object_t *next;
+
         /* Remove the first (therefore only) exact match update. */
-        for (ob = trigger->inv; ob; ob = ob->below)
+        FOREACH_OBJECT_IN_OBJECT(ob, trigger, next)
         {
             if (ob->type == TYPE_QUEST_UPDATE &&
                 ob->sub_type1 == subtype &&
@@ -660,8 +671,9 @@ int update_quest(struct obj *trigger, uint8 subtype, struct obj *info, char *tex
 
     /* Give the update a timestamp, write text to it, and insert it in
      * trigger. */
-    get_tad(&tad, 0);
-    ob->custom_attrset = print_tad(&tad, TAD_SHOWTIME | TAD_SHOWDATE);
+    m = parent_map(pl->ob);
+    get_tad(m->tadnow, m->tadoffset);
+    ob->custom_attrset = print_tad(m->tadnow, TAD_SHOWTIME | TAD_SHOWDATE);
     FREE_AND_COPY_HASH(ob->msg, (text) ? text : vim);
     insert_ob_in_ob(ob, trigger);
 
@@ -669,7 +681,7 @@ int update_quest(struct obj *trigger, uint8 subtype, struct obj *info, char *tex
     SET_FLAG(trigger, FLAG_BLIND);
 
     /* Notify player that a quest has been updated. */
-    new_draw_info(NDI_UNIQUE | NDI_NAVY | NDI_VIM, 0, pl->ob,
+    ndi(NDI_UNIQUE | NDI_NAVY | NDI_VIM, 0, pl->ob,
                          "Quest updated!\n%s", vim);
     play_sound_player_only(pl, SOUND_LEVEL_UP, SOUND_NORMAL, 0, 0);
 
@@ -681,18 +693,22 @@ int update_quest(struct obj *trigger, uint8 subtype, struct obj *info, char *tex
  * quest_trigger.
  * NOTE: Be sure you checked quests_type_kill before!
  */
-void check_kill_quest_event(struct obj *pl, struct obj *op)
+void check_kill_quest_event(object_t *pl, object_t *op)
 {
-    object *tmp, *tmp_info;
+    object_t *tmp,
+           *next;
 
     if (!CONTR(pl)->quests_type_kill)
         add_quest_containers(pl);
 
     /* browse the quest triggers */
-    for (tmp = CONTR(pl)->quests_type_kill->inv; tmp; tmp = tmp->below)
+    FOREACH_OBJECT_IN_OBJECT(tmp, CONTR(pl)->quests_type_kill, next)
     {
+        object_t *tmp_info,
+               *next2;
+
         /* inside the quest triggers are quest_info object with the kill info */
-        for(tmp_info=tmp->inv;tmp_info;tmp_info=tmp_info->below)
+        FOREACH_OBJECT_IN_OBJECT(tmp_info, tmp, next2)
         {
             if ((!tmp_info->race || tmp_info->race == op->arch->name) &&
                 (!tmp_info->name || tmp_info->name == tmp_info->arch->name || tmp_info->name == op->name) &&
@@ -720,7 +736,7 @@ void check_kill_quest_event(struct obj *pl, struct obj *op)
                     }
                     else
                     {
-                        object *newob;
+                        object_t *newob;
 
                         /* don't give out more as needed items */
                         nrof = get_nrof_quest_item(pl, tmp_info->inv->arch->name, tmp_info->inv->name, tmp_info->inv->title);
@@ -763,12 +779,13 @@ void check_kill_quest_event(struct obj *pl, struct obj *op)
  * Its automatically given and/or looking for a quest_trigger of
  * the player
  */
-void check_cont_quest_event(struct obj *pl, struct obj *sack)
+void check_cont_quest_event(object_t *pl, object_t *sack)
 {
-    object *tmp;
+    object_t *tmp,
+           *next;
 
-    /* lets browse the inventory of the container for quest_trigger object */
-    for(tmp=sack->inv;tmp;tmp=tmp->below)
+    /* lets browse the inventory of the container for quest_trigger object_t */
+    FOREACH_OBJECT_IN_OBJECT(tmp, sack, next)
     {
         if(tmp->type ==TYPE_QUEST_TRIGGER && (tmp->sub_type1 == ST1_QUEST_TRIGGER_NORMAL ||
                     tmp->sub_type1 == ST1_QUEST_TRIGGER_ITEM))
@@ -777,12 +794,13 @@ void check_cont_quest_event(struct obj *pl, struct obj *sack)
 }
 
 /* recursive check the (legal, non hidden with containers) inventory for nrof of an item */
-uint32 get_nrof_quest_item(const struct obj *target, const char *aname, const char *name, const char *title)
+uint32 get_nrof_quest_item(const object_t *target, const char *aname, const char *name, const char *title)
 {
-    int nrof = 0;
-    object *tmp;
+    object_t *tmp,
+           *next;
+    uint32  nrof = 0;
 
-    for (tmp = target->inv; tmp; tmp = tmp->below)
+    FOREACH_OBJECT_IN_OBJECT(tmp, target, next)
     {
         if(QUERY_FLAG(tmp, FLAG_SYS_OBJECT)) /* search only "real" inventory */
             continue;
@@ -796,17 +814,18 @@ uint32 get_nrof_quest_item(const struct obj *target, const char *aname, const ch
 }
 
 /* lets find a quest with name */
-struct obj *quest_find_name(const struct obj *pl, const char *name)
+object_t *quest_find_name(const object_t *pl, const char *name)
 {
-    struct obj *tmp;
-    const char *namehash = find_string(name);
+    object_t *tmp,
+           *next;
+    shstr_t  *namehash = find_string(name);
 
     if(!namehash) /* unknown name = no quest known */
         return NULL;
 
     if (CONTR(pl)->quests_type_normal)
     {
-        for (tmp = CONTR(pl)->quests_type_normal->inv; tmp; tmp = tmp->below)
+        FOREACH_OBJECT_IN_OBJECT(tmp, CONTR(pl)->quests_type_normal, next)
         {
             if(tmp->name == namehash)
                 return tmp;
@@ -816,7 +835,7 @@ struct obj *quest_find_name(const struct obj *pl, const char *name)
 
     if (CONTR(pl)->quests_type_kill)
     {
-        for (tmp = CONTR(pl)->quests_type_kill->inv; tmp; tmp = tmp->below)
+        FOREACH_OBJECT_IN_OBJECT(tmp, CONTR(pl)->quests_type_kill, next)
         {
             if(tmp->name == namehash)
                 return tmp;
@@ -826,7 +845,7 @@ struct obj *quest_find_name(const struct obj *pl, const char *name)
 
     if (CONTR(pl)->quests_done)
     {
-        for (tmp = CONTR(pl)->quests_done->inv; tmp; tmp = tmp->below)
+        FOREACH_OBJECT_IN_OBJECT(tmp, CONTR(pl)->quests_done, next)
         {
             if(tmp->name == namehash)
                 return tmp;
@@ -838,29 +857,36 @@ struct obj *quest_find_name(const struct obj *pl, const char *name)
 }
 
 /* count all open (pending) quests */
-int quest_count_pending(const struct obj *pl)
+int quest_count_pending(const object_t *pl)
 {
-    struct obj *tmp;
-    int qc=0;
+    int     qc = 0;
+    object_t *tmp,
+           *next;
 
     if (CONTR(pl)->quests_type_normal)
     {
-        for (tmp = CONTR(pl)->quests_type_normal->inv; tmp; tmp = tmp->below, qc++)
-            ;
+        FOREACH_OBJECT_IN_OBJECT(tmp, CONTR(pl)->quests_type_normal, next)
+        {
+            qc++;
+        }
     }
+
     if (CONTR(pl)->quests_type_kill)
     {
-        for (tmp = CONTR(pl)->quests_type_kill->inv; tmp; tmp = tmp->below, qc++)
-            ;
+        FOREACH_OBJECT_IN_OBJECT(tmp, CONTR(pl)->quests_type_kill, next)
+        {
+            qc++;
+        }
     }
 
     return qc;
 }
 
 /* send quest list for player op */
-void send_quest_list(struct obj *pl)
+void send_quest_list(object_t *pl)
 {
-    struct obj *tmp;
+    object_t *tmp,
+           *next;
     int count = 0;
     char buf[HUGE_BUF];
 
@@ -868,7 +894,7 @@ void send_quest_list(struct obj *pl)
 
     if (CONTR(pl)->quests_type_normal)
     {
-        for (tmp = CONTR(pl)->quests_type_normal->inv; tmp; tmp = tmp->below)
+        FOREACH_OBJECT_IN_OBJECT(tmp, CONTR(pl)->quests_type_normal, next)
         {
             char tmp_buf[8];
 
@@ -894,7 +920,7 @@ void send_quest_list(struct obj *pl)
 
     if (CONTR(pl)->quests_type_kill)
     {
-        for (tmp = CONTR(pl)->quests_type_kill->inv; tmp; tmp = tmp->below)
+        FOREACH_OBJECT_IN_OBJECT(tmp, CONTR(pl)->quests_type_kill, next)
         {
             char tmp_buf[8];
 
@@ -926,14 +952,15 @@ void send_quest_list(struct obj *pl)
 }
 
 /* helper function - return a quest object which is #x of the players quests */
-static inline struct obj * find_quest_nr(struct obj *pl, int tag, char *cmd)
+static inline object_t * find_quest_nr(object_t *pl, int tag, char *cmd)
 {
-    struct obj *tmp;
+    object_t *tmp,
+           *next;
     int count = 0;
 
     if (CONTR(pl)->quests_type_normal)
     {
-        for (tmp = CONTR(pl)->quests_type_normal->inv; tmp; tmp = tmp->below)
+        FOREACH_OBJECT_IN_OBJECT(tmp, CONTR(pl)->quests_type_normal, next)
         {
             if(tag == ++count)
                 return tmp;
@@ -942,7 +969,7 @@ static inline struct obj * find_quest_nr(struct obj *pl, int tag, char *cmd)
 
     if (CONTR(pl)->quests_type_kill)
     {
-        for (tmp = CONTR(pl)->quests_type_kill->inv; tmp; tmp = tmp->below)
+        FOREACH_OBJECT_IN_OBJECT(tmp, CONTR(pl)->quests_type_kill, next)
         {
             if(tag == ++count)
                 return tmp;
@@ -953,15 +980,18 @@ static inline struct obj * find_quest_nr(struct obj *pl, int tag, char *cmd)
     return NULL;
 }
 
-void quest_list_command(struct obj *pl, char *cmd)
+void quest_list_command(object_t *pl, char *cmd)
 {
+    object_t *quest,
+           *tmp,
+           *next;
+
     if(!pl || cmd == '\0')
         return;
 
     if(*cmd == 'd') /* player ask for deleting a quest */
     {
         int nr = atoi(cmd+1);
-        struct obj *quest;
 
         if ((quest = find_quest_nr(pl, nr, cmd)))
         {
@@ -977,24 +1007,22 @@ void quest_list_command(struct obj *pl, char *cmd)
     else if(*cmd == 'x') /* player has confirmed to skip a quest */
     {
         int nr = atoi(cmd+1);
-        struct obj *quest = find_quest_nr(pl, nr, cmd);
 
-        if(quest)
+        if ((quest = find_quest_nr(pl, nr, cmd)))
         {
-            new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, pl, "Quest '%s' removed from quest list!", quest->name);
+            ndi(NDI_UNIQUE | NDI_ORANGE, 0, pl, "Quest '%s' removed from quest list!", quest->name);
             remove_ob(quest);
             send_quest_list(pl);
         }
     }
     else if(*cmd == 's') /* show a quest */
     {
-        int     nr = atoi(cmd+1);
-        object *quest;
+        int nr = atoi(cmd+1);
 
         if ((quest = find_quest_nr(pl, nr, cmd)))
         {
             char    buf[HUGE_BUF];
-            object *update;
+            object_t *update;
 
             sprintf(buf, "%s<at=\"List quests\"c=\"l\"><dt=\"Skip quest\"c=\"d%d\"><mt=\"%s\"",
                     (quest->msg) ? quest->msg : "", nr,
@@ -1003,14 +1031,13 @@ void quest_list_command(struct obj *pl, char *cmd)
             /* now create the status block lines */
             if(quest->sub_type1 == ST1_QUEST_TRIGGER_ITEM)
             {
-                uint32 c;
+                uint32  c;
 
-                object *tmp;
                 sprintf(strchr(buf, '\0'), "b=\"|Quest status:| %s\n",
                         (quest_get_active_status(CONTR(pl), quest) == QSTAT_SOLVED) ?
                         "|Complete!|" : "Incomplete");
 
-                for (tmp = quest->inv; tmp; tmp = tmp->below)
+                FOREACH_OBJECT_IN_OBJECT(tmp, quest, next)
                 {
                     if (tmp->type == TYPE_QUEST_UPDATE)
                     {
@@ -1031,13 +1058,11 @@ void quest_list_command(struct obj *pl, char *cmd)
             }
             else if(quest->sub_type1 == ST1_QUEST_TRIGGER_KILL)
             {
-                object *tmp;
-
                 sprintf(strchr(buf, '\0'), "b=\"|Quest status:| %s\n",
                         (quest_get_active_status(CONTR(pl), quest) == QSTAT_SOLVED) ?
                         "|Complete!|" : "Incomplete");
 
-                for (tmp = quest->inv; tmp; tmp = tmp->below)
+                FOREACH_OBJECT_IN_OBJECT(tmp, quest, next)
                 {
                     if (tmp->type == TYPE_QUEST_UPDATE)
                     {
@@ -1058,14 +1083,13 @@ void quest_list_command(struct obj *pl, char *cmd)
             }
             else if(quest->sub_type1 == ST1_QUEST_TRIGGER_KILL_ITEM)
             {
-                uint32 c;
-                object *tmp;
+                uint32  c;
 
                 sprintf(strchr(buf, '\0'), "b=\"|Quest status:| %s\n",
                         (quest_get_active_status(CONTR(pl), quest) == QSTAT_SOLVED) ?
                         "|Complete!|" : "Incomplete");
 
-                for (tmp = quest->inv; tmp; tmp = tmp->below)
+                FOREACH_OBJECT_IN_OBJECT(tmp, quest, next)
                 {
                     if (tmp->type == TYPE_QUEST_UPDATE)
                     {
@@ -1096,7 +1120,7 @@ void quest_list_command(struct obj *pl, char *cmd)
 
             strcat(buf, "\n\">");
 
-            for (update = quest->inv; update; update = update->below)
+            FOREACH_OBJECT_IN_OBJECT(update, quest, next)
             {
                 if (update->type != TYPE_QUEST_UPDATE)
                 {

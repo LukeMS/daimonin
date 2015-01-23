@@ -300,13 +300,13 @@ void account_send_client(NewSocket *ns, int stats)
  * (we also remove name from account - in this case the player name should be blocked which
  * will effect a newchar with that name but did no harm)
  */
-account_status account_delete_player(NewSocket *ns, shstr *name)
+account_status account_delete_player(NewSocket *ns, shstr_t *name)
 {
     Account *ac = &ns->pl_account;
     int i, ret = ACCOUNT_STATUS_EXISTS;
     char ac_fname[MEDIUM_BUF], pl_fname[MEDIUM_BUF];
     struct timeval   now;
-    player *ptmp = first_player;
+    player_t *ptmp = first_player;
 
     /* first, lets check we have that name in our account - in any case we remove it
      * from the account!
@@ -365,9 +365,9 @@ account_status account_delete_player(NewSocket *ns, shstr *name)
     return ret;
 }
 
-Account *account_get_from_object(object *op)
+Account *account_get_from_object(object_t *op)
 {
-    player    *pl;
+    player_t    *pl;
     NewSocket *ns;
     Account   *ac;
 
@@ -384,10 +384,10 @@ Account *account_get_from_object(object *op)
     return ac;
 }
 
-int account_update(Account *ac, object *op)
+int account_update(Account *ac, object_t *op)
 {
     int        i;
-    object    *force;
+    object_t    *force;
     int        drain_level = 0;
 
     if (!ac)
@@ -437,7 +437,7 @@ Account *find_account(char *acname)
  */
 Account *find_account_hash(const char *acname)
 {
-    player *pl;
+    player_t *pl;
 
     if(acname)
     {

@@ -34,8 +34,8 @@ typedef struct artifactstruct
     const char             *name;            /* thats the fake arch name when chained to arch list */
     const char             *def_at_name;    /* we use it as marker for def_at is valid and quick name access */
     struct artifactstruct  *next;
-    linked_char            *allowed;
-    archetype               def_at;            /* thats the base archtype object - this is chained to arch list */
+    shstr_linked_t            *allowed;
+    archetype_t               def_at;            /* thats the base archetype_type object - this is chained to arch list */
     int                     t_style;
     uint16                  chance;
     uint8                   difficulty;

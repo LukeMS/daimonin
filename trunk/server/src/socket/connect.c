@@ -106,7 +106,7 @@ void InitConnection(NewSocket *ns, char *ip)
 
     ns->pwd_try=0;
 
-    memset(&ns->lastmap, 0, sizeof(struct Map));
+    memset(&ns->lastmap, 0, sizeof(view_map_t));
 
     strcpy(ns->ip_host, ip);
 

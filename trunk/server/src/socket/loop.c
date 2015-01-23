@@ -454,7 +454,7 @@ static int socket_prepare_commands(NewSocket *ns) // use this for debugging
 /* the socket is marked as "dead" - means we drop the connection and
  * auto-remove/logout the player
  */
-void remove_ns_dead_player(player *pl)
+void remove_ns_dead_player(player_t *pl)
 {
 
     LOG(llevDebug, "remove_ns_dead_player(%s): state:%d gmaster:%d g_status:%d\n", STRING_OBJ_NAME(pl->ob),pl->state,
@@ -474,7 +474,7 @@ void remove_ns_dead_player(player *pl)
             gmaster_list_GM ||
             gmaster_list_SA)
         {
-            objectlink *ol;
+            objectlink_t *ol;
             char        buf[SMALL_BUF];
 
             sprintf(buf, "%s leaves the game (%d still playing).",
@@ -482,17 +482,17 @@ void remove_ns_dead_player(player *pl)
 
             for (ol = gmaster_list_VOL; ol; ol = ol->next)
             {
-                new_draw_info(NDI_UNIQUE, 0, ol->objlink.ob, "%s", buf);
+                ndi(NDI_UNIQUE, 0, ol->objlink.ob, "%s", buf);
             }
 
             for (ol = gmaster_list_GM; ol; ol = ol->next)
             {
-                new_draw_info(NDI_UNIQUE, 0, ol->objlink.ob, "%s", buf);
+                ndi(NDI_UNIQUE, 0, ol->objlink.ob, "%s", buf);
             }
 
             for (ol = gmaster_list_SA; ol; ol = ol->next)
             {
-                new_draw_info(NDI_UNIQUE, 0, ol->objlink.ob, "%s", buf);
+                ndi(NDI_UNIQUE, 0, ol->objlink.ob, "%s", buf);
             }
         }
 
@@ -522,7 +522,7 @@ void remove_ns_dead_player(player *pl)
 static int check_ip_ban(NewSocket *sock, char *ip)
 {
     int         count, i;
-    player      *next_tmp, *pl, *ptmp = NULL;
+    player_t      *next_tmp, *pl, *ptmp = NULL;
 
     /* lets first check sensless connected sockets
      * from same IP.
@@ -625,7 +625,7 @@ void doeric_server(int update, struct timeval *timeout)
     struct sockaddr_storage addr;
 #endif
     unsigned int        addrlen = sizeof(addr);
-    player                     *pl, *next;
+    player_t                     *pl, *next;
 
     /* would it not be possible to use FD_CLR too and avoid the
      * reseting every time?
@@ -670,7 +670,7 @@ void doeric_server(int update, struct timeval *timeout)
     {
         if (pl->socket.status == Ns_Dead)
         {
-            player *npl = pl->next;
+            player_t *npl = pl->next;
 
             remove_ns_dead_player(pl);
             pl = npl;
@@ -686,11 +686,11 @@ void doeric_server(int update, struct timeval *timeout)
                     {
                         pl->socket.login_count = ROUND_TAG + pticks_player_idle2;
                         pl->socket.idle_flag = 1;
-                        new_draw_info(NDI_UNIQUE | NDI_RED, 0, pl->ob, "8 minutes idle warning! Server will disconnect you in 2 minutes.");
+                        ndi(NDI_UNIQUE | NDI_RED, 0, pl->ob, "8 minutes idle warning! Server will disconnect you in 2 minutes.");
                     }
                     else if (pl->socket.login_count < ROUND_TAG)
                     {
-                        new_draw_info(NDI_UNIQUE | NDI_RED, 0, pl->ob, "Max idle time reached! Server is closing connection.");
+                        ndi(NDI_UNIQUE | NDI_RED, 0, pl->ob, "Max idle time reached! Server is closing connection.");
                         pl->socket.login_count = ROUND_TAG + pticks_player_idle1;
                         pl->socket.status = Ns_Zombie; /* we hold the socket open for a *bit* */
                         pl->socket.idle_flag = 1;
@@ -704,7 +704,7 @@ void doeric_server(int update, struct timeval *timeout)
             {
                 if (pl->socket.login_count < ROUND_TAG) /* time to kill! */
                 {
-                    player *npl = pl->next;
+                    player_t *npl = pl->next;
                     pl->socket.status = Ns_Dead;
                     remove_ns_dead_player(pl);  /* or player has left game */
                     pl = npl;
@@ -859,7 +859,7 @@ void doeric_server(int update, struct timeval *timeout)
                             pl->update_skills = 0;
                         }
 
-                        draw_client_map(pl->ob);
+                        draw_client_map(pl);
                     }
 
                     if (FD_ISSET(pl->socket.fd, &tmp_write))

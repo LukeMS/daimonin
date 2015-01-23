@@ -23,17 +23,13 @@
     The author can be reached via e-mail to info@daimonin.org
 */
 
-#include <global.h>
-#include <math.h>
-
+#include "global.h"
 
 /* Distance must be less than this for the object to be blocked.
  * An object is 1.0 wide, so if set to 0.5, it means the object
  * that blocks half the view (0.0 is complete block) will
  * block view in our tables.
- * .4 or less lets you see through walls.  .5 is about right.
- */
-
+ * .4 or less lets you see through walls.  .5 is about right. */
 #define SPACE_BLOCK 0.5
 
 typedef struct blstr
@@ -42,165 +38,11 @@ typedef struct blstr
     int             index;
 } blocks;
 
-static blocks   block[MAP_CLIENT_X][MAP_CLIENT_Y];
+static blocks block[MAP_CLIENT_X][MAP_CLIENT_Y];
 
-/* lightning system */
-#define MAX_MASK_SIZE 81
-#define NR_LIGHT_MASK 10
-#define MAX_LIGHT_SOURCE 13
+inline void clear_los(object_t *op);
 
-static int      lmask_x[MAX_MASK_SIZE]                      =
-{
-    0, 0, 1, 1, 1, 0, -1, -1, -1, 0, 1, 2, 2, 2, 2, 2, 1, 0, -1, -2, -2, -2, -2, -2, -1, 0, 1, 2, 3, 3, 3, 3, 3, 3, 3,
-    2, 1, 0, -1, -2, -3, -3, -3, -3, -3, -3, -3, -2, -1, 0, 1, 2, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 2, 1, 0, -1, -2, -3,
-    -4, -4, -4, -4, -4, -4, -4, -4, -4, -3, -2, -1
-};
-static int      lmask_y[MAX_MASK_SIZE]                      =
-{
-    0, -1, -1, 0, 1, 1, 1, 0, -1, -2, -2, -2, -1, 0, 1, 2, 2, 2, 2, 2, 1, 0, -1, -2, -2, -3, -3, -3, -3, -2, -1, 0, 1,
-    2, 3, 3, 3, 3, 3, 3, 3, 2, 1, 0, -1, -2, -3, -3, -3, 4, 4, 4, 4, 4, 3, 2, 1, 0, -1, -2, -3, -4, -4, -4, -4, -4, -4,
-    -4, -4, -4, -3, -2, -1, 0, 1, 2, 3, 4, 4, 4, 4
-};
-
-
-static int      light_mask[MAX_LIGHT_SOURCE + 1]            =
-{
-    0, 1, 2, 3, 4, 5, 6, 6, 7, 7, 8, 8, 8, 9
-};
-
-static int      light_mask_width[NR_LIGHT_MASK]             =
-{
-    0, 1, 2, 2, 3, 3, 3, 4, 4, 4
-};
-
-static int      light_mask_size[NR_LIGHT_MASK]              =
-{
-    0, 9, 25, 25, 49, 49, 49, 81, 81, 81
-};
-
-static int      light_masks[NR_LIGHT_MASK][MAX_MASK_SIZE]   =
-{
-    {0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    }, {40,
-    20,20,20,20,20,20,20,20,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    }, {80,
-    40,40,40,40,40,40,40,40,
-    20,20,20,20,20,20,20,20,
-    20,20,20,20,20,20,20,20,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    }, {160,
-    80,80,80,80,80,80,80,80,
-    40,40,40,40,40,40,40,40,
-    40,40,40,40,40,40,40,40,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    }, {160,
-
-    80,80,80,80,80,80,80,80,
-
-    40,40,40,40,40,40,40,40,
-    40,40,40,40,40,40,40,40,
-
-    20,20,20,20,20,20,20,20,
-    20,20,20,20,20,20,20,20,
-    20,20,20,20,20,20,20,20,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    }, {320,
-    160,160,160,160,160,160,160,160,
-    80,80,80,80,80,80,80,80,
-    80,80,80,80,80,80,80,80,
-
-    40,40,40,40,40,40,40,40,
-    40,40,40,40,40,40,40,40,
-    40,40,40,40,40,40,40,40,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    }, {320,
-    160,160,160,160,160,160,160,160,
-    80,80,80,80,80,80,80,80,
-    80,80,80,80,80,80,80,80,
-
-    40,40,40,40,40,40,40,40,
-    40,40,40,40,40,40,40,40,
-    40,40,40,40,40,40,40,40,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    }, {320,
-
-    160,160,160,160,160,160,160,160,
-    80,80,80,80,80,80,80,80,
-    80,80,80,80,80,80,80,80,
-
-    40,40,40,40,40,40,40,40,
-    40,40,40,40,40,40,40,40,
-    40,40,40,40,40,40,40,40,
-    20,20,20,20,20,20,20,20,
-    20,20,20,20,20,20,20,20,
-    20,20,20,20,20,20,20,20,
-    20,20,20,20,20,20,20,20,
-    }, {640,
-    320,320,320,320,320,320,320,320,
-    160,160,160,160,160,160,160,160,
-    160,160,160,160,160,160,160,160,
-    80,80,80,80,80,80,80,80,
-    80,80,80,80,80,80,80,80,
-    80,80,80,80,80,80,80,80,
-    40,40,40,40,40,40,40,40,
-    40,40,40,40,40,40,40,40,
-    40,40,40,40,40,40,40,40,
-    40,40,40,40,40,40,40,40,
-    }, {1280,
-    640,640,640,640,640,640,640,640,
-    160,160,160,160,160,160,160,160,
-    160,160,160,160,160,160,160,160,
-    80,80,80,80,80,80,80,80,
-    80,80,80,80,80,80,80,80,
-    80,80,80,80,80,80,80,80,
-    40,40,40,40,40,40,40,40,
-    40,40,40,40,40,40,40,40,
-    40,40,40,40,40,40,40,40,
-    40,40,40,40,40,40,40,40,
-    }
-};
-
-inline void    clear_los(object *op);
+static void SetWall(player_t *pl, int x, int y);
 
 /*
  * initialises the array used by the LOS routines.
@@ -320,141 +162,20 @@ void set_block(int x, int y, int bx, int by)
 #endif
 }
 
-
-
-
-/*
- * Used to initialise the array used by the LOS routines.
- * x,y are indexes into the blocked[][] array.
- * This recursively sets the blocked line of sight view.
- * From the blocked[][] array, we know for example
- * that if some particular space is blocked, it blocks
- * the view of the spaces 'behind' it, and those blocked
- * spaces behind it may block other spaces, etc.
- * In this way, the chain of visibility is set.
- */
-
-static void set_wall(object *op, int x, int y)
+/* update_los() recalculates the array which specifies what is
+ * visible for the given player-object. */
+void update_los(object_t *op)
 {
-    int i, xt, yt;
-
-    xt = (MAP_CLIENT_X - CONTR(op)->socket.mapx) / 2;
-    yt = (MAP_CLIENT_Y - CONTR(op)->socket.mapy) / 2;
-
-    for (i = 0; i < block[x][y].index; i++)
-    {
-        int dx = block[x][y].                               x[i], dy = block[x][y].y[i], ax, ay;
-
-        /* ax, ay are the values as adjusted to be in the
-         * socket look structure.
-         */
-        ax = dx - xt;
-        ay = dy - yt;
-
-        if (ax < 0 || ax >= CONTR(op)->socket.mapx || ay < 0 || ay >= CONTR(op)->socket.mapy)
-            continue;
-#if 0
-    LOG(llevInfo ,"blocked %d %d -> %d %d\n",dx, dy, ax, ay);
-#endif
-        /* we need to adjust to the fact that the socket
-         * code wants the los to start from the 0,0
-         * and not be relative to middle of los array.
-         */
-        if (!(CONTR(op)->blocked_los[ax][ay] & BLOCKED_LOS_OUT_OF_MAP))
-            CONTR(op)->blocked_los[ax][ay] |= BLOCKED_LOS_BLOCKED; /* this tile can't be seen */
-        set_wall(op, dx, dy);
-    }
-}
-
-/*
- * Used to initialise the array used by the LOS routines.
- * op is the object, x and y values based on MAP_CLIENT_X and Y.
- * this is because they index the blocked[][] arrays.
- */
-/* instead light values, blocked_los[][] now tells the client
- * update function what kind of tile we have: visible, sight blocked, blocksview trigger
- * or out of map.
- */
-static void check_wall(object *op, int x, int y)
-{
-    int ax, ay, flags;
-
-    /* ax, ay are coordinates as indexed into the look window */
-    ax = x - (MAP_CLIENT_X - CONTR(op)->socket.mapx) / 2;
-    ay = y - (MAP_CLIENT_Y - CONTR(op)->socket.mapy) / 2;
-
-    /* this skips the "edges" of view area, the border tiles.
-     * Naturally, this tiles can't block any view - there is
-     * nothing behind them.
-     */
-    if (!block[x][y].index)
-    {
-        /* to handle the "blocksview update" right, we give this special
-             * tiles a "never use it to trigger a los_update()" flag.
-             * blockview changes to this tiles will have no effect.
-             */
-        if (blocks_view(op->map, op->x + x - MAP_CLIENT_X / 2, op->y + y - MAP_CLIENT_Y / 2) & P_OUT_OF_MAP)
-            CONTR(op)->blocked_los[ax][ay] = BLOCKED_LOS_OUT_OF_MAP; /* mark the space as out_of_map */
-        else
-            CONTR(op)->blocked_los[ax][ay] |= BLOCKED_LOS_IGNORE; /* ignore means ignore for LOS */
-        return;
-    }
-
-
-    /* If the converted coordinates are outside the viewable
-     * area for the client, return now.
-     */
-    if (ax < 0 || ay < 0 || ax >= CONTR(op)->socket.mapx || ay >= CONTR(op)->socket.mapy)
-        return;
-
-    /*LOG(llevNoLog,"SET_LOS: %d,%d\n", ax,ay);*/
-    /* If this space is already blocked, prune the processing - presumably
-     * whatever has set this space to be blocked has done the work and already
-     * done the dependency chain.
-    * but check for out_of_map to speedup our client map draw function.
-     */
-    if (CONTR(op)->blocked_los[ax][ay] & (BLOCKED_LOS_BLOCKED | BLOCKED_LOS_OUT_OF_MAP))
-    {
-        if (CONTR(op)->blocked_los[ax][ay] & BLOCKED_LOS_BLOCKED)
-        {
-            if ((flags = blocks_view(op->map, op->x + x - MAP_CLIENT_X / 2, op->y + y - MAP_CLIENT_Y / 2)))
-            {
-                if (flags & P_OUT_OF_MAP)
-                    CONTR(op)->blocked_los[ax][ay] = BLOCKED_LOS_OUT_OF_MAP; /* mark the space as out_of_map */
-                else
-                    CONTR(op)->blocked_los[ax][ay] |= BLOCKED_LOS_BLOCKSVIEW;
-            }
-        }
-        return;
-    }
-
-#if 0
-    LOG(llevInfo ,"check_wall, ax,ay=%d, %d  x,y = %d, %d  blocksview = %d, %d\n",
-        ax, ay, x, y, op->x + x - MAP_CLIENT_X/2, op->y + y - MAP_CLIENT_Y/2);
-#endif
-
-    if ((flags = blocks_view(op->map, op->x + x - MAP_CLIENT_X / 2, op->y + y - MAP_CLIENT_Y / 2)))
-    {
-        set_wall(op, x, y);
-
-        /* out of map clears all other flags! */
-        if (flags & P_OUT_OF_MAP)
-            CONTR(op)->blocked_los[ax][ay] = BLOCKED_LOS_OUT_OF_MAP; /* mark the space as out_of_map */
-        else
-            CONTR(op)->blocked_los[ax][ay] |= BLOCKED_LOS_BLOCKSVIEW;
-    }
-}
-
-/*
- * update_los() recalculates the array which specifies what is
- * visible for the given player-object.
- */
-void update_los(object *op)
-{
-    int dx = CONTR(op)->socket. mapx_2, dy = CONTR(op)->socket.mapy_2, x, y;
+    player_t *pl = CONTR(op);
+    sint16  dx = pl->socket.mapx_2,
+            dy = pl->socket.mapy_2,
+            x,
+            y;
 
     if (QUERY_FLAG(op, FLAG_REMOVED))
+    {
         return;
+    }
 
 #ifdef DEBUG_CORE
     LOG(llevDebug, "LOS - %s\n", STRING_OBJ_NAME(op));
@@ -462,19 +183,87 @@ void update_los(object *op)
 
     clear_los(op);
 
-    if (IS_GMASTER_WIZPASS(op))
+    if (pl->gmaster_wizpass)
     {
         return;
     }
 
-    /* For larger maps, this is more efficient than the old way which
-     * used the chaining of the block array.  Since many space views could
-     * be blocked by different spaces in front, this mean that a lot of spaces
-     * could be examined multile times, as each path would be looked at.
-     */
-    for (x = (MAP_CLIENT_X - CONTR(op)->socket.mapx) / 2; x < (MAP_CLIENT_X + CONTR(op)->socket.mapx) / 2; x++)
-        for (y = (MAP_CLIENT_Y - CONTR(op)->socket.mapy) / 2; y < (MAP_CLIENT_Y + CONTR(op)->socket.mapy) / 2; y++)
-            check_wall(op, x, y);
+    for (x = (MAP_CLIENT_X - pl->socket.mapx) / 2; x < (MAP_CLIENT_X + pl->socket.mapx) / 2; x++)
+    {
+        for (y = (MAP_CLIENT_Y - pl->socket.mapy) / 2; y < (MAP_CLIENT_Y + pl->socket.mapy) / 2; y++)
+        {
+            map_t *m = op->map;
+            /* ax, ay are coordinates as indexed into the look window */
+            sint16     ax = x - (MAP_CLIENT_X - pl->socket.mapx) / 2,
+                       ay = y - (MAP_CLIENT_Y - pl->socket.mapy) / 2,
+                       x2 = op->x + x - MAP_CLIENT_X / 2,
+                       y2 = op->y + y - MAP_CLIENT_Y / 2;
+            msp_t  *msp = MSP_GET(m, x2, y2);
+
+            /* this skips the "edges" of view area, the border tiles.
+             * Naturally, this tiles can't block any view - there is
+             * nothing behind them. */
+            if (!block[x][y].index)
+            {
+                /* to handle the "blocksview update" right, we give this special
+                 * tiles a "never use it to trigger a los_update()" flag.
+                 * blockview changes to this tiles will have no effect. */
+                if (!msp)
+                {
+                    pl->blocked_los[ax][ay] = BLOCKED_LOS_OUT_OF_MAP;
+                }
+                else
+                {
+                    pl->blocked_los[ax][ay] |= BLOCKED_LOS_IGNORE;
+                }
+
+                continue;
+            }
+
+            /* If the converted coordinates are outside the viewable
+             * area for the client, return now. */
+            if (ax < 0 ||
+                ax >= pl->socket.mapx ||
+                ay < 0 ||
+                ay >= pl->socket.mapy)
+            {
+                continue;
+            }
+
+            /*LOG(llevNoLog,"SET_LOS: %d,%d\n", ax,ay);*/
+            /* If this space is already blocked, prune the processing - presumably
+             * whatever has set this space to be blocked has done the work and already
+             * done the dependency chain.
+             * but check for out_of_map to speedup our client map draw function. */
+            if (pl->blocked_los[ax][ay] & (BLOCKED_LOS_BLOCKED | BLOCKED_LOS_OUT_OF_MAP))
+            {
+                if (pl->blocked_los[ax][ay] & BLOCKED_LOS_BLOCKED)
+                {
+                    if (!msp)
+                    {
+                        pl->blocked_los[ax][ay] = BLOCKED_LOS_OUT_OF_MAP;
+                    }
+                    else if ((msp->flags & MSP_FLAG_BLOCKSVIEW))
+                    {
+                        pl->blocked_los[ax][ay] |= BLOCKED_LOS_BLOCKSVIEW;
+                    }
+                }
+
+                continue;
+            }
+
+            if (!msp)
+            {
+                SetWall(pl, x, y);
+                pl->blocked_los[ax][ay] = BLOCKED_LOS_OUT_OF_MAP;
+            }
+            else if ((msp->flags & MSP_FLAG_BLOCKSVIEW))
+            {
+                SetWall(pl, x, y);
+                pl->blocked_los[ax][ay] |= BLOCKED_LOS_BLOCKSVIEW;
+            }
+        }
+    }
 
     expand_sight(op);
 
@@ -483,15 +272,59 @@ void update_los(object *op)
      */
     if (QUERY_FLAG(op, FLAG_XRAYS))
     {
-        int x, y;
         for (x = -4; x <= 4; x++)
         {
             for (y = -4; y <= 4; y++)
             {
-                if (CONTR(op)->blocked_los[dx + x][dy + y] & BLOCKED_LOS_BLOCKED)
-                    CONTR(op)->blocked_los[dx + x][dy + y] &= ~BLOCKED_LOS_BLOCKED;
+                if (pl->blocked_los[dx + x][dy + y] & BLOCKED_LOS_BLOCKED)
+                    pl->blocked_los[dx + x][dy + y] &= ~BLOCKED_LOS_BLOCKED;
             }
         }
+    }
+}
+
+/* Used to initialise the array used by the LOS routines.
+ * x,y are indexes into the blocked[][] array.
+ * This recursively sets the blocked line of sight view.
+ * From the blocked[][] array, we know for example
+ * that if some particular space is blocked, it blocks
+ * the view of the spaces 'behind' it, and those blocked
+ * spaces behind it may block other spaces, etc.
+ * In this way, the chain of visibility is set. */
+static void SetWall(player_t *pl, int x, int y)
+{
+    sint32  i;
+    sint16  x2 = (MAP_CLIENT_X - pl->socket.mapx) / 2,
+            y2 = (MAP_CLIENT_Y - pl->socket.mapy) / 2;
+
+    for (i = 0; i < block[x][y].index; i++)
+    {
+        sint16 dx = block[x][y].x[i],
+               dy = block[x][y].y[i],
+               ax = dx - x2,
+               ay = dy - y2;
+
+        if (ax < 0 ||
+            ax >= pl->socket.mapx ||
+            ay < 0 ||
+            ay >= pl->socket.mapy)
+        {
+            continue;
+        }
+
+#if 0
+        LOG(llevInfo ,"blocked %d %d -> %d %d\n",dx, dy, ax, ay);
+#endif
+        /* we need to adjust to the fact that the socket
+         * code wants the los to start from the 0,0
+         * and not be relative to middle of los array.
+         */
+        if (!(pl->blocked_los[ax][ay] & BLOCKED_LOS_OUT_OF_MAP))
+        {
+            pl->blocked_los[ax][ay] |= BLOCKED_LOS_BLOCKED; /* this tile can't be seen */
+        }
+
+        SetWall(pl, dx, dy);
     }
 }
 
@@ -500,7 +333,7 @@ void update_los(object *op)
  * controlling the object.
  */
 
-inline void clear_los(object *op)
+inline void clear_los(object_t *op)
 {
     (void) memset((void *) CONTR(op)->blocked_los, BLOCKED_LOS_VISIBLE, sizeof(CONTR(op)->blocked_los));
 }
@@ -517,7 +350,7 @@ inline void clear_los(object *op)
  */
 #define BLOCKED_LOS_EXPAND 0x20
 
-void expand_sight(object *op)
+void expand_sight(object_t *op)
 {
     int i, x, y, dx, dy;
 
@@ -535,8 +368,8 @@ void expand_sight(object *op)
                 /* mark all directions */
                 for (i = 1; i <= 8; i += 1)
                 {
-                    dx = x + freearr_x[i];
-                    dy = y + freearr_y[i];
+                    dx = x + OVERLAY_X(i);
+                    dy = y + OVERLAY_Y(i);
 
                     if (dx <0 || dy <0 || dx> CONTR(op)->socket.mapx || dy> CONTR(op)->socket.mapy)
                         continue;
@@ -558,30 +391,12 @@ void expand_sight(object *op)
     }
 }
 
-
-
-
-/* returns true if op carries one or more lights
- * This is a trivial function now days, but it used to
- * be a bit longer.  Probably better for callers to just
- * check the op->glow_radius instead of calling this.
- */
-
-int has_carried_lights(object *op)
-{
-    /* op is a light source or glowing */
-    if (op->glow_radius > 0)
-        return 1;
-
-    return 0;
-}
-
 /*
  * Debug-routine which dumps the array which specifies the visible
  * area of a player.  Triggered by the z key in DM mode.
  */
 
-void print_los(object *op)
+void print_los(object_t *op)
 {
     int     x, y;
     char    buf[50], buf2[10];
@@ -592,7 +407,7 @@ void print_los(object *op)
         sprintf(buf2, "%2d", x);
         strcat(buf, buf2);
     }
-    new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
+    ndi(NDI_UNIQUE, 0, op, "%s", buf);
     for (y = 0; y < CONTR(op)->socket.mapy; y++)
     {
         sprintf(buf, "%2d:", y);
@@ -601,497 +416,687 @@ void print_los(object *op)
             sprintf(buf2, " %1d", CONTR(op)->blocked_los[x][y]);
             strcat(buf, buf2);
         }
-        new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
+        ndi(NDI_UNIQUE, 0, op, "%s", buf);
     }
 }
 
-static inline int get_real_light_source_value(int l)
+/*
+ * make_sure_seen: The object is supposed to be visible through walls, thus
+ * check if any players are nearby, and edit their LOS array.
+ */
+void make_sure_seen(object_t *op)
 {
-    if (l > MAX_LIGHT_SOURCE)
-        return light_mask[MAX_LIGHT_SOURCE];
-    if (l < -MAX_LIGHT_SOURCE)
-        return -light_mask[MAX_LIGHT_SOURCE];
-    if (l < 0)
-        return -light_mask[-l];
-
-    return light_mask[l];
 }
 
-static inline void remove_light_mask(mapstruct *map, int x, int y, int mid)
+/*
+ * make_sure_not_seen: The object which is supposed to be visible through
+ * walls has just been removed from the map, so update the los of any
+ * players within its range
+ */
+
+void make_sure_not_seen(object_t *op)
 {
-    MapSpace   *msp;
-    mapstruct  *m;
-    int         xt, yt, i, mlen;
-
-    if (mid > 0) /* light masks */
-    {
-        mlen = light_mask_size[mid];
-
-        for (i = 0; i < mlen; i++)
-        {
-            xt = x + lmask_x[i];
-            yt = y + lmask_y[i];
-            if (!(m = out_of_map2(map, &xt, &yt)))
-                continue;
-            msp = GET_MAP_SPACE_PTR(m, xt, yt);
-            msp->light_value -= light_masks[mid][i];
-        }
-    }
-    else /* handle shadow mask */
-    {
-        mid = -mid;
-        mlen = light_mask_size[mid];
-
-        for (i = 0; i < mlen; i++)
-        {
-            xt = x + lmask_x[i];
-            yt = y + lmask_y[i];
-            if (!(m = out_of_map2(map, &xt, &yt)))
-                continue;
-            msp = GET_MAP_SPACE_PTR(m, xt, yt);
-            msp->light_value += light_masks[mid][i];
-        }
-    }
 }
 
-static inline int add_light_mask(mapstruct *map, int x, int y, int mid)
+/** Tests if an object is in the line of sight of another object.
+ * Relatively slow. Do not use for players, since they always have
+ * a precalculated area of sight which can be used instead.
+ * @param op the looking object
+ * @param obj the object to look for
+ * @param rv pre-calculated rv from op to obj
+ * @return TRUE if there's an unblocked line of sight from op to obj, FALSE otherwise
+ */
+int obj_in_line_of_sight(object_t *op, object_t *obj, rv_t *rv)
 {
-    MapSpace   *msp;
-    mapstruct  *m;
-    int         xt, yt, i, mlen, map_flag = FALSE;
+    /* Bresenham variables */
+    int fraction, dx2, dy2, stepx, stepy;
 
-    if (mid > 0)
+    /* Stepping variables */
+    map_t *m = rv->part->map;
+    sint16     x = rv->part->x,
+               y = rv->part->y;
+
+    /*
+    LOG(llevDebug, "obj_in_line_of_sight(): %s (%d:%d) -> %s (%d:%d)?\n",
+            STRING_OBJ_NAME(op), op->x, op->y,
+            STRING_OBJ_NAME(obj), obj->x, obj->y);
+    */
+
+    BRESENHAM_INIT(rv->distance_x, rv->distance_y, fraction, stepx, stepy, dx2, dy2);
+
+    while(1)
     {
-        mlen = light_mask_size[mid];
+        msp_t *msp;
 
-        for (i = 0; i < mlen; i++)
+//        LOG(llevDebug, " (%d:%d)", x, y);
+        if(m == obj->map &&
+           x == obj->x &&
+           y == obj->y)
         {
-            xt = x + lmask_x[i];
-            yt = y + lmask_y[i];
-            if (!(m = out_of_map2(map, &xt, &yt)))
-            {
-                if (xt)
-                    map_flag = TRUE;
-                continue;
-            }
-            if (m != map)   /* this light mask cross some tiled map borders */
-                map_flag = TRUE;
-            msp = GET_MAP_SPACE_PTR(m, xt, yt);
-            msp->light_value += light_masks[mid][i];
+//            LOG(llevDebug, "  can see!\n");
+            return TRUE;
         }
-    }
-    else /* shadow masks */
-    {
-        mid = -mid;
-        mlen = light_mask_size[mid];
 
-        for (i = 0; i < mlen; i++)
+        msp = MSP_GET(m, x, y);
+
+        // Can't see if view blocked, unless mob has x-ray vision
+        // and object (player) is in range.
+        if (!msp ||
+            ((msp->flags & MSP_FLAG_BLOCKSVIEW) &&
+             (!QUERY_FLAG(op, FLAG_XRAYS) ||
+              !mob_can_see_obj(op, obj, NULL))))
         {
-            xt = x + lmask_x[i];
-            yt = y + lmask_y[i];
-            if (!(m = out_of_map2(map, &xt, &yt)))
-            {
-                if (xt)
-                    map_flag = TRUE;
-                continue;
-            }
-            if (m != map)   /* this light mask cross some tiled map borders */
-                map_flag = TRUE;
-            msp = GET_MAP_SPACE_PTR(m, xt, yt);
-            msp->light_value -= light_masks[mid][i];
+//            LOG(llevDebug, "  blocked!\n");
+            return FALSE;
         }
+
+        BRESENHAM_STEP(x, y, fraction, stepx, stepy, dx2, dy2);
     }
-    return map_flag;
+/*
+    LOG(llevDebug, "  out of range!\n");
+    return FALSE;*/
+}
+
+#include "global.h"
+
+/* This is much like the SIZEOFFREE stuff (see object.c) but operates on a max
+ * 9x9 grid rather than 7x7. It *might* be worthwhile combining the two systems.
+ *
+ * Although I have added spacing to aid readability, the LightMasks[] is not
+ * the most obvious thing in the world. The masks are arranged so that the
+ * indices spiral outwards from the central point (index 0). A more readable/
+ * maintainable arrangement might be so that the tables themselves represent a
+ * flat mao of the masks (ie, basically so the central point (currently index
+ * 0) is actually central to the array (so index 40). But the current
+ * arrangement is probably faster in execution whi is the most important thing
+ * (light masks change very frequently).
+ *
+ * -- Smacky 20140511 */
+#define MAX_MASK_SIZE 81
+#define NR_LIGHT_MASK 10
+#define MAX_LIGHT_SOURCE 13
+
+#if 0
+static int LightMaskX[MAX_MASK_SIZE] =
+{
+    0,
+    0, 1, 1, 1, 0, -1, -1, -1,
+    0, 1, 2, 2, 2, 2, 2, 1, 0, -1, -2, -2, -2, -2, -2, -1,
+    0, 1, 2, 3, 3, 3, 3, 3, 3, 3, 2, 1, 0, -1, -2, -3, -3, -3, -3, -3, -3, -3, -2, -1,
+    0, 1, 2, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 2, 1, 0, -1, -2, -3, -4, -4, -4, -4, -4, -4, -4, -4, -4, -3, -2, -1
+};
+
+static int LightMaskY[MAX_MASK_SIZE] =
+{
+    0,
+    -1, -1, 0, 1, 1, 1, 0, -1,
+    -2, -2, -2, -1, 0, 1, 2, 2, 2, 2, 2, 1, 0, -1, -2, -2,
+    -3, -3, -3, -3, -2, -1, 0, 1, 2, 3, 3, 3, 3, 3, 3, 3, 2, 1, 0, -1, -2, -3, -3, -3,
+    4, 4, 4, 4, 4, 3, 2, 1, 0, -1, -2, -3, -4, -4, -4, -4, -4, -4, -4, -4, -4, -3, -2, -1, 0, 1, 2, 3, 4, 4, 4, 4
+};
+#endif
+
+static uint8 LightMask[MAX_LIGHT_SOURCE + 1] =
+{
+    0, 1, 2, 3, 4, 5, 6, 6, 7, 7, 8, 8, 8, 9
+};
+
+static int LightMaskWidth[NR_LIGHT_MASK] =
+{
+    0, 1, 2, 2, 3, 3, 3, 4, 4, 4
+};
+
+static int LightMaskSize[NR_LIGHT_MASK] =
+{
+    0, 9, 25, 25, 49, 49, 49, 81, 81, 81
+};
+
+static int LightMasks[NR_LIGHT_MASK][OVERLAY_9X9] =
+{
+    {0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0},
+    {40  , 
+     20  , 20  , 20  , 20  , 20  , 20  , 20  , 20  , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0},
+    {80  , 
+     40  , 40  , 40  , 40  , 40  , 40  , 40  , 40  , 
+     20  , 20  , 20  , 20  , 20  , 20  , 20  , 20  , 
+     20  , 20  , 20  , 20  , 20  , 20  , 20  , 20  , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0},
+    {160 , 
+     80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 
+     40  , 40  , 40  , 40  , 40  , 40  , 40  , 40  , 
+     40  , 40  , 40  , 40  , 40  , 40  , 40  , 40  , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0},
+    {160 , 
+     80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 
+     40  , 40  , 40  , 40  , 40  , 40  , 40  , 40  , 
+     40  , 40  , 40  , 40  , 40  , 40  , 40  , 40  , 
+     20  , 20  , 20  , 20  , 20  , 20  , 20  , 20  , 
+     20  , 20  , 20  , 20  , 20  , 20  , 20  , 20  , 
+     20  , 20  , 20  , 20  , 20  , 20  , 20  , 20  , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0},
+    {320 , 
+     160 , 160 , 160 , 160 , 160 , 160 , 160 , 160 , 
+     80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 
+     80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 
+     40  , 40  , 40  , 40  , 40  , 40  , 40  , 40  , 
+     40  , 40  , 40  , 40  , 40  , 40  , 40  , 40  , 
+     40  , 40  , 40  , 40  , 40  , 40  , 40  , 40  , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0},
+    {320 , 
+     160 , 160 , 160 , 160 , 160 , 160 , 160 , 160 , 
+     80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 
+     80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 
+     40  , 40  , 40  , 40  , 40  , 40  , 40  , 40  , 
+     40  , 40  , 40  , 40  , 40  , 40  , 40  , 40  , 
+     40  , 40  , 40  , 40  , 40  , 40  , 40  , 40  , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
+     0   , 0   , 0   , 0   , 0   , 0   , 0   , 0},
+    {320 , 
+     160 , 160 , 160 , 160 , 160 , 160 , 160 , 160 , 
+     80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 
+     80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 
+     40  , 40  , 40  , 40  , 40  , 40  , 40  , 40  , 
+     40  , 40  , 40  , 40  , 40  , 40  , 40  , 40  , 
+     40  , 40  , 40  , 40  , 40  , 40  , 40  , 40  , 
+     20  , 20  , 20  , 20  , 20  , 20  , 20  , 20  , 
+     20  , 20  , 20  , 20  , 20  , 20  , 20  , 20  , 
+     20  , 20  , 20  , 20  , 20  , 20  , 20  , 20  , 
+     20  , 20  , 20  , 20  , 20  , 20  , 20  , 20},
+    {640 , 
+     320 , 320 , 320 , 320 , 320 , 320 , 320 , 320 , 
+     160 , 160 , 160 , 160 , 160 , 160 , 160 , 160 , 
+     160 , 160 , 160 , 160 , 160 , 160 , 160 , 160 , 
+     80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 
+     80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 
+     80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 
+     40  , 40  , 40  , 40  , 40  , 40  , 40  , 40  , 
+     40  , 40  , 40  , 40  , 40  , 40  , 40  , 40  , 
+     40  , 40  , 40  , 40  , 40  , 40  , 40  , 40  , 
+     40  , 40  , 40  , 40  , 40  , 40  , 40  , 40},
+    {1280,
+     640 , 640 , 640 , 640 , 640 , 640 , 640 , 640 , 
+     160 , 160 , 160 , 160 , 160 , 160 , 160 , 160 , 
+     160 , 160 , 160 , 160 , 160 , 160 , 160 , 160 , 
+     80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 
+     80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 
+     80  , 80  , 80  , 80  , 80  , 80  , 80  , 80  , 
+     40  , 40  , 40  , 40  , 40  , 40  , 40  , 40  , 
+     40  , 40  , 40  , 40  , 40  , 40  , 40  , 40  , 
+     40  , 40  , 40  , 40  , 40  , 40  , 40  , 40  , 
+     40  , 40  , 40  , 40  , 40  , 40  , 40  , 40}
+};
+
+static inline sint8 GetRealLightSourceValue(int l);
+static inline void  RemoveLightMask(map_t *map, sint16 x, sint16 y, sint8 id);
+static inline uint8 AddLightMask(map_t *map, sint16 x, sint16 y, sint8 id);
+static inline void  RestoreLightMask(map_t *restore_map, map_t *map, sint16 x, sint16 y, sint8 id);
+static inline void  RemoveLightMaskOther(map_t *map, int x, int y, int id);
+
+sint16 brightness[MAX_DARKNESS + 1] =
+{
+    0, 20, 40, 80, 160, 320, 640, 1280
+};
+
+/* returns true if op carries one or more lights
+ * This is a trivial function now days, but it used to
+ * be a bit longer.  Probably better for callers to just
+ * check the op->glow_radius instead of calling this. */
+int has_carried_lights(object_t *op)
+{
+    /* op is a light source or glowing */
+    if (op->glow_radius > 0)
+        return 1;
+
+    return 0;
 }
 
 /* we add or remove a light source to a map space.
  * we adjust the light source map counter
  * and apply the area of light it invokes around it.
  */
-void adjust_light_source(mapstruct *map, int x, int y, int light)
+void adjust_light_source(msp_t *msp, int light)
 {
-    int         nlm, olm;
-    MapSpace   *msp1    = GET_MAP_SPACE_PTR(map, x, y);
-
+    sint8   olm,
+            nlm;
+    map_t  *m = msp->map;
+    sint16  x = msp->x,
+            y = msp->y;
 
     /* this happens, we don't change the intense of the old light mask */
-    olm = get_real_light_source_value(msp1->light_source); /* old mask */
-    msp1->light_source += light;
-    nlm = get_real_light_source_value(msp1->light_source); /* new mask */
+    olm = GetRealLightSourceValue(msp->light_source); /* old mask */
+    msp->light_source += light;
+    nlm = GetRealLightSourceValue(msp->light_source); /* new mask */
 
     if (nlm == olm) /* old mask same as new one? */
+    {
         return; /* not much to do */
+    }
 
     if (olm)
     {
-        remove_light_mask(map, x, y, olm); /* remove the old light mask */
+        RemoveLightMask(m, x, y, olm); /* remove the old light mask */
 
         /* remember - perhaps we are in this list - perhaps we are not! */
-        if (msp1->prev_light)
-            msp1->prev_light->next_light = msp1->next_light;
-        else
+        if (msp->prev_light)
         {
-            /* we are the list head */
-            if (map->first_light == msp1)
-                map->first_light = msp1->next_light;
+            msp->prev_light->next_light = msp->next_light;
+        }
+        /* we are the list head */
+        else if (m->first_light == msp)
+        {
+            m->first_light = msp->next_light;
         }
 
-        if (msp1->next_light) /* handle next link */
-            msp1->next_light->prev_light = msp1->prev_light; /* NULL or prev */
-        msp1->prev_light = NULL;
-        msp1->next_light = NULL;
+        if (msp->next_light) /* handle next link */
+        {
+            msp->next_light->prev_light = msp->prev_light; /* NULL or prev */
+        }
+
+        msp->prev_light = msp->next_light = NULL;
     }
 
     if (nlm)
     {
-        if (add_light_mask(map, x, y, nlm)) /* add new light mask */
+        if (AddLightMask(m, x, y, nlm)) /* add new light mask */
         {
             /* don't chain if we are chained previous */
-            if (msp1->next_light || msp1->prev_light || map->first_light == msp1)
+            if (msp->next_light ||
+                msp->prev_light ||
+                m->first_light == msp)
+            {
                 return;
+            }
 
             /* we should be always unlinked here - so link it now */
-            msp1->next_light = map->first_light;
-            if (map->first_light)
-                msp1->next_light->prev_light = msp1;
-            map->first_light = msp1;
+            msp->next_light = m->first_light;
 
-            /* debug
-                    for(msp1=map->first_light;msp1;msp1 = msp1->next_light)
-                        LOG(llevNoLog,"L-LIST add: (%d,%d) of >%s<\n",msp1->first->x,msp1->first->y,msp1->first->map->path);
-                    */
+            if (m->first_light)
+            {
+                msp->next_light->prev_light = msp;
+            }
+
+            m->first_light = msp;
         }
     }
 }
+
+static inline sint8 GetRealLightSourceValue(int l)
+{
+    if (l > MAX_LIGHT_SOURCE)
+    {
+        return LightMask[MAX_LIGHT_SOURCE];
+    }
+    else if (l < -MAX_LIGHT_SOURCE)
+    {
+        return -LightMask[MAX_LIGHT_SOURCE];
+    }
+    else if (l < 0)
+    {
+        return -LightMask[-l];
+    }
+
+    return LightMask[l];
+}
+
+static inline void RemoveLightMask(map_t *map, sint16 x, sint16 y, sint8 id)
+{
+    uint8 mask,
+          mlen,
+          i;
+
+    if (id > 0) /* light masks */
+    {
+        mask = 1;
+    }
+    else
+    {
+        mask = 0;
+        id = -id;
+    }
+
+    mlen = LightMaskSize[id];
+
+    for (i = 0; i < mlen; i++)
+    {
+        map_t  *m2 = map;
+        sint16      x2 = x + OVERLAY_X(i),
+                    y2 = y + OVERLAY_Y(i);
+        msp_t   *msp = MSP_GET2(m2, x2, y2);
+
+        if (!msp)
+        {
+            continue;
+        }
+
+        x2 = LightMasks[id][i];
+        msp->flooding_brightness += (mask) ? -x2 : x2;
+    }
+}
+
+static inline uint8 AddLightMask(map_t *map, sint16 x, sint16 y, sint8 id)
+{
+    uint8 mask,
+          mlen,
+          i,
+          map_flag = 0;
+
+    if (id > 0) /* light masks */
+    {
+        mask = 1;
+    }
+    else
+    {
+        mask = 0;
+        id = -id;
+    }
+
+    mlen = LightMaskSize[id];
+
+    for (i = 0; i < mlen; i++)
+    {
+        map_t  *m2 = map;
+        sint16      x2 = x + OVERLAY_X(i),
+                    y2 = y + OVERLAY_Y(i);
+        msp_t   *msp = MSP_GET2(m2, x2, y2);
+
+        if (!msp)
+        {
+            if (x2)
+            {
+                map_flag = 1;
+            }
+
+            continue;
+        }
+
+        if (m2 != map)   /* this light mask cross some tiled map borders */
+        {
+            map_flag = 1;
+        }
+
+        x2 = LightMasks[id][i];
+        msp->flooding_brightness += (mask) ? x2 : -x2;
+    }
+
+    return map_flag;
+}
+
+#define CHECKLSL(_MSP_, _X_, _Y_, _ID_) \
+    if (!(_MSP_)->first) \
+    { \
+        LOG(llevBug, "BUG:: %s:check_light_source_list(): no object in msp of light source on %s %d %d!\n", \
+            __FILE__, STRING_MAP_PATH((_MSP_)->map), (_MSP_)->x, (_MSP_)->y); \
+        continue; \
+    } \
+    (_X_) = (_MSP_)->first->x; \
+    (_Y_) = (_MSP_)->first->y; \
+    (_ID_) = GetRealLightSourceValue((_MSP_)->light_source);
+
+void check_light_source_list(map_t *m)
+{
+    map_t  *m2;
+    sint16      x,
+                y;
+    msp_t   *msp;
+    sint8       id;
+
+    /*LOG(llevNoLog,"CHECK ALL LS for map:>%s<\n", m->path);*/
+
+    if ((m2 = m->tiling.tile_map[TILING_DIRECTION_NORTH]) &&
+        (m2->in_memory == MAP_MEMORY_ACTIVE ||
+         m2->in_memory == MAP_MEMORY_LOADING) &&
+        m2->first_light)
+    {
+        /* check this light source list */
+        for (msp = m2->first_light; msp; msp = msp->next_light)
+        {
+            CHECKLSL(msp, x, y, id);
+
+            /*LOG(llevNoLog,"check LSL: %d,%d map:>%s< (%d - %d)\n", x,y,m2->path,y+LightMaskWidth[id],m2->height);*/
+            /* only light sources reaching in this map */
+            if (y + LightMaskWidth[ABS(id)] < m2->height)
+            {
+                continue;
+            }
+
+            /*LOG(llevNoLog,"restore LSL: %d,%d map:>%s<\n", x,y,m2->path);*/
+            RestoreLightMask(m, m2, x, y, id);
+        }
+    }
+
+    if ((m2 = m->tiling.tile_map[TILING_DIRECTION_EAST])
+     && (m2->in_memory == MAP_MEMORY_ACTIVE || m2->in_memory == MAP_MEMORY_LOADING)
+     && m2->first_light)
+    {
+        /* check this light source list */
+        for (msp = m2->first_light; msp; msp = msp->next_light)
+        {
+            CHECKLSL(msp, x, y, id);
+
+            /*LOG(llevNoLog,"check LSL: %d,%d map:>%s<\n", x,y,m2->path);*/
+            /* only light sources reaching in this map */
+            if (x - LightMaskWidth[ABS(id)] >= 0)
+            {
+                continue;
+            }
+
+            /*LOG(llevNoLog,"restore LSL: %d,%d map:>%s<\n", x,y,m2->path);*/
+            RestoreLightMask(m, m2, x, y, id);
+        }
+    }
+
+    if ((m2 = m->tiling.tile_map[TILING_DIRECTION_SOUTH])
+     && (m2->in_memory == MAP_MEMORY_ACTIVE || m2->in_memory == MAP_MEMORY_LOADING)
+     && m2->first_light)
+    {
+        /* check this light source list */
+        for (msp = m2->first_light; msp; msp = msp->next_light)
+        {
+            CHECKLSL(msp, x, y, id);
+
+            /*LOG(llevNoLog,"check LSL: %d,%d map:>%s<\n", x,y,m2->path);*/
+            /* only light sources reaching in this map */
+            if (y - LightMaskWidth[ABS(id)] >= 0)
+            {
+                continue;
+            }
+
+            /*LOG(llevNoLog,"restore LSL: %d,%d map:>%s<\n", x,y,m2->path);*/
+            RestoreLightMask(m, m2, x, y, id);
+        }
+    }
+
+    if ((m2 = m->tiling.tile_map[TILING_DIRECTION_WEST])
+     && (m2->in_memory == MAP_MEMORY_ACTIVE || m2->in_memory == MAP_MEMORY_LOADING)
+     && m2->first_light)
+    {
+        /* check this light source list */
+        for (msp = m2->first_light; msp; msp = msp->next_light)
+        {
+            CHECKLSL(msp, x, y, id);
+
+            /*LOG(llevNoLog,"check LSL: %d,%d map:>%s<\n", x,y,m2->path);*/
+            /* only light sources reaching in this map */
+            if (x + LightMaskWidth[ABS(id)] < m2->width)
+            {
+                continue;
+            }
+
+            /*LOG(llevNoLog,"restore LSL: %d,%d map:>%s<\n", x,y,m2->path);*/
+            RestoreLightMask(m, m2, x, y, id);
+        }
+    }
+
+    if ((m2 = m->tiling.tile_map[TILING_DIRECTION_NORTHEAST])
+     && (m2->in_memory == MAP_MEMORY_ACTIVE || m2->in_memory == MAP_MEMORY_LOADING)
+     && m2->first_light)
+    {
+        /* check this light source list */
+        for (msp = m2->first_light; msp; msp = msp->next_light)
+        {
+            CHECKLSL(msp, x, y, id);
+
+            /*LOG(llevNoLog,"check LSL: %d,%d map:>%s<\n", x,y,m2->path);*/
+            /* only light sources reaching in this map */
+            if ((y + LightMaskWidth[ABS(id)]) < m2->height || (x - LightMaskWidth[ABS(id)]) >= 0)
+            {
+                continue;
+            }
+
+            /*LOG(llevNoLog,"restore LSL: %d,%d map:>%s<\n", x,y,m2->path);*/
+            RestoreLightMask(m, m2, x, y, id);
+        }
+    }
+
+    if ((m2 = m->tiling.tile_map[TILING_DIRECTION_SOUTHEAST])
+     && (m2->in_memory == MAP_MEMORY_ACTIVE || m2->in_memory == MAP_MEMORY_LOADING)
+     && m2->first_light)
+    {
+        /* check this light source list */
+        for (msp = m2->first_light; msp; msp = msp->next_light)
+        {
+            CHECKLSL(msp, x, y, id);
+
+            /*LOG(llevNoLog,"check LSL: %d,%d map:>%s<\n", x,y,m2->path);*/
+            /* only light sources reaching in this map */
+            if ((x - LightMaskWidth[ABS(id)]) >= 0 || (y - LightMaskWidth[ABS(id)]) >= 0)
+            {
+                continue;
+            }
+
+            /*LOG(llevNoLog,"restore LSL: %d,%d map:>%s<\n", x,y,m2->path);*/
+            RestoreLightMask(m, m2, x, y, id);
+        }
+    }
+
+    if ((m2 = m->tiling.tile_map[TILING_DIRECTION_SOUTHWEST])
+     && (m2->in_memory == MAP_MEMORY_ACTIVE || m2->in_memory == MAP_MEMORY_LOADING)
+     && m2->first_light)
+    {
+        /* check this light source list */
+        for (msp = m2->first_light; msp; msp = msp->next_light)
+        {
+            CHECKLSL(msp, x, y, id);
+
+            /*LOG(llevNoLog,"check LSL: %d,%d map:>%s<\n", x,y,m2->path);*/
+            /* only light sources reaching in this map */
+            if ((y - LightMaskWidth[ABS(id)]) >= 0 || (x + LightMaskWidth[ABS(id)]) < m2->width)
+            {
+                continue;
+            }
+
+            /*LOG(llevNoLog,"restore LSL: %d,%d map:>%s<\n", x,y,m2->path);*/
+            RestoreLightMask(m, m2, x, y, id);
+        }
+    }
+
+    if ((m2 = m->tiling.tile_map[TILING_DIRECTION_NORTHWEST])
+     && (m2->in_memory == MAP_MEMORY_ACTIVE || m2->in_memory == MAP_MEMORY_LOADING)
+     && m2->first_light)
+    {
+        /* check this light source list */
+        for (msp = m2->first_light; msp; msp = msp->next_light)
+        {
+            CHECKLSL(msp, x, y, id);
+
+            /*LOG(llevNoLog,"check LSL: %d,%d map:>%s<\n", x,y,m2->path);*/
+            /* only light sources reaching in this map */
+            if ((y + LightMaskWidth[ABS(id)]) < m2->height
+             || (x + LightMaskWidth[ABS(id)]) < m2->width)
+            {
+                continue;
+            }
+
+            /*LOG(llevNoLog,"restore LSL: %d,%d map:>%s<\n", x,y,m2->path);*/
+            RestoreLightMask(m, m2, x, y, id);
+        }
+    }
+}
+
+#undef CHECKLSL
 
 /* after loading a map, we check here all possible connected
  * maps for overlapping light sources. When we find one, we
  * adding the overlapping area to our new loaded map.
  */
-static inline void restore_light_mask(mapstruct *restore_map, mapstruct *map, int x, int y, int mid)
+static inline void RestoreLightMask(map_t *restore_map, map_t *map, sint16 x, sint16 y, sint8 id)
 {
-    MapSpace   *msp;
-    mapstruct  *m;
-    int         xt, yt, i, mlen;
+    uint8 mask,
+          mlen,
+          i;
 
-    if (mid > 0)
+    if (id > 0) /* light masks */
     {
-        mlen = light_mask_size[mid];
-
-        for (i = 0; i < mlen; i++)
-        {
-            xt = x + lmask_x[i];
-            yt = y + lmask_y[i];
-            m = out_of_map2(map, &xt, &yt);
-            if (restore_map != m) /* only handle parts inside our calling (restore) map */
-                continue;
-            msp = GET_MAP_SPACE_PTR(m, xt, yt);
-            msp->light_value += light_masks[mid][i];
-        }
-    }
-    else /* shadow masks */
-    {
-        mid = -mid;
-        mlen = light_mask_size[mid];
-
-        for (i = 0; i < mlen; i++)
-        {
-            xt = x + lmask_x[i];
-            yt = y + lmask_y[i];
-            m = out_of_map2(map, &xt, &yt);
-            if (restore_map != m) /* only handle parts inside our calling (restore) map */
-                continue;
-            msp = GET_MAP_SPACE_PTR(m, xt, yt);
-            msp->light_value -= light_masks[mid][i];
-        }
-    }
-}
-
-void check_light_source_list(mapstruct *map)
-{
-    mapstruct  *t_map;
-    MapSpace   *tmp;
-    int         x, y, mid;
-
-    /*LOG(llevNoLog,"CHECK ALL LS for map:>%s<\n", map->path);*/
-
-    if ((t_map = map->tile_map[TILED_MAPS_NORTH])
-     && (t_map->in_memory == MAP_ACTIVE || t_map->in_memory == MAP_LOADING)
-     && t_map->first_light)
-    {
-        /* check this light source list */
-        for (tmp = t_map->first_light; tmp; tmp = tmp->next_light)
-        {
-            if (!tmp->first)
-            {
-                LOG(llevBug, "BUG: check_light_source_list() map:>%s< - no object in mapspace of light source!\n",
-                    t_map->path ? t_map->path : "NO T_MAP PATH?");
-                continue;
-            }
-
-            mid = get_real_light_source_value(tmp->light_source);
-            /* there MUST be at last one object in this tile - grap it and
-                     * get the x/y offset from it!
-                     */
-            x = tmp->first->x;
-            y = tmp->first->y;
-            /*LOG(llevNoLog,"check LSL: %d,%d map:>%s< (%d - %d)\n", x,y,t_map->path,y+light_mask_width[mid],MAP_HEIGHT(t_map));*/
-            /* only light sources reaching in this map */
-            if (y + light_mask_width[abs(mid)] < MAP_HEIGHT(t_map))
-                continue;
-            /*LOG(llevNoLog,"restore LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
-            restore_light_mask(map, t_map, x, y, mid);
-        }
-    }
-
-    if ((t_map = map->tile_map[TILED_MAPS_EAST])
-     && (t_map->in_memory == MAP_ACTIVE || t_map->in_memory == MAP_LOADING)
-     && t_map->first_light)
-    {
-        /* check this light source list */
-        for (tmp = t_map->first_light; tmp; tmp = tmp->next_light)
-        {
-            if (!tmp->first)
-            {
-                LOG(llevBug, "BUG: check_light_source_list() map:>%s< - no object in mapspace of light source!\n",
-                    t_map->path ? t_map->path : "NO MAP PATH?");
-                continue;
-            }
-
-            mid = get_real_light_source_value(tmp->light_source);
-            /* there MUST be at last one object in this tile - grap it and
-                     * get the x/y offset from it!
-                     */
-            x = tmp->first->x;
-            y = tmp->first->y;
-            /*LOG(llevNoLog,"check LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
-            /* only light sources reaching in this map */
-            if (x - light_mask_width[abs(mid)] >= 0)
-                continue;
-            /*LOG(llevNoLog,"restore LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
-            restore_light_mask(map, t_map, x, y, mid);
-        }
-    }
-
-    if ((t_map = map->tile_map[TILED_MAPS_SOUTH])
-     && (t_map->in_memory == MAP_ACTIVE || t_map->in_memory == MAP_LOADING)
-     && t_map->first_light)
-    {
-        /* check this light source list */
-        for (tmp = t_map->first_light; tmp; tmp = tmp->next_light)
-        {
-            if (!tmp->first)
-            {
-                LOG(llevBug, "BUG: check_light_source_list() map:>%s< - no object in mapspace of light source!\n",
-                    t_map->path ? t_map->path : "NO T_MAP PATH?");
-                continue;
-            }
-
-            mid = get_real_light_source_value(tmp->light_source);
-            /* there MUST be at last one object in this tile - grap it and
-                     * get the x/y offset from it!
-                     */
-            x = tmp->first->x;
-            y = tmp->first->y;
-            /*LOG(llevNoLog,"check LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
-            /* only light sources reaching in this map */
-            if (y - light_mask_width[abs(mid)] >= 0)
-                continue;
-            /*LOG(llevNoLog,"restore LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
-            restore_light_mask(map, t_map, x, y, mid);
-        }
-    }
-
-    if ((t_map = map->tile_map[TILED_MAPS_WEST])
-     && (t_map->in_memory == MAP_ACTIVE || t_map->in_memory == MAP_LOADING)
-     && t_map->first_light)
-    {
-        /* check this light source list */
-        for (tmp = t_map->first_light; tmp; tmp = tmp->next_light)
-        {
-            if (!tmp->first)
-            {
-                LOG(llevBug, "BUG: check_light_source_list() map:>%s< - no object in mapspace of light source!\n",
-                    t_map->path ? t_map->path : "NO T_MAP PATH?");
-                continue;
-            }
-
-            mid = get_real_light_source_value(tmp->light_source);
-            /* there MUST be at last one object in this tile - grap it and
-                     * get the x/y offset from it!
-                     */
-            x = tmp->first->x;
-            y = tmp->first->y;
-            /*LOG(llevNoLog,"check LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
-            /* only light sources reaching in this map */
-            if (x + light_mask_width[abs(mid)] < MAP_WIDTH(t_map))
-                continue;
-            /*LOG(llevNoLog,"restore LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
-            restore_light_mask(map, t_map, x, y, mid);
-        }
-    }
-
-    if ((t_map = map->tile_map[TILED_MAPS_NORTHEAST])
-     && (t_map->in_memory == MAP_ACTIVE || t_map->in_memory == MAP_LOADING)
-     && t_map->first_light)
-    {
-        /* check this light source list */
-        for (tmp = t_map->first_light; tmp; tmp = tmp->next_light)
-        {
-            if (!tmp->first)
-            {
-                LOG(llevBug, "BUG: check_light_source_list() map:>%s< - no object in mapspace of light source!\n",
-                    t_map->path ? t_map->path : "NO T_MAP PATH?");
-                continue;
-            }
-
-            mid = get_real_light_source_value(tmp->light_source);
-            /* there MUST be at last one object in this tile - grap it and
-                     * get the x/y offset from it!
-                     */
-            x = tmp->first->x;
-            y = tmp->first->y;
-            /*LOG(llevNoLog,"check LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
-            /* only light sources reaching in this map */
-            if ((y + light_mask_width[abs(mid)]) < MAP_HEIGHT(t_map) || (x - light_mask_width[abs(mid)]) >= 0)
-                continue;
-            /*LOG(llevNoLog,"restore LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
-            restore_light_mask(map, t_map, x, y, mid);
-        }
-    }
-
-    if ((t_map = map->tile_map[TILED_MAPS_SOUTHEAST])
-     && (t_map->in_memory == MAP_ACTIVE || t_map->in_memory == MAP_LOADING)
-     && t_map->first_light)
-    {
-        /* check this light source list */
-        for (tmp = t_map->first_light; tmp; tmp = tmp->next_light)
-        {
-            if (!tmp->first)
-            {
-                LOG(llevBug, "BUG: check_light_source_list() map:>%s< - no object in mapspace of light source!\n",
-                    t_map->path ? t_map->path : "NO MAP PATH?");
-                continue;
-            }
-
-            mid = get_real_light_source_value(tmp->light_source);
-            /* there MUST be at last one object in this tile - grap it and
-                     * get the x/y offset from it!
-                     */
-            x = tmp->first->x;
-            y = tmp->first->y;
-            /*LOG(llevNoLog,"check LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
-            /* only light sources reaching in this map */
-            if ((x - light_mask_width[abs(mid)]) >= 0 || (y - light_mask_width[abs(mid)]) >= 0)
-                continue;
-            /*LOG(llevNoLog,"restore LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
-            restore_light_mask(map, t_map, x, y, mid);
-        }
-    }
-
-    if ((t_map = map->tile_map[TILED_MAPS_SOUTHWEST])
-     && (t_map->in_memory == MAP_ACTIVE || t_map->in_memory == MAP_LOADING)
-     && t_map->first_light)
-    {
-        /* check this light source list */
-        for (tmp = t_map->first_light; tmp; tmp = tmp->next_light)
-        {
-            if (!tmp->first)
-            {
-                LOG(llevBug, "BUG: check_light_source_list() map:>%s< - no object in mapspace of light source!\n",
-                    t_map->path ? t_map->path : "NO T_MAP PATH?");
-                continue;
-            }
-
-            mid = get_real_light_source_value(tmp->light_source);
-            /* there MUST be at last one object in this tile - grap it and
-                     * get the x/y offset from it!
-                     */
-            x = tmp->first->x;
-            y = tmp->first->y;
-            /*LOG(llevNoLog,"check LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
-            /* only light sources reaching in this map */
-            if ((y - light_mask_width[abs(mid)]) >= 0 || (x + light_mask_width[abs(mid)]) < MAP_WIDTH(t_map))
-                continue;
-            /*LOG(llevNoLog,"restore LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
-            restore_light_mask(map, t_map, x, y, mid);
-        }
-    }
-
-    if ((t_map = map->tile_map[TILED_MAPS_NORTHWEST])
-     && (t_map->in_memory == MAP_ACTIVE || t_map->in_memory == MAP_LOADING)
-     && t_map->first_light)
-    {
-        /* check this light source list */
-        for (tmp = t_map->first_light; tmp; tmp = tmp->next_light)
-        {
-            if (!tmp->first)
-            {
-                LOG(llevBug, "BUG: check_light_source_list() map:>%s< - no object in mapspace of light source!\n",
-                    t_map->path ? t_map->path : "NO T_MAP PATH?");
-                continue;
-            }
-
-            mid = get_real_light_source_value(tmp->light_source);
-            /* there MUST be at last one object in this tile - grap it and
-                     * get the x/y offset from it!
-                     */
-            x = tmp->first->x;
-            y = tmp->first->y;
-            /*LOG(llevNoLog,"check LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
-            /* only light sources reaching in this map */
-            if ((y + light_mask_width[abs(mid)]) < MAP_HEIGHT(t_map)
-             || (x + light_mask_width[abs(mid)]) < MAP_WIDTH(t_map))
-                continue;
-            /*LOG(llevNoLog,"restore LSL: %d,%d map:>%s<\n", x,y,t_map->path);*/
-            restore_light_mask(map, t_map, x, y, mid);
-        }
-    }
-}
-
-/* only remove mask part from OTHER in memory maps! */
-static inline void remove_light_mask_other(mapstruct *map, int x, int y, int mid)
-{
-    MapSpace   *msp;
-    mapstruct  *m;
-    int         xt, yt, i, mlen;
-
-    if (mid > 0)
-    {
-        mlen = light_mask_size[mid];
-
-        for (i = 0; i < mlen; i++)
-        {
-            xt = x + lmask_x[i];
-            yt = y + lmask_y[i];
-            m = out_of_map2(map, &xt, &yt);
-            if (!m || m == map) /* only legal OTHER maps */
-                continue;
-            msp = GET_MAP_SPACE_PTR(m, xt, yt);
-            msp->light_value -= light_masks[mid][i];
-        }
+        mask = 1;
     }
     else
     {
-        mid = -mid;
-        mlen = light_mask_size[mid];
+        mask = 0;
+        id = -id;
+    }
 
-        for (i = 0; i < mlen; i++)
+    mlen = LightMaskSize[id];
+
+    for (i = 0; i < mlen; i++)
+    {
+        map_t  *m2 = map;
+        sint16      x2 = x + OVERLAY_X(i),
+                    y2 = y + OVERLAY_Y(i);
+        msp_t   *msp = MSP_GET2(m2, x2, y2);
+
+        if (!msp ||
+            restore_map != m2)
         {
-            xt = x + lmask_x[i];
-            yt = y + lmask_y[i];
-            m = out_of_map2(map, &xt, &yt);
-            if (!m || m == map) /* only legal OTHER maps */
-                continue;
-            msp = GET_MAP_SPACE_PTR(m, xt, yt);
-            msp->light_value += light_masks[mid][i];
+            continue;
         }
+
+        x2 = LightMasks[id][i];
+        msp->flooding_brightness += (mask) ? x2 : -x2;
     }
 }
 
-void remove_light_source_list(mapstruct *map)
+void remove_light_source_list(map_t *map)
 {
-    MapSpace   *tmp;
+    msp_t   *tmp;
 
     /*LOG(llevNoLog,"REMOVE LSL-LIST of map:>%s<\n",map->path);*/
     for (tmp = map->first_light; tmp; tmp = tmp->next_light)
@@ -1104,77 +1109,45 @@ void remove_light_source_list(mapstruct *map)
             continue;
         }
         /*LOG(llevNoLog,"remove LSL: %d,%d ,map:>%s<\n", tmp->first->x,tmp->first->y,map->path);*/
-        remove_light_mask_other(map, tmp->first->x, tmp->first->y, get_real_light_source_value(tmp->light_source));
+        RemoveLightMaskOther(map, tmp->first->x, tmp->first->y, GetRealLightSourceValue(tmp->light_source));
     }
     map->first_light = NULL;
 }
 
-/*
- * make_sure_seen: The object is supposed to be visible through walls, thus
- * check if any players are nearby, and edit their LOS array.
- */
-void make_sure_seen(object *op)
+/* only remove mask part from OTHER in memory maps! */
+static inline void RemoveLightMaskOther(map_t *map, int x, int y, int id)
 {
-}
+    uint8 mask,
+          mlen,
+          i;
 
-/*
- * make_sure_not_seen: The object which is supposed to be visible through
- * walls has just been removed from the map, so update the los of any
- * players within its range
- */
-
-void make_sure_not_seen(object *op)
-{
-}
-
-/** Tests if an object is in the line of sight of another object.
- * Relatively slow. Do not use for players, since they always have
- * a precalculated area of sight which can be used instead.
- * @param op the looking object
- * @param obj the object to look for
- * @param rv pre-calculated rv from op to obj
- * @return TRUE if there's an unblocked line of sight from op to obj, FALSE otherwise
- */
-int obj_in_line_of_sight(object *op, object *obj, rv_vector *rv)
-{
-    /* Bresenham variables */
-    int fraction, dx2, dy2, stepx, stepy;
-
-    /* Stepping variables */
-    mapstruct *m = rv->part->map;
-    int x = rv->part->x, y = rv->part->y;
-
-    /*
-    LOG(llevDebug, "obj_in_line_of_sight(): %s (%d:%d) -> %s (%d:%d)?\n",
-            STRING_OBJ_NAME(op), op->x, op->y,
-            STRING_OBJ_NAME(obj), obj->x, obj->y);
-    */
-
-    BRESENHAM_INIT(rv->distance_x, rv->distance_y, fraction, stepx, stepy, dx2, dy2);
-
-    while(1)
+    if (id > 0) /* light masks */
     {
-//        LOG(llevDebug, " (%d:%d)", x, y);
-        if(x == obj->x && y == obj->y && m == obj->map)
-        {
-//            LOG(llevDebug, "  can see!\n");
-            return TRUE;
-        }
-
-        // Can't see if view blocked, unless mob has x-ray vision
-        // and object (player) is in range.
-        if (m == NULL || ((GET_MAP_FLAGS(m,x,y) & P_BLOCKSVIEW) &&
-            (!QUERY_FLAG(op, FLAG_XRAYS) || !mob_can_see_obj(op, obj, NULL))))
-        {
-//            LOG(llevDebug, "  blocked!\n");
-            return FALSE;
-        }
-
-        BRESENHAM_STEP(x, y, fraction, stepx, stepy, dx2, dy2);
-
-        m = out_of_map(m, &x, &y);
+        mask = 1;
     }
-/*
-    LOG(llevDebug, "  out of range!\n");
-    return FALSE;*/
+    else
+    {
+        mask = 0;
+        id = -id;
+    }
+
+    mlen = LightMaskSize[id];
+
+    for (i = 0; i < mlen; i++)
+    {
+        map_t  *m2 = map;
+        sint16      x2 = x + OVERLAY_X(i),
+                    y2 = y + OVERLAY_Y(i);
+        msp_t   *msp = MSP_GET2(m2, x2, y2);
+
+        if (!msp ||
+            m2 == map) /* only legal OTHER maps */
+
+        {
+            continue;
+        }
+
+        x2 = LightMasks[id][i];
+        msp->flooding_brightness += (mask) ? -x2 : x2;
+    }
 }

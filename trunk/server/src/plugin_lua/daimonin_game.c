@@ -167,21 +167,10 @@ static struct constant_decl preset_game_constants[] =
     {"MAP_NEW",   PLUGIN_MAP_NEW},
 
     /* map status flags (also some are used by GameObject:SetPosition()) (map.h) */
-    {"INSTANCE_NO_REENTER", INSTANCE_FLAG_NO_REENTER},
-    {"MFLAG_FIXED_POS",     MAP_STATUS_FIXED_POS},
-    {"MFLAG_RANDOM_POS_1",  MAP_STATUS_RANDOM_POS_1},
-    {"MFLAG_RANDOM_POS_2",  MAP_STATUS_RANDOM_POS_2},
-    {"MFLAG_RANDOM_POS_3",  MAP_STATUS_RANDOM_POS_3},
-    {"MFLAG_RANDOM_POS",    MAP_STATUS_RANDOM_POS},
-    {"MFLAG_FREE_POS_ONLY", MAP_STATUS_FREE_POS_ONLY},
+    {"INSTANCE_NO_REENTER", MAP_INSTANCE_FLAG_NO_REENTER},
     {"MFLAG_NO_FALLBACK",   MAP_STATUS_NO_FALLBACK },
     {"MFLAG_LOAD_ONLY",     MAP_STATUS_LOAD_ONLY},
     {"MFLAG_FIXED_LOGIN",   MAP_STATUS_FIXED_LOGIN},
-
-    /* insertion flags (object.h) */
-    {"INS_NO_FORCE",       INS_NO_FORCE},
-    {"INS_WITHIN_LOS",     INS_WITHIN_LOS},
-    {"INS_IGNORE_TERRAIN", INS_IGNORE_TERRAIN},
 
     /* quest trigger sub types (define.h) */
     {"QUEST_NORMAL",   ST1_QUEST_TRIGGER_NORMAL},
@@ -262,7 +251,6 @@ static struct constant_decl preset_game_constants[] =
     {"TYPE_MARKER",           MARKER},
     {"TYPE_HOLY_ALTAR",       HOLY_ALTAR},
     {"TYPE_PLAYER_CHANGER",   PLAYER_CHANGER},
-    {"TYPE_BATTLEGROUND",     BATTLEGROUND},
     {"TYPE_PEACEMAKER",       PEACEMAKER},
     {"TYPE_GEM",              GEM},
     {"TYPE_FIRECHEST",        FIRECHEST},
@@ -425,16 +413,16 @@ static struct constant_decl preset_game_constants[] =
     {"SKILLGROUP_MISC",        SKILLGROUP_MISC},
 
     /* stats (living.h) */
-    {"STAT_STRENGTH",     STR},
-    {"STAT_DEXTERITY",    DEX},
-    {"STAT_CONSTITUTION", CON},
-    {"STAT_INTELLIGENCE", INTELLIGENCE},
-    {"STAT_WISDOM",       WIS},
-    {"STAT_POWER",        POW},
-    {"STAT_CHARISMA",     CHA},
-    {"STAT_NONE",         NO_STAT_VAL},
+    {"STAT_STRENGTH",     STAT_STR},
+    {"STAT_DEXTERITY",    STAT_DEX},
+    {"STAT_CONSTITUTION", STAT_CON},
+    {"STAT_INTELLIGENCE", STAT_INT},
+    {"STAT_WISDOM",       STAT_WIS},
+    {"STAT_POWER",        STAT_POW},
+    {"STAT_CHARISMA",     STAT_CHA},
+    {"STAT_NONE",         STAT_NONE},
 
-    /*money_block modes (global.h) */
+    /*moneyblock_t modes (global.h) */
     {"MONEYSTRING_ALL",     MONEY_MODE_ALL},     // deprecated -- use MONEY_MODE_*
     {"MONEYSTRING_NOTHING", MONEY_MODE_NOTHING}, // deprecated -- use MONEY_MODE_*
     {"MONEYSTRING_AMOUNT",  MONEY_MODE_AMOUNT},  // deprecated -- use MONEY_MODE_*
@@ -500,6 +488,23 @@ static struct constant_decl preset_game_constants[] =
     {"BUFF_ADD_MAX_EXCEEDED", BUFF_ADD_MAX_EXCEEDED},
     {"BUFF_ADD_BAD_PARAMS", BUFF_ADD_BAD_PARAMS},
     {"BUFF_ADD_NO_INSERT", BUFF_ADD_NO_INSERT},
+
+    /* Object layers (msp.h) -- the plugin has no concept of clayers (they are
+     * irrelevant to scripters) and mostly scripts only refer to object->layer,
+     * not msp->slayer. So just call them LAYER_*. */
+    {"LAYER_SYSTEM",  MSP_SLAYER_SYSTEM},
+    {"LAYER_FLOOR",   MSP_SLAYER_FLOOR},
+    {"LAYER_FMASK",   MSP_SLAYER_FMASK},
+    {"LAYER_ITEMA",   MSP_SLAYER_ITEMA},
+    {"LAYER_ITEMB",   MSP_SLAYER_ITEMB},
+    {"LAYER_FEATURE", MSP_SLAYER_FEATURE},
+#ifdef USE_SLAYER_MONSTER
+    {"LAYER_MONSTER", MSP_SLAYER_MONSTER},
+#else
+    {"LAYER_MONSTER", MSP_SLAYER_FEATURE},
+#endif
+    {"LAYER_PLAYER",  MSP_SLAYER_PLAYER},
+    {"LAYER_EFFECT",  MSP_SLAYER_EFFECT},
 };
 
 lua_class Game =
@@ -706,9 +711,15 @@ static int Game_UpgradeApartment(lua_State *L)
 
     get_lua_args(L, "GMMii", &self, &map_old, &map_new, &x, &y);
 
-    if( !map_new->data.map || !map_old->data.map || x<= 0 || y<=0
-            || x>=map_new->data.map->width || y>=map_new->data.map->height)
+    if (!map_new->data.map ||
+        !map_old->data.map ||
+        x <= 0 ||
+        y <= 0 ||
+        x >= MAP_WIDTH(map_new->data.map) ||
+        y >= MAP_HEIGHT(map_new->data.map))
+    {
         return 0;
+    }
 
     /* transfer the items */
     hooks->map_transfer_apartment_items(map_old->data.map, map_new->data.map, x, y);
@@ -726,7 +737,7 @@ static int Game_LoadObject(lua_State *L)
 {
     lua_object *self;
     char       *obstr;
-    object     *ob;
+    object_t     *ob;
 
     get_lua_args(L, "Gs", &self, &obstr);
 
@@ -781,8 +792,8 @@ static int Game_ReadyMap(lua_State *L)
     lua_object *self;
     const char *path;
     int         mode = 0;
-    shstr      *orig_path_sh;
-    mapstruct  *m;
+    shstr_t      *orig_path_sh;
+    map_t  *m;
 
     get_lua_args(L, "Gs|i", &self, &path, &mode);
 
@@ -803,14 +814,14 @@ static int Game_ReadyMap(lua_State *L)
     if (mode == PLUGIN_MAP_NEW &&
         m)
     {
-        m->map_flags |= MAP_FLAG_MANUAL_RESET | MAP_FLAG_RELOAD;
+        m->status |= MAP_STATUS_MANUAL_RESET | MAP_STATUS_RELOAD;
         MAP_SET_WHEN_RESET(m, -1);
         hooks->map_check_in_memory(m);
     }
     else if (mode != PLUGIN_MAP_CHECK &&
              (!m ||
-              (m->in_memory != MAP_LOADING &&
-               m->in_memory != MAP_ACTIVE)))
+              (m->in_memory != MAP_MEMORY_LOADING &&
+               m->in_memory != MAP_MEMORY_ACTIVE)))
     {
         m = hooks->ready_map_name(NULL, orig_path_sh, MAP_STATUS_MULTI, NULL);
     }
@@ -828,8 +839,8 @@ static int Game_ReadyMap(lua_State *L)
 /*****************************************************************************/
 static int Game_FindPlayer(lua_State *L)
 {
-    player *foundpl;
-    object *foundob = NULL;
+    player_t *foundpl;
+    object_t *foundob = NULL;
     CFParm *CFR, CFP;
     char   *txt;
     lua_object *self;
@@ -838,7 +849,7 @@ static int Game_FindPlayer(lua_State *L)
 
     CFP.Value[0] = (void *) (txt);
     CFR = (PlugHooks[HOOK_FINDPLAYER]) (&CFP);
-    foundpl = (player *) (CFR->Value[0]);
+    foundpl = (player_t *) (CFR->Value[0]);
     free(CFR);
 
     if (foundpl != NULL)
@@ -933,9 +944,9 @@ static int Game_IsValid(lua_State *L)
 static int Game_LocateBeacon(lua_State *L)
 {
     char   *id;
-    shstr  *id_s = NULL;
+    shstr_t  *id_s = NULL;
     lua_object *self;
-    object *foundob = NULL;
+    object_t *foundob = NULL;
 
     get_lua_args(L, "Gs", &self, &id);
 
@@ -949,14 +960,21 @@ static int Game_LocateBeacon(lua_State *L)
 /*****************************************************************************/
 /* Name   : Game_GetTimeAndDate                                              */
 /* Lua    : game:GetTimeAndDate(offset)                                      */
-/* Info   : Returns a table with values on the game time.                    */
+/* Info   : Returns info about the game time.                                */
 /*          offset is optional. If specified it may be a number which is the */
 /*          number of hours in the future or the past which the return       */
 /*          represents, or a string which is parsed to arrive at a similar   */
 /*          result (eg, "11 parweeks, 2 days, and 17 hours").                */
-/* Return : a table with the following fields:                               */
+/* Return : 3 returns: a table which reflects the game time given offset; a  */
+/*          number which is the CURRENT absolute game time to an hour's      */
+/*          resolution; a number which is the absolute game time given offset*/
+/*          to an hour's resolution.                                         */
+/*          The table has the following fields:                              */
+/*            daylight_darkness - daylight darkness as number                */
+/*            daylight_brightness - daylight brightness as number            */
 /*            hour - hour in day as number                                   */
 /*            minute - minute in hour as number                              */
+/*            dayofyear - day of year as number                              */
 /*            year - year as number                                          */
 /*            season - season in year as number                              */
 /*            month - month in season as number                              */
@@ -982,25 +1000,37 @@ static int Game_GetTimeAndDate(lua_State *L)
 
     get_lua_args(L, "G|s", &self, &string);
     offset = hooks->get_tad_offset_from_string(string);
+    memset(&tad, 0, sizeof(timeanddate_t));
     hooks->get_tad(&tad, offset);
     lua_newtable(L);
 
+    /* Daylight (numbers) */
+    lua_pushliteral(L, "daylight_darkness");
+    lua_pushnumber(L, (lua_Number)tad.daylight_darkness); /* -7 <= n <= 7 */
+    lua_rawset(L, -3);
+    lua_pushliteral(L, "daylight_brightness");
+    lua_pushnumber(L, (lua_Number)tad.daylight_brightness); /* -1280 <= n <= 1280 */
+    lua_rawset(L, -3);
+
     /* Time (numbers) */
     lua_pushliteral(L, "hour");
-    lua_pushnumber(L, (lua_Number)tad.hour); /* 0 <= hour <= 23 */
+    lua_pushnumber(L, (lua_Number)tad.hour); /* 0 <= n <= 23 */
     lua_rawset(L, -3);
     lua_pushliteral(L, "minute");
-    lua_pushnumber(L, (lua_Number)tad.minute); /* 0 <= minute <= 59 */
+    lua_pushnumber(L, (lua_Number)tad.minute); /* 0 <= n <= 59 */
     lua_rawset(L, -3);
 
     /* Date (numbers) */
+    lua_pushliteral(L, "dayofyear");
+    lua_pushnumber(L, (lua_Number)tad.dayofyear); /* 0 <= n <= 8640 */
+    lua_rawset(L, -3);
     lua_pushliteral(L, "year");
-    lua_pushnumber(L, (lua_Number)tad.year); /* -16383 <= year <= +16383 */
+    lua_pushnumber(L, (lua_Number)tad.year); /* -16383 <= n <= +16383 */
     lua_rawset(L, -3);
     lua_pushliteral(L, "season");
 
     if (tad.season >= 0)
-        lua_pushnumber(L, (lua_Number)tad.season + 1); /* 1 <= season <= 4 */
+        lua_pushnumber(L, (lua_Number)tad.season + 1); /* 1 <= n <= 4 */
     else
         lua_pushnil(L);
 
@@ -1008,7 +1038,7 @@ static int Game_GetTimeAndDate(lua_State *L)
     lua_pushliteral(L, "month");
 
     if (tad.month >= 0)
-        lua_pushnumber(L, (lua_Number)tad.month + 1); /* 1 <= month <= 3 */
+        lua_pushnumber(L, (lua_Number)tad.month + 1); /* 1 <= n <= 3 */
     else
         lua_pushnil(L);
 
@@ -1016,7 +1046,7 @@ static int Game_GetTimeAndDate(lua_State *L)
     lua_pushliteral(L, "week");
 
     if (tad.week >= 0)
-        lua_pushnumber(L, (lua_Number)tad.week + 1); /* 1 <= week <= 3 */
+        lua_pushnumber(L, (lua_Number)tad.week + 1); /* 1 <= n <= 3 */
     else
         lua_pushnil(L);
 
@@ -1024,7 +1054,7 @@ static int Game_GetTimeAndDate(lua_State *L)
     lua_pushliteral(L, "parweek");
 
     if (tad.parweek >= 0)
-        lua_pushnumber(L, (lua_Number)tad.parweek + 1); /* 1 <= parweek <= 3 */
+        lua_pushnumber(L, (lua_Number)tad.parweek + 1); /* 1 <= n <= 3 */
     else
         lua_pushnil(L);
 
@@ -1032,7 +1062,7 @@ static int Game_GetTimeAndDate(lua_State *L)
     lua_pushliteral(L, "day");
 
     if (tad.day >= 0)
-        lua_pushnumber(L, (lua_Number)tad.day + 1); /* 1 <= day <= 3 */
+        lua_pushnumber(L, (lua_Number)tad.day + 1); /* 1 <= n <= 3 */
     else
         lua_pushnil(L);
 
@@ -1048,7 +1078,7 @@ static int Game_GetTimeAndDate(lua_State *L)
     lua_pushliteral(L, "extraholiday");
 
     if (tad.extraholiday >= 0)
-        lua_pushnumber(L, (lua_Number)tad.extraholiday + 1); /* 1 <= extraholiday <= 12 */
+        lua_pushnumber(L, (lua_Number)tad.extraholiday + 1); /* 1 <= n <= 12 */
     else
         lua_pushnil(L);
 
@@ -1073,8 +1103,9 @@ static int Game_GetTimeAndDate(lua_State *L)
     lua_pushliteral(L, "extraholiday_name");
     lua_pushstring(L, tad.extraholiday_name);
     lua_rawset(L, -3);
-
-    return 1;
+    lua_pushnumber(L, *hooks->tadtick);
+    lua_pushnumber(L, *hooks->tadtick + offset);
+    return 3;
 }
 
 /*****************************************************************************/
@@ -1096,7 +1127,7 @@ static int Game_GlobalMessage(lua_State *L)
     /* No point mucking about with an empty message. */
     if (*message)
     {
-        hooks->new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | color, 5, NULL,
+        hooks->ndi(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | color, 5, NULL,
                       "%s", message);
     }
 
@@ -1194,6 +1225,7 @@ static int Game_PrintTimeAndDate(lua_State *L)
 
     get_lua_args(L, "G|is", &self, &flags, &string);
     offset = hooks->get_tad_offset_from_string(string);
+    memset(&tad, 0, sizeof(timeanddate_t));
     hooks->get_tad(&tad, offset);
 
     if (flags <= 0 ||

@@ -47,10 +47,8 @@
  * If llevInfo is set, is still drops alot useful messages.
  * If llevBug is set, only really bugs and errors are loged.
  * Set levNoLog for no output.
- * ingore llevSystem - its used for additional infos used by llevError and llevBug
- */
-
-typedef enum LogLevel
+ * ingore llevSystem - its used for additional infos used by llevError and llevBug */
+enum log_t
 {
     llevNoLog  = -1, /**< set GLOBAL_LOG_LEVEL to this, and no message will be printed out */
     llevSystem = 0,  /**< internal: used for llevError msg and llevBug message - don't set this! */
@@ -60,8 +58,7 @@ typedef enum LogLevel
     llevInfo,        /**< just tell the log stuff we think its useful to know */
     llevDebug,       /**< give out maximal information for debug and bug control */
     llevMonster,     /**< SPECIAL DEBUG: give out full monster infos & debugs msg */
-}    LogLevel;
-
+};
 
 /* if not set from outside, we force a useful setting here */
 #ifndef GLOBAL_LOG_LEVEL
@@ -71,5 +68,8 @@ typedef enum LogLevel
 #define GLOBAL_LOG_LEVEL llevInfo
 #endif
 #endif
+
+extern sint8 LOG(log_t logLevel, char *format, ...) DAI_GNUC_PRINTF(2, 3);
+extern void  CHATLOG(char *format, ...) DAI_GNUC_PRINTF(1, 2);
 
 #endif /* ifndef __LOGGER_H */

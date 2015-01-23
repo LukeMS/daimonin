@@ -25,6 +25,8 @@
 
 #include <global.h>
 
+static void Free(objectlink_t *ol);
+
 /*
  *   I changed the objectlink module so it use not only the mempool
  *   system but also uses one struct for objectlink and objectlinkpt.
@@ -39,52 +41,12 @@
  * a pointer to it.
  */
 
-objectlink * get_objectlink(int id)
+objectlink_t * objectlink_get(int id)
 {
-    objectlink *ol  = (objectlink *) get_poolchunk(pool_objectlink);
-    memset(ol, 0, sizeof(objectlink));
-    ol->flags |= id;
+    objectlink_t *ol  = (objectlink_t *) get_poolchunk(pool_objectlink);
+    memset(ol, 0, sizeof(objectlink_t));
+    ol->flags = id;
     return ol;
-}
-
-/*
- * Allocates a new oblinkpt structure, initialises it, and returns
- * a pointer to it.
- */
-
-oblinkpt * get_objectlinkpt()
-{
-    oblinkpt   *obp = (oblinkpt *) get_poolchunk(pool_objectlink);
-    memset(obp, 0, sizeof(oblinkpt));
-    obp->flags |= OBJLNK_FLAG_LINK;
-    return obp;
-}
-
-/* free objectlink
- * and clean up linked objects
- */
-
-void free_objectlink(objectlink *ol)
-{
-    if (OBJECT_VALID(ol->objlink.ob, ol->id))
-        CLEAR_FLAG(ol->objlink.ob, FLAG_IS_LINKED);
-    free_objectlink_simple(ol);
-}
-
-/*
- * Recursively frees all objectlinks.
- * WARNING: only call for with FLAG_IS_LINKED used
- * lists - friendly list or others handle their
- * objectlink malloc/free native.
-*/
-
-void free_objectlink_recursive(objectlink *ol)
-{
-    if (ol->next)
-        free_objectlink_recursive(ol->next);
-    if (OBJECT_VALID(ol->objlink.ob, ol->id))
-        CLEAR_FLAG(ol->objlink.ob, FLAG_IS_LINKED);
-    free_objectlink_simple(ol);
 }
 
 /*
@@ -94,21 +56,47 @@ void free_objectlink_recursive(objectlink *ol)
  * objectlink malloc/free native.
 */
 
-void free_objectlinkpt(oblinkpt *obp)
+void objectlink_free(objectlink_t *ol)
 {
-    if (obp->next)
-        free_objectlinkpt(obp->next);
-    if (obp->objlink.link)
-        free_objectlink_recursive(obp->objlink.link);
-    free_objectlinkpt_simple(obp);
+    if (ol->next)
+    {
+        objectlink_free(ol->next);
+    }
+
+    if (ol->objlink.link)
+    {
+        Free(ol->objlink.link);
+    }
+}
+
+/*
+ * Recursively frees all objectlinks.
+ * WARNING: only call for with FLAG_IS_LINKED used
+ * lists - friendly list or others handle their
+ * objectlink malloc/free native.
+*/
+/* free objectlink
+ * and clean up linked objects
+ */
+
+static void Free(objectlink_t *ol)
+{
+    if (ol->next)
+    {
+        Free(ol->next);
+    }
+
+    if (OBJECT_VALID(ol->objlink.ob, ol->id))
+        CLEAR_FLAG(ol->objlink.ob, FLAG_IS_LINKED);
+    return_poolchunk(ol, pool_objectlink);
 }
 
 
 /* generic link function for objectlinks
  * update a start & end ptr is there is one.
  */
-objectlink *objectlink_link(objectlink **startptr, objectlink **endptr,
-                            objectlink *afterptr, objectlink *beforeptr, objectlink *objptr )
+objectlink_t *objectlink_link(objectlink_t **startptr, objectlink_t **endptr,
+                            objectlink_t *afterptr, objectlink_t *beforeptr, objectlink_t *objptr )
 {
     if(!beforeptr) /* link it behind afterptr */
     {
@@ -156,7 +144,7 @@ objectlink *objectlink_link(objectlink **startptr, objectlink **endptr,
 /* generic unlink a objectlink from a list
  * update a end & start ptr if there is one.
  */
-objectlink *objectlink_unlink(objectlink **startptr, objectlink **endptr, objectlink *objptr)
+objectlink_t *objectlink_unlink(objectlink_t **startptr, objectlink_t **endptr, objectlink_t *objptr)
 {
     if(startptr && *startptr == objptr)
         *startptr = objptr->next;

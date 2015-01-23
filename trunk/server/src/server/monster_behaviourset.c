@@ -191,7 +191,7 @@ void cleanup_all_behavioursets()
 
 /* Generate a 32 bit unique hash from the data we use to generate
  * behavioursets */
-uint32 bghash(object *op)
+uint32 bghash(object_t *op)
 {
     uint32  hash    = 0;
     if (QUERY_FLAG(op, FLAG_NO_ATTACK))
@@ -219,7 +219,7 @@ uint32 bghash(object *op)
 /* Set up pointers to default ai definitions in the archetypes */
 void init_arch_default_behaviours()
 {
-    archetype  *at;
+    archetype_t  *at;
 
     LOG(llevDebug, "Init arch default AI: ");
     for (at = first_archetype; at != NULL; at = (at->more == NULL) ? at->next : at->more)
@@ -261,7 +261,7 @@ struct mob_behaviour * init_behaviour(behaviourclass_t classid, int behaviourid)
 
 /* Backwards-compability function that creates a behaviourset
  * from old-style mob parameters (attributes of mob object) */
-struct mob_behaviourset * generate_behaviourset(object *op)
+struct mob_behaviourset * generate_behaviourset(object_t *op)
 {
     struct mob_behaviourset    *set;
     struct mob_behaviour       *last;
@@ -655,7 +655,7 @@ static struct mob_behaviour *setup_plugin_behaviour(
 }
 
 static struct mob_behaviour *setup_behaviour(
-        object *op, behaviourclass_t class,
+        object_t *op, behaviourclass_t class,
         char *buf, const char *tok_end, const char *conf_text)
 {
     int behaviour_id;
@@ -697,7 +697,7 @@ static struct mob_behaviour *setup_behaviour(
     return new_behaviour;
 }
 
-struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object *op)
+struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object_t *op)
 {
     struct mob_behaviourset    *behaviourset;
     struct mob_behaviour       *last_behaviour[NROF_BEHAVIOURCLASSES];
@@ -873,14 +873,19 @@ struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object *o
  * fall back to an arch-default for that mob, then a race-default and
  * finally a global default.
  */
-struct mob_behaviourset * setup_behaviours(object *op)
+struct mob_behaviourset * setup_behaviours(object_t *op)
 {
-    object *conf_obj    = NULL;
+    object_t *conf_obj,
+           *next;
 
-    /* Find mob's behaviour configuration object */
-    for (conf_obj = op->inv; conf_obj; conf_obj = conf_obj->below)
+    /* Find mob's behaviour configuration object_t */
+    FOREACH_OBJECT_IN_OBJECT(conf_obj, op, next)
+    {
         if (conf_obj->type == TYPE_AI)
+        {
             break;
+        }
+    }
 
     /* Configuration from mob, arch, race or generator? */
     if (conf_obj && conf_obj->msg)
@@ -912,7 +917,7 @@ struct mob_behaviourset * setup_behaviours(object *op)
 }
 
 /** Free the mob's current behaviourset and generate a new one */
-void reload_behaviours(object *op)
+void reload_behaviours(object_t *op)
 {
     if(MOB_DATA(op) == NULL)
     {

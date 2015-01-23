@@ -25,7 +25,7 @@
 
 #include <global.h>
 
-int command_uskill(object *pl, char *params)
+int command_uskill(object_t *pl, char *params)
 {
     if (!params)
         return 1;
@@ -43,7 +43,7 @@ int command_uskill(object *pl, char *params)
     }
 }
 
-int command_rskill(object *pl, char *params)
+int command_rskill(object_t *pl, char *params)
 {
     int skillno;
 
@@ -55,7 +55,7 @@ int command_rskill(object *pl, char *params)
 
     if ((skillno = lookup_skill_by_name(params)) == -1)
     {
-        new_draw_info(NDI_UNIQUE, 0, pl, "Couldn't find the skill %s", params);
+        ndi(NDI_UNIQUE, 0, pl, "Couldn't find the skill %s", params);
 
         return 0;
     }
@@ -71,30 +71,30 @@ int command_rskill(object *pl, char *params)
 }
 
 
-int command_egobind ( object *pl, char *params)
+int command_egobind ( object_t *pl, char *params)
 {
-    object *mark;
+    object_t *mark;
 
     if(pl->type != PLAYER || !CONTR(pl))
         return 0;
 
     if (!(mark = find_marked_object(pl)))
     {
-        new_draw_info(NDI_UNIQUE, 0,pl, "First MARK an ego item, then type: /egobind ");
+        ndi(NDI_UNIQUE, 0,pl, "First MARK an ego item, then type: /egobind ");
         return 0;
     }
 
     /* kein egoitem or previous bound */
     if(!QUERY_FLAG(mark, FLAG_IS_EGOITEM) || QUERY_FLAG(mark, FLAG_IS_EGOBOUND))
     {
-        new_draw_info(NDI_UNIQUE, 0,pl, "Your marked item %s is not an unbound ego item!",
+        ndi(NDI_UNIQUE, 0,pl, "Your marked item %s is not an unbound ego item!",
             QUERY_SHORT_NAME(mark, NULL));
         return 0;
     }
 
     if(!params)
     {
-        new_draw_info(NDI_UNIQUE, 0,pl, "To bind %s type: /egobind %d",
+        ndi(NDI_UNIQUE, 0,pl, "To bind %s type: /egobind %d",
             QUERY_SHORT_NAME(mark, pl), mark->count);
         return 0;
     }
@@ -102,12 +102,12 @@ int command_egobind ( object *pl, char *params)
     /* be sure we REALLY bind the marked and previous announced item! */
     if(mark->count != (uint32) strtoul(params, NULL, 10))
     {
-        new_draw_info(NDI_UNIQUE, 0,pl, "The numbers don't match!\nTo bind %s type: /egobind %d",
+        ndi(NDI_UNIQUE, 0,pl, "The numbers don't match!\nTo bind %s type: /egobind %d",
             QUERY_SHORT_NAME(mark, pl), mark->count);
         return 0;
     }
 
-    new_draw_info(NDI_UNIQUE, 0,pl, "You have bound %s!",
+    ndi(NDI_UNIQUE, 0,pl, "You have bound %s!",
         QUERY_SHORT_NAME(mark, pl));
     create_ego_item(mark, pl->name, EGO_ITEM_BOUND_PLAYER);
     esrv_update_item(UPD_NAME, mark);
@@ -117,9 +117,11 @@ int command_egobind ( object *pl, char *params)
 }
 
 /* Gecko: added a recursive part to search so that we also search in containers */
-static object * find_marked_object_rec(object *op, object **marked, uint32 *marked_count)
+static object_t * find_marked_object_rec(object_t *op, object_t **marked, uint32 *marked_count)
 {
-    object *tmp, *tmp2;
+    object_t *tmp,
+           *next,
+           *tmp2;
 
     /* TODO: wouldn't it be more efficient to search the other way? That is:
      * start with the marked item, and search outwards through its env
@@ -130,7 +132,7 @@ static object * find_marked_object_rec(object *op, object **marked, uint32 *mark
      * player hasn't dropped the item.  We use count on the off chance that
      * an item got reincarnated at some point.
      */
-    for (tmp = op->inv; tmp; tmp = tmp->below)
+    FOREACH_OBJECT_IN_OBJECT(tmp, op, next)
     {
         if (QUERY_FLAG(tmp, FLAG_SYS_OBJECT))
         {
@@ -166,7 +168,7 @@ static object * find_marked_object_rec(object *op, object **marked, uint32 *mark
  * NULL.  We leave it up to the calling function to print messages if
  * nothing is found.
  */
-object * find_marked_object(object *op)
+object_t * find_marked_object(object_t *op)
 {
     if (op->type != PLAYER)
         return NULL;
@@ -183,10 +185,11 @@ object * find_marked_object(object *op)
 /* op is the player
  * tmp is the monster being examined.
  */
-char *examine_monster(object *op, object *tmp, char *buf, int flag)
+char *examine_monster(object_t *op, object_t *tmp, char *buf, int flag)
 {
-    object *mon = tmp->head ? tmp->head : tmp,
-           *walk;
+    object_t *mon = (tmp->head) ? tmp->head : tmp,
+           *walk,
+           *next;
     float   dps;
     char   *gender, *att;
     int     val, val2, i;
@@ -322,7 +325,7 @@ char *examine_monster(object *op, object *tmp, char *buf, int flag)
         }
     }
 
-    for (walk = mon->inv; walk; walk = walk->below)
+    FOREACH_OBJECT_IN_OBJECT(walk, mon, next)
     {
         if (walk->type == FORCE &&
             walk->sub_type1 == ST1_FORCE_POISON)
@@ -332,12 +335,12 @@ char *examine_monster(object *op, object *tmp, char *buf, int flag)
     }
 
     if(op)
-        new_draw_info(NDI_UNIQUE, 0, op, "%s", buf);
+        ndi(NDI_UNIQUE, 0, op, "%s", buf);
 
     return buf;
 }
 
-char *examine(object *op, object *tmp, int flag)
+char *examine(object_t *op, object_t *tmp, int flag)
 {
     char    *buf_out = global_string_buf4096;
     char    buf[LARGE_BUF];
@@ -623,10 +626,10 @@ char *examine(object *op, object *tmp, int flag)
 
         if (tmp->type != MONEY)
         {
-            MapSpace *msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
-            object *shop;
+            msp_t *msp = MSP_KNOWN(op);
+            object_t *shop;
 
-            GET_MAP_SPACE_SYS_OBJ(msp, SHOP_FLOOR, shop);
+            MSP_GET_SYS_OBJ(msp, SHOP_FLOOR, shop);
 
             if (shop)
             {
@@ -699,7 +702,7 @@ char *examine(object *op, object *tmp, int flag)
 
     if(op)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "%s", buf_out);
+        ndi(NDI_UNIQUE, 0, op, "%s", buf_out);
 
         /* Examining signs also applies them (so the player can see what is on
          * them). This is because for signs their whole raison d'etre is to be
@@ -721,7 +724,7 @@ char *examine(object *op, object *tmp, int flag)
 #endif
         {
             dump_object(tmp);
-            new_draw_info(NDI_UNIQUE, 0, op, "%s", errmsg);
+            ndi(NDI_UNIQUE, 0, op, "%s", errmsg);
         }
     }
     return buf_out;

@@ -48,7 +48,7 @@ static godlink * init_godslist()
 
 void init_gods(void)
 {
-    archetype  *at  = NULL;
+    archetype_t  *at  = NULL;
 
     LOG(llevDebug, "Initializing gods...");
     for (at = first_archetype; at != NULL; at = at->next)
@@ -59,7 +59,7 @@ void init_gods(void)
 }
 
 /* add_god_to_list()- called only from init_gods */
-void add_god_to_list(archetype *god_arch)
+void add_god_to_list(archetype_t *god_arch)
 {
     godlink    *god;
 
@@ -91,7 +91,7 @@ void add_god_to_list(archetype *god_arch)
  * god in question, then set the title for later use. -b.t.
  */
 
-int baptize_altar(object *op)
+int baptize_altar(object_t *op)
 {
     char    buf[MEDIUM_BUF];
 
@@ -136,9 +136,9 @@ godlink * get_rand_god(void)
  * We need to be VERY carefull about using this, as we
  * are returning a pointer to the CLONE object. -b.t.
  */
-object * pntr_to_god_obj(godlink *godlnk)
+object_t * pntr_to_god_obj(godlink *godlnk)
 {
-    object *god = NULL;
+    object_t *god = NULL;
 
     if (godlnk && godlnk->arch)
         god = &godlnk->arch->clone;
@@ -167,7 +167,7 @@ void dump_gods()
     LOG(llevInfo, "\n");
     for (glist = first_god; glist; glist = glist->next)
     {
-        object *god = pntr_to_god_obj(glist);
+        object_t *god = pntr_to_god_obj(glist);
         char    tmpbuf[HUGE_BUF];
         int     tmpvar, gifts = 0;
 
@@ -180,7 +180,7 @@ void dump_gods()
         LOG(llevInfo, " enemy: %s\n", STRING_OBJ_TITLE(god));
         if (god->other_arch)
         {
-            object *serv    = &god->other_arch->clone;
+            object_t *serv    = &god->other_arch->clone;
             LOG(llevInfo, " servant stats: (%s)\n", STRING_ARCH_NAME(god->other_arch));
             LOG(llevInfo, "  S:%d C:%d D:%d I:%d W:%d P:%d\n", serv->stats.Str, serv->stats.Con, serv->stats.Dex,
                 serv->stats.Int, serv->stats.Wis, serv->stats.Pow);
@@ -239,7 +239,7 @@ void dump_gods()
         {
             gifts = 1; LOG(llevInfo, "\n  reflect missiles");
         }
-        if (QUERY_FLAG(god, FLAG_REFL_SPELL))
+        if (QUERY_FLAG(god, FLAG_REFL_CASTABLE))
         {
             gifts = 1; LOG(llevInfo, "\n  reflect spells");
         }

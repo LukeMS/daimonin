@@ -161,7 +161,7 @@
 * USE_LIGHTING - enable light/darkness & light sources
 * USE_TILESTRETCHER - enables tilestretcher for uneven ground surface
 * USE_PVP - Enables players to attack each other in certain maps.
-*
+* USE_SLAYER_MONSTER - enables a slayer exclusively for monsters.
 ***********************************************************************/
 
 /* Enables Brian Thomas's new alchemy code.  Might unbalance the game - lets
@@ -314,10 +314,11 @@
 
 #define USE_TILESTRETCHER
 
-/*
- * With USE_PVP defined, players can attack each other on maps with 'pvp 1' in their header.
- */
+/* With USE_PVP defined, players can attack each other on maps with 'pvp 1' in
+ * their header. */
 #define USE_PVP
+
+#define USE_SLAYER_MONSTER
 
 /***********************************************************************
  * SECTION 2 - Machine/Compiler specific stuff.
