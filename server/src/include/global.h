@@ -1057,12 +1057,10 @@ EXTERN racelink                *first_race;
 EXTERN long                     init_done;          /* Ignores signals until init_done is true */
 EXTERN long                     nroferrors;     /* If it exceeds MAX_ERRORS, call fatal() */
 
-EXTERN unsigned long            pticks;                 /* this is the global round counter. Every main loop pticks=pticks+1 */
-EXTERN long                     pticks_ums;             /* how many micro seconds has one pticks */
+EXTERN uint32                   pticks;                 /* this is the global round counter. Every main loop pticks=pticks+1 */
+EXTERN uint32                   pticks_ums;             /* how many micro seconds has one pticks */
 EXTERN uint32                   pticks_second;          /* how many pticks in one second */
-EXTERN uint32                   pticks_socket_idle;     /* 3 idle counter we use for idle sockets in socket/loop.c */
-EXTERN uint32                   pticks_player_idle1;
-EXTERN uint32                   pticks_player_idle2;
+
 /*
  * Misc global variables:
  */

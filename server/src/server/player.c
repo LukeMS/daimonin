@@ -1463,7 +1463,7 @@ char *get_online_players_info(player_t *who, player_t *diff, uint8 force)
     LOG(llevInfo, "rewritten.\n");
 
     /* Begin string with time of rewrite and player numbers in hex. */
-    sprintf(buf, "%lx %x ", ROUND_TAG, player_active);
+    sprintf(buf, "%x %x ", ROUND_TAG, player_active);
 
     for (pl = first_player; pl; pl = pl->next)
     {

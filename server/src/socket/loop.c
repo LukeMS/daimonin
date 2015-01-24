@@ -374,7 +374,7 @@ static int socket_prepare_commands(NewSocket *ns) // use this for debugging
                 /* account name ptrs are was deleted as we mirrored the socket */
                 ns->readbuf.buf = NULL;
                 ns->readbuf.len = ns->readbuf.toread = 0; /* sanity settings */
-                ns->login_count = ROUND_TAG + pticks_socket_idle; // reset idle counter
+                ns->login_count = ROUND_TAG + IDLE_SOCKET * pticks_second; // reset idle counter
                 socket_info.nconns--;
                 ns->status = Ns_Avail;
                 return TRUE; /* leave this instance, the copied socket in the player will go */
@@ -684,14 +684,15 @@ void doeric_server(int update, struct timeval *timeout)
                     if (!pl->socket.idle_flag &&
                         pl->socket.login_count < ROUND_TAG)
                     {
-                        pl->socket.login_count = ROUND_TAG + pticks_player_idle2;
+                        pl->socket.login_count = ROUND_TAG + IDLE_PLAYER2 * pticks_second;
                         pl->socket.idle_flag = 1;
-                        ndi(NDI_UNIQUE | NDI_RED, 0, pl->ob, "8 minutes idle warning! Server will disconnect you in 2 minutes.");
+                        ndi(NDI_UNIQUE | NDI_RED, 0, pl->ob, "Idle warning! Server will disconnect you in %u seconds.",
+                            IDLE_PLAYER2);
                     }
                     else if (pl->socket.login_count < ROUND_TAG)
                     {
                         ndi(NDI_UNIQUE | NDI_RED, 0, pl->ob, "Max idle time reached! Server is closing connection.");
-                        pl->socket.login_count = ROUND_TAG + pticks_player_idle1;
+                        pl->socket.login_count = ROUND_TAG + IDLE_PLAYER1  * pticks_second;
                         pl->socket.status = Ns_Zombie; /* we hold the socket open for a *bit* */
                         pl->socket.idle_flag = 1;
                         pl = pl->next;

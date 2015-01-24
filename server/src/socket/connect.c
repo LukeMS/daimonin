@@ -71,7 +71,7 @@ void InitConnection(NewSocket *ns, char *ip)
             sndbufsize, rcvbufsize);
     }
 
-    ns->login_count = ROUND_TAG + pticks_socket_idle;
+    ns->login_count = ROUND_TAG + IDLE_SOCKET * pticks_second;
     ns->idle_flag = 0;
     ns->addme = 0;
     ns->image2 = 0;

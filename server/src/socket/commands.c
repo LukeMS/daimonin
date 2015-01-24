@@ -402,7 +402,7 @@ void process_command_queue(NewSocket *ns, player_t *pl)
 #endif
 
         /* reset idle counter */
-        ns->login_count = ROUND_TAG + pticks_player_idle1;
+        ns->login_count = ROUND_TAG + IDLE_PLAYER1 * pticks_second;
         ns->idle_flag = 0;
 
         /* all commands we have was pre-processed, so we can be sure they are valid for active, playing Player. */
