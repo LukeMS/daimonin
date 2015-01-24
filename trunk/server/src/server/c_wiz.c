@@ -1310,24 +1310,24 @@ int command_addexp(object_t *op, char *params)
  * '/serverspeed <number>' sets server speed to <number>. */
 int command_serverspeed(object_t *op, char *params)
 {
-    long i;
+    sint32 i;
 
     if (!params)
     {
-        ndi(NDI_UNIQUE, 0, op, "Current server speed is %ld ums (%u ticks/second)",
-                             pticks_ums, pticks_second);
-
+        ndi(NDI_UNIQUE, 0, op, "Current server speed is %u ums per round (%u rounds per second)",
+            pticks_ums, pticks_second);
         return COMMANDS_RTN_VAL_OK_SILENT;
     }
 
-    if (!sscanf(params, "%ld", &i))
+    if (!sscanf(params, "%d", &i))
+    {
         return COMMANDS_RTN_VAL_SYNTAX;
+    }
 
     set_pticks_time(i);
     GETTIMEOFDAY(&last_time);
-    ndi(NDI_UNIQUE, 0, op, "Set server speed to %ld ums (%u ticks/second)",
-                         pticks_ums, pticks_second);
-
+    ndi(NDI_UNIQUE, 0, op, "Set server speed to %u ums per round (%u rounds per second)",
+        pticks_ums, pticks_second);
     return COMMANDS_RTN_VAL_OK;
 }
 
@@ -1720,18 +1720,27 @@ static int BanList(object_t *op, ENUM_BAN_TYPE ban_type)
     {
         if (ol->objlink.ban->ticks_init != -1 &&
             pticks >= ol->objlink.ban->ticks)
+        {
             remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
+        }
         else
+        {
             if (ol->objlink.ban->ticks_init == -1)
+            {
                 ndi(NDI_UNIQUE, 0, op, "%s -> Permanently banned",
                               (ban_type == BANTYPE_ACCOUNT ? ol->objlink.ban->account :
                                ban_type == BANTYPE_CHAR ? ol->objlink.ban->name : ol->objlink.ban->ip));
+            }
             else
-                ndi(NDI_UNIQUE, 0, op, "%s -> %lu left (of %d) sec",
+            {
+                /* FIXME: Bans should rely on real time, not server rounds (pticks). */
+                ndi(NDI_UNIQUE, 0, op, "%s -> %u left (of %d) sec",
                               (ban_type == BANTYPE_ACCOUNT ? ol->objlink.ban->account :
                                ban_type == BANTYPE_CHAR ? ol->objlink.ban->name : ol->objlink.ban->ip),
                               (ol->objlink.ban->ticks - pticks) / 8,
                               (ol->objlink.ban->ticks_init) / 8);
+            }
+        }
     }
 
     return COMMANDS_RTN_VAL_OK_SILENT;

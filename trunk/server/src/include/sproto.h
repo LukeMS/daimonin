@@ -395,7 +395,7 @@ void                        compile_info(void);
 void                        fatal_signal(int make_core, int close_sockets, uint8 status);
 void                        init_library(void);
 void                        free_strings(void);
-void                        set_pticks_time(long t);
+void                        set_pticks_time(sint32 t);
 void                        free_lists_and_tables(void);
 /* ipcompare.c */
 int                         parse_ip(const char * ip, unsigned char ip_terms[], int mask_pos[]);

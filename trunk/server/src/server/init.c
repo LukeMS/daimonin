@@ -177,30 +177,19 @@ static void FreeStrings(size_t nrof, shstr_t **ptr)
     }
 }
 
-/* set the pticks_xx but NOT pticks itself.
- * pticks_ums = how "long" in ums is a server "round" (counted with ROUND_TAG).
- * pticks_second = how many "round" are done in a second.
+/* set_pticks_time() sets the various pticks_* variables (but not pticks itself
+ * which is simply a counter of elapsed server 'rounds').
  *
- * The default ums is set in MAX_TIME in config.h and cank be changed with the
- * /dm_time command. */
+ * The parameter t is restricted to the range 1-1000000 and this becomes the
+ * value of pticks_ums (the number of ums a ptick takes). It follows that
+ * pticks_second (the number of pticks which elapse per second) is 1000000
+ * divided by this number. */
 /* TODO: send new pticks_xx to all plugins! */
-void set_pticks_time(long t)
+void set_pticks_time(sint32 t)
 {
-    pticks_ums = t;
-    pticks_second = 1000000;
-
-    if(t)
-    {
-        pticks_second = (uint32)(1000000 / t);
-    }
-
-    pticks_socket_idle = 60 * 3 * pticks_second;
-    pticks_player_idle1 = 60 * 8 * pticks_second;
-    pticks_player_idle2 = 60 * 2 * pticks_second;
-
-    /* LOG(llevDebug,"set_pticks_time(): t=%d ums:%d pticks_second:%u sock:%d idle1:%d idle2:%d\n",
-       t, pticks_ums, pticks_second, pticks_socket_idle, pticks_player_idle1, pticks_player_idle2);
-     */
+    t = MAX(1, MIN(t, 1000000));
+    pticks_ums = (uint32)t;
+    pticks_second = (uint32)(1000000 / pticks_ums);
 }
 
 /*
@@ -1033,7 +1022,7 @@ void compile_info()
     LOG(llevSystem, "Itemsdir:\t%s/%s\n", settings.localdir, settings.uniquedir);
     LOG(llevSystem, "Tmpdir:\t\t%s\n", settings.tmpdir);
     LOG(llevSystem, "Tlogfilename:\t%s, Clogfilename:\t%s (llev:%d)\n", settings.tlogfilename, settings.clogfilename, settings.debug);
-    LOG(llevSystem, "Max_time:\t%ld (%u)\n", pticks_ums, pticks_second);
+    LOG(llevSystem, "Server speed:\t%u ums per round (%u rounds per second)\n", pticks_ums, pticks_second);
 #ifdef MAP_MAXOBJECTS
     LOG(llevSystem, "Maps swap when too many objects are in memory:\t%u\n",
         MAP_MAXOBJECTS);
