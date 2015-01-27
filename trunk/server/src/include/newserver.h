@@ -226,9 +226,9 @@ struct view_msp_t
 {
     int     count;
     short   faces[MSP_CLAYER_NROF];
-    uint16  fflag[MSP_CLAYER_NROF - MSP_CLAYER_UNSLICED - 1];
-    uint8   ff_probe[MSP_CLAYER_NROF - MSP_CLAYER_UNSLICED - 1];
-    uint8   quick_pos[MSP_CLAYER_NROF - MSP_CLAYER_UNSLICED - 1];
+    uint16  fflag[MSP_CLAYER_NROF];
+    uint8   ff_probe[MSP_CLAYER_NROF];
+    uint8   quick_pos[MSP_CLAYER_NROF];
 };
 
 struct view_map_t
