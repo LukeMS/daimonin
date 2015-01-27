@@ -523,6 +523,10 @@ void draw_client_map2(player_t *pl)
             clayer_over = msp->clayer[msp_slice][MSP_CLAYER_OVER - MSP_CLAYER_UNSLICED - 1];
 
             /* Always see self. */
+            /* TODO: This block needs to be looked at carefully. Should be a
+             * simple task...
+             *
+             * -- Smacky 20150127 */
             if (MSP_KNOWN(who) == msp)
             {
 #if 0
@@ -540,11 +544,13 @@ void draw_client_map2(player_t *pl)
                     clayer_over = who;
                 }
 #else
-                if (clayer_over->type == PLAYER)
+                if (clayer_over &&
+                    clayer_over->type == PLAYER)
                 {
                     clayer_over = who;
                 }
-                else if (clayer_under->type == PLAYER)
+                else if (clayer_under &&
+                         clayer_under->type == PLAYER)
                 {
                     clayer_under = who;
                 }
