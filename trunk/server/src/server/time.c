@@ -877,7 +877,6 @@ void change_object(object_t *op)
     /* Doesn`t handle linked objs yet */
 
     object_t *tmp, *env ;
-    msp_t *msp = MSP_KNOWN(op);
     int     i, j;
 
     /* In non-living items only change when food value is 0 */
@@ -930,6 +929,8 @@ void change_object(object_t *op)
                     }
                     else /* object is on map */
                     {
+                        msp_t *msp = MSP_KNOWN(op);
+
                         /* remove light mask from map */
                         adjust_light_source(msp, -(op->glow_radius));
                         update_object(op, UP_OBJ_FACE); /* tell map update we have something changed */
@@ -971,6 +972,8 @@ void change_object(object_t *op)
         }
         else
         {
+            msp_t *msp = MSP_KNOWN(op);
+
             /* The problem with searching for a free spot in this kind of
              * object change (where the change is only technical, ie, in the
              * gameworld the object is the same physical object, just with a
