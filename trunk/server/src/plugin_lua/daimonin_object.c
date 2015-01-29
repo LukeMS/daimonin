@@ -3778,7 +3778,7 @@ static int GameObject_Move(lua_State *L)
     int         dir;
 
     get_lua_args(L, "Oi|O", &self, &dir, &whatptr);
-    lua_pushnumber(L, hooks->move_ob(WHO, dir, WHAT));
+    lua_pushnumber(L, hooks->move_ob(WHO, dir, (whatptr) ? WHAT : NULL));
     return 1;
 }
 
