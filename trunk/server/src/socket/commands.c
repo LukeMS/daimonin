@@ -391,38 +391,57 @@ void process_command_queue(NewSocket *ns, player_t *pl)
     int cmd, cmd_count = 0;
 
     /* do some sanity checks ... we only allow a full enabled player to work out commands */
-    if ( ns->status != Ns_Playing || !(pl->state&ST_PLAYING) || (pl && (!pl->ob || pl->ob->speed_left < 0.0f)))
-        return;
-
-    /* Loop through this - maybe we have several complete packets here. */
-    while (ns->cmd_start)
+    if (ns->status != Ns_Playing ||
+        !pl ||
+        !(pl->state & ST_PLAYING) ||
+        !pl->ob ||
+        pl->ob->speed_left < 0.0)
     {
-#ifdef DEBUG_PROCESS_QUEUE
-        LOG(llevDebug, "process_command_queue: Found cmdptr:%p . Cmd: %d\n", ns->cmd_start, ns->cmd_start->cmd);
-#endif
+        return;
+    }
 
-        /* reset idle counter */
-        ns->login_count = ROUND_TAG + IDLE_PLAYER1 * pticks_second;
-        ns->idle_flag = 0;
+    if (ns->cmd_start)
+    {
+        /* reset inactivity counter */
+        ns->inactive_when = ROUND_TAG + INACTIVE_PLAYER1 * pticks_second;
+        ns->inactive_flag = 0;
 
-        /* all commands we have was pre-processed, so we can be sure they are valid for active, playing Player. */
-
-        /* well, some last sanity tests */
-        if((cmd = ns->cmd_start->cmd) < 0 || cmd >= CLIENT_CMD_MAX_NROF)
+        /* Loop through this - maybe we have several complete packets here. */
+        do
         {
-            LOG(llevDebug, "HACKBUG: Bad command from client (%d) cmd:(%d)\n", ns->fd, cmd);
-            ns->status = Ns_Dead;
-            return;
+#ifdef DEBUG_PROCESS_QUEUE
+            LOG(llevDebug, "process_command_queue: Found cmdptr:%p . Cmd: %d\n",
+                ns->cmd_start, ns->cmd_start->cmd);
+
+#endif
+            /* all commands we have was pre-processed, so we can be sure they are valid for active, playing Player. */
+            /* well, some last sanity tests */
+            if ((cmd = ns->cmd_start->cmd) < 0 ||
+                cmd >= CLIENT_CMD_MAX_NROF)
+            {
+                LOG(llevDebug, "HACKBUG: Bad command from client (%d) cmd:(%d)\n",
+                    ns->fd, cmd);
+                ns->status = Ns_Dead;
+                return;
+            }
+
+            /* simple and fast: we call the cmd function in binary style */
+            cs_commands[cmd].cmdproc(ns->cmd_start->buf, ns->cmd_start->len, ns);
+            /* and remove the command from the queue */
+            command_buffer_clear(ns);
+
+            /* have we to stop or one more command? */
+            if (cmd_count++ >= 8 ||
+                ns->status != Ns_Playing ||
+                !pl ||
+                !(pl->state & ST_PLAYING) ||
+                !pl->ob ||
+                pl->ob->speed_left < 0.0)
+            {
+                return;
+            }
         }
-
-        /* simple and fast: we call the cmd function in binary style */
-        cs_commands[cmd].cmdproc(ns->cmd_start->buf, ns->cmd_start->len, ns);
-        /* and remove the command from the queue */
-        command_buffer_clear(ns);
-
-        /* have we to stop or one more command? */
-        if (cmd_count++ >= 8 || ns->status != Ns_Playing || !(pl->state&ST_PLAYING) || (pl && (!pl->ob || pl->ob->speed_left < 0.0f)))
-            return;
+        while (ns->cmd_start);
     }
 }
 
@@ -897,9 +916,9 @@ void cs_cmd_setup(char *buf, int len, NewSocket *ns)
         LOG(llevInfo, "Daimonin version mismatch client: %u.%u.%u server: %u.%u.%u\n",
             rel, maj, min, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR,
             DAI_VERSION_MINOR);
-        ns->login_count = ROUND_TAG + 10 * pticks_second;
+        ns->inactive_when = ROUND_TAG + INACTIVE_ZOMBIE * pticks_second;
         ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
-        ns->idle_flag = 1;
+        ns->inactive_flag = 1;
 
         return;
     }
@@ -908,9 +927,9 @@ void cs_cmd_setup(char *buf, int len, NewSocket *ns)
     {
         LOG(llevInfo, "Protocol version mismatch client:(%u) server:(%u)\n",
             ns->protocol_version, PROTOCOL_VERSION);
-        ns->login_count = ROUND_TAG + 10 * pticks_second;
+        ns->inactive_when = ROUND_TAG + INACTIVE_ZOMBIE * pticks_second;
         ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
-        ns->idle_flag = 1;
+        ns->inactive_flag = 1;
         return;
     }
 }

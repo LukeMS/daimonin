@@ -368,43 +368,6 @@ int move_player(object_t * const op, int dir, const int flag)
     return dir;
 }
 
-
-/* main player command loop - read command from buffer
- * and execute it.
- * Return:
- *         0: turn speed used up or no commands left
- *        -1: player is invalid now
- */
-int handle_newcs_player(player_t *pl)
-{
-    object_t *op  = pl->ob;
-
-    if (!op || !OBJECT_ACTIVE(op))
-        return -1;
-
-    process_command_queue(&pl->socket, pl);
-
-    if (!op || !OBJECT_ACTIVE(op) || pl->socket.status >= Ns_Zombie)
-        return -1;
-
-    /* player is fine, check for speed */
-    if (op->speed_left < 0.0f || QUERY_FLAG(op,FLAG_PARALYZED) ||QUERY_FLAG(op,FLAG_ROOTED) )
-        return 0;
-
-    /* this movement action will dramatically change in the future.
-     * basically we will go for a "steps per ticks"
-     */
-
-    if (op->direction && CONTR(op)->run_on)     /* automove */
-    {
-        /* All move commands take 1 tick, at least for now */
-        move_player(op, op->direction, TRUE);
-        op->speed_left--;
-    }
-
-    return 0;
-}
-
 int save_life(object_t *op)
 {
     object_t *this,
