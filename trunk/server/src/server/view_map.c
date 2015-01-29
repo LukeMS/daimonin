@@ -610,7 +610,7 @@ void draw_client_map2(player_t *pl)
                 {
                     if (head->update_tag == map2_count)
                     {
-                        clayer_under == NULL;
+                        clayer_under = NULL;
                     }
                     else
                     {
@@ -621,7 +621,7 @@ void draw_client_map2(player_t *pl)
 
                 if (face_under == blank_face->number)
                 {
-                    clayer_under == NULL;
+                    clayer_under = NULL;
                 }
 
                 if (!clayer_under)
@@ -682,7 +682,7 @@ void draw_client_map2(player_t *pl)
                 {
                     if (head->update_tag == map2_count)
                     {
-                        clayer_over == NULL;
+                        clayer_over = NULL;
                     }
                     else
                     {
@@ -693,7 +693,7 @@ void draw_client_map2(player_t *pl)
 
                 if (face_over == blank_face->number)
                 {
-                    clayer_over == NULL;
+                    clayer_over = NULL;
                 }
 
                 if (!clayer_over)
