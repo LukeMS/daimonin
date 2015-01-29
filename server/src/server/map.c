@@ -2537,36 +2537,36 @@ static void LoadObjects(map_t *m, FILE *fp, int mapflags)
             * for it but it should work MT-10.2005
             */
             if (QUERY_FLAG(op, FLAG_SYS_OBJECT))
-                SET_MULTI_FLAG(op->more, FLAG_SYS_OBJECT);
+                SET_MULTI_FLAG(op->more, FLAG_SYS_OBJECT)
             else
             CLEAR_MULTI_FLAG(tmp->more, FLAG_SYS_OBJECT);
             if (QUERY_FLAG(op, FLAG_NO_APPLY))
-                SET_MULTI_FLAG(op->more, FLAG_NO_APPLY);
+                SET_MULTI_FLAG(op->more, FLAG_NO_APPLY)
             else
             CLEAR_MULTI_FLAG(tmp->more, FLAG_NO_APPLY);
             if (QUERY_FLAG(op, FLAG_IS_INVISIBLE))
-                SET_MULTI_FLAG(op->more, FLAG_IS_INVISIBLE);
+                SET_MULTI_FLAG(op->more, FLAG_IS_INVISIBLE)
             else
             CLEAR_MULTI_FLAG(tmp->more, FLAG_IS_INVISIBLE);
             if (QUERY_FLAG(op, FLAG_IS_ETHEREAL))
-                SET_MULTI_FLAG(op->more, FLAG_IS_ETHEREAL);
+                SET_MULTI_FLAG(op->more, FLAG_IS_ETHEREAL)
             else
             CLEAR_MULTI_FLAG(tmp->more, FLAG_IS_ETHEREAL);
             if (QUERY_FLAG(op, FLAG_CAN_PASS_THRU))
-                SET_MULTI_FLAG(op->more, FLAG_CAN_PASS_THRU);
+                SET_MULTI_FLAG(op->more, FLAG_CAN_PASS_THRU)
             else
             CLEAR_MULTI_FLAG(tmp->more, FLAG_CAN_PASS_THRU);
             if (QUERY_FLAG(op, FLAG_FLYING))
-                SET_MULTI_FLAG(op->more, FLAG_FLYING);
+                SET_MULTI_FLAG(op->more, FLAG_FLYING)
             else
             CLEAR_MULTI_FLAG(tmp->more, FLAG_FLYING);
             if (QUERY_FLAG(op, FLAG_LEVITATE))
-                SET_MULTI_FLAG(op->more, FLAG_LEVITATE);
+                SET_MULTI_FLAG(op->more, FLAG_LEVITATE)
             else
             CLEAR_MULTI_FLAG(tmp->more, FLAG_LEVITATE);
 
             if (QUERY_FLAG(op, FLAG_BLOCKSVIEW))
-                SET_MULTI_FLAG(op->more, FLAG_BLOCKSVIEW);
+                SET_MULTI_FLAG(op->more, FLAG_BLOCKSVIEW)
             else
             CLEAR_MULTI_FLAG(tmp->more, FLAG_BLOCKSVIEW);
         }
