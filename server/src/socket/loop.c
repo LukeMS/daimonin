@@ -374,7 +374,7 @@ static int socket_prepare_commands(NewSocket *ns) // use this for debugging
                 /* account name ptrs are was deleted as we mirrored the socket */
                 ns->readbuf.buf = NULL;
                 ns->readbuf.len = ns->readbuf.toread = 0; /* sanity settings */
-                ns->login_count = ROUND_TAG + IDLE_SOCKET * pticks_second; // reset idle counter
+                ns->inactive_when = ROUND_TAG + INACTIVE_SOCKET * pticks_second; // reset idle counter
                 socket_info.nconns--;
                 ns->status = Ns_Avail;
                 return TRUE; /* leave this instance, the copied socket in the player will go */
@@ -456,18 +456,22 @@ static int socket_prepare_commands(NewSocket *ns) // use this for debugging
  */
 void remove_ns_dead_player(player_t *pl)
 {
+    LOG(llevInfo, "remove_ns_dead_player(%s): state:%d gmaster:%d g_status:%d\n",
+        STRING_OBJ_NAME(pl->ob),pl->state, pl->gmaster_mode, pl->group_status);
 
-    LOG(llevDebug, "remove_ns_dead_player(%s): state:%d gmaster:%d g_status:%d\n", STRING_OBJ_NAME(pl->ob),pl->state,
-        pl->gmaster_mode, pl->group_status);
     if (!(pl->state & ST_DEAD))
     {
         /* remove the player from global gmaster lists */
-        if(pl->gmaster_mode != GMASTER_MODE_NO)
+        if (pl->gmaster_mode != GMASTER_MODE_NO)
+        {
             remove_gmaster_list(pl);
+        }
 
         /* remove player from party */
-        if(pl->group_status & GROUP_STATUS_GROUP)
+        if ((pl->group_status & GROUP_STATUS_GROUP))
+        {
             party_remove_member(pl, TRUE);
+        }
 
         /* TODO: Use channels. */
         if (gmaster_list_VOL ||
@@ -510,6 +514,8 @@ void remove_ns_dead_player(player_t *pl)
         leave(pl, 1);
     }
 
+    /* TODO: IDK if this is at all necessary. */
+    pl->socket.status = Ns_Dead;
     free_player(pl); /* we *,must* do this here and not in the memory pool - it needs to be a syncron action */
     (void)get_online_players_info(NULL, pl, 1);
 }
@@ -521,8 +527,8 @@ void remove_ns_dead_player(player_t *pl)
  */
 static int check_ip_ban(NewSocket *sock, char *ip)
 {
-    int         count, i;
-    player_t      *next_tmp, *pl, *ptmp = NULL;
+    int       count, i;
+    player_t *next, *pl, *ptmp = NULL;
 
     /* lets first check sensless connected sockets
      * from same IP.
@@ -569,43 +575,49 @@ static int check_ip_ban(NewSocket *sock, char *ip)
 
     /* now check the players we have */
     count = 0;
-    for (pl = first_player; pl; pl = next_tmp)
+    for (pl = first_player; pl; pl = next)
     {
-        next_tmp = pl->next;
-    if(!strcmp(pl->socket.ip_host, ip)) /* we have someone playing from same IP? */
-    {
-        if (pl->socket.status != Ns_Playing)
-        {
-        pl->socket.status = Ns_Dead;
-            remove_ns_dead_player(pl);
-        }
-        else /* allow 2 logged in *real* playing accounts online from same IP */
-        {
-            count++;
-        if (!ptmp)
-            ptmp = pl;
-        else
-        {
-            /* lets compare the idle time.
-             * if needed we will kick the login with the highest idle time
-                     */
-            if (ptmp->socket.login_count <= pl->socket.login_count)
-                ptmp = pl;
+        next = pl->next;
 
-                /* now the tricky part: if we have to many
-                     * connects from that IP, we KICK the login
-                     * with the highest idle time
-             */
-            if (count > (settings.max_cons_from_one_ip - 1))
+        if(!strcmp(pl->socket.ip_host, ip)) /* we have someone playing from same IP? */
+        {
+            if (pl->socket.status != Ns_Playing)
             {
-                LOG(llevDebug, "check_ip_ban(): connection flood: mark player %s Ns_Dead (IP %s)\n",
-                    STRING_OBJ_NAME(pl->ob), ptmp->socket.ip_host);
-            ptmp->socket.status = Ns_Dead;
+                remove_ns_dead_player(pl);
+                continue;
             }
-        }
+            else /* allow 2 logged in *real* playing accounts online from same IP */
+            {
+                count++;
+
+                if (!ptmp)
+                {
+                    ptmp = pl;
+                }
+                else
+                {
+                    /* lets compare the inactivity time.
+                     * if needed we will kick the login with the highest inactivity time */
+                    if (ptmp->socket.inactive_when <= pl->socket.inactive_when)
+                    {
+                        ptmp = pl;
+                    }
+        
+                    /* now the tricky part: if we have to many
+                     * connects from that IP, we KICK the login
+                     * with the highest idle time */
+                    if (count > (settings.max_cons_from_one_ip - 1))
+                    {
+                        LOG(llevDebug, "check_ip_ban(): connection flood: mark player %s Ns_Dead (IP %s)\n",
+                            STRING_OBJ_NAME(pl->ob), ptmp->socket.ip_host);
+                        remove_ns_dead_player(ptmp);
+                        continue;
+                    }
+                }
             }
         }
     }
+
     return FALSE;
 }
 
@@ -641,13 +653,14 @@ void doeric_server(int update, struct timeval *timeout)
             free_newsocket(&init_sockets[i]);
             init_sockets[i].status = Ns_Avail;
             socket_info.nconns--;
+            continue;
         }
         else if (init_sockets[i].status != Ns_Avail) /* ns_add... */
         {
             if (init_sockets[i].status > Ns_Wait) /* exclude socket #0 which listens for new connects */
             {
-                /* kill this after 3 minutes idle... */
-                if (init_sockets[i].login_count < ROUND_TAG)
+                /* kill this after too long inactive... */
+                if (init_sockets[i].inactive_when < ROUND_TAG)
                 {
                     free_newsocket(&init_sockets[i]);
                     init_sockets[i].status = Ns_Avail;
@@ -655,71 +668,69 @@ void doeric_server(int update, struct timeval *timeout)
                     continue;
                 }
             }
+
             FD_SET((uint32) init_sockets[i].fd, &tmp_read);
             FD_SET((uint32) init_sockets[i].fd, &tmp_exceptions);
+
             /* Only check for writing if we actually want to write */
-            if (init_sockets[i].sockbuf_start || (init_sockets[i].sockbuf && init_sockets[i].sockbuf->len))
+            if (init_sockets[i].sockbuf_start ||
+                (init_sockets[i].sockbuf &&
+                 init_sockets[i].sockbuf->len))
+            {
                 FD_SET((uint32) init_sockets[i].fd, &tmp_write);
+            }
         }
     }
 
-    /* Go through the players.  Let the loop set the next pl value,
-     * since we may remove some
-     */
-    for (pl = first_player; pl != NULL;)
+    for (pl = first_player; pl; pl = next)
     {
+        next = pl->next;
+
         if (pl->socket.status == Ns_Dead)
         {
-            player_t *npl = pl->next;
-
             remove_ns_dead_player(pl);
-            pl = npl;
+            continue;
         }
-        else
+
+        if (pl->socket.inactive_when < ROUND_TAG)
         {
-            if(pl->socket.status != Ns_Zombie)
+            if (pl->socket.status != Ns_Zombie)
             {
                 if (!(pl->gmaster_mode & GMASTER_MODE_SA))
                 {
-                    if (!pl->socket.idle_flag &&
-                        pl->socket.login_count < ROUND_TAG)
+                    if (!pl->socket.inactive_flag)
                     {
-                        pl->socket.login_count = ROUND_TAG + IDLE_PLAYER2 * pticks_second;
-                        pl->socket.idle_flag = 1;
-                        ndi(NDI_UNIQUE | NDI_RED, 0, pl->ob, "Idle warning! Server will disconnect you in %u seconds.",
-                            IDLE_PLAYER2);
+                        pl->socket.inactive_when = ROUND_TAG + INACTIVE_PLAYER2 * pticks_second;
+                        pl->socket.inactive_flag = 1;
+                        ndi(NDI_UNIQUE | NDI_RED, 0, pl->ob, "Inactivity warning! Server will disconnect you in %u seconds.",
+                            INACTIVE_PLAYER2);
                     }
-                    else if (pl->socket.login_count < ROUND_TAG)
+                    else
                     {
-                        ndi(NDI_UNIQUE | NDI_RED, 0, pl->ob, "Max idle time reached! Server is closing connection.");
-                        pl->socket.login_count = ROUND_TAG + IDLE_PLAYER1  * pticks_second;
+                        ndi(NDI_UNIQUE | NDI_RED, 0, pl->ob, "Max inactivity time reached! Server is closing connection.");
+                        pl->socket.inactive_when = ROUND_TAG + INACTIVE_ZOMBIE * pticks_second;
                         pl->socket.status = Ns_Zombie; /* we hold the socket open for a *bit* */
-                        pl->socket.idle_flag = 1;
-                        pl = pl->next;
-
+                        pl->socket.inactive_flag = 1;
                         continue;
                     }
                 }
             }
-            else
+            else /* time to kill! */
             {
-                if (pl->socket.login_count < ROUND_TAG) /* time to kill! */
-                {
-                    player_t *npl = pl->next;
-                    pl->socket.status = Ns_Dead;
-                    remove_ns_dead_player(pl);  /* or player has left game */
-                    pl = npl;
-
-                    continue;
-                }
+                remove_ns_dead_player(pl);
+                continue;
             }
+        }
 
-            FD_SET((uint32) pl->socket.fd, &tmp_read);
-            FD_SET((uint32) pl->socket.fd, &tmp_exceptions);
-            /* Only check for writing if we actually want to write */
-            if (pl->socket.sockbuf_start || (pl->socket.sockbuf && pl->socket.sockbuf->len))
-                FD_SET((uint32) pl->socket.fd, &tmp_write);
-            pl = pl->next;
+        FD_SET((uint32) pl->socket.fd, &tmp_read);
+        FD_SET((uint32) pl->socket.fd, &tmp_exceptions);
+
+        /* Only check for writing if we actually want to write */
+        if (pl->socket.sockbuf_start ||
+            (pl->socket.sockbuf &&
+             pl->socket.sockbuf->len))
+        {
+            FD_SET((uint32) pl->socket.fd, &tmp_write);
         }
     }
 
@@ -736,13 +747,12 @@ void doeric_server(int update, struct timeval *timeout)
     }
 
     /* Following adds a new connection */
-    if (pollret && FD_ISSET(init_sockets[0].fd, &tmp_read))
+    if (pollret &&
+        FD_ISSET(init_sockets[0].fd, &tmp_read))
     {
-    NewSocket *newsock;
+        NewSocket *newsock = socket_get_available();
 
         LOG(llevInfo, "CONNECT from... ");
-    newsock = socket_get_available();
-
         newsock->fd = accept(init_sockets[0].fd, (struct sockaddr *) &addr, &addrlen);
         if (newsock->fd != -1)
         {
@@ -816,9 +826,11 @@ void doeric_server(int update, struct timeval *timeout)
         next = pl->next;
 
         /* kill players if we have problems */
-        if (pl->socket.status == Ns_Dead || FD_ISSET(pl->socket.fd, &tmp_exceptions))
+        if (pl->socket.status == Ns_Dead ||
+            FD_ISSET(pl->socket.fd, &tmp_exceptions))
         {
             remove_ns_dead_player(pl);
+            continue;
         }
         else
         {
@@ -834,12 +846,15 @@ void doeric_server(int update, struct timeval *timeout)
                     pl->socket.status = Ns_Dead;
                 }
                 else
+                {
                     socket_prepare_commands(&pl->socket);
+                }
             }
 
             if (pl->socket.status == Ns_Dead) /* perhaps something was bad? */
             {
                 remove_ns_dead_player(pl);  /* or player has left game */
+                continue;
             }
             else
             {

@@ -252,7 +252,7 @@ typedef struct NewSocket_struct
     int                 sockbuf_nrof;        /* number of the queued socket buffers */
     int                 sockbuf_bytes;        /* number of bytes in all queued socket buffers we must transfer */
     view_map_t          lastmap;            /* Thats the VISIBLE map area of the player, used to send to client */
-    uint32              login_count;        /* if someone is to long idle in the login, we kick him here! */
+    uint32              inactive_when;        /* if someone is to long idle in the login, we kick him here! */
     int                 mapx, mapy;         /* How large a map the client wants */
     int                 mapx_2, mapy_2;     /* same like above but /2 */
     uint32              protocol_version;
@@ -272,7 +272,7 @@ typedef struct NewSocket_struct
     uint32              version_maj; // client major version
     uint32              version_min; // client minor version
 
-    uint32              idle_flag       : 1;        /* idle warning was given and we count for disconnect */
+    uint32              inactive_flag       : 1;        /* idle warning was given and we count for disconnect */
     uint32              addme           : 1;        /* important: when set, a "connect" was initizialised as "player" */
     uint32              sound           : 1;        /* does the client want sound */
     uint32              ext_title_flag  : 1;        /* send ext title to client */

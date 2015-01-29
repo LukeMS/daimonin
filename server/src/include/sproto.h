@@ -503,7 +503,6 @@ int                         path_to_player(object_t *mon, object_t *pl, int mind
 void                        give_initial_items(object_t *pl, struct objectlink_t *items);
 void                        flee_player(object_t *op);
 int                         move_player(object_t *const op, int dir, const int flag);
-int                         handle_newcs_player(player_t *pl);
 int                         save_life(object_t *op);
 void                        remove_unpaid_objects(object_t *op, object_t *env);
 void                        do_some_living(object_t *op);

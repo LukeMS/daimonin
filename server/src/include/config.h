@@ -214,9 +214,10 @@
 /* thats 8 ticks per second now - 100.000 are 10 ticks */
 #define MAX_TIME    125000
 
-#define IDLE_SOCKET  180 // seconds until a socket is recycled
-#define IDLE_PLAYER1 480 // seconds until an inactive player is warned he'll be kicked
-#define IDLE_PLAYER2 120 // seconds until we lose patience with the warned inactive player
+#define INACTIVE_SOCKET  180 // seconds until a socket is recycled
+#define INACTIVE_PLAYER1 480 // seconds until an inactive player is warned he'll be kicked
+#define INACTIVE_PLAYER2 120 // seconds until we lose patience with the warned inactive player
+#define INACTIVE_ZOMBIE   10 // seconds until a zombie socket is killed
 
 /* Arguably, this should be in calendar.h, but I have put it here so it is with
  * MAX_TIME as you'll probably want to change both together. */

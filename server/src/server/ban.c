@@ -351,9 +351,8 @@ static void ban_inform_client(NewSocket *ns, objectlink_t *ol, ENUM_BAN_TYPE ban
 
         Write_String_To_Socket(ns, SERVER_CMD_DRAWINFO, buf , strlen(buf));
         player_addme_failed(ns, ADDME_MSG_DISCONNECT); /* tell client we failed and kick him away */
-
-        ns->login_count = ROUND_TAG + 10 * pticks_second;
+        ns->inactive_when = ROUND_TAG + INACTIVE_ZOMBIE * pticks_second;
         ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
-        ns->idle_flag = 1;
+        ns->inactive_flag = 1;
     }
 }
