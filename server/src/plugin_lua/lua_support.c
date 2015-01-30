@@ -122,12 +122,12 @@ static int getObjectMember(lua_State *L)
 
     if (nargs == 2)
     {
-        lua_object *obj              = lua_touserdata(L, 1);
-        const char *key                 = lua_tostring(L, 2);
-        lua_class *class    = obj->class;
+        lua_object *obj = lua_touserdata(L, 1);
+        const char *key = lua_tostring(L, 2);
 
         if (obj && key)
         {
+            lua_class  *class = obj->class;
             lua_object *member;
 
             lua_rawgeti(L, LUA_REGISTRYINDEX, class->meta); /* Fetch the class */
