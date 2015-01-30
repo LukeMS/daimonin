@@ -963,8 +963,7 @@ sint8 enter_map_by_exit(object_t *who, object_t *exit_ob)
 
     /* some "exits" like a pit will move you for sure to a new map -- but for a
      * price ... */
-    if (exit_ob &&
-        exit_ob->stats.dam)
+    if (exit_ob->stats.dam)
     {
         damage_ob(who, exit_ob->stats.dam, exit_ob, ENV_ATTACK_CHECK);
 
