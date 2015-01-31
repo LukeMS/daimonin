@@ -166,11 +166,22 @@ static struct constant_decl preset_game_constants[] =
     {"MAP_CHECK", PLUGIN_MAP_CHECK},
     {"MAP_NEW",   PLUGIN_MAP_NEW},
 
-    /* map status flags (also some are used by GameObject:SetPosition()) (map.h) */
+    /* map status flags (map.h) */
     {"INSTANCE_NO_REENTER", MAP_INSTANCE_FLAG_NO_REENTER},
     {"MFLAG_NO_FALLBACK",   MAP_STATUS_NO_FALLBACK },
     {"MFLAG_LOAD_ONLY",     MAP_STATUS_LOAD_ONLY},
     {"MFLAG_FIXED_LOGIN",   MAP_STATUS_FIXED_LOGIN},
+
+    /* object positioning flags (overlay.h) */
+    {"MFLAG_FIXED",             OVERLAY_FIXED}, // deprecated
+    {"MFLAG_RANDOM",            OVERLAY_RANDOM}, // deprecated
+    {"OVERLAY_IGNORE_TERRAIN",  OVERLAY_IGNORE_TERRAIN},
+    {"OVERLAY_WITHIN_LOS",      OVERLAY_WITHIN_LOS},
+    {"OVERLAY_FORCE",           OVERLAY_FORCE},
+    {"OVERLAY_FIRST_AVAILABLE", OVERLAY_FIRST_AVAILABLE},
+    {"OVERLAY_FIXED",           OVERLAY_FIXED},
+    {"OVERLAY_RANDOM",          OVERLAY_RANDOM},
+    {"OVERLAY_SPECIAL",         OVERLAY_SPECIAL},
 
     /* quest trigger sub types (define.h) */
     {"QUEST_NORMAL",   ST1_QUEST_TRIGGER_NORMAL},
