@@ -660,24 +660,19 @@ int GameObject_init(lua_State *L)
 /*          WARNING: a script developer must have in mind that SetPosition() */
 /*          can result in the destruction of the transferred object. The     */
 /*          return value is important to check!                              */
-/*          flags are:                                                       */
-/*            game.MFLAG_FIXED_POS - fixed location.                         */
-/*            game.MFLAG_RANDOM_POS_1 - random location, 1 square radius.    */
-/*            game.MFLAG_RANDOM_POS_2 - random location, 2 square radius.    */
-/*            game.MFLAG_RANDOM_POS_3 - random location, 3 square radius.    */
-/*            game.MFLAG_RANDOM_POS - random location, progressive radius.   */
-/*            game.MFLAG_FREE_POS_ONLY - first available location/free spot  */
-/*              only.                                                        */
-/*          Of these, the first five are in order of precedence while the    */
-/*          last may be used in conjunction with any of the others or on its */
-/*          own. If none are, given the default is fixed location.           */
-/*          ins_flags are any combination of zero or more of:                */
-/*            game.INS_NO_FORCE - do not insert at the default spot if no    */
-/*              free spot is found.                                          */
-/*            game.INS_WITHIN_LOS - insert only within LOS of default spot.  */
-/*            game.INS_IGNORE_TERRAIN - ignore terrain when deciding if a    */
-/*              spot is free.                                                */
-/*          If none are given, the default is ignore terrain.                */
+/*          oflags are:                                                      */
+/*            game.OVERLAY_IGNORE_TERRAIN                                    */
+/*            game.OVERLAY_WITHIN_LOS                                        */
+/*            game.OVERLAY_FORCE                                             */
+/*            game.OVERLAY_FIRST_AVAILABLE                                   */
+/*            game.OVERLAY_FIXED                                             */
+/*            game.OVERLAY_RANDOM                                            */
+/*            game.OVERLAY_SPECIAL                                           */
+/*          The default is OVERLAY_RANDOM | OVERLAY_SPECIAL which basically  */
+/*          means insert at the first free spot within a three square radius */
+/*          of x, y. A common alternative is OVERLAY_FIXED which means       */
+/*          insert at x, y if free only. Many more complex variations can be */
+/*          specified and will be documented in future.                      */
 /*          Examples:                                                        */
 /*          obj:SetPosition(x, y) - same as obj:SetPosition(obj.map, x,y)    */
 /*          obj:SetPosition(game:ReadyMap("/a_map"), x, y) - multiplayer map */
@@ -686,15 +681,16 @@ int GameObject_init(lua_State *L)
 /* Return : 0: all ok, 1: object was destroyed, 2: insertion failed (map or  */
 /*          position error, ...)                                             */
 /* Status : Tested/Stable                                                    */
+/* TODO   : Better document oflags.                                          */
 /*****************************************************************************/
 static int GameObject_SetPosition(lua_State *L)
 {
     lua_object *self;
-    map_t  *m;
+    map_t      *m;
     sint16      x,
                 y;
-    int         oflags = OVERLAY_FIXED;
-    msp_t   *msp;
+    int         oflags = OVERLAY_RANDOM | OVERLAY_SPECIAL;
+    msp_t      *msp;
 
     /* Small hack to allow optional first map parameter */
     if(lua_isuserdata(L, 2))
