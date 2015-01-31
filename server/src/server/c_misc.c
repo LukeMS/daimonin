@@ -161,15 +161,15 @@ void malloc_info(object_t *op)
     sum_alloc += i;
 
 #ifndef WIN32 /* non windows */
-#ifdef HAVE_SYSCONF
+# ifdef HAVE_SYSCONF
     fd = sysconf(_SC_OPEN_MAX);
-#else
+# else
 #  ifdef HAVE_GETDTABLESIZE
     fd = getdtablesize();
 #  else
-    "Unable to find usable function to get max filedescriptors";
+#   error "Unable to find usable function to get max filedescriptors"
 #  endif
-#endif
+# endif
 #else
     fd = -3;
 #endif
