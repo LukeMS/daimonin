@@ -309,9 +309,9 @@ static int PushLiving(object_t *who, sint8 dir, object_t *pusher)
     /* TODO: allow multi arch pushing. Can't be very difficult */
     if (who->more == NULL && owner == pusher)
     {
-        int temp;
-        temp = pusher->x;
-        temp = pusher->y;
+        sint16 x = pusher->x,
+               y = pusher->y;
+
         remove_ob(who);
         if (check_walk_off(who, NULL, MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
             return 0;
@@ -324,9 +324,9 @@ static int PushLiving(object_t *who, sint8 dir, object_t *pusher)
             return 0;
         }
         pusher->x = who->x;
-        who->x = temp;
+        who->x = x;
         pusher->y = who->y;
-        who->y = temp;
+        who->y = y;
 
         insert_ob_in_map(who, who->map, pusher, 0);
         insert_ob_in_map(pusher, pusher->map, pusher, 0);
