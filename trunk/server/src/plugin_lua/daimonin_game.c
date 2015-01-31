@@ -173,8 +173,9 @@ static struct constant_decl preset_game_constants[] =
     {"MFLAG_FIXED_LOGIN",   MAP_STATUS_FIXED_LOGIN},
 
     /* object positioning flags (overlay.h) */
-    {"MFLAG_FIXED",             OVERLAY_FIXED}, // deprecated
-    {"MFLAG_RANDOM",            OVERLAY_RANDOM}, // deprecated
+    {"MFLAG_FIXED_POS",         OVERLAY_FIXED}, // deprecated
+    {"MFLAG_FREE_POS_ONLY",     OVERLAY_FIXED}, // deprecated
+    {"MFLAG_RANDOM_POS",        OVERLAY_RANDOM}, // deprecated
     {"OVERLAY_IGNORE_TERRAIN",  OVERLAY_IGNORE_TERRAIN},
     {"OVERLAY_WITHIN_LOS",      OVERLAY_WITHIN_LOS},
     {"OVERLAY_FORCE",           OVERLAY_FORCE},
