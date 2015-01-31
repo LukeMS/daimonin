@@ -691,6 +691,7 @@ static int GameObject_SetPosition(lua_State *L)
                 y;
     int         oflags = OVERLAY_RANDOM | OVERLAY_SPECIAL;
     msp_t      *msp;
+LOG(llevInfo, ">>>>%d", oflags);
 
     /* Small hack to allow optional first map parameter */
     if(lua_isuserdata(L, 2))
@@ -710,6 +711,13 @@ static int GameObject_SetPosition(lua_State *L)
         }
     }
 
+LOG(llevInfo, ">>>>self %p, WHO %p, m %p, x %d, y %d, oflags %d\n",
+ self,
+ WHO,
+ m,
+ x,
+ y,
+ oflags);
     /* Find and load  the correct tiled map for extreme values of x and y,
      * aborting the script with an error where the given values are out of map
      * (scripter should fix). */
@@ -721,6 +729,14 @@ static int GameObject_SetPosition(lua_State *L)
             STRING_OBJ_NAME(WHO), STRING_MAP_PATH(m), x, y);
     }
 
+LOG(llevInfo, ">>>>self %p, WHO %p, msp %p, m %p, x %d, y %d, oflags %d\n",
+ self,
+ WHO,
+ msp,
+ m,
+ x,
+ y,
+ oflags);
     lua_pushnumber(L, hooks->enter_map(WHO, msp, NULL, oflags, 0));
     return 1;
 }
