@@ -686,10 +686,12 @@ int GameObject_init(lua_State *L)
 static int GameObject_SetPosition(lua_State *L)
 {
     lua_object *self;
-    map_t      *m;
     sint32      x,
-                y;
-    int         oflags = OVERLAY_RANDOM | OVERLAY_SPECIAL;
+                y,
+                oflags = OVERLAY_RANDOM | OVERLAY_SPECIAL;
+    map_t      *m2;
+    sint16      x2,
+                y2;
     msp_t      *msp;
 
     /* Small hack to allow optional first map parameter */
@@ -698,13 +700,13 @@ static int GameObject_SetPosition(lua_State *L)
         lua_object *where;
 
         get_lua_args(L, "OMii|i", &self, &where, &x, &y, &oflags);
-        m = where->data.map;
+        m2 = where->data.map;
     }
     else
     {
         get_lua_args(L, "Oii|i", &self, &x, &y, &oflags);
 
-        if (!(m = WHO->map))
+        if (!(m2 = WHO->map))
         {
             luaL_error(L, "Short-form of SetPosition() used, but the object didn't have a map");
         }
@@ -713,12 +715,14 @@ static int GameObject_SetPosition(lua_State *L)
     /* Find and load  the correct tiled map for extreme values of x and y,
      * aborting the script with an error where the given values are out of map
      * (scripter should fix). */
-    msp = MSP_GET(m, x, y);
+    x2 = x;
+    y2 = y;
+    msp = MSP_GET(m2, x2, y2);
 
     if (!msp)
     {
         return luaL_error(L, "object:SetPosition() trying to place object (%s) at %s %d, %d which is outside of any map!",
-            STRING_OBJ_NAME(WHO), STRING_MAP_PATH(m), x, y);
+            STRING_OBJ_NAME(WHO), STRING_MAP_PATH(m2), x2, y2);
     }
 
     lua_pushnumber(L, hooks->enter_map(WHO, msp, NULL, oflags, 0));
