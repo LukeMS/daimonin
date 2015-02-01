@@ -397,19 +397,23 @@ static int Map_GetFirstObjectOnSquare(lua_State *L)
 static int Map_GetBrightnessOnSquare(lua_State *L)
 {
     lua_object *self;
-    sint16      x,
+    sint32      x,
                 y,
                 mode = 0;
-    map_t  *m;
-    msp_t   *msp;
+    map_t      *m2;
+    sint16      x2,
+                y2;
+    msp_t      *msp;
     uint16      n = 0;
 
     get_lua_args(L, "Mii|i", &self, &x, &y, &mode);
-    m = WHERE;
+    m2 = WHERE;
+    x2 = x;
+    y2 = y;
 
-    if ((msp = MSP_GET(m, x, y)))
+    if ((msp = MSP_GET(m2, x2, y2)))
     {
-        hooks->get_tad(m->tadnow, m->tadoffset);
+        hooks->get_tad(m2->tadnow, m2->tadoffset);
         n = MSP_GET_REAL_BRIGHTNESS(msp);
 
         if (mode == 0)
@@ -446,29 +450,19 @@ static int Map_GetBrightnessOnSquare(lua_State *L)
 static int Map_IsWallOnSquare(lua_State *L)
 {
     lua_object *self;
-    int         x,
+    sint32      x,
                 y;
-    map_t  *mt;
-    sint16      xt,
-                yt;
-    msp_t   *msp;
+    map_t      *m2;
+    sint16      x2,
+                y2;
+    msp_t      *msp;
 
     get_lua_args(L, "Mii", &self, &x, &y);
-    mt = WHERE;
-    xt = x;
-    yt = y;
-    msp = MSP_GET(mt, xt, yt);
-
-    if (!msp ||
-        MSP_IS_RESTRICTED(msp))
-    {
-        lua_pushboolean(L, 1);
-    }
-    else
-    {
-        lua_pushboolean(L, 0);
-    }
-
+    m2 = WHERE;
+    x2 = x;
+    y2 = y;
+    msp = MSP_GET(m2, x2, y2);
+    lua_pushboolean(L, (!msp || MSP_IS_RESTRICTED(msp)) ? 1 : 0);
     return 1;
 }
 
@@ -523,15 +517,19 @@ static int Map_IsAnyPlayerOnMap(lua_State *L)
 static int Map_MapTileAt(lua_State *L)
 {
     lua_object *self;
-    sint16      x,
+    sint32      x,
                 y;
-    map_t      *m;
+    map_t      *m2;
+    sint16      x2,
+                y2;
 
     get_lua_args(L, "Mii", &self, &x, &y);
-    m = OUT_OF_MAP(WHERE, x, y);
-    push_object(L, &Map, m);
-    lua_pushnumber(L, x);
-    lua_pushnumber(L, y);
+    x2 = x;
+    y2 = y;
+    m2 = OUT_OF_MAP(WHERE, x2, y2);
+    push_object(L, &Map, m2);
+    lua_pushnumber(L, x2);
+    lua_pushnumber(L, y2);
     return 3;
 }
 
