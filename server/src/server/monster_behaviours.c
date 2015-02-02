@@ -1248,14 +1248,15 @@ void ai_avoid_line_of_fire(object_t *op, struct mob_behaviour_param *params, mov
 
                 /* Don't move into line of fire (note: this may fail if
                  * firing into the back of an enemy. That is a good thing :) */
-                for(i=-2; i<=2; i++) {
-                    map_t *m;
-                    int d = absdir(op->direction + i);
-                    sint16 x = op->x + OVERLAY_X(d),
-                           y = op->y + OVERLAY_Y(d);
+                for (i = -2; i <= 2; i++)
+                {
+                    int     d = absdir(op->direction + i);
+                    map_t  *m = op->map;
+                    sint16  x = op->x + OVERLAY_X(d),
+                            y = op->y + OVERLAY_Y(d);
 
                     /* Avoid moving into line of fire */
-                    if ((m = OUT_OF_MAP(op->map, x, y)))
+                    if ((m = OUT_OF_MAP(m, x, y)))
                     {
                         if(mapcoord_in_line_of_missile(tmp->obj, m, x, y))
                             response->forbidden |= (1 << d);
@@ -1347,13 +1348,13 @@ void ai_optimize_line_of_fire(object_t *op, struct mob_behaviour_param *params, 
              * the mob starts zipping between two "half-good" spots */
             for(i=-2; i<=2; i++)
             {
-                map_t *m;
-                int dir = absdir(rv->direction+i);
-                sint16 x = op->x + OVERLAY_X(dir),
-                       y = op->y + OVERLAY_Y(dir);
+                int     dir = absdir(rv->direction+i);
+                map_t  *m = op->map;
+                sint16  x = op->x + OVERLAY_X(dir),
+                        y = op->y + OVERLAY_Y(dir);
 
                 /* Find a spot in or near line of fire, and forbid movements to other spots */
-                if ((m = OUT_OF_MAP(op->map, x, y)))
+                if ((m = OUT_OF_MAP(m, x, y)))
                 {
                     if(mapcoord_in_line_of_fire(op->enemy, m, x, y, 1)) /* good spot? */
                         good_directions |= (1 << dir);
