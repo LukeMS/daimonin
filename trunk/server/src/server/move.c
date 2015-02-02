@@ -467,10 +467,11 @@ sint8 enter_map(object_t *who, msp_t *msp, object_t *originator, uint8 oflags, u
     }
     else if (i > 0)
     {
-        sint16 x = msp->x + OVERLAY_X(i),
-               y = msp->y + OVERLAY_Y(i);
+        map_t  *m = msp->map;
+        sint16  x = msp->x + OVERLAY_X(i),
+                y = msp->y + OVERLAY_Y(i);
 
-        msp = MSP_GET(msp->map, x, y);
+        msp = MSP_GET(m, x, y);
     }
 
     /* If it is a player login, he has yet to be inserted anyplace.

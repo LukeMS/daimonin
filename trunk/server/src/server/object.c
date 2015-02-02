@@ -881,15 +881,16 @@ object_t *clone_object(object_t *original, uint8 mode)
         }
         else if (original->map)
         {
-            sint16 x = original->x + this->arch->clone.x,
-                   y = original->y + this->arch->clone.y;
+            map_t  *m = original->map;
+            sint16  x = original->x + this->arch->clone.x,
+                    y = original->y + this->arch->clone.y;
 
             /* out_of_map() will check and adjust map,x,y so that spawn points on
              * or near the edge of a map will spawn a mob with the correct values
              * on a tiled map (ie, the point is at map_0000 5 0 and the mob spawns
              * on the northeast square -- this is map_0001 6 23, not map_0000 6 -1).
              * -- Smacky 20131205 */
-            that->map = OUT_OF_MAP(original->map, x, y);
+            that->map = OUT_OF_MAP(m, x, y);
             that->x = x;
             that->y = y;
         }
@@ -2651,8 +2652,11 @@ int check_walk_off(object_t *op, object_t *originator, int flags)
 
     for (part = op; part; part = part->more) /* check single and multi arches */
     {
-        msp_t *msp = MSP_GET(op->map, part->x, part->y);
-        object_t   *tmp,
+        map_t    *m = op->map;
+        sint16    x = part->x,
+                  y = part->y;
+        msp_t    *msp = MSP_GET(m, x, y);
+        object_t *tmp,
                  *next;
 
         if (!(msp->flags & (MSP_FLAG_WALK_OFF | MSP_FLAG_FLY_OFF))) /* no event on this tile */

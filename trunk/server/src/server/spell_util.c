@@ -2628,16 +2628,17 @@ void explode_object(object_t *op)
     if (op->env) /* object is in container, try to drop on map! */
     {
         map_t  *m;
-        sint16      xt,
-                    yt;
+        sint16  x,
+                y;
 
         for (env = op; env->env != NULL; env = env->env)
             ;
 
-        xt = env->x;
-        yt = env->y;
+        m = env->map;
+        x = env->x;
+        y = env->y;
 
-        if (!(m = OUT_OF_MAP(env->map, xt, yt)))
+        if (!(m = OUT_OF_MAP(m, x, y)))
         {
             LOG(llevBug, "BUG: explode_object(): env out of map (%s)\n", STRING_OBJ_NAME(op));
             remove_ob(op);
@@ -2647,8 +2648,8 @@ void explode_object(object_t *op)
 
         remove_ob(op);
         check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
-        op->x = xt;
-        op->y = yt;
+        op->x = x;
+        op->y = y;
 
         if (!insert_ob_in_map(op, m, op, 0))
             return;
@@ -2838,38 +2839,38 @@ int find_target_for_spell(object_t *op, object_t *item, object_t **target, int d
 
     return FALSE; /* invalid target/spell or whatever */
 
-    /*
-        if(op->type!=PLAYER&&op->type!=RUNE)
-        {
-            tmp=get_owner(op);
-            if(!tmp || !QUERY_FLAG(tmp,FLAG_MONSTER))
-                tmp=op;
-        }
-        else
-        {
-            xt = op->x+OVERLAY_X(dir);
-            yt = op->y+OVERLAY_Y(dir);
-            if (!(m=out_of_map(op->map,&xt,&yt)))
-                tmp=NULL;
-            else
-            {
-                for(tmp=MSP_GET_LAST(m,xt,yt);tmp!=NULL;tmp=tmp->below)
-                {
-                    if(tmp->type==PLAYER)
-                        break;
-                }
-            }
-        }
-        if(tmp==NULL)
-        {
-            for(tmp=MSP_GET_LAST(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->below)
-            {
-                if(tmp->type==PLAYER)
-                    break;
-            }
-        }
-        return tmp;
-    */
+#if 0
+//    if(op->type!=PLAYER&&op->type!=RUNE)
+//    {
+//        tmp=get_owner(op);
+//        if(!tmp || !QUERY_FLAG(tmp,FLAG_MONSTER))
+//            tmp=op;
+//    }
+//    else
+//    {
+//        xt = op->x+OVERLAY_X(dir);
+//        yt = op->y+OVERLAY_Y(dir);
+//        if (!(m=out_of_map(op->map,&xt,&yt)))
+//            tmp=NULL;
+//        else
+//        {
+//            for(tmp=MSP_GET_LAST(m,xt,yt);tmp!=NULL;tmp=tmp->below)
+//            {
+//                if(tmp->type==PLAYER)
+//                    break;
+//            }
+//        }
+//    }
+//    if(tmp==NULL)
+//    {
+//        for(tmp=MSP_GET_LAST(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->below)
+//        {
+//            if(tmp->type==PLAYER)
+//                break;
+//        }
+//    }
+//    return tmp;
+#endif
 }
 
 int reduction_dir[OVERLAY_7X7][3] =
