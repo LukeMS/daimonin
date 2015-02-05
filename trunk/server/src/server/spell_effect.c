@@ -153,7 +153,7 @@ int recharge(object_t *op)
                 ndi(NDI_UNIQUE, 0, op, "%s vibrates violently, then explodes!",
                     QUERY_SHORT_NAME(wand, op));
                 play_sound_map(MSP_KNOWN(op), SOUND_OB_EXPLODE, SOUND_NORMAL);
-                destruct_ob(wand);
+                remove_ob(wand);
             }
             else
             {
@@ -1191,8 +1191,8 @@ void check_fired_arch(object_t *op)
         this_tag = this->count;
         dam = damage_ob(this, op->stats.dam, op, ENV_ATTACK_CHECK);
 
-        if (was_destroyed(op, op_tag) ||
-            !was_destroyed(this, this_tag) ||
+        if (!OBJECT_VALID(op, op_tag) ||
+            OBJECT_VALID(this, this_tag) ||
             (op->stats.dam -= dam) < 0)
         {
             if (!QUERY_FLAG(op, FLAG_REMOVED))
@@ -1219,7 +1219,7 @@ void move_fired_arch(object_t *op)
     {
         replace_insert_ob_in_map("fire_trail", op);
 
-        if (was_destroyed(op, op_tag))
+        if (!OBJECT_VALID(op, op_tag))
         {
             return;
         }

@@ -2595,14 +2595,16 @@ static int GameObject_Kill(lua_State *L)
     /* Monster. */
     else
     {
-        int b;
-
         /* Kill the monster, returning true if he dies, false otherwise (it has
          * a life-saving DEATH script). */
-        WHO->stats.hp = 0;
-        b = (hooks->kill_object(WHO, 0, (whatptr) ? WHAT : NULL, 0)) ? 1 : 0;
-
-        lua_pushboolean(L, b);
+        if (!hooks->kill_object(WHO, (whatptr) ? WHAT : NULL))
+        {
+            lua_pushboolean(L, 1);
+        }
+        else
+        {
+            lua_pushboolean(L, 0);
+        }
 
         return 1;
     }
@@ -3742,7 +3744,7 @@ static int GameObject_Remove(lua_State *L)
 /* Also   : If you want reduce the quantity of a stack, use                  */
 /*          object:DecreaseNrOf(). If you want to quietly remove an object,  */
 /*          not fiddle with the stack, use object:Remove()                   */
-/* Status : Untested/Stable                                                  */
+/* Status : Deprecated 0.10.7 -- use object:Kill()                           */
 /*****************************************************************************/
 static int GameObject_Destruct(lua_State *L)
 {
@@ -3755,8 +3757,7 @@ static int GameObject_Destruct(lua_State *L)
         return luaL_error(L, "Destruct() can only be called on monster!");
     }
 
-    hooks->destruct_ob(WHO);
-
+    (void)hooks->kill_object(WHO, NULL);
     return 0;
 }
 

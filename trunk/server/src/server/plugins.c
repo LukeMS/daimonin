@@ -62,7 +62,6 @@ struct plugin_hooklist  hooklist    =
     create_unique_path_sh,
     /* D */
     decrease_ob_nr,
-    destruct_ob,
     drop_to_floor,
     /* E */
     enter_map,

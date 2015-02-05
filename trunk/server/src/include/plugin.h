@@ -267,7 +267,6 @@ struct plugin_hooklist
     shstr_t *(*create_unique_path_sh)(shstr_t *, shstr_t *);
     /* D */
     object_t *(*decrease_ob_nr)(object_t *, uint32);
-    void (*destruct_ob)(object_t *);
     object_t *(*drop_to_floor)(object_t *, object_t *, uint32);
     /* E */
     sint8 (*enter_map)(object_t *, msp_t *, object_t *, uint8, uint32);
@@ -331,7 +330,7 @@ struct plugin_hooklist
     object_t *(*is_player_inv)(object_t *);
     /* J */
     /* K */
-    int (*kill_object)(object_t *, int, object_t *, int);
+    object_t *(*kill_object)(object_t *, object_t *);
     int (*kill_player)(object_t *);
     /* L */
     object_t *(*load_object_str)(char *);

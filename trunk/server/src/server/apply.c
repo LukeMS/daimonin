@@ -1968,12 +1968,12 @@ static void ApplyTreasure(object_t *op, object_t *tmp)
         if (treas && treas->type == RUNE && treas->level && IS_LIVE(op))
             spring_trap(treas, op);
 
-        if (was_destroyed(op, op_tag) || was_destroyed(tmp, tmp_tag))
+        if (!OBJECT_VALID(op, op_tag) || !OBJECT_VALID(tmp, tmp_tag))
             break;
     }
     while ((treas = tmp->inv) != NULL);
 
-    if (!was_destroyed(tmp, tmp_tag) && tmp->inv == NULL)
+    if (OBJECT_VALID(tmp, tmp_tag) && tmp->inv == NULL)
         decrease_ob_nr(tmp, 1);
 
 #if 0

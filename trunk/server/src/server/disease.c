@@ -162,7 +162,11 @@ int move_disease(object_t *disease)
         disease->weight_limit--;
         if (disease->weight_limit == 0)
         {
-            destruct_ob(disease); /* drop inv since disease may carry secondary infections */
+            /* TODO: This is not a correct usage, but diseases are currently
+             * broken anyway.
+             *
+             * -- Smacky 20150204 */
+            (void)kill_object(disease, NULL); /* drop inv since disease may carry secondary infections */
             return 1;
         }
     }
@@ -177,7 +181,12 @@ int move_disease(object_t *disease)
             {
                 remove_symptoms(disease);  /* remove the symptoms of this disease */
                 grant_immunity(disease);
-                destruct_ob(disease); /* drop inv since disease may carry secondary infections */
+
+                /* TODO: This is not a correct usage, but diseases are currently
+                 * broken anyway.
+                 *
+                 * -- Smacky 20150204 */
+                (void)kill_object(disease, NULL); /* drop inv since disease may carry secondary infections */
                 return 1;
             }
         }
@@ -202,7 +211,11 @@ int remove_symptoms(object_t *disease)
     if (symptom != NULL)
     {
         object_t *victim  = symptom->env;
-        destruct_ob(symptom);
+        /* TODO: This is not a correct usage, but diseases are currently
+         * broken anyway.
+         *
+         * -- Smacky 20150204 */
+        (void)kill_object(symptom, NULL);
         if (victim)
             FIX_PLAYER(victim ,"remove symptoms ");
     }

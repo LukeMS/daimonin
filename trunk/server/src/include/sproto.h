@@ -144,7 +144,6 @@ void                        scroll_failure(object_t *op, int failure, int power)
 int                         attack_ob(object_t *op, object_t *hitter, object_t *hit_obj);
 int                         damage_ob(object_t *op, int dam, object_t *hitter, attack_envmode_t env_attack);
 int                         hit_map(object_t *op, int dir);
-int                         kill_object(object_t *op, int dam, object_t *hitter, int type);
 object_t                     *hit_with_arrow(object_t *op, object_t *victim);
 void                        tear_down_wall(object_t *op);
 void                        snare_player(object_t *op, object_t *hitter, int dam);

@@ -1155,7 +1155,7 @@ void move_player_mover(object_t *op)
             if (QUERY_FLAG(op, FLAG_LIFESAVE) &&
                 op->stats.hp-- < 0)
             {
-                destruct_ob(op);
+                remove_ob(op);
                 return;
             }
 
@@ -1707,7 +1707,7 @@ void move_marker(object_t *op)
                 /* marker expires--granted mark number limit */
                 if (--op->stats.hp <= 0)
                 {
-                    destruct_ob(op);
+                    remove_ob(op);
                     return;
                 }
             }
@@ -1774,24 +1774,7 @@ int process_object(object_t *op)
                 return 1;
             }
 
-            /* Monsters who die of old age... */
-            if (op->type == MONSTER)
-            {
-                /* ...have no enemy (corpse will be noone's bounty and noone
-                 * gets a kill credit). */
-                op->enemy = NULL;
-
-                /* ...leave empty corpses (as long as the mob leaves a corpse
-                 * at all AND unless the mob already has a forced corpse. */
-                if (QUERY_FLAG(op, FLAG_CORPSE) &&
-                    !QUERY_FLAG(op, FLAG_CORPSE_FORCED))
-                {
-                    SET_FLAG(op, FLAG_CORPSE_FORCED);
-                    SET_FLAG(op, FLAG_NO_DROP);
-                }
-            }
-
-            destruct_ob(op);
+            (void)kill_object(op, NULL);
         }
         return 1;
     }

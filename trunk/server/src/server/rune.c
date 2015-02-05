@@ -206,7 +206,7 @@ void rune_attack(object_t *op, object_t *victim)
         if (!op->inv || op->inv->type != DISEASE)
         {
             damage_ob(victim, op->stats.dam, op, ENV_ATTACK_CHECK);
-            if (was_destroyed(victim, tag))
+            if (!OBJECT_VALID(victim, tag))
             {
                 op->stats.dam = dam;
                 return;
@@ -290,7 +290,7 @@ void spring_trap(object_t *trap, object_t *victim)
     {
         rune_attack(trap, victim);
         set_traped_flag(env);
-        if (was_destroyed(trap, trap_tag))
+        if (!OBJECT_VALID(trap, trap_tag))
             return;
     }
     else

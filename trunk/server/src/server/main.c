@@ -366,7 +366,7 @@ static void process_map_events(map_t *map)
         {
             --op->speed_left;
             process_object(op);
-            if (was_destroyed(op, tag))
+            if (!OBJECT_VALID(op, tag))
                 continue;
         }
         else
