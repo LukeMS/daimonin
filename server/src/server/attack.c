@@ -317,8 +317,8 @@ int attack_ob(object_t *target, object_t *hitter, object_t *hit_obj)
                 cast_spell(hitter, hitter, hitter->direction, hitter->stats.sp, 1, spellPotion, NULL); /* apply potion ALWAYS fire on the spot the applier stands - good for healing - bad for firestorm */
             decrease_ob_nr(hitter, 1);
 
-            if (was_destroyed(hitter, hitter_tag) ||
-                was_destroyed(target, op_tag) ||
+            if (!OBJECT_VALID(hitter, hitter_tag) ||
+                !OBJECT_VALID(target, op_tag) ||
                 AbortAttack(target, hitter, env_attack))
                 goto leave;
         }
@@ -334,16 +334,16 @@ int attack_ob(object_t *target, object_t *hitter, object_t *hit_obj)
         {
             damage_ob(hitter, random_roll(0, target->stats.dam), target, env_attack);
 
-            if (was_destroyed(target, op_tag) ||
-                was_destroyed(hitter, hitter_tag) ||
+            if (!OBJECT_VALID(target, op_tag) ||
+                !OBJECT_VALID(hitter, hitter_tag) ||
                 AbortAttack(target, hitter, env_attack))
                 goto leave;
         }
 
         /* the damage is between 70 and 100% of the (adjusted) base damage */
         hitdam = damage_ob(target, random_roll((int)(hitdam*0.7f)+1, hitdam), hitter, env_attack);
-        if (was_destroyed(target, op_tag) ||
-            was_destroyed(hitter, hitter_tag) ||
+        if (!OBJECT_VALID(target, op_tag) ||
+            !OBJECT_VALID(hitter, hitter_tag) ||
             AbortAttack(target, hitter, env_attack))
             goto leave;
     }
@@ -579,57 +579,61 @@ int damage_ob(object_t *op, int dam, object_t *hitter, attack_envmode_t env_atta
     op->stats.hp -= maxdam; /* thats the damage the target got */
 
     /* lets kill, kill, kill... */
-    if (op->stats.hp <= 0 &&
-        op->type == PLAYER)
+    if (op->stats.hp <= 0)
     {
-        char buf[SMALL_BUF];
-        strcpy(buf, QUERY_SHORT_NAME(hitter, NULL));
-        FREE_AND_COPY_HASH(CONTR(op)->killer, buf);
-
-        // TODO: Add some more checks here to ensure that the player isn't trying to cheat the system (killing alts).
-        // If op really died (and wasn't saved by save_life, Lua triggers, etc.)...
-        if (kill_player(op))
+        if (op->type == PLAYER)
         {
-            /* And was in a PvP area...
-             * Although this is cheating a bit. Because we called kill_player() earlier, the player has already been moved.
-             * Now the map data will change and may not be a pvp area anymore. Because of this, we have to check the hitter
-             * instead, but most likely (100% of the time with players, not so much with mobs) they will be on a PvP map too,
-             * and if not, the death was not technically a result of PvP.
-             */
-            if (pvp_area(hit_obj, NULL))
+            char buf[SMALL_BUF];
+            strcpy(buf, QUERY_SHORT_NAME(hitter, NULL));
+            FREE_AND_COPY_HASH(CONTR(op)->killer, buf);
+
+            // TODO: Add some more checks here to ensure that the player isn't trying to cheat the system (killing alts).
+            // If op really died (and wasn't saved by save_life, Lua triggers, etc.)...
+            if (kill_player(op))
             {
-                // And was killed by a player, increment their total/round death counts and their killer's total/round kill counts.
-                if (hit_obj->type == PLAYER || (hit_obj->owner != NULL && hit_obj->owner->type == PLAYER))
+                /* And was in a PvP area...
+                 * Although this is cheating a bit. Because we called kill_player() earlier, the player has already been moved.
+                 * Now the map data will change and may not be a pvp area anymore. Because of this, we have to check the hitter
+                 * instead, but most likely (100% of the time with players, not so much with mobs) they will be on a PvP map too,
+                 * and if not, the death was not technically a result of PvP.
+                 */
+                if (pvp_area(hit_obj, NULL))
                 {
-                    increment_pvp_counter(op, (PVP_STATFLAG_DEATH_TOTAL | PVP_STATFLAG_DEATH_ROUND));
-                    increment_pvp_counter(hit_obj, (PVP_STATFLAG_KILLS_TOTAL | PVP_STATFLAG_KILLS_ROUND));
-                } else // But if op wasn't killed by a player (or an object whose owner is a player), only increment their temporary round count.
-                {
-                    increment_pvp_counter(op, PVP_STATFLAG_DEATH_ROUND);
+                    // And was killed by a player, increment their total/round death counts and their killer's total/round kill counts.
+                    if (hit_obj->type == PLAYER || (hit_obj->owner != NULL && hit_obj->owner->type == PLAYER))
+                    {
+                        increment_pvp_counter(op, (PVP_STATFLAG_DEATH_TOTAL | PVP_STATFLAG_DEATH_ROUND));
+                        increment_pvp_counter(hit_obj, (PVP_STATFLAG_KILLS_TOTAL | PVP_STATFLAG_KILLS_ROUND));
+                    } else // But if op wasn't killed by a player (or an object whose owner is a player), only increment their temporary round count.
+                    {
+                        increment_pvp_counter(op, PVP_STATFLAG_DEATH_ROUND);
+                    }
                 }
             }
-        }
 
-        return maxdam;  /* nothing more to do for wall */
+            return maxdam;  /* nothing more to do for wall */
+        }
+        else
+        {
+            if (!kill_object(op, hitter))
+            {
+                return maxdam;
+            }
+        }
     }
     /* Eneq(@csd.uu.se): Check to see if monster runs away. */
     /* TODO: gecko: this should go into a behaviour... */
-    else if ((op->stats.hp >= 0) && QUERY_FLAG(op, FLAG_MONSTER) && op->stats.hp < (signed short) (((float) op->run_away / 100.0f) * (float) op->stats.maxhp))
+    else if (QUERY_FLAG(op, FLAG_MONSTER) &&
+             op->stats.hp < (signed short)(((float)op->run_away / 100.0) * (float)op->stats.maxhp))
     {
         SET_FLAG(op, FLAG_RUN_AWAY);
     }
 
-    if (QUERY_FLAG(op, FLAG_TEAR_DOWN))
-    {
-        tear_down_wall(op);
-        return maxdam;  /* nothing more to do for wall */
-    }
-    /* Start of creature kill processing */
-
-    if ((rtn_kill = kill_object(op, dam, hitter, 0)))
-        return (maxdam + rtn_kill + 1); /* rtn_kill is here negative! */
-
-    /* End of creature kill processing */
+//    if (QUERY_FLAG(op, FLAG_TEAR_DOWN))
+//    {
+//        tear_down_wall(op);
+//        return maxdam;  /* nothing more to do for wall */
+//    }
 
     /* Used to be ghosthit removal - we now use the ONE_HIT flag.  Note
      * that before if the player was immune to ghosthit, the monster
@@ -747,7 +751,7 @@ int hit_map(object_t *op, int dir)
 
     while (next)
     {
-        if (was_destroyed(next, next_tag))
+        if (!OBJECT_VALID(next, next_tag))
         {
             /* There may still be objects that were above 'next', but there is no
              * simple way to find out short of copying all object references and
@@ -792,7 +796,7 @@ int hit_map(object_t *op, int dir)
 #if 0
         damage_ob(tmp, op->stats.dam, op, ENV_ATTACK_CHECK);
         retflag |= 1;
-        if (was_destroyed(op, op_tag))
+        if (!OBJECT_VALID(op, op_tag))
             break;
 #else
         if (!trigger_object_plugin_event(EVENT_ATTACK, tmp, op, op, NULL, NULL,
@@ -801,7 +805,7 @@ int hit_map(object_t *op, int dir)
             damage_ob(tmp, op->stats.dam, op, ENV_ATTACK_CHECK);
             retflag |= 1;
 
-            if (was_destroyed(op, op_tag))
+            if (!OBJECT_VALID(op, op_tag))
             {
                 break;
             }
@@ -1421,177 +1425,6 @@ static void SendAttackMsg(object_t *op, object_t *hitter, int attacknum, int dam
     }
 }
 
-/* GROS: This code comes from damage_ob. It has been made external to
- * allow script procedures to "kill" objects in a combat-like fashion.
- * It was initially used by (kill-object) developed for the Collector's
- * Sword. Note that nothing has been changed from the original version
- * of the following code.
- */
-/* ok, when i have finished the different attacks i must clean this up here too
- * looks like some artifact code in here - MT-2003
- */
-int kill_object(object_t *op, int dam, object_t *hitter, int typeX)
-{
-    object_t     *corpse_owner, *owner, *old_hitter; /* this is used in case of servant monsters */
-    int         maxdam              = 0;
-    char        group_buf[MEDIUM_BUF] = "";
-
-    /* Object has been killed.  Lets clean it up */
-    if (op->stats.hp <= 0)
-    {
-        if(trigger_object_plugin_event(EVENT_DEATH,
-                    op, hitter, op, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
-            return 0; /* Cheat death */
-
-#if 0
-        CFParm      CFP;
-        /* GROS: Handle for the global kill event */
-        evtid = EVENT_GKILL;
-        CFP.Value[0] = (void *) (&evtid);
-        CFP.Value[1] = (void *) (hitter);
-        CFP.Value[2] = (void *) (op);
-        GlobalEvent(&CFP);
-#endif
-
-
-        corpse_owner = owner = old_hitter = NULL;
-        maxdam = op->stats.hp - 1;
-
-        /* very old door code for destroyable code.*/
-        /*if (op->type == DOOR)
-        {
-            op->speed = 0.1f;
-            update_ob_speed(op);
-            op->speed_left = -0.05f;
-            return maxdam;
-        }*/
-
-        /* Show Damage System for clients
-         * whatever is dead now, we check map. If it on map, we redirect last_damage
-         * to map space, giving player the chance to see the last hit damage they had
-         *  done. If there is more as one object killed on a single map tile, we overwrite
-         *  it now. This visual effect works pretty good. MT
-         */
-
-        /* no pet/player/monster checking now, perhaps not needed */
-
-        if (op->damage_round_tag == ROUND_TAG)
-        {
-            if (op->map) /* hm, can we sure we are on a legal map position... hope so */
-            {
-                msp_t *msp = MSP_KNOWN(op);
-
-                msp->last_damage = op->last_damage;
-                msp->round_tag = ROUND_TAG;
-            }
-        }
-
-        if (op->map)
-            play_sound_map(MSP_KNOWN(op), SOUND_PLAYER_KILLS, SOUND_NORMAL);
-
-        /* old golem/npc code
-        if (QUERY_FLAG(op, FLAG_FRIENDLY) && op->type != PLAYER)
-        {
-            if (get_owner(op) != NULL && op->owner->type == PLAYER)
-            {
-                send_golem_control(op, GOLEM_CTR_RELEASE);
-                CONTR(op->owner)->golem = NULL;
-            }
-
-            op->speed = 0;
-            update_ob_speed(op);
-            destruct_ob(op);
-            return maxdam;
-        } */
-
-        /* do some checks */
-        if ((owner = get_owner(hitter)) == NULL)
-            owner = hitter;
-
-        /* Create kill message */
-        if (owner->type == PLAYER)
-        {
-            if (owner != hitter)
-            {
-                if (hitter->type == MONSTER)
-                {
-                    ndi(NDI_WHITE, 0, owner, "%s killed %s!",
-                        query_name(hitter, NULL, ARTICLE_POSSESSIVE, 1),
-                        QUERY_SHORT_NAME(op, NULL));
-                    sprintf(group_buf, "%s's %s killed %s.",
-                        QUERY_SHORT_NAME(owner, NULL),
-                        query_name(hitter, NULL, ARTICLE_NONE, 1),
-                        QUERY_SHORT_NAME(op, NULL));
-                }
-                else
-                {
-                    ndi(NDI_WHITE, 0, owner, "You killed %s with %s!",
-                        QUERY_SHORT_NAME(op, NULL),
-                        query_name(hitter, NULL, ARTICLE_NONE, 1));
-                    sprintf(group_buf, "%s killed %s with %s.",
-                        QUERY_SHORT_NAME(owner, NULL),
-                        QUERY_SHORT_NAME(op, NULL),
-                        query_name(hitter, NULL, ARTICLE_NONE, 1));
-                }
-
-                old_hitter = hitter;
-                owner->skillgroup = hitter->skillgroup;
-            }
-            else
-            {
-                ndi(NDI_WHITE, 0, owner, "You killed %s!",
-                    QUERY_SHORT_NAME(op, NULL));
-                sprintf(group_buf, "%s killed %s.",
-                    QUERY_SHORT_NAME(owner, NULL),
-                    QUERY_SHORT_NAME(op, NULL));
-            }
-        }
-
-        /* Give exp and create the corpse. Decide we get a loot or not */
-        if (op->type != PLAYER)
-        {
-            corpse_owner = aggro_calculate_exp(op, owner, (group_buf[0] != '\0') ? group_buf : NULL);
-            op->speed = 0;
-            update_ob_speed(op); /* remove from active list (if on) */
-
-            /* destruct_ob() will remove the killed mob/object from the game.
-             * It will also trigger the drop of a corpse & with the loot (inv of that object).
-             * FLAG_NO_DROP will avoid to drop the standard loot for example when
-             * a npc killed another npc.
-             */
-            if(corpse_owner)
-            {
-                /* drop_inv() will use ->enemy to create the "bounty look" for a corpse container */
-                if(corpse_owner->type == PLAYER)
-                {
-                    op->enemy = corpse_owner;
-                    op->enemy_count = corpse_owner->count;
-                }
-                else /* mob/npc kill - force a droped corpse without items */
-                {
-                    op->enemy = NULL;
-                    SET_FLAG(op, FLAG_CORPSE_FORCED);
-                    SET_FLAG(op, FLAG_NO_DROP);
-                }
-            }
-            else /* aggroless kill (eg, script mob:Kill()) -- force empty corpse */
-            {
-                op->enemy = NULL;
-                SET_FLAG(op, FLAG_CORPSE_FORCED);
-                SET_FLAG(op, FLAG_NO_DROP);
-            }
-
-            /* here "remove" the killed object, drop the items inside and add
-             * quests and quest items/one drops to group of corpse_owner
-             */
-            destruct_ob(op);
-        }
-   }
-
-    return maxdam;
-}
-
-
 /* Check if target and hitter are still in a relation similar to the one
  * determined by GetAttackMode(). */
 static attack_envmode_t AbortAttack(object_t *target, object_t *hitter, attack_envmode_t env_attack)
@@ -1642,7 +1475,7 @@ object_t * hit_with_arrow(object_t *op, object_t *victim)
     }
 
     /* hopefully the walk_off event was triggered somewhere there */
-    if (was_destroyed(hitter, hitter_tag) || hitter->env != NULL)
+    if (!OBJECT_VALID(hitter, hitter_tag) || hitter->env != NULL)
         return NULL;
 
     /* Missile hit victim */
@@ -1673,7 +1506,7 @@ void tear_down_wall(object_t *op)
     {
         /* Object has been called - no animations, so remove it */
         if (op->stats.hp < 0)
-            destruct_ob(op); /* Should update LOS */
+            (void)kill_object(op, NULL); /* Should update LOS */
         return; /* no animations, so nothing more to do */
     }
     perc = NUM_ANIMATIONS(op) - ((int) NUM_ANIMATIONS(op) * op->stats.hp) / op->stats.maxhp;
@@ -1688,7 +1521,7 @@ void tear_down_wall(object_t *op)
         /* Reached the last animation */
         if (op->face == blank_face)
                 /* If the last face is blank, remove the ob */
-            destruct_ob(op); /* Should update LOS */
+            (void)kill_object(op, NULL); /* Should update LOS */
         else
         {
             /* The last face was not blank, leave an image */

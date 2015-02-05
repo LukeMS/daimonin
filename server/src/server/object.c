@@ -33,6 +33,7 @@ static void RegrowBurdenTree(object_t *op, sint32 nrof, sint8 mode);
 static void RemoveFromEnv(object_t *op);
 static void RemoveFromMap(object_t *op);
 static void Copy(object_t *from, object_t *to);
+static void DropLoot(object_t *ob);
 
 static int static_walk_semaphore = FALSE; /* see walk_off/walk_on functions  */
 
@@ -1282,25 +1283,565 @@ void update_object(object_t *op, int action)
     }
 }
 
-/* Drops the inventory of ob into ob's current environment. */
-/* Makes some decisions whether to actually drop or not, and/or to
- * create a corpse for the stuff */
-void drop_ob_inv(object_t *ob)
+/** Frees all data belonging to an object, but doesn't
+ * care about the object itself. This can be used for
+ * non-GC objects like archetype clone objects */
+void free_object_data(object_t *ob, int free_static_data)
+{
+    /* This should be very rare... */
+    if (QUERY_FLAG(ob, FLAG_IS_LINKED))
+        remove_button_link(ob);
+
+    activelist_remove_inline(ob);
+
+    if (ob->type == CONTAINER && ob->attacked_by)
+        container_unlink(NULL, ob);
+
+    /* unlink old treasurelist if needed */
+    if (ob->randomitems)
+        unlink_treasurelists(ob->randomitems, free_static_data ? OBJLNK_FLAG_STATIC : 0);
+    ob->randomitems = NULL;
+
+    /* Remove object from the active list */
+//    ob->speed = 0;
+//    update_ob_speed(ob);
+    /*LOG(llevDebug,"FO: a:%s %x >%s< (#%d)\n", ob->arch?(ob->arch->name?ob->arch->name:""):"", ob->name, ob->name?ob->name:"",ob->name?query_refcount(ob->name):0);*/
+
+    /* Free attached attrsets */
+    if (ob->custom_attrset)
+    {
+        /*      LOG(llevDebug,"destroy_object() custom attrset found in object %s (type %d)\n",
+                      STRING_OBJ_NAME(ob), ob->type);*/
+
+#ifdef DAI_DEVELOPMENT_CODE /* Avoid this check on performance-critical servers */
+        if(ob->head)
+        {
+            LOG(llevDebug, "DEBUG:: %s/free_object_data(): Custom attrset found in object %s[%d] subpart (type %d)\n",
+                __FILE__, STRING_OBJ_NAME(ob), TAG(ob), ob->type);
+        }
+#endif
+
+        switch (ob->type)
+        {
+            case PLAYER:
+            case DEAD_OBJECT:
+              /* Players are changed into DEAD_OBJECTs when they logout */
+              return_poolchunk(ob->custom_attrset, pool_player);
+              break;
+
+            case MONSTER:
+              return_poolchunk(ob->custom_attrset, pool_mob_data);
+              break;
+
+            case TYPE_BEACON:
+              {
+                  object_t *registered = hashtable_find(beacon_table, ob->custom_attrset);
+
+#ifdef DEBUG_BEACONS
+                  /* the original object name is stored in custom_attrset */
+                  LOG(llevInfo, "Removing beacon (%s): ", (char *)ob->custom_attrset);
+
+                  if (registered != ob)
+                  {
+                      LOG(llevInfo, "another beacon has replaced it. Not deregistering!\n");
+                  }
+                  else
+                  {
+                      LOG(llevInfo, "deregistering!\n");
+                      hashtable_erase(beacon_table, ob->custom_attrset);
+                  }
+#else
+                  if (registered == ob)
+                  {
+                      hashtable_erase(beacon_table, ob->custom_attrset);
+                  }
+#endif
+
+                  FREE_ONLY_HASH(ob->custom_attrset);
+              }
+              break;
+
+            case TYPE_QUEST_UPDATE: // since r7336 a string, so avoid default
+            break;
+
+            default:
+              LOG(llevBug, "BUG: destroy_object() custom attrset found in unsupported object %s (type %d)\n",
+                  STRING_OBJ_NAME(ob), ob->type);
+        }
+        ob->custom_attrset = NULL;
+    }
+
+    FREE_AND_CLEAR_HASH2(ob->name);
+    FREE_AND_CLEAR_HASH2(ob->title);
+    FREE_AND_CLEAR_HASH2(ob->race);
+    FREE_AND_CLEAR_HASH2(ob->slaying);
+    FREE_AND_CLEAR_HASH2(ob->msg);
+}
+
+/* destroy and delete recursive the inventory of an destroyed object. */
+static void destroy_ob_inv(object_t *op)
+{
+    object_t *tmp,
+           *next;
+
+#if defined DEBUG_GC
+    if(op->inv)
+        LOG(llevDebug, "  destroy_ob_inv(%s (%d))\n", STRING_OBJ_NAME(op), op->count);
+#endif
+
+    FOREACH_OBJECT_IN_OBJECT(tmp, op, next)
+    {
+        /* For some reason sometimes a dmg info in an aggro history will be
+         * freed with return_poolchunk() in object_gc() above but not entirely
+         * removed by the time we get here (ie, during map swap). We therefore
+         * sometimes try to mark_object_removed() a freed object, which is a
+         * bug. Although IDK why this happens, so it needs investigating, this
+         * *only* happens in this one case so I assume it is a timing glitch.
+         * In any case, it seems pointless to let it happen so here we skip
+         * such freed objects and log a DEBUG.
+         * -- Smacky 20101115 */
+        if (OBJECT_FREE(tmp))
+        {
+#if defined DEBUG_GC
+            LOG(llevDebug, "DEBUG:: %s/destroy_ob_inv(): Skipping freed object found in inv of %s[%d] during gc!\n",
+                __FILE__, STRING_OBJ_NAME(op), TAG(op));
+#endif
+
+            continue;
+        }
+
+#if defined DEBUG_GC
+        LOG(llevDebug, "    removing %s (%d)\n", STRING_OBJ_NAME(tmp), tmp->count);
+#endif
+
+        if (tmp->inv)
+            destroy_ob_inv(tmp);
+
+        mark_object_removed(tmp); /* Enqueue for gc */
+    }
+}
+
+/** frees everything allocated by an object, removes
+ * it from the list of used objects, and puts it on the list of
+ * free objects.
+ *
+ * This function is called automatically to free unused objects
+ * (it is called from return_poolchunk() during garbage collection in object_gc() ).
+ * The object must have been removed by remove_ob() first for this function to succeed.
+ * @note Due to the tricky free/active/remove-list handling of objects, don't ever call this manually.
+ */
+void destroy_object(object_t *ob)
+{
+    if (OBJECT_FREE(ob))
+    {
+        dump_object(ob);
+        LOG(llevBug, "BUG: Trying to destroy freed object.\n%s\n", errmsg);
+        return;
+    }
+
+    if (!QUERY_FLAG(ob, FLAG_REMOVED))
+    {
+        dump_object(ob);
+        LOG(llevBug, "BUG: Destroy object called with non removed object\n:%s\n", errmsg);
+    }
+
+#if defined DEBUG_GC
+    LOG(llevDebug, "  destroy_object(%s)\n", STRING_OBJ_NAME(ob));
+#endif
+
+    /* Make sure to get rid of the inventory, too. */
+    destroy_ob_inv(ob);
+
+    free_object_data(ob, 0);
+
+    ob->map = NULL;
+
+    ob->count = 0; /* mark object as "do not use" and invalidate all references to it */
+}
+
+#if 0
+/*
+ * count_free() returns the number of objects on the list of free objects.
+ */
+
+int count_free() {
+  int i=0;
+  object_t *tmp=free_objects;
+  while(tmp!=NULL)
+    tmp=tmp->next, i++;
+  return i;
+}
+
+/*
+ * count_used() returns the number of objects on the list of used objects.
+ */
+
+int count_used() {
+  int i=0;
+  object_t *tmp=objects;
+  while(tmp!=NULL)
+    tmp=tmp->next, i++;
+  return i;
+}
+#endif
+
+/* remove_ob(op):
+ *   This function removes the object op from the linked list of objects
+ *   which it is currently tied to.  When this function is done, the
+ *   object will have no environment.  If the object previously had an
+ *   environment, the x and y coordinates will be updated to
+ *   the previous environment.
+ *   if we want remove alot of players inventory items, set
+ *   FLAG_NO_FIX_PLAYER to the player first and call fix_player()
+ *   explicit then.
+ */
+void remove_ob(object_t *op)
+{
+    if (QUERY_FLAG(op, FLAG_REMOVED))
+    {
+        /*dump_object(op)*/;
+        LOG(llevBug, "BUG:: %s:remove_ob(): Trying to remove removed object %s[%d] at %s (%d,%d)!\n",
+            __FILE__, STRING_OBJ_NAME(op), TAG(op), STRING_OBJ_MAP_PATH(op),
+            op->x, op->y);
+
+        return;
+    }
+
+    if (op->more)
+    {
+        remove_ob(op->more); // check off is handled outside here
+    }
+
+    mark_object_removed(op);
+    SET_FLAG(op, FLAG_OBJECT_WAS_MOVED);
+
+    if (op->env)
+    {
+        RemoveFromEnv(op);
+    }
+    else if (op->map)
+    {
+        RemoveFromMap(op);
+    }
+    else
+    {
+        LOG(llevBug, "BUG:: %s:remove_ob(): object %s[%d] has neither map nor env!\n",
+            __FILE__, STRING_OBJ_NAME(op), TAG(op));
+    }
+}
+
+static void RemoveFromEnv(object_t *op)
+{
+    object_t *env = op->env;
+
+    /* When the object being removed is an open container, close it. */
+    if (op->type == CONTAINER &&
+        op->attacked_by)
+    {
+        container_unlink(NULL, op);
+    }
+
+    /* Notify clients. */
+    if (!QUERY_FLAG(op, FLAG_NO_SEND))
+    {
+        esrv_del_item(op);
+    }
+
+    /* Recalc the chain of weights. Remember that the above is client info
+     * only -- the object has not actually gone yet. */
+    if (!QUERY_FLAG(op, FLAG_SYS_OBJECT))
+    {
+        RegrowBurdenTree(op, op->nrof, -1);
+    }
+
+    /* Sort out the revised object chain. */
+    if (op->above)
+    {
+        op->above->below = op->below;
+    }
+    else
+    {
+        op->env->inv = op->below;
+    }
+
+    if (op->below)
+    {
+        op->below->above = op->above;
+    }
+
+#ifdef POSITION_DEBUG
+    op->ox = op->x;
+    op->oy = op->y;
+#endif
+
+    op->above = op->below = op->env = NULL;
+    op->map = NULL;
+
+    if (env->type == PLAYER &&
+        !QUERY_FLAG(env, FLAG_NO_FIX_PLAYER))
+    {
+        FIX_PLAYER(env, "remove_ob()");
+    }
+}
+
+static void RemoveFromMap(object_t *op)
+{
+    msp_t *msp = MSP_KNOWN(op);
+
+    /* Sort out object chain. Don't NULL op->map (still needed). */
+    if (op->above)
+    {
+        op->above->below = op->below;
+    }
+    else
+    {
+        msp->last = op->below;
+    }
+
+    if (op->below)
+    {
+        op->below->above = op->above;
+    }
+    else
+    {
+        msp->first = op->above;
+    }
+
+    op->above = NULL;
+    op->below = NULL;
+
+    /* When a map is swapped out and the objects on it get removed too. */
+    if (op->map->in_memory == MAP_MEMORY_SAVING)
+    {
+        return;
+    }
+
+    if (op->type == PLAYER)
+    {
+        player_t *pl = CONTR(op);
+
+        /* now we remove us from the local map player chain */
+        if (pl->map_below)
+        {
+            CONTR(pl->map_below)->map_above = pl->map_above;
+        }
+        else
+        {
+            op->map->player_first = pl->map_above;
+        }
+
+        if (pl->map_above)
+        {
+            CONTR(pl->map_above)->map_below = pl->map_below;
+        }
+
+        pl->map_below = pl->map_above = NULL;
+        pl->update_los = 1;
+
+        /* a open container NOT in our player inventory = unlink (close) when we move */
+        if (pl->container &&
+            pl->container->env != op)
+        {
+            container_unlink(pl, NULL);
+        }
+    }
+
+    if (op->layer > MSP_SLAYER_UNSLICED)
+    {
+        msp_rebuild_slices_without(msp, op);
+    }
+
+    update_object(op, UP_OBJ_REMOVE);
+    op->env = NULL;
+}
+
+/* Recursively remove the inventory of op. */
+void remove_ob_inv(object_t *op)
+{
+    object_t *this,
+           *next;
+
+    FOREACH_OBJECT_IN_OBJECT(this, op, next)
+    {
+        if (this->inv)
+        {
+            remove_ob_inv(this);
+        }
+
+        remove_ob(this);
+    }
+}
+
+/* kill_object() causws victim to be 'killed' by killer. killer may be NULL in
+ * which case victim just dies (of natural causes). It is possible that victim
+ * has a DEATH script wh */
+object_t *kill_object(object_t *victim, object_t *killer)
+{
+    uint32 tag = victim->count;
+
+    /* A DEATH script may return true to cheat death (or otherwise handle it).
+     * If it does then return victim or NULL depending on whether victim still
+     * exists afterwards. If it returns false then return NULL if victim no
+     * longer exists afterwards or carry on otherwise. */
+    if (trigger_object_plugin_event(EVENT_DEATH, victim, killer, victim, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
+    {
+        if (OBJECT_VALID(victim, tag))
+        {
+            return victim;
+        }
+    }
+
+    if (!OBJECT_VALID(victim, tag))
+    {
+        return NULL;
+    }
+
+    /* Show Damage System for clients
+     * whatever is dead now, we check map. If it on map, we redirect last_damage
+     * to map space, giving player the chance to see the last hit damage they had
+     * done. If there is more as one object killed on a single map tile, we overwrite
+     * it now. This visual effect works pretty good. MT */
+    /* no pet/player/monster checking now, perhaps not needed */
+    if (victim->map)
+    {
+        msp_t *msp = MSP_KNOWN(victim);
+
+        if (victim->damage_round_tag == ROUND_TAG)
+        {
+            msp->last_damage = victim->last_damage;
+            msp->round_tag = ROUND_TAG;
+        }
+
+        play_sound_map(msp, SOUND_PLAYER_KILLS, SOUND_NORMAL);
+    }
+
+    /* Notify player that a pet has died */
+    if (victim->type == MONSTER)
+    {
+        object_t *victim_owner = get_owner(victim);
+
+        if (victim_owner &&
+            victim_owner->type == PLAYER)
+        {
+            ndi(NDI_UNIQUE, 0, victim_owner, "%s was killed!",
+                query_name(victim, victim_owner, ARTICLE_POSSESSIVE, 0));
+        }
+    }
+
+    /* aggroless kill (eg, script mob:Kill()) -- force empty corpse */
+    if (!killer)
+    {
+        if (victim->type == MONSTER)
+        {
+            /* ...have no enemy (corpse will be noone's bounty and noone
+             * gets a kill credit). */
+            victim->enemy = NULL;
+
+            /* ...leave empty corpses (as long as the mob leaves a corpse
+             * at all AND unless the mob already has a forced corpse. */
+            if (QUERY_FLAG(victim, FLAG_CORPSE) &&
+                !QUERY_FLAG(victim, FLAG_CORPSE_FORCED))
+            {
+                SET_FLAG(victim, FLAG_CORPSE_FORCED);
+                SET_FLAG(victim, FLAG_NO_DROP);
+            }
+        }
+    }
+    /* The killer nay be a pet or spell or missile or such so we need to know
+     * the owner to calculate exp/loot. */
+    else
+    {
+        object_t *owner = get_owner(killer);
+
+        if (!owner)
+        {
+            owner = killer;
+        }
+
+        /* Create kill message */
+        if (owner->type == PLAYER)
+        {
+            char      buf[MEDIUM_BUF] = "";
+            object_t *corpse_owner;
+
+            if (owner != killer)
+            {
+                if (killer->type == MONSTER)
+                {
+                    ndi(NDI_WHITE, 0, owner, "%s killed %s!",
+                        query_name(killer, NULL, ARTICLE_POSSESSIVE, 1),
+                        QUERY_SHORT_NAME(victim, NULL));
+                    sprintf(buf, "%s's %s killed %s.",
+                        QUERY_SHORT_NAME(owner, NULL),
+                        query_name(killer, NULL, ARTICLE_NONE, 1),
+                        QUERY_SHORT_NAME(victim, NULL));
+                }
+                else
+                {
+                    ndi(NDI_WHITE, 0, owner, "You killed %s with %s!",
+                        QUERY_SHORT_NAME(victim, NULL),
+                        query_name(killer, NULL, ARTICLE_NONE, 1));
+                    sprintf(buf, "%s killed %s with %s.",
+                        QUERY_SHORT_NAME(owner, NULL),
+                        QUERY_SHORT_NAME(victim, NULL),
+                        query_name(killer, NULL, ARTICLE_NONE, 1));
+                }
+
+                owner->skillgroup = killer->skillgroup;
+            }
+            else
+            {
+                ndi(NDI_WHITE, 0, owner, "You killed %s!",
+                    QUERY_SHORT_NAME(victim, NULL));
+                sprintf(buf, "%s killed %s.",
+                    QUERY_SHORT_NAME(owner, NULL),
+                    QUERY_SHORT_NAME(victim, NULL));
+            }
+
+            /* Give exp and create the corpse. Decide we get a loot or not. */
+            corpse_owner = aggro_calculate_exp(victim, owner, (buf[0] != '\0') ? buf : NULL);
+
+            if (victim->type == MONSTER)
+            {
+#if 0
+                if (!corpse_owner)
+                {
+                    corpse_owner = owner;
+                }
+
+#endif
+                victim->enemy = corpse_owner;
+                victim->enemy_count = corpse_owner->count;
+            }
+        }
+        /* mob/npc kill - force a droped corpse without items */
+        else
+        {
+            if (victim->type == MONSTER)
+            {
+                victim->enemy = NULL;
+                SET_FLAG(victim, FLAG_CORPSE_FORCED);
+                SET_FLAG(victim, FLAG_NO_DROP);
+            }
+        }
+    }
+
+    victim->speed = 0;
+    update_ob_speed(victim); /* remove from active list (if on) */
+    DropLoot(victim);
+    remove_ob(victim);
+    check_walk_off(victim, NULL, MOVE_APPLY_DEFAULT);
+    return NULL;
+}
+
+/* DropLoot() needs a rewrite. */
+static void DropLoot(object_t *ob)
 {
     player_t *pl      = NULL;
     object_t *corpse  = NULL;
     object_t *tmp_op,
            *next;
     object_t *gtmp, *tmp     = NULL;
-
-    if (ob->type == PLAYER)
-    {
-        /* we don't handle players here */
-        LOG(llevBug, "BUG: drop_ob_inv() - try to drop items of %s\n",
-            ob->name);
-
-        return;
-    }
 
     if (!ob->env &&
         (!ob->map ||
@@ -1516,416 +2057,6 @@ void drop_ob_inv(object_t *ob)
                 remove_ob(corpse); /* no check off - not put in the map here */
             }
         }
-    }
-}
-
-/** Frees all data belonging to an object, but doesn't
- * care about the object itself. This can be used for
- * non-GC objects like archetype clone objects */
-void free_object_data(object_t *ob, int free_static_data)
-{
-    /* This should be very rare... */
-    if (QUERY_FLAG(ob, FLAG_IS_LINKED))
-        remove_button_link(ob);
-
-    activelist_remove_inline(ob);
-
-    if (ob->type == CONTAINER && ob->attacked_by)
-        container_unlink(NULL, ob);
-
-    /* unlink old treasurelist if needed */
-    if (ob->randomitems)
-        unlink_treasurelists(ob->randomitems, free_static_data ? OBJLNK_FLAG_STATIC : 0);
-    ob->randomitems = NULL;
-
-    /* Remove object from the active list */
-//    ob->speed = 0;
-//    update_ob_speed(ob);
-    /*LOG(llevDebug,"FO: a:%s %x >%s< (#%d)\n", ob->arch?(ob->arch->name?ob->arch->name:""):"", ob->name, ob->name?ob->name:"",ob->name?query_refcount(ob->name):0);*/
-
-    /* Free attached attrsets */
-    if (ob->custom_attrset)
-    {
-        /*      LOG(llevDebug,"destroy_object() custom attrset found in object %s (type %d)\n",
-                      STRING_OBJ_NAME(ob), ob->type);*/
-
-#ifdef DAI_DEVELOPMENT_CODE /* Avoid this check on performance-critical servers */
-        if(ob->head)
-        {
-            LOG(llevDebug, "DEBUG:: %s/free_object_data(): Custom attrset found in object %s[%d] subpart (type %d)\n",
-                __FILE__, STRING_OBJ_NAME(ob), TAG(ob), ob->type);
-        }
-#endif
-
-        switch (ob->type)
-        {
-            case PLAYER:
-            case DEAD_OBJECT:
-              /* Players are changed into DEAD_OBJECTs when they logout */
-              return_poolchunk(ob->custom_attrset, pool_player);
-              break;
-
-            case MONSTER:
-              return_poolchunk(ob->custom_attrset, pool_mob_data);
-              break;
-
-            case TYPE_BEACON:
-              {
-                  object_t *registered = hashtable_find(beacon_table, ob->custom_attrset);
-
-#ifdef DEBUG_BEACONS
-                  /* the original object name is stored in custom_attrset */
-                  LOG(llevInfo, "Removing beacon (%s): ", (char *)ob->custom_attrset);
-
-                  if (registered != ob)
-                  {
-                      LOG(llevInfo, "another beacon has replaced it. Not deregistering!\n");
-                  }
-                  else
-                  {
-                      LOG(llevInfo, "deregistering!\n");
-                      hashtable_erase(beacon_table, ob->custom_attrset);
-                  }
-#else
-                  if (registered == ob)
-                  {
-                      hashtable_erase(beacon_table, ob->custom_attrset);
-                  }
-#endif
-
-                  FREE_ONLY_HASH(ob->custom_attrset);
-              }
-              break;
-
-            case TYPE_QUEST_UPDATE: // since r7336 a string, so avoid default
-            break;
-
-            default:
-              LOG(llevBug, "BUG: destroy_object() custom attrset found in unsupported object %s (type %d)\n",
-                  STRING_OBJ_NAME(ob), ob->type);
-        }
-        ob->custom_attrset = NULL;
-    }
-
-    FREE_AND_CLEAR_HASH2(ob->name);
-    FREE_AND_CLEAR_HASH2(ob->title);
-    FREE_AND_CLEAR_HASH2(ob->race);
-    FREE_AND_CLEAR_HASH2(ob->slaying);
-    FREE_AND_CLEAR_HASH2(ob->msg);
-}
-
-/* destroy and delete recursive the inventory of an destroyed object. */
-static void destroy_ob_inv(object_t *op)
-{
-    object_t *tmp,
-           *next;
-
-#if defined DEBUG_GC
-    if(op->inv)
-        LOG(llevDebug, "  destroy_ob_inv(%s (%d))\n", STRING_OBJ_NAME(op), op->count);
-#endif
-
-    FOREACH_OBJECT_IN_OBJECT(tmp, op, next)
-    {
-        /* For some reason sometimes a dmg info in an aggro history will be
-         * freed with return_poolchunk() in object_gc() above but not entirely
-         * removed by the time we get here (ie, during map swap). We therefore
-         * sometimes try to mark_object_removed() a freed object, which is a
-         * bug. Although IDK why this happens, so it needs investigating, this
-         * *only* happens in this one case so I assume it is a timing glitch.
-         * In any case, it seems pointless to let it happen so here we skip
-         * such freed objects and log a DEBUG.
-         * -- Smacky 20101115 */
-        if (OBJECT_FREE(tmp))
-        {
-#if defined DEBUG_GC
-            LOG(llevDebug, "DEBUG:: %s/destroy_ob_inv(): Skipping freed object found in inv of %s[%d] during gc!\n",
-                __FILE__, STRING_OBJ_NAME(op), TAG(op));
-#endif
-
-            continue;
-        }
-
-#if defined DEBUG_GC
-        LOG(llevDebug, "    removing %s (%d)\n", STRING_OBJ_NAME(tmp), tmp->count);
-#endif
-
-        if (tmp->inv)
-            destroy_ob_inv(tmp);
-
-        mark_object_removed(tmp); /* Enqueue for gc */
-    }
-}
-
-/** frees everything allocated by an object, removes
- * it from the list of used objects, and puts it on the list of
- * free objects.
- *
- * This function is called automatically to free unused objects
- * (it is called from return_poolchunk() during garbage collection in object_gc() ).
- * The object must have been removed by remove_ob() first for this function to succeed.
- * @note Due to the tricky free/active/remove-list handling of objects, don't ever call this manually.
- */
-void destroy_object(object_t *ob)
-{
-    if (OBJECT_FREE(ob))
-    {
-        dump_object(ob);
-        LOG(llevBug, "BUG: Trying to destroy freed object.\n%s\n", errmsg);
-        return;
-    }
-
-    if (!QUERY_FLAG(ob, FLAG_REMOVED))
-    {
-        dump_object(ob);
-        LOG(llevBug, "BUG: Destroy object called with non removed object\n:%s\n", errmsg);
-    }
-
-#if defined DEBUG_GC
-    LOG(llevDebug, "  destroy_object(%s)\n", STRING_OBJ_NAME(ob));
-#endif
-
-    /* Make sure to get rid of the inventory, too. */
-    destroy_ob_inv(ob);
-
-    free_object_data(ob, 0);
-
-    ob->map = NULL;
-
-    ob->count = 0; /* mark object as "do not use" and invalidate all references to it */
-}
-
-#if 0
-/*
- * count_free() returns the number of objects on the list of free objects.
- */
-
-int count_free() {
-  int i=0;
-  object_t *tmp=free_objects;
-  while(tmp!=NULL)
-    tmp=tmp->next, i++;
-  return i;
-}
-
-/*
- * count_used() returns the number of objects on the list of used objects.
- */
-
-int count_used() {
-  int i=0;
-  object_t *tmp=objects;
-  while(tmp!=NULL)
-    tmp=tmp->next, i++;
-  return i;
-}
-#endif
-
-/* Physically kill/destroy an object, creating corpse and/or
- * dropping any inventory on the floor */
-void destruct_ob(object_t *op)
-{
-    object_t *owner;
-
-    drop_ob_inv(op);
-    remove_ob(op);
-    check_walk_off(op, NULL, MOVE_APPLY_DEFAULT);
-
-    /* Notify player that a pet has died */
-    /* TODO: maybe this should be in kill_object() */
-    if (op->type == MONSTER &&
-        (owner = get_owner(op)) &&
-        owner->type == PLAYER)
-    {
-        ndi(NDI_UNIQUE, 0, owner, "%s was killed!",
-            query_name(op, owner, ARTICLE_POSSESSIVE, 0));
-    }
-}
-
-/* remove_ob(op):
- *   This function removes the object op from the linked list of objects
- *   which it is currently tied to.  When this function is done, the
- *   object will have no environment.  If the object previously had an
- *   environment, the x and y coordinates will be updated to
- *   the previous environment.
- *   if we want remove alot of players inventory items, set
- *   FLAG_NO_FIX_PLAYER to the player first and call fix_player()
- *   explicit then.
- */
-void remove_ob(object_t *op)
-{
-    if (QUERY_FLAG(op, FLAG_REMOVED))
-    {
-        /*dump_object(op)*/;
-        LOG(llevBug, "BUG:: %s:remove_ob(): Trying to remove removed object %s[%d] at %s (%d,%d)!\n",
-            __FILE__, STRING_OBJ_NAME(op), TAG(op), STRING_OBJ_MAP_PATH(op),
-            op->x, op->y);
-
-        return;
-    }
-
-    if (op->more)
-    {
-        remove_ob(op->more); // check off is handled outside here
-    }
-
-    mark_object_removed(op);
-    SET_FLAG(op, FLAG_OBJECT_WAS_MOVED);
-
-    if (op->env)
-    {
-        RemoveFromEnv(op);
-    }
-    else if (op->map)
-    {
-        RemoveFromMap(op);
-    }
-    else
-    {
-        LOG(llevBug, "BUG:: %s:remove_ob(): object %s[%d] has neither map nor env!\n",
-            __FILE__, STRING_OBJ_NAME(op), TAG(op));
-    }
-}
-
-static void RemoveFromEnv(object_t *op)
-{
-    object_t *env = op->env;
-
-    /* When the object being removed is an open container, close it. */
-    if (op->type == CONTAINER &&
-        op->attacked_by)
-    {
-        container_unlink(NULL, op);
-    }
-
-    /* Notify clients. */
-    if (!QUERY_FLAG(op, FLAG_NO_SEND))
-    {
-        esrv_del_item(op);
-    }
-
-    /* Recalc the chain of weights. Remember that the above is client info
-     * only -- the object has not actually gone yet. */
-    if (!QUERY_FLAG(op, FLAG_SYS_OBJECT))
-    {
-        RegrowBurdenTree(op, op->nrof, -1);
-    }
-
-    /* Sort out the revised object chain. */
-    if (op->above)
-    {
-        op->above->below = op->below;
-    }
-    else
-    {
-        op->env->inv = op->below;
-    }
-
-    if (op->below)
-    {
-        op->below->above = op->above;
-    }
-
-#ifdef POSITION_DEBUG
-    op->ox = op->x;
-    op->oy = op->y;
-#endif
-
-    op->above = op->below = op->env = NULL;
-    op->map = NULL;
-
-    if (env->type == PLAYER &&
-        !QUERY_FLAG(env, FLAG_NO_FIX_PLAYER))
-    {
-        FIX_PLAYER(env, "remove_ob()");
-    }
-}
-
-static void RemoveFromMap(object_t *op)
-{
-    msp_t *msp = MSP_KNOWN(op);
-
-    /* Sort out object chain. Don't NULL op->map (still needed). */
-    if (op->above)
-    {
-        op->above->below = op->below;
-    }
-    else
-    {
-        msp->last = op->below;
-    }
-
-    if (op->below)
-    {
-        op->below->above = op->above;
-    }
-    else
-    {
-        msp->first = op->above;
-    }
-
-    op->above = NULL;
-    op->below = NULL;
-
-    /* When a map is swapped out and the objects on it get removed too. */
-    if (op->map->in_memory == MAP_MEMORY_SAVING)
-    {
-        return;
-    }
-
-    if (op->type == PLAYER)
-    {
-        player_t *pl = CONTR(op);
-
-        /* now we remove us from the local map player chain */
-        if (pl->map_below)
-        {
-            CONTR(pl->map_below)->map_above = pl->map_above;
-        }
-        else
-        {
-            op->map->player_first = pl->map_above;
-        }
-
-        if (pl->map_above)
-        {
-            CONTR(pl->map_above)->map_below = pl->map_below;
-        }
-
-        pl->map_below = pl->map_above = NULL;
-        pl->update_los = 1;
-
-        /* a open container NOT in our player inventory = unlink (close) when we move */
-        if (pl->container &&
-            pl->container->env != op)
-        {
-            container_unlink(pl, NULL);
-        }
-    }
-
-    if (op->layer > MSP_SLAYER_UNSLICED)
-    {
-        msp_rebuild_slices_without(msp, op);
-    }
-
-    update_object(op, UP_OBJ_REMOVE);
-    op->env = NULL;
-}
-
-/* Recursively remove the inventory of op. */
-void remove_ob_inv(object_t *op)
-{
-    object_t *this,
-           *next;
-
-    FOREACH_OBJECT_IN_OBJECT(this, op, next)
-    {
-        if (this->inv)
-        {
-            remove_ob_inv(this);
-        }
-
-        remove_ob(this);
     }
 }
 
@@ -2588,7 +2719,7 @@ int check_walk_on(object_t *const op, object_t *const originator, int flags)
                                                      * NOTE: move_apply() can be heavy recursive and recall
                                                      * this function too.*/
 
-            if (was_destroyed(op, tag)) // we got killed, removed or whatever
+            if (!OBJECT_VALID(op, tag)) // we got killed, removed or whatever
             {
                 if (local_walk_semaphore)
                 {
@@ -2836,15 +2967,6 @@ object_t *present_arch_in_ob_temp(archetype_t *at, object_t *op)
     }
 
     return NULL;
-}
-
-int was_destroyed(const object_t *const op, const tag_t old_tag)
-{
-    /* checking for OBJECT_FREE isn't necessary, but makes this function more
-     * robust */
-    /* Gecko: redefined "destroyed" a little broader: included removed objects.
-     * -> need to make sure this is never a problem with temporarily removed objects */
-    return (QUERY_FLAG(op, FLAG_REMOVED) || (op->count != old_tag) || OBJECT_FREE(op));
 }
 
 /* GROS - Creates an object using a string representing its content.         */

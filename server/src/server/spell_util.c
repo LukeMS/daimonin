@@ -2112,7 +2112,7 @@ void move_cone(object_t *op)
     if (op->attacktype & AT_PHYSICAL)
         check_cone_push(op);
     */
-    if (was_destroyed(op, tag))
+    if (!OBJECT_VALID(op, tag))
         return;
 
     if ((op->stats.hp -= 2) < 0)
@@ -2303,7 +2303,8 @@ void move_bolt(object_t *op)
 
     if (--(op->stats.hp) < 0)
     {
-        destruct_ob(op);
+        remove_ob(op);
+        check_walk_off(op, NULL, MOVE_APPLY_DEFAULT);
         return;
     }
 
@@ -2425,7 +2426,7 @@ void move_golem(object_t *op)
     if (get_owner(op) == NULL)
     {
         LOG(llevDebug, "Golem without owner destructed.\n");
-        destruct_ob(op);
+        (void)kill_object(op, NULL);
         return;
     }
     /* It would be nice to have a cleaner way of what message to print
@@ -2450,8 +2451,7 @@ void move_golem(object_t *op)
         }
         send_golem_control(op, GOLEM_CTR_RELEASE);
         CONTR(op->owner)->golem = NULL;
-
-        destruct_ob(op);
+        (void)kill_object(op, NULL);
         return;
     }
 
@@ -2463,7 +2463,7 @@ void move_golem(object_t *op)
         return;
     }
 
-    if (was_destroyed(op, tag))
+    if (!OBJECT_VALID(op, tag))
     {
         return;
     }
@@ -2573,7 +2573,7 @@ void move_magic_missile(object_t *op)
     {
         tag_t   tag = op->count;
         hit_map(op, op->direction);
-        if (!was_destroyed(op, tag))
+        if (OBJECT_VALID(op, tag))
         {
             remove_ob(op);
             check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
@@ -2659,7 +2659,7 @@ void explode_object(object_t *op)
     if (op->attacktype)
     {
         hit_map(op, 0);
-        if (was_destroyed(op, op_tag))
+        if (!OBJECT_VALID(op, op_tag))
             return;
     }
     */
@@ -2726,7 +2726,7 @@ void explode_object(object_t *op)
     }
 
     /* remove the firebullet */
-    if (!was_destroyed(op, op_tag))
+    if (OBJECT_VALID(op, op_tag))
     {
         remove_ob(op);
         check_walk_off(op, NULL, MOVE_APPLY_VANISHED);

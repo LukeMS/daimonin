@@ -457,7 +457,7 @@ void spawn_point(object_t *op)
     tag = mob->count;
     if (trigger_object_plugin_event(EVENT_APPLY, op, mob, loot, NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
     {
-        if (!was_destroyed(mob, tag))
+        if (OBJECT_VALID(mob, tag))
         {
             mob->last_eat = 0;
             InsertLoot(op, mob, loot->inv);

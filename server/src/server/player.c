@@ -862,7 +862,10 @@ void cast_dust(object_t *op, object_t *throw_ob, int dir)
             QUERY_SHORT_NAME(throw_ob, op));
 
     if (!QUERY_FLAG(throw_ob, FLAG_REMOVED))
-        destruct_ob(throw_ob);
+    {
+        remove_ob(throw_ob);
+        check_walk_off(throw_ob, NULL, MOVE_APPLY_DEFAULT);
+    }
 }
 
 void make_visible(object_t *op)

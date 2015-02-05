@@ -118,7 +118,7 @@ int command_cast_spell(object_t *op, char *params)
     if (pl->golem)
     {
         send_golem_control(pl->golem, GOLEM_CTR_RELEASE);
-        destruct_ob(pl->golem);
+        (void)kill_object(pl->golem, NULL);
         pl->golem = NULL;
     }
 
