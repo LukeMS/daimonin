@@ -1774,7 +1774,7 @@ int process_object(object_t *op)
                 return 1;
             }
 
-            (void)kill_object(op, NULL);
+            (void)kill_object(op, NULL, NULL, NULL);
         }
         return 1;
     }

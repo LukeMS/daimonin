@@ -166,7 +166,8 @@ int move_disease(object_t *disease)
              * broken anyway.
              *
              * -- Smacky 20150204 */
-            (void)kill_object(disease, NULL); /* drop inv since disease may carry secondary infections */
+            /* drop inv since disease may carry secondary infections */
+            (void)kill_object(disease, NULL, NULL, NULL);
             return 1;
         }
     }
@@ -186,7 +187,8 @@ int move_disease(object_t *disease)
                  * broken anyway.
                  *
                  * -- Smacky 20150204 */
-                (void)kill_object(disease, NULL); /* drop inv since disease may carry secondary infections */
+                /* drop inv since disease may carry secondary infections */
+                (void)kill_object(disease, NULL, NULL, NULL);
                 return 1;
             }
         }
@@ -215,7 +217,7 @@ int remove_symptoms(object_t *disease)
          * broken anyway.
          *
          * -- Smacky 20150204 */
-        (void)kill_object(symptom, NULL);
+        (void)kill_object(symptom, NULL, NULL, NULL);
         if (victim)
             FIX_PLAYER(victim ,"remove symptoms ");
     }

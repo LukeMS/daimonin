@@ -149,9 +149,7 @@
 * MAX_TIME - how long an internal tick is in microseconds
 * PTICKS_PER_ARKHE_HOUR -how many pticks make up a game hour
 * MULTIPLE_GODS - adds numerous gods to the game, with different powers
-* NOT_PERMADEATH - should death be the final end or not?
 * RECYCLE_TMP_MAPS - use tmp maps across multiple runs?
-* RESURRECTION - lets players bring other dead players back to life.
 * SECURE - Allow overriding values with run time flags?
 * SPELL_* - various spell related options
 * STAT_LOSS - if not 0, players lose randdom stats on death.
@@ -224,21 +222,6 @@
 /* 1 Arkhe hour = 5 real life minutes, or (1000000 / MAX_TIME) * 300 */
 #define PTICKS_PER_ARKHE_HOUR 2400
 
-/* NOT_PERMADEATH by Charles Henrich (henrich@crh.cl.msu.edu), April 9, 1993
- *
- * Makes death non permanent.  If enabled and you die, you lose a bunch of
- * exp, a random stat, and go back to starting town.
- * If not defined, if you die, you are dead.  If an a multiplayer server,
- * resurrection may be possible
- *
- * This option changes the game significantly one way or the other - it makes
- * adventuring right at the edge of death something more reasonable to do
- * (death still hurts here).  On the other hand, it certainly makes the
- * game a bit safer and easier.
- */
-
-#define NOT_PERMADEATH
-
 /*
  * Set this if you want the temporary maps to be saved and reused across
  * crossfire runs.  This can be especially useful for single player
@@ -252,17 +235,6 @@
  */
 
 /*#define RECYCLE_TMP_MAPS*/
-
-
-/* define RESURECTION if you want to let players bring other players
- * back to life via some spells.  If RESURRECTION is undefined, then a
- * death is permanent.  NOTE: RESURRECTION (either defined or undefined)
- * has no meaning if NOT_PERMADEATH is defined.  SAVE_PLAYER also needs
- * to be defined for this to have any use
- */
-
-#define RESURRECTION
-
 
 /*
  * If SECURE is defined, crossfire will not accept enviromental variables

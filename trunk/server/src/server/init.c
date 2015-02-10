@@ -145,7 +145,6 @@ static void init_strings()
     shstr_cons.Eldath = add_string("Eldath"); /* old and incorrect god */
     shstr_cons.the_Tabernacle = add_string("the Tabernacle"); /* corrected god */
 
-    /* mostly used by CONTR(op)->killer */
     shstr_cons.poisonous_food = add_string("poisonous food");
     shstr_cons.starvation = add_string("starvation");
     shstr_cons.drowning = add_string("drowning in a swamp");

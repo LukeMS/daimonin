@@ -330,8 +330,7 @@ struct plugin_hooklist
     object_t *(*is_player_inv)(object_t *);
     /* J */
     /* K */
-    object_t *(*kill_object)(object_t *, object_t *);
-    int (*kill_player)(object_t *);
+    object_t *(*kill_object)(object_t *, object_t *, const char *, const char *);
     /* L */
     object_t *(*load_object_str)(char *);
     object_t *(*locate_beacon)(shstr_t *);
@@ -383,7 +382,6 @@ struct plugin_hooklist
     void (*reset_instance_data)(player_t *pl);
     void (*return_poolchunk_array_real)(void *, uint32, struct mempool *);
     /* S */
-    int (*save_life)(object_t *);
     void (*set_personal_light)(player_t *, int);
     void (*set_quest_status)(object_t *, int, int);
     uint8 (*shop_pay_amount)(sint64, object_t *);

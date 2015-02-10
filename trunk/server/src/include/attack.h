@@ -92,6 +92,8 @@ struct attack_name_t
 {
     char *abbr;
     char *name;
+    char *kill_headline;
+    char *kill_detail;
 };
 
 /* only the damage dealing attacks are covered by armour protections.

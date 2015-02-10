@@ -33,7 +33,8 @@ static void RegrowBurdenTree(object_t *op, sint32 nrof, sint8 mode);
 static void RemoveFromEnv(object_t *op);
 static void RemoveFromMap(object_t *op);
 static void Copy(object_t *from, object_t *to);
-static void DropLoot(object_t *ob);
+static void KillPlayer(player_t *pl, object_t *killer, object_t *killer_owner, const char *detail);
+static void KillMonster(object_t *victim, object_t *killer, object_t *killer_owner);
 
 static int static_walk_semaphore = FALSE; /* see walk_off/walk_on functions  */
 
@@ -1672,18 +1673,118 @@ void remove_ob_inv(object_t *op)
     }
 }
 
-/* kill_object() causws victim to be 'killed' by killer. killer may be NULL in
- * which case victim just dies (of natural causes). It is possible that victim
- * has a DEATH script wh */
-object_t *kill_object(object_t *victim, object_t *killer)
+/* kill_object() causes victim to be 'killed' by killer. killer may be NULL in
+ * which case victim just dies (eg, of natural causes -- but see below).
+ *
+ * Killing an object is a gameplay-affecting process -- most common is when a
+ * player/monster reduces a monster/player to 0 hp in combat, the defeated
+ * (monster) is replaced with a corpse and loot or (player) is respawned at his
+ * savebed. But also other objects can be killed for example, by a script.
+ * Note that there is no inbuilt criteria for when something dies; call this
+ * function and -- short of a lifesaving item or script (see below) -- victim
+ * is killed.
+ *
+ * Although technically any object can be killed, it is quite an involved
+ * process so don't call kill_object() where a technical remove_ob() is all
+ * that's needed.
+ *
+ * The headline and detail strings add colour to your kills. Each is a
+ * verb-phrase. The headline comes after the victim's name as in the default
+ * (which is 'died') 'victim died'. Then follows the parenthetical detail as in
+ * the default (which is 'killed by' or 'killed') '(killed by killer)'. When
+ * killer is non-NULL, the detail phrase should end in a preposition -- by,
+ * with, beneath, etc. When killer is NULL you may want to make detail a more
+ * descriptive sentence such as 'fell off a cliff' or 'torn asunder by magical
+ * vortices'. Either string is only used where victim or killer (or the owner
+ * of either) is a player.
+ *
+ * There are two exceptions to victim being killed. The first is if victim has
+ * FLAG_LIFESAVE (for players gained through appropriate items). If so, we
+ * remove the flag or item and that's the end of the process.
+ *
+ * The second is where victim has a DEATH script (remember, players should
+ * never have scripts). If so, where the script returns true we assume it has
+ * handled the killing or not entirely itself and that's the end of the
+ * process. But where it does not return true then if victim still exists
+ * afterwards we continue (so he WILL be killed and reported).
+ *
+ * In any case, when victim has been killed the return is NULL and when he was
+ * not it is victim. Note that a return of NULL needn't mean the object is
+ * really no more (in the case of players for example it never does. */
+object_t *kill_object(object_t *victim, object_t *killer, const char *headline, const char *detail)
 {
-    uint32 tag = victim->count;
+    msp_t    *msp;
+    uint32    tag;
+    object_t *this,
+             *next,
+             *victim_owner,
+             *killer_owner;
+    char      buf[MEDIUM_BUF],
+              gbuf[MEDIUM_BUF] = "";
+    player_t *pl = NULL;
+
+    /* Get the msp of victim (or that of his topmost env). */
+    for (this = victim; this->env; this = this->env)
+    {
+    }
+
+    msp = MSP_KNOWN(this);
+
+    /* If victim has lifesaving ability, use it. */
+    if (QUERY_FLAG(victim, FLAG_LIFESAVE))
+    {
+        /* Players may have lifesaving through some applied inventory item. */
+        if (victim->type == PLAYER)
+        {
+            FOREACH_OBJECT_IN_OBJECT(this, victim, next)
+            {
+                if (QUERY_FLAG(this, FLAG_APPLIED) &&
+                    QUERY_FLAG(this, FLAG_LIFESAVE))
+                {
+                    play_sound_map(msp, SOUND_OB_EVAPORATE, SOUND_NORMAL);
+                    ndi(NDI_UNIQUE, 0, victim, "%s vibrates violently, then evaporates.",
+                        QUERY_SHORT_NAME(this, victim)); // is evaporate really a sensible verb here?
+                    victim->stats.hp = victim->stats.maxhp;
+                    remove_ob(this);
+                    break;
+                }
+            }
+        }
+
+        /* Should we call fix_player() instead for players? Seems like a big
+         * overhead but what of those with multiple items of lifesaving? */
+        CLEAR_FLAG(victim, FLAG_LIFESAVE);
+        return victim;
+    }
+
+    /* If victim is in a shop or the inv of something else in a shop, then
+     * return all unpaid items from his inv to the shop. */
+    if (victim->type == PLAYER ||
+        victim->type == MONSTER ||
+        victim->type == GOLEM ||
+        victim->type == CONTAINER)
+    {
+        object_t *shop;
+
+        MSP_GET_SYS_OBJ(msp, SHOP_FLOOR, shop);
+
+        if (shop)
+        {
+            shop_return_unpaid(victim, msp);
+        }
+    }
+
+    tag = victim->count;
+    killer_owner = (killer) ? get_owner(killer) : NULL;
 
     /* A DEATH script may return true to cheat death (or otherwise handle it).
      * If it does then return victim or NULL depending on whether victim still
      * exists afterwards. If it returns false then return NULL if victim no
-     * longer exists afterwards or carry on otherwise. */
-    if (trigger_object_plugin_event(EVENT_DEATH, victim, killer, victim, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
+     * longer exists afterwards or carry on otherwise.
+     *
+     * Note that because we just returned unpaid items this means that even if
+     * the script did save victim's life he still lost his shopping. Tough. */
+    if (trigger_object_plugin_event(EVENT_DEATH, victim, killer, killer_owner, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
     {
         if (OBJECT_VALID(victim, tag))
         {
@@ -1696,368 +1797,497 @@ object_t *kill_object(object_t *victim, object_t *killer)
         return NULL;
     }
 
-    /* Show Damage System for clients
-     * whatever is dead now, we check map. If it on map, we redirect last_damage
-     * to map space, giving player the chance to see the last hit damage they had
-     * done. If there is more as one object killed on a single map tile, we overwrite
-     * it now. This visual effect works pretty good. MT */
-    /* no pet/player/monster checking now, perhaps not needed */
-    if (victim->map)
+    /* Now the plugin is dealt with it is easier for the code to say a NULL
+     * killer_owner is killer itself. */
+    if (!killer_owner)
     {
-        msp_t *msp = MSP_KNOWN(victim);
-
-        if (victim->damage_round_tag == ROUND_TAG)
-        {
-            msp->last_damage = victim->last_damage;
-            msp->round_tag = ROUND_TAG;
-        }
-
-        play_sound_map(msp, SOUND_PLAYER_KILLS, SOUND_NORMAL);
+        killer_owner = killer;
     }
 
-    /* Notify player that a pet has died */
-    if (victim->type == MONSTER)
+    /* Defaults for headline and detail. */
+    if (!headline)
     {
-        object_t *victim_owner = get_owner(victim);
+        headline = "died";
+    }
 
-        if (victim_owner &&
-            victim_owner->type == PLAYER)
+    if (!detail)
+    {
+        detail = (killer) ? "killed by" : "killed";
+    }
+
+    /* When something owned by a player is killed WHEREVER it is, notify the
+     * owner. But do not tell him who killed it (though he may be able to guess
+     * from the manner of death). */
+    if ((victim_owner = get_owner(victim)) &&
+        victim_owner->type == PLAYER)
+    {
+        ndi(NDI_UNIQUE, 0, victim_owner, "~%s~ %s!",
+            query_name(victim, victim_owner, ARTICLE_POSSESSIVE, 0), headline);
+    }
+
+    /* When a player (owns something that) has killed, tell him and his group
+     * (including how and who did it as appropriate). */
+    if (killer_owner &&
+        killer_owner->type == PLAYER &&
+        (pl = CONTR(killer_owner)))
+    {
+        object_t *member;
+
+        sprintf(buf, "~%s~ %s (%s ", QUERY_SHORT_NAME(victim, NULL), headline, detail);
+
+        if (killer_owner != killer)
         {
-            ndi(NDI_UNIQUE, 0, victim_owner, "%s was killed!",
-                query_name(victim, victim_owner, ARTICLE_POSSESSIVE, 0));
+            ndi(NDI_WHITE, 0, killer_owner, "%s~%s~)!",
+                buf, query_name(killer, NULL, ARTICLE_POSSESSIVE, 1));
+            sprintf(gbuf, "%s~%s's %s~)!",
+                buf, QUERY_SHORT_NAME(killer_owner, NULL),
+                query_name(killer, NULL, ARTICLE_NONE, 1));
+            killer_owner->skillgroup = killer->skillgroup;
+        }
+        else
+        {
+            ndi(NDI_WHITE, 0, killer_owner, "%s~you~)!", buf);
+            sprintf(gbuf, "%s~%s~)!", buf, QUERY_SHORT_NAME(killer_owner, NULL));
+        }
+
+        /* Tell killer_owner's group. Note that this does not guarantee that
+         * that group receives any bounty (though the majority of the time it
+         * will). This is because bounty is awarded to the highest hitter not
+         * the final hitter. */
+        for (member = pl->group_leader; member; member = CONTR(member)->group_next)
+        {
+            if (member != killer_owner)
+            {
+                ndi(NDI_YELLOW, 0, member, "%s", gbuf);
+            }
         }
     }
+
+    /* When a player is killed, tell him, his group, and possibly shout about
+     * it (including how and who did it as appropriate). */
+    if (victim->type == PLAYER)
+    {
+        object_t *member;
+
+        if (!(pl = CONTR(victim)))
+        {
+            return NULL;
+        }
+
+        if (!killer)
+        {
+            sprintf(buf, "~You~ %s (%s)!", headline, detail);
+        }
+        else if (killer_owner != killer)
+        {
+            sprintf(buf, "~You~ %s (%s ~%s's %s~)!",
+                headline, detail, QUERY_SHORT_NAME(killer_owner, NULL),
+                query_name(killer, NULL, ARTICLE_NONE, 1));
+        }
+        else
+        {
+            sprintf(buf, "~You~ %s (%s ~%s~)!",
+                headline, detail, query_name(killer, NULL, ARTICLE_NONE, 1));
+        }
+
+        ndi(NDI_WHITE, 0, victim, "%s", buf);
+        sprintf(gbuf, "~%s~ %s", QUERY_SHORT_NAME(victim, NULL), buf + 6);
+
+        /* Tell victim's group about their friend's demise. */ 
+        for (member = pl->group_leader; member; member = CONTR(member)->group_next)
+        {
+            if (member != victim)
+            {
+                ndi(NDI_YELLOW, 0, member, "%s", gbuf);
+            }
+        }
+
+#ifdef USE_CHANNELS
+        /* Shout it. This is great for social interaction between players as
+         * well as a source of amusement. A privacy-enabled player will not
+         * have their death reported. */
+        /* TODO: A muted player will also not be reported and rapid multiple
+         * deaths will earn automute. Same as any form of spam. */
+        if (!CONTR(victim)->privacy)
+        {
+            struct channels *channel = findGlobalChannelFromName(NULL, "general", 1);
+
+            if (channel)
+            {
+                sendChannelMessage(NULL, channel, gbuf);
+            }
+        }
+#endif
+
+        /* When a player is killed he really just respaWns. */
+        KillPlayer(pl, killer, killer_owner, detail);
+    }
+    else if (victim->type == MONSTER ||
+             victim->type == GOLEM)
+    {
+        /* When a monster is killed he may drop loot and/or a corpsw and/or
+         * give exp depennding on his settings and killer. */
+        KillMonster(victim, killer, killer_owner);
+    }
+    else
+    {
+        /* Any other object that is killed is just removed from the game. */
+        remove_ob(victim);
+        check_walk_off(victim, NULL, MOVE_APPLY_DEFAULT);
+    }
+
+    return NULL;
+}
+
+static void KillPlayer(player_t *pl, object_t *killer, object_t *killer_owner, const char *detail)
+{
+    object_t *victim = pl->ob,
+             *thing;
+    msp_t    *msp = MSP_KNOWN(victim);
+    uint8     i;
+#ifdef USE_GRAVESTONES
+    char      buf[MEDIUM_BUF];
+    map_t    *m;
+    sint16    x,
+              y;
+#endif
+
+    /* STEP 1: Player death is penalised with stat and exp loss when victim is
+     * main level 3 or higher. */
+    /* TODO: Needs tidyup. */
+    if (victim->level >= MAX(3, ABS(settings.stat_loss) / 5))
+    {
+        /* Stat loss may not apply depending on server settings. */
+        if (settings.stat_loss)
+        {
+           uint8 num_stats_lose = 1,
+                 stats[STAT_NROF] = { 0, 0, 0, 0, 0, 0, 0 };
+
+            /* Stats are lost on death through death sickness according to
+             * settings.stat_loss -- see config.h/STAT_LOSS.
+             *
+             * The theory behind multiple stat loss is that lower level chars don't
+             * lose as many stats because they suffer more if they do, while higher
+             * level characters can afford things such as potions of restoration,
+             * or better, stat potions. So we slug them that little bit harder. */
+            /* FIXME: IIRC cure death sickness restores ALL stats and the cost is
+             * based on player level, not the number or value of lost stats. Which
+             * negates some of the financial reasoning just given.
+             * --Smacky  20100603 */
+            if (settings.stat_loss > 0)
+            {
+                num_stats_lose += victim->level / settings.stat_loss;
+            }
+
+            for (i = 0; i < num_stats_lose; i++)
+            {
+                stats[RANDOM() % STAT_NROF]++;
+            }
+
+            if (!(thing = present_arch_in_ob(archetype_global._deathsick, victim)))
+            {
+                thing = arch_to_object(archetype_global._deathsick);
+                insert_ob_in_ob(thing, victim);
+            }
+
+            for (i = 0; i < STAT_NROF; i++)
+            {
+                uint8 victim_val = get_stat_value(&(victim->stats), i),
+                      thing_val = ABS(get_stat_value(&(thing->stats), i));
+
+                if (thing_val + stats[i] >= victim_val)
+                {
+                    stats[i] = MAX(0, victim_val - thing_val - 1);
+                }
+
+                if (stats[i])
+                {
+                    set_stat_value(&(thing->stats), i, -stats[i]);
+                    ndi(NDI_UNIQUE, 0, victim, "%s (You lose ~%d~ %s).",
+                        lose_msg[i], stats[i], stat_name[i]);
+                    SET_FLAG(thing, FLAG_APPLIED);
+                }
+            }
+        }
+
+        /* Exp loss is handled elsewhere. */
+        apply_death_exp_penalty(victim);
+    }
+
+    /* STEP 2: Reset victim's health. */
+    /* Clear out any food forces so if the player died while eating a bad
+     * apple he won't keep redying in his apt. */
+    remove_food_force(victim);
+    pl->food_status = 0;
+
+    /* Cure victim of all poison, disease, and other ailments and replenish
+     * his hinds to max. */
+    /* FIXME: All the cure_what_ails_you()s are less than ideal as each one
+     * potentially searches the player's entire inv. We should use a flag
+     * system rather than st1 to do all the necessary forces in one pass,
+     * and/or query flags here to be sure the player even has the ailment in
+     * question. Not sure if all ailments have a flag though.
+     * -- Smacky 20100608 */
+    cast_heal(victim, 110, victim, SP_CURE_POISON);
+    cure_disease(victim, NULL);  /* remove any disease */
+    (void)cure_what_ails_you(victim, ST1_FORCE_DEPLETE);
+    (void)cure_what_ails_you(victim, ST1_FORCE_DRAIN);
+    (void)cure_what_ails_you(victim, ST1_FORCE_SLOWED);
+    (void)cure_what_ails_you(victim, ST1_FORCE_FEAR);
+    (void)cure_what_ails_you(victim, ST1_FORCE_SNARE);
+    (void)cure_what_ails_you(victim, ST1_FORCE_PARALYZE);
+    (void)cure_what_ails_you(victim, ST1_FORCE_CONFUSED);
+    (void)cure_what_ails_you(victim, ST1_FORCE_BLIND);
+    (void)cure_what_ails_you(victim, ST1_FORCE_POISON);
+    victim->stats.hp = victim->stats.maxhp;
+    victim->stats.sp = victim->stats.maxsp;
+    victim->stats.grace = victim->stats.maxgrace;
+
+    /* STEP 3: Do some final things before the respawning (ie, while victim is
+     * at the scene of his imminent demise). */
+    /* If victim is on a PvP msp and he was killed by a player (or spell, pet,
+     * etc owned by a player) and killer_owner is also on a PvP msp, increment
+     * both victim's and killer_owner's PvP stats. But if no PvP player was
+     * responsible for the kill, just increment victim's temporary deaths. */
+    if ((msp->flags & MSP_FLAG_PVP))
+    {
+        if (killer &&
+            killer_owner->type == PLAYER &&
+            (MSP_KNOWN(killer_owner)->flags & MSP_FLAG_PVP))
+        {
+            increment_pvp_counter(victim, (PVP_STATFLAG_DEATH_TOTAL | PVP_STATFLAG_DEATH_ROUND));
+            increment_pvp_counter(killer_owner, (PVP_STATFLAG_KILLS_TOTAL | PVP_STATFLAG_KILLS_ROUND));
+        } 
+        else
+        {
+            increment_pvp_counter(victim, PVP_STATFLAG_DEATH_ROUND);
+        }
+    }
+
+#ifdef USE_GRAVESTONES
+    /* Put a gravestone up where or near to where the character died if there
+     * is a free spot and isn't already one there. */
+    if (!(thing = arch_to_object(archetype_global._gravestone)))
+    {
+        return;
+    }
+
+    thing->level = victim->level;
+    sprintf(buf, "%s's gravestone", STRING_OBJ_NAME(victim));
+    FREE_AND_COPY_HASH(thing->name, buf);
+    m = msp->map;
+    get_tad(m->tadnow, m->tadoffset);
+    sprintf(buf, "R.I.P. %s\n\nLevel %d %s\n\n%s%s%s.\n\nOn %s",
+        QUERY_SHORT_NAME(victim, NULL),
+        (int)victim->level, STRING_OBJ_RACE(victim),
+        detail, (killer) ? " " : "", (killer) ? QUERY_SHORT_NAME(killer, NULL) : "",
+        print_tad(m->tadnow, TAD_SHOWDATE | TAD_LONGFORM));
+    FREE_AND_COPY_HASH(thing->msg, buf);
+    i = (uint8)overlay_find_free(msp, thing, 0, OVERLAY_7X7,
+        OVERLAY_IGNORE_TERRAIN | OVERLAY_WITHIN_LOS | OVERLAY_FIRST_AVAILABLE);
+
+    if ((sint8)i == -1)
+    {
+        return;
+    }
+
+    x = msp->x + OVERLAY_X((sint8)i);
+    y = msp->y + OVERLAY_Y((sint8)i);
+    m = OUT_OF_MAP(m, x, y);
+    thing->x = x;
+    thing->y = y;
+    insert_ob_in_map(thing, m, NULL, INS_NO_WALK_ON);
+#endif
+
+    /* STEP 4: Respawn victim. */
+    (void)enter_map_by_name(victim, pl->savebed_map, pl->orig_savebed_map, pl->bed_x, pl->bed_y, pl->bed_status);
+    play_sound_player_only(pl, SOUND_PLAYER_DIES, SOUND_NORMAL, 0, 0);
+}
+
+static void KillMonster(object_t *victim, object_t *killer, object_t *killer_owner)
+{
+    object_t *corpse, // is there a corpse?
+             *bounty; // if so, whose bounty?
+    sint8     loot;   // is there any loot?
 
     /* aggroless kill (eg, script mob:Kill()) -- force empty corpse */
     if (!killer)
     {
-        if (victim->type == MONSTER)
-        {
-            /* ...have no enemy (corpse will be noone's bounty and noone
-             * gets a kill credit). */
-            victim->enemy = NULL;
-
-            /* ...leave empty corpses (as long as the mob leaves a corpse
-             * at all AND unless the mob already has a forced corpse. */
-            if (QUERY_FLAG(victim, FLAG_CORPSE) &&
-                !QUERY_FLAG(victim, FLAG_CORPSE_FORCED))
-            {
-                SET_FLAG(victim, FLAG_CORPSE_FORCED);
-                SET_FLAG(victim, FLAG_NO_DROP);
-            }
-        }
+        corpse = (QUERY_FLAG(victim, FLAG_CORPSE) ||
+                  QUERY_FLAG(victim, FLAG_CORPSE_FORCED)) ? victim : NULL;
+        bounty = NULL;
+        loot = (!QUERY_FLAG(victim, FLAG_NO_DROP)) ? 1 : 0;
     }
-    /* The killer nay be a pet or spell or missile or such so we need to know
-     * the owner to calculate exp/loot. */
-    else
+    else if (killer_owner->type == PLAYER)
     {
-        object_t *owner = get_owner(killer);
+        object_t *corpse_owner = aggro_calculate_exp(victim, killer_owner);
 
-        if (!owner)
-        {
-            owner = killer;
-        }
-
-        /* Create kill message */
-        if (owner->type == PLAYER)
-        {
-            char      buf[MEDIUM_BUF] = "";
-            object_t *corpse_owner;
-
-            if (owner != killer)
-            {
-                if (killer->type == MONSTER)
-                {
-                    ndi(NDI_WHITE, 0, owner, "%s killed %s!",
-                        query_name(killer, NULL, ARTICLE_POSSESSIVE, 1),
-                        QUERY_SHORT_NAME(victim, NULL));
-                    sprintf(buf, "%s's %s killed %s.",
-                        QUERY_SHORT_NAME(owner, NULL),
-                        query_name(killer, NULL, ARTICLE_NONE, 1),
-                        QUERY_SHORT_NAME(victim, NULL));
-                }
-                else
-                {
-                    ndi(NDI_WHITE, 0, owner, "You killed %s with %s!",
-                        QUERY_SHORT_NAME(victim, NULL),
-                        query_name(killer, NULL, ARTICLE_NONE, 1));
-                    sprintf(buf, "%s killed %s with %s.",
-                        QUERY_SHORT_NAME(owner, NULL),
-                        QUERY_SHORT_NAME(victim, NULL),
-                        query_name(killer, NULL, ARTICLE_NONE, 1));
-                }
-
-                owner->skillgroup = killer->skillgroup;
-            }
-            else
-            {
-                ndi(NDI_WHITE, 0, owner, "You killed %s!",
-                    QUERY_SHORT_NAME(victim, NULL));
-                sprintf(buf, "%s killed %s.",
-                    QUERY_SHORT_NAME(owner, NULL),
-                    QUERY_SHORT_NAME(victim, NULL));
-            }
-
-            /* Give exp and create the corpse. Decide we get a loot or not. */
-            corpse_owner = aggro_calculate_exp(victim, owner, (buf[0] != '\0') ? buf : NULL);
-
-            if (victim->type == MONSTER)
-            {
 #if 0
-                if (!corpse_owner)
-                {
-                    corpse_owner = owner;
-                }
+        if (!corpse_owner)
+        {
+            corpse_owner = killer_owner;
+        }
 
 #endif
-                victim->enemy = corpse_owner;
-                victim->enemy_count = corpse_owner->count;
-            }
-        }
-        /* mob/npc kill - force a droped corpse without items */
-        else
+        if (killer_owner != killer)
         {
-            if (victim->type == MONSTER)
-            {
-                victim->enemy = NULL;
-                SET_FLAG(victim, FLAG_CORPSE_FORCED);
-                SET_FLAG(victim, FLAG_NO_DROP);
-            }
-        }
-    }
-
-    victim->speed = 0;
-    update_ob_speed(victim); /* remove from active list (if on) */
-    DropLoot(victim);
-    remove_ob(victim);
-    check_walk_off(victim, NULL, MOVE_APPLY_DEFAULT);
-    return NULL;
-}
-
-/* DropLoot() needs a rewrite. */
-static void DropLoot(object_t *ob)
-{
-    player_t *pl      = NULL;
-    object_t *corpse  = NULL;
-    object_t *tmp_op,
-           *next;
-    object_t *gtmp, *tmp     = NULL;
-
-    if (!ob->env &&
-        (!ob->map ||
-         ob->map->in_memory != MAP_MEMORY_ACTIVE))
-    {
-        /* TODO */
-        LOG(llevDebug, "BUG: drop_ob_inv() - can't drop inventory of objects not in map yet: %s (%s)\n",
-            STRING_OBJ_NAME(ob), STRING_OBJ_MAP_PATH(ob));
-
-        return;
-    }
-
-    if (ob->enemy &&
-        ob->enemy->type == PLAYER &&
-        ob->enemy_count == ob->enemy->count)
-    {
-        pl = CONTR(ob->enemy);
-    }
-
-    /* create corpse and/or drop stuff to floor */
-    if ((QUERY_FLAG(ob, FLAG_CORPSE) &&
-         !QUERY_FLAG(ob, FLAG_NO_DROP)) ||
-        QUERY_FLAG(ob, FLAG_CORPSE_FORCED))
-    {
-        char buf[MEDIUM_BUF];
-
-        /* Create the corpse object. */
-        /* TODO: Change the corpse attribute from boolean to an arch name so
-         * that the corpse arch can be variable (ie, different capacities for a
-         * gnat and a demon) and not hardwired in to the code.
-         * -- Smacky 20090302 */
-        corpse = arch_to_object(archetype_global._corpse_default);
-
-        /* Give thie corpse the correct face -- this is the 0th entry of the
-         * mob's animation (corpses are not animated). */
-        /* TODO: The check for dummy.111 is temporary -- it's to suppress
-         * ingame errors (showing the dummy.111 face) while the arches are
-         * being changed. */
-        strcpy(buf, new_faces[animations[ob->animation_id].faces[0]].name);
-
-        if (strcmp(buf, "dummy.111"))
-        {
-            corpse->face = &new_faces[animations[ob->animation_id].faces[0]];
+            killer_owner->skillgroup = killer->skillgroup;
         }
 
-        /* The corpse will go on the same square as (m)ob->head. */
-        corpse->map = ob->map;
-        corpse->x = ob->x;
-        corpse->y = ob->y;
-        /* ALL corpses are half the weight of the living mob! */
-        corpse->weight = (sint32)(ob->weight * 0.50);
+        corpse = (QUERY_FLAG(victim, FLAG_CORPSE) ||
+                  QUERY_FLAG(victim, FLAG_CORPSE_FORCED)) ? victim : NULL;
+        bounty = corpse_owner;
+        loot = (!QUERY_FLAG(victim, FLAG_NO_DROP)) ? 1 : 0;
+    }
+    /* mob/npc kill - force a droped corpse without items */
+    else
+    {
+        corpse = victim;
+        bounty = NULL;
+        loot = 0;
     }
 
-    FOREACH_OBJECT_IN_OBJECT(tmp_op, ob, next)
+    /* Unless victim is on a map he won't drop under any circumstances. */
+    if (victim->map)
     {
-        remove_ob(tmp_op); /* Inv-no check off / This will be destroyed in next loop of object_gc() */
+        object_t *this,
+                 *next;
+        player_t *pl = (killer_owner &&
+                        killer_owner->type == PLAYER) ? CONTR(killer_owner) : NULL;
 
-        if(tmp_op->type == TYPE_QUEST_TRIGGER)
+        /* Create any corpse and place it on the map (empty). */
+        if (corpse)
         {
-            /* legal, non freed enemy */
-            if (pl)
+            char buf[MEDIUM_BUF];
+
+            /* TODO: Change the corpse attribute from boolean to an arch name so
+             * that the corpse arch can be variable (ie, different capacities for a
+             * gnat and a demon) and not hardwired in to the code.
+             * -- Smacky 20090302 */
+            corpse = arch_to_object(archetype_global._corpse_default);
+
+            if (bounty)
             {
-                if (!(pl->group_status & GROUP_STATUS_GROUP))
+                FREE_AND_ADD_REF_HASH(corpse->slaying, bounty->name);
+
+                if (pl)
                 {
-                    insert_quest_item(tmp_op, pl->ob); /* single player */
-                }
-                else
-                {
-                    for(gtmp = pl->group_leader; gtmp; gtmp = CONTR(gtmp)->group_next)
+                    if ((pl->group_status & GROUP_STATUS_GROUP))
                     {
-                        /* check for out of (kill) range */
-                        if(!(CONTR(gtmp)->group_status & GROUP_STATUS_NOQUEST))
-                        {
-                           insert_quest_item(tmp_op, gtmp); /* give it to member */
-                        }
-                    }
-                }
-            }
-        }
-        /* if we recall spawn mobs, we don't want drop their items as free.
-         * So, marking the mob itself with "FLAG_NO_DROP" will kill
-         * all inventory and not dropping it on the map.
-         * This also happens when a player slays a to low mob/non exp mob.
-         * Don't drop any sys_object in inventory... I can't think about
-         * any use... when we do it, a disease needle for example
-         * is dropping his disease force and so on. */
-        else if (!(QUERY_FLAG(ob, FLAG_NO_DROP) ||
-                   (tmp_op->type != RUNE &&
-                    (QUERY_FLAG(tmp_op, FLAG_SYS_OBJECT) ||
-                     QUERY_FLAG(tmp_op, FLAG_NO_DROP)))))
-        {
-            tmp_op->x = ob->x;
-            tmp_op->y = ob->y;
-            CLEAR_FLAG(tmp_op, FLAG_APPLIED);
-
-            /* if we have a corpse put the item in it */
-            if (corpse)
-            {
-                if(!tmp_op->item_level &&
-                   !tmp_op->level &&
-                   tmp_op->type != RING &&
-                   tmp_op->type != AMULET)
-                {
-                    SET_FLAG(tmp_op, FLAG_IDENTIFIED);
-
-                    if (is_magical(tmp_op))
-                    {
-                        SET_FLAG(tmp_op, FLAG_KNOWN_MAGICAL);
-                    }
-
-                    if (is_cursed_or_damned(tmp_op))
-                    {
-                        SET_FLAG(tmp_op, FLAG_KNOWN_CURSED);
-                    }
-                }
-
-                insert_ob_in_ob(tmp_op, corpse);
-            }
-            else
-            {
-                /* don't drop traps from a container to the floor.
-                 * removing the container where a trap is applied will
-                 * neutralize the trap too
-                 * Also not drop it in env - be safe here */
-                if (tmp_op->type != RUNE)
-                {
-                    if (!tmp_op->item_level &&
-                        !tmp_op->level &&
-                        tmp_op->type != RING &&
-                        tmp_op->type != AMULET)
-                    {
-                        SET_FLAG(tmp_op, FLAG_IDENTIFIED);
-
-                        if (is_magical(tmp_op))
-                        {
-                            SET_FLAG(tmp_op, FLAG_KNOWN_MAGICAL);
-                        }
-
-                        if (is_cursed_or_damned(tmp_op))
-                        {
-                            SET_FLAG(tmp_op, FLAG_KNOWN_CURSED);
-                        }
-                    }
-
-                    if (ob->env)
-                    {
-                        insert_ob_in_ob(tmp_op, ob->env);
+                        corpse->stats.maxhp = CONTR(pl->group_leader)->group_id;
+                        corpse->sub_type1 = ST1_CONTAINER_CORPSE_group;
                     }
                     else
                     {
-                        /* Insert in same map as the env*/
-                        insert_ob_in_map(tmp_op, ob->map, NULL, 0);
+                        corpse->sub_type1 = ST1_CONTAINER_CORPSE_player;
+                    }
+                }
+            }
+            else
+            {
+                FREE_AND_CLEAR_HASH(corpse->slaying);
+                corpse->stats.food = 6;
+            }
+
+            /* Give thie corpse the correct face -- this is the 0th entry of the
+             * mob's animation (corpses are not animated). */
+            /* TODO: The check for dummy.111 is temporary -- it's to suppress
+             * ingame errors (showing the dummy.111 face) while the arches are
+             * being changed. */
+            strcpy(buf, new_faces[animations[victim->animation_id].faces[0]].name);
+
+            if (strcmp(buf, "dummy.111"))
+            {
+                corpse->face = &new_faces[animations[victim->animation_id].faces[0]];
+            }
+
+            /* ALL corpses are half the weight of the living mob! */
+            corpse->weight = (sint32)(victim->weight * 0.50);
+            corpse->x = victim->x;
+            corpse->y = victim->y;
+            insert_ob_in_map(corpse, victim->map, NULL, 0);
+        }
+
+        /* If there's any loot, drop it now (either into the corpse if their is
+         * one or straight onto the floor). */
+        if (loot)
+        {
+            FOREACH_OBJECT_IN_OBJECT(this, victim, next)
+            {
+                remove_ob(this);
+
+                /* Players on quests get quest items delivered straight to
+                 * their inv. */
+                if(this->type == TYPE_QUEST_TRIGGER)
+                {
+                    if (pl)
+                    {
+                        if (!(pl->group_status & GROUP_STATUS_GROUP))
+                        {
+                            insert_quest_item(this, killer_owner); /* single player */
+                        }
+                        else
+                        {
+                            object_t *member;
+
+                            for (member = pl->group_leader; member; member = CONTR(member)->group_next)
+                            {
+                                /* check for out of (kill) range */
+                                if(!(CONTR(member)->group_status & GROUP_STATUS_NOQUEST))
+                                {
+                                   insert_quest_item(this, member); /* give it to member */
+                                }
+                            }
+                        }
+                    }
+                }
+                else if (!QUERY_FLAG(this, FLAG_NO_DROP) &&
+                         (!QUERY_FLAG(this, FLAG_SYS_OBJECT) ||
+                          this->type == RUNE))
+                {
+                    CLEAR_FLAG(this, FLAG_APPLIED);
+
+                    if(!this->item_level &&
+                       !this->level &&
+                       this->type != RING &&
+                       this->type != AMULET)
+                    {
+                        SET_FLAG(this, FLAG_IDENTIFIED);
+
+                        if (is_magical(this))
+                        {
+                            SET_FLAG(this, FLAG_KNOWN_MAGICAL);
+                        }
+
+                        if (is_cursed_or_damned(this))
+                        {
+                            SET_FLAG(this, FLAG_KNOWN_CURSED);
+                        }
+                    }
+
+                    /* if we have a corpse put the item in it */
+                    if (corpse)
+                    {
+                        insert_ob_in_ob(this, corpse);
+                    }
+                    /* don't drop traps from a container to the floor.
+                     * removing the container where a trap is applied will
+                     * neutralize the trap too. */
+                    else if (this->type != RUNE)
+                    {
+                        this->x = victim->x;
+                        this->y = victim->y;
+                        insert_ob_in_map(this, victim->map, NULL, 0);
                     }
                 }
             }
         }
     }
 
-    if (corpse)
-    {
-        /* drop the corpse when something is in OR corpse_forced is set */
-        /* i changed this to drop corpse always even they have no items
-         * inside (player get confused when corpse don't drop. To avoid
-         * clear corpses, change below "||corpse " to "|| corpse->inv" */
-        if (QUERY_FLAG(ob, FLAG_CORPSE_FORCED) ||
-            corpse)
-        {
-            /* ok... we have a corpse AND we insert something in.
-             * now check enemy and/or attacker to find a player.
-             * if there is one - personlize this corpse container.
-             * this gives the player the chance to grap this stuff first
-             * - and looter will be stopped. */
-            if (pl)
-            {
-                FREE_AND_ADD_REF_HASH(corpse->slaying, pl->ob->name);
-            }
-            else if (QUERY_FLAG(ob, FLAG_CORPSE_FORCED)) /* && no player */
-            {
-                /* normallly only player drop corpse. But in some cases
-                 * npc can do it too. Then its smart to remove that corpse fast.
-                 * It will not harm anything because we never deal for NPC with
-                 * bounty. */
-                corpse->stats.food = 6;
-            }
-
-            if (corpse->slaying) /* change sub_type to mark this corpse */
-            {
-                if(pl->group_status & GROUP_STATUS_GROUP)
-                {
-                    corpse->stats.maxhp = CONTR(pl->group_leader)->group_id;
-                    corpse->sub_type1 = ST1_CONTAINER_CORPSE_group;
-                }
-                else
-                {
-                    corpse->sub_type1 = ST1_CONTAINER_CORPSE_player;
-                }
-            }
-
-            if (ob->env)
-            {
-                insert_ob_in_ob(corpse, ob->env);
-            }
-            else
-            {
-                insert_ob_in_map(corpse, ob->map, NULL, 0);
-            }
-        }
-        else /* disabled */
-        {
-            /* if we are here, our corpse mob had something in inv but its nothing to drop */
-            if (!QUERY_FLAG(corpse, FLAG_REMOVED))
-            {
-                remove_ob(corpse); /* no check off - not put in the map here */
-            }
-        }
-    }
+    victim->speed = 0.0;
+    update_ob_speed(victim); /* remove from active list (if on) */
+    remove_ob(victim);
+    check_walk_off(victim, NULL, MOVE_APPLY_DEFAULT);
 }
 
 /*
