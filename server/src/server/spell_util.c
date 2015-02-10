@@ -2425,8 +2425,8 @@ void move_golem(object_t *op)
 
     if (get_owner(op) == NULL)
     {
-        LOG(llevDebug, "Golem without owner destructed.\n");
-        (void)kill_object(op, NULL);
+        LOG(llevBug, "BUG:: Golem without owner destructed.\n");
+        remove_ob(op);
         return;
     }
     /* It would be nice to have a cleaner way of what message to print
@@ -2451,7 +2451,7 @@ void move_golem(object_t *op)
         }
         send_golem_control(op, GOLEM_CTR_RELEASE);
         CONTR(op->owner)->golem = NULL;
-        (void)kill_object(op, NULL);
+        (void)kill_object(op, NULL, "expired", NULL);
         return;
     }
 

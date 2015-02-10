@@ -145,7 +145,6 @@ int                         attack_ob(object_t *op, object_t *hitter, object_t *
 int                         damage_ob(object_t *op, int dam, object_t *hitter, attack_envmode_t env_attack);
 int                         hit_map(object_t *op, int dir);
 object_t                     *hit_with_arrow(object_t *op, object_t *victim);
-void                        tear_down_wall(object_t *op);
 void                        snare_player(object_t *op, object_t *hitter, int dam);
 void                        poison_player(object_t *op, object_t *hitter, float dam);
 void                        slow_player(object_t *op, object_t *hitter, int dam);
@@ -502,10 +501,7 @@ int                         path_to_player(object_t *mon, object_t *pl, int mind
 void                        give_initial_items(object_t *pl, struct objectlink_t *items);
 void                        flee_player(object_t *op);
 int                         move_player(object_t *const op, int dir, const int flag);
-int                         save_life(object_t *op);
-void                        remove_unpaid_objects(object_t *op, object_t *env);
 void                        do_some_living(object_t *op);
-int                         kill_player(object_t *op);
 void                        cast_dust(object_t *op, object_t *throw_ob, int dir);
 void                        make_visible(object_t *op);
 int                         is_true_undead(object_t *op);
@@ -514,7 +510,6 @@ void                        do_hidden_move(object_t *op);
 int                         stand_near_hostile(object_t *who);
 int                         player_can_view(object_t *pl, object_t *op);
 int                         action_makes_visible(object_t *op);
-uint8                       pvp_area(object_t *attacker, object_t *victim);
 void                        dragon_ability_gain(object_t *who, int atnr, int level);
 int                         atnr_is_dragon_enabled(int attacknr);
 int                         is_dragon_pl(object_t *op);
@@ -578,6 +573,7 @@ char                       *query_cost_string(object_t *tmp, object_t *who, int 
 sint64                      query_money(object_t *where, moneyblock_t *money);
 uint8                       shop_pay_amount(sint64 amount, object_t *op);
 uint8                       shop_checkout(object_t *op, object_t *this);
+void                        shop_return_unpaid(object_t *who, msp_t *msp);
 int                         get_money_from_string(char *text, struct moneyblock_t *money);
 int                         query_money_type(object_t *op, int value);
 int                         enumerate_coins(sint64 value, struct moneyblock_t *money);

@@ -112,7 +112,6 @@ struct plugin_hooklist  hooklist    =
     /* J */
     /* K */
     kill_object,
-    kill_player,
     /* L */
     load_object_str,
     locate_beacon,
@@ -164,7 +163,6 @@ struct plugin_hooklist  hooklist    =
     reset_instance_data,
     return_poolchunk_array_real,
     /* S */
-    save_life,
     set_personal_light,
     set_quest_status,
     shop_pay_amount,

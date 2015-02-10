@@ -2530,96 +2530,38 @@ static int GameObject_Fix(lua_State *L)
 /*****************************************************************************/
 /* Name   : GameObject_Kill                                                  */
 /* Lua    : object:Kill(killer)                                              */
-/* Info   : Only works for player and monster objects. Other types generate  */
-/*          an error.                                                        */
-/*          Kills the object, awarding exp, creating a corpse, giving        */
+/* Info   : Kills the object, awarding exp, creating a corpse, giving        */
 /*          deathsick, etc. as necessary.                                    */
 /*          Returns true if the object was good enough to die, false if it   */
 /*          had some method of saving its life, or nil if there was a        */
 /*          problem.                                                         */
-/* Status : Untested/Stable                                                  */
+/* Status : 0.10.7 Lua API rewriten so above docs incorrect.                 */
 /*****************************************************************************/
 static int GameObject_Kill(lua_State *L)
 {
     lua_object *self,
                *whatptr = NULL;
-    char       *killer = NULL;
+    char       *headline = NULL,
+               *detail = NULL;
 
-    /* Get the arguments. */
-    if (lua_isuserdata(L, 2))
-        get_lua_args(L, "OO", &self, &whatptr);
-    else
-        get_lua_args(L, "O|s", &self, &killer);
-
-    /* Only players and monsters can be killed. */
-    if ((WHO->type != PLAYER ||
-         CONTR(WHO) == NULL) &&
-        WHO->type != MONSTER)
-        return luaL_error(L, "Kill() can only be called on a player or monster!");
+    get_lua_args(L, "O|Oss", &self, &whatptr, &headline, &detail);
 
     /* If WHO is already removed, don't try to kill it, return nil. */
     if (QUERY_FLAG(WHO, FLAG_REMOVED))
-        return 0;
-
-    /* Player. */
-    if (WHO->type == PLAYER)
     {
-        /* The player has a way to save his life? Use it up and return
-         * false.
-         *
-         * NOTE: This should no longer be necessary, as kill_player() now returns the success value.
-         */
-/*        if (hooks->save_life(WHO))
-        {
-            lua_pushboolean(L, 0);
-
-            return 1;
-        }
-*/
-
-        /* Note the player's killer. */
-        if (whatptr)
-        {
-            FREE_AND_COPY_HASH(CONTR(WHO)->killer, STRING_OBJ_NAME(WHAT));
-        }
-        else if (killer)
-        {
-            FREE_AND_COPY_HASH(CONTR(WHO)->killer, STRING_SAFE(killer));
-        }
-
-        // Attempt to kill and return whether or not they died.
-        lua_pushboolean(L, hooks->kill_player(WHO));
-
-        return 1;
+        return 0;
     }
-    /* Monster. */
+
+    if (!hooks->kill_object(WHO, (whatptr) ? WHAT : NULL, headline, detail))
+    {
+        lua_pushboolean(L, 1);
+    }
     else
     {
-        /* Kill the monster, returning true if he dies, false otherwise (it has
-         * a life-saving DEATH script). */
-        if (!hooks->kill_object(WHO, (whatptr) ? WHAT : NULL))
-        {
-            lua_pushboolean(L, 1);
-        }
-        else
-        {
-            lua_pushboolean(L, 0);
-        }
-
-        return 1;
+        lua_pushboolean(L, 0);
     }
 
-    /* No idea what this is. */
-    /* TODO: make sure this still works... */
-    /* This is to avoid the attack routine to continue after we called
-     * killObject, since the attacked object no longer exists.
-     * By fixing guile_current_other to NULL, guile_use_weapon_script will
-     * return -1, meaning the attack function must be immediately terminated.
-     */
-    /*    if (WHAT==StackOther[StackPosition])
-        {
-            StackOther[StackPosition] = NULL;
-        }*/
+    return 1;
 }
 
 /*****************************************************************************/
@@ -3757,7 +3699,7 @@ static int GameObject_Destruct(lua_State *L)
         return luaL_error(L, "Destruct() can only be called on monster!");
     }
 
-    (void)hooks->kill_object(WHO, NULL);
+    (void)hooks->kill_object(WHO, NULL, NULL, NULL);
     return 0;
 }
 

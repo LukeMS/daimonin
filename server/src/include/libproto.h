@@ -178,7 +178,7 @@ extern int              count_free(void);
 extern int              count_used(void);
 extern void             remove_ob(object_t *op);
 extern void             remove_ob_inv(object_t *op);
-extern object_t        *kill_object(object_t *victim, object_t *killer);
+extern object_t        *kill_object(object_t *victim, object_t *killer, const char *headline, const char *detail);
 extern object_t          *insert_ob_in_map(object_t *const op, map_t *m, object_t *const originator, const int flag);
 extern void             replace_insert_ob_in_map(char *arch_string, object_t *op);
 extern object_t          *get_split_ob(object_t *orig_ob, uint32 nr);

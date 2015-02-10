@@ -2095,7 +2095,6 @@ static void ApplyPoison(object_t *op, object_t *tmp)
     {
         play_sound_player_only(CONTR(op), SOUND_DRINK_POISON, SOUND_NORMAL, 0, 0);
         ndi(NDI_UNIQUE, 0, op, "Yech!  That tasted poisonous!");
-        FREE_AND_ADD_REF_HASH(CONTR(op)->killer, shstr_cons.poisonous_food);
     }
     if (tmp->stats.dam)
     {

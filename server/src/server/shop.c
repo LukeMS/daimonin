@@ -413,6 +413,34 @@ uint8 shop_checkout(object_t *op, object_t *this)
     return success;
 }
 
+/* shop_return_unpaid(). */
+void shop_return_unpaid(object_t *who, msp_t *msp)
+{
+    object_t *this,
+             *next;
+
+    FOREACH_OBJECT_IN_OBJECT(this, who, next)
+    {
+        if (QUERY_FLAG(this, FLAG_SYS_OBJECT))
+        {
+            continue;
+        }
+
+        if (this->type == PLAYER ||
+            this->type == MONSTER ||
+            this->type == GOLEM ||
+            this->type == CONTAINER)
+        {
+            shop_return_unpaid(this, msp);
+        }
+
+        if (QUERY_FLAG(this, FLAG_UNPAID))
+        {
+            remove_ob(this);
+        }
+    }
+}
+
 /* get_money_from_string() parses string to money.
  *
  * string should include a sequence of tokens of the basic form '# cointype'.

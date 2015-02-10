@@ -535,7 +535,7 @@ static inline int in_group_exp_range(object_t *victim, object_t *hitter, object_
 /* calc exp for a group
  * CONTR() will access here always players
  */
-static inline int aggro_exp_group(object_t *victim, object_t *aggro, char *kill_msg)
+static inline int aggro_exp_group(object_t *victim, object_t *aggro)
 {
     object_t *leader = CONTR(aggro->enemy)->group_leader;
     object_t *high = leader, *tmp;
@@ -633,12 +633,6 @@ static inline int aggro_exp_group(object_t *victim, object_t *aggro, char *kill_
             continue;
         }
 
-        /* We have have moved the kill message because we want it BEFORE
-         * the exp gain messages... ugly, but well, better as double calc the exp gain
-         */
-        if(kill_msg && aggro->enemy != tmp)
-            ndi(NDI_YELLOW, 0, tmp, "%s", kill_msg);
-
         pl->group_status &= ~GROUP_STATUS_NOQUEST;
 
        if(pl->quests_type_kill && pl->quests_type_kill->inv)
@@ -666,7 +660,7 @@ static inline int aggro_exp_group(object_t *victim, object_t *aggro, char *kill_
  *  We decide here what we will do in that cases.
  *  Return: The corpse owner (NULL: There is no owner, target was to low, NPC kill...)
  */
-object_t *aggro_calculate_exp(object_t *victim, object_t *slayer, char *kill_msg)
+object_t *aggro_calculate_exp(object_t *victim, object_t *slayer)
 {
     object_t *tmp,
            *tmp3,
@@ -791,7 +785,7 @@ object_t *aggro_calculate_exp(object_t *victim, object_t *slayer, char *kill_msg
     }
 
     if(CONTR(highest_hitter->enemy)->group_status & GROUP_STATUS_GROUP)
-        ret = aggro_exp_group(victim, highest_hitter, kill_msg);
+        ret = aggro_exp_group(victim, highest_hitter);
     else
         ret = aggro_exp_single(victim, highest_hitter, -1);
 #ifdef DEBUG_AGGRO

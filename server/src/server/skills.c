@@ -152,7 +152,8 @@ static object_t *IsValidTarget(object_t *what, object_t*who)
     /* PvP is not available unless both players are in PvP msps. */
     if (who->type == PLAYER &&
         what->type == PLAYER &&
-        !pvp_area(who, what))
+        (!(MSP_KNOWN(who)->flags & MSP_FLAG_PVP) ||
+         !(MSP_KNOWN(what)->flags & MSP_FLAG_PVP)))
     {
         return NULL;
     }

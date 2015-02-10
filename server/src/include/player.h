@@ -109,7 +109,6 @@ struct player_t
 
     const char          *instance_name;         /* Name of the map the player is on */
     const char          *group_invite_name;     /* GROUP_MODE_INVITE: This player name can invite you */
-    const char          *killer;                /* Who killed this player. */
     const char          *savebed_map;           /* map where player will respawn after death */
     const char          *orig_savebed_map;      /* map where player will respawn after death (original map) */
     const char          *orig_map;              /* Name of the map the player is on (original map) */

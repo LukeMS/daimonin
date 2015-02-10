@@ -37,40 +37,45 @@
 #define ATTACK_RESIST_DAMAGE(_op, _anum)    dam=dam*((double)(100-_op->resist[_anum])*(double)0.01)
 
 /* resist use the same names as attacks - they map 1:1 to it */
+/* TODO: Re the kill_object() detail (4th column): not all attacks can kill
+ * anyway and these needn't be final; I just quicklt worked down the list
+ * until I got bored.
+ *
+ * -- Smacky 20150209 */
 attack_name_t attack_name[NROFATTACKS] =
 {
-    { "IM", "impact" },
-    { "SL", "slash" },
-    { "CL", "cleave" },
-    { "PI", "pierce" },
-    { "FI", "fire" },
-    { "CO", "cold" },
-    { "EL", "electricity" },
-    { "PO", "poison" },
-    { "AC", "acid" },
-    { "SO", "sonic" },
-    { "CH", "channelling" },
-    { "CO", "corruption" },
-    { "PS", "psionic" },
-    { "LI", "light" },
-    { "SH", "shadow" },
-    { "LS", "lifesteal" },
-    { "AE", "aether" },
-    { "NE", "nether" },
-    { "CH", "chaos" },
-    { "DE", "death" },
-    { "WM", "weaponmagic" },
-    { "GO", "godpower" },
-    { "DR", "drain" },
-    { "DP", "depletion" },
-    { "CM", "countermagic" },
-    { "CA", "cancellation" },
-    { "CF", "confusion" },
-    { "FE", "fear" },
-    { "SL", "slow" },
-    { "PA", "paralyze" },
-    { "SN", "snare" },
-    { "??", "internal" },
+    { "IM", "impact", NULL, "beaten to death by" },
+    { "SL", "slash", NULL, "sliced 'n' diced by" },
+    { "CL", "cleave", NULL, "hacked to pieces by" },
+    { "PI", "pierce", NULL, "poked fatally by" },
+    { "FI", "fire", NULL, "burned to a crisp by" },
+    { "CO", "cold", NULL, "frozen by" },
+    { "EL", "electricity", NULL, "electrocuted by" },
+    { "PO", "poison", NULL, "poisoned by" },
+    { "AC", "acid", NULL, "dissolved by" },
+    { "SO", "sonic", NULL, "sonically shattered by" },
+    { "CH", "channelling", NULL, "mentally overwhelmed by" },
+    { "CO", "corruption", NULL, "spiritually corrupted by" },
+    { "PS", "psionic", NULL, "psionically defeated by" },
+    { "LI", "light", NULL, NULL },
+    { "SH", "shadow", NULL, NULL },
+    { "LS", "lifesteal", NULL, "withered by" },
+    { "AE", "aether", NULL, NULL },
+    { "NE", "nether", NULL, NULL },
+    { "CH", "chaos", NULL, NULL },
+    { "DE", "death", NULL, NULL },
+    { "WM", "weaponmagic", NULL, NULL },
+    { "GO", "godpower", NULL, NULL },
+    { "DR", "drain", NULL, NULL },
+    { "DP", "depletion", NULL, NULL },
+    { "CM", "countermagic", NULL, NULL },
+    { "CA", "cancellation", NULL, NULL },
+    { "CF", "confusion", NULL, NULL },
+    { "FE", "fear", NULL, NULL },
+    { "SL", "slow", NULL, NULL },
+    { "PA", "paralyze", NULL, NULL },
+    { "SN", "snare", NULL, NULL },
+    { "??", "internal", NULL, NULL },
 };    
       
 /* If you want to weight things so certain resistances show up more often than
@@ -453,16 +458,17 @@ int damage_ob(object_t *op, int dam, object_t *hitter, attack_envmode_t env_atta
      * This avoid this kind of heros, standing on pvp border, firing in and running back to save.
      * on the other side, running in safe areas will help you when hunted - and thats always a great fun.
      */
-    if (op->type == PLAYER || (target_obj!=op && op->owner->type == PLAYER))
+    if (hit_obj->type == PLAYER &&
+        hit_obj->map &&
+        target_obj->type == PLAYER &&
+        target_obj->map)
     {
-        if (hitter->type == PLAYER || (hit_obj!=hitter && hitter->owner->type == PLAYER))
+        if (!(MSP_KNOWN(hit_obj)->flags & MSP_FLAG_PVP) ||
+            !(MSP_KNOWN(target_obj)->flags & MSP_FLAG_PVP))
         {
-            /* now we are sure player are involved. Get the real player object now and test! */
-            if (!pvp_area(op->type == PLAYER ? op : target_obj, hitter->type == PLAYER ? hitter : hit_obj))
-                return 0;
+            return 0;
         }
     }
-
 
     /* this checks objects are valid, on same map and set them to head when needed! */
     /* also, simple_attack is set to 1, when one of the parts hav ->env != null
@@ -581,44 +587,62 @@ int damage_ob(object_t *op, int dam, object_t *hitter, attack_envmode_t env_atta
     /* lets kill, kill, kill... */
     if (op->stats.hp <= 0)
     {
-        if (op->type == PLAYER)
+        /* TODO: This is just a quick and ugly hack to make kill messages
+         * semi-random for entertainment. I'll tidy and rewrite this whole
+         * function one day so the message reflects the attack that actually
+         * caused death.
+         *
+         * -- Smacky 20150209 */
+        const char *headline = NULL,
+                   *detail = NULL;
+
+        if (hitter->type == ARROW)
         {
-            char buf[SMALL_BUF];
-            strcpy(buf, QUERY_SHORT_NAME(hitter, NULL));
-            FREE_AND_COPY_HASH(CONTR(op)->killer, buf);
-
-            // TODO: Add some more checks here to ensure that the player isn't trying to cheat the system (killing alts).
-            // If op really died (and wasn't saved by save_life, Lua triggers, etc.)...
-            if (kill_player(op))
+            if (!random_roll(0, 9))
             {
-                /* And was in a PvP area...
-                 * Although this is cheating a bit. Because we called kill_player() earlier, the player has already been moved.
-                 * Now the map data will change and may not be a pvp area anymore. Because of this, we have to check the hitter
-                 * instead, but most likely (100% of the time with players, not so much with mobs) they will be on a PvP map too,
-                 * and if not, the death was not technically a result of PvP.
-                 */
-                if (pvp_area(hit_obj, NULL))
-                {
-                    // And was killed by a player, increment their total/round death counts and their killer's total/round kill counts.
-                    if (hit_obj->type == PLAYER || (hit_obj->owner != NULL && hit_obj->owner->type == PLAYER))
-                    {
-                        increment_pvp_counter(op, (PVP_STATFLAG_DEATH_TOTAL | PVP_STATFLAG_DEATH_ROUND));
-                        increment_pvp_counter(hit_obj, (PVP_STATFLAG_KILLS_TOTAL | PVP_STATFLAG_KILLS_ROUND));
-                    } else // But if op wasn't killed by a player (or an object whose owner is a player), only increment their temporary round count.
-                    {
-                        increment_pvp_counter(op, PVP_STATFLAG_DEATH_ROUND);
-                    }
-                }
+                detail = "struck down by";
             }
-
-            return maxdam;  /* nothing more to do for wall */
         }
         else
         {
-            if (!kill_object(op, hitter))
+            sint8  i;
+
+            for (i = 0; i < NROFATTACKS; i++)
             {
-                return maxdam;
+                uint8 v = hitter->attack[i];
+
+                if (v &&
+                    !random_roll(0, 9))
+                {
+                    headline = attack_name[i].kill_headline;
+                    detail = attack_name[i].kill_detail;
+                    break;
+                }
             }
+        }
+
+        if (!kill_object(op, hitter, headline, detail))
+        {
+            /* Show Damage System for clients
+             * whatever is dead now, we check map. If it on map, we redirect last_damage
+             * to map space, giving player the chance to see the last hit damage they had
+             * done. If there is more as one object killed on a single map tile, we overwrite
+             * it now. This visual effect works pretty good. MT */
+            /* no pet/player/monster checking now, perhaps not needed */
+            if (op->map)
+            {
+                msp_t *msp = MSP_KNOWN(op);
+
+                if (op->damage_round_tag == ROUND_TAG)
+                {
+                    msp->last_damage = op->last_damage;
+                    msp->round_tag = ROUND_TAG;
+                }
+
+                play_sound_map(msp, SOUND_PLAYER_KILLS, SOUND_NORMAL);
+            }
+
+            return maxdam;
         }
     }
     /* Eneq(@csd.uu.se): Check to see if monster runs away. */
@@ -628,12 +652,6 @@ int damage_ob(object_t *op, int dam, object_t *hitter, attack_envmode_t env_atta
     {
         SET_FLAG(op, FLAG_RUN_AWAY);
     }
-
-//    if (QUERY_FLAG(op, FLAG_TEAR_DOWN))
-//    {
-//        tear_down_wall(op);
-//        return maxdam;  /* nothing more to do for wall */
-//    }
 
     /* Used to be ghosthit removal - we now use the ONE_HIT flag.  Note
      * that before if the player was immune to ghosthit, the monster
@@ -1489,47 +1507,6 @@ object_t * hit_with_arrow(object_t *op, object_t *victim)
     }
 
     return op;
-}
-
-/* ATM no tear down wall in the game, function must be checked first MT -09.2005 */
-void tear_down_wall(object_t *op)
-{
-    int perc    = 0;
-
-    if (!op->stats.maxhp)
-    {
-        LOG(llevBug, "BUG:: %s/tear_down_wall(): %s[%d] had no maxhp!\n",
-            __FILE__, STRING_OBJ_NAME(op), TAG(op));
-        perc = 1;
-    }
-    else if (!GET_ANIM_ID(op))
-    {
-        /* Object has been called - no animations, so remove it */
-        if (op->stats.hp < 0)
-            (void)kill_object(op, NULL); /* Should update LOS */
-        return; /* no animations, so nothing more to do */
-    }
-    perc = NUM_ANIMATIONS(op) - ((int) NUM_ANIMATIONS(op) * op->stats.hp) / op->stats.maxhp;
-    if (perc >= (int) NUM_ANIMATIONS(op))
-        perc = NUM_ANIMATIONS(op) - 1;
-    else if (perc < 1)
-        perc = 1;
-    SET_ANIMATION(op, perc);
-    update_object(op, UP_OBJ_FACE);
-    if (perc == NUM_ANIMATIONS(op) - 1)
-    {
-        /* Reached the last animation */
-        if (op->face == blank_face)
-                /* If the last face is blank, remove the ob */
-            (void)kill_object(op, NULL); /* Should update LOS */
-        else
-        {
-            /* The last face was not blank, leave an image */
-            CLEAR_FLAG(op, FLAG_BLOCKSVIEW);
-            CLEAR_FLAG(op, FLAG_NO_PASS);
-            CLEAR_FLAG(op, FLAG_ALIVE);
-        }
-    }
 }
 
 void poison_player(object_t *op, object_t *hitter, float dam)

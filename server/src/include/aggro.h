@@ -54,9 +54,8 @@ extern object_t *aggro_update_info(object_t *target, object_t *hitter, object_t 
  * Analyzes all aggro info in the supplied object and gives the player experience based on this information.
  * @param victim
  * @param slayer
- * @param kill_msg
  * @return
  */
-extern object_t *aggro_calculate_exp(object_t *victim, object_t *slayer, char *kill_msg);
+extern object_t *aggro_calculate_exp(object_t *victim, object_t *slayer);
 
 #endif /* ifndef __AGGRO_H */
