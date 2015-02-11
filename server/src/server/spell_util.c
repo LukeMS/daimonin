@@ -2076,7 +2076,7 @@ void move_cone(object_t *op)
     int     i;
     tag_t   tag;
 
-    /* if no map then hit_map will crash so just ignore object_t */
+    /* if no map then ignore op. */
     if (!op->map)
     {
         LOG(llevBug, "BUG: Tried to move_cone object %s without a map.\n", STRING_OBJ_NAME(op));
@@ -2088,7 +2088,7 @@ void move_cone(object_t *op)
     /* lava saves it's life, but not yours  :) */
     if (QUERY_FLAG(op, FLAG_LIFESAVE))
     {
-        hit_map(op, 0);
+        (void)hit_map(op, MSP_KNOWN(op));
         return;
     }
 
@@ -2104,7 +2104,7 @@ void move_cone(object_t *op)
      * food to 1, which will stop the cone from progressing.
      */
     tag = op->count;
-    op->stats.food |= hit_map(op, 0);
+    op->stats.food = hit_map(op, MSP_KNOWN(op));
     /* Check to see if we should push anything.
      * Cones with AT_PHYSICAL push whatever is in them to some
      * degree.  */
@@ -2308,7 +2308,7 @@ void move_bolt(object_t *op)
         return;
     }
 
-    hit_map(op, 0);
+    (void)hit_map(op, MSP_KNOWN(op));
 
     if (!op->stats.sp)
     {
@@ -2571,13 +2571,16 @@ void move_magic_missile(object_t *op)
 
     if (msp_blocked(op, NULL, OVERLAY_X(op->direction), OVERLAY_Y(op->direction)))
     {
-        tag_t   tag = op->count;
-        hit_map(op, op->direction);
+        tag_t tag = op->count;
+
+        (void)hit_map(op, msp);
+
         if (OBJECT_VALID(op, tag))
         {
             remove_ob(op);
             check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
         }
+
         return;
     }
 
@@ -2655,14 +2658,14 @@ void explode_object(object_t *op)
             return;
     }
 
-    /*
-    if (op->attacktype)
-    {
-        hit_map(op, 0);
-        if (!OBJECT_VALID(op, op_tag))
-            return;
-    }
-    */
+#if 0
+//    if (op->attacktype)
+//    {
+//        hit_map(op, 0);
+//        if (!OBJECT_VALID(op, op_tag))
+//            return;
+//    }
+#endif
 
     /*  peterm:  hack added to make fireballs and other explosions level
      *  dependent:

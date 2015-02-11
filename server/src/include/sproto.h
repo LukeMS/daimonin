@@ -143,7 +143,7 @@ void                        scroll_failure(object_t *op, int failure, int power)
 /* attack.c */
 int                         attack_ob(object_t *op, object_t *hitter, object_t *hit_obj);
 int                         damage_ob(object_t *op, int dam, object_t *hitter, attack_envmode_t env_attack);
-int                         hit_map(object_t *op, int dir);
+sint32                      hit_map(object_t *hitter, msp_t *msp);
 object_t                     *hit_with_arrow(object_t *op, object_t *victim);
 void                        snare_player(object_t *op, object_t *hitter, int dam);
 void                        poison_player(object_t *op, object_t *hitter, float dam);

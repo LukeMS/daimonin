@@ -224,7 +224,16 @@ void rune_attack(object_t *op, object_t *victim)
         }
     }
     else
-        hit_map(op, 0);
+    {
+        tag_t tag = op->count;
+
+        hit_map(op, MSP_KNOWN(op));
+
+        if (!OBJECT_VALID(op, tag))
+        {
+            return;
+        }
+    }
 
     op->stats.dam = dam;
 }
