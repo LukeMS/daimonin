@@ -713,125 +713,71 @@ int damage_ob(object_t *op, int dam, object_t *hitter, attack_envmode_t env_atta
     return maxdam;
 }
 
-/* if we drop for example a spell object like a fireball to the map,
- * they move from tile to tile. Every time they check the object they
- * "hit on this map tile". If they find some - we are here.
- */
-int hit_map(object_t *op, int dir)
+/* hit_map() causes hitter to damage every damageable object on msp.
+ *
+ * I'm not entirely sure how useful it really is to have msp as a separate
+ * parameter as you probably only want to damage those objects where hitter
+ * actually is. It does mean that hitter needn't be there (or even on a map at
+ * all), so I guess we have a bit more flexibility in when we call this
+ * function, if that's helpful.
+ *
+ * Before ddamaging an object any ATTACK script on that object is run and if it
+ * returns true it escapes damage. */
+sint32 hit_map(object_t *hitter, msp_t *msp)
 {
-    object_t     *tmp, *next, *tmp_obj;
-    map_t  *m;
-    sint16      x,
-                y;
-    msp_t   *msp;
-    int         mflags, retflag = 0;  /* added this flag..  will return 1 if it hits a monster */
-    tag_t       op_tag, next_tag = 0;
+    tag_t     hitter_tag;
+    object_t *owner,
+             *this,
+             *next;
+    sint32    r = 0;
 
-    if (OBJECT_FREE(op))
+    if (!msp->last)
     {
-        LOG(llevBug, "BUG:: %s/hit_map(): free object %s[%d]!\n",
-            __FILE__, STRING_OBJ_NAME(op), TAG(op));
-        return 0;
+        return 0; // nothing here
     }
 
-    if (op->head)
-        op = op->head;
+    hitter_tag = hitter->count;
 
-    if (QUERY_FLAG(op, FLAG_REMOVED) ||
-        !op->map)
+    if (!(owner = get_owner(hitter)))
     {
-        LOG(llevBug, "BUG:: %s/hit_map(): hitter (%s[%d]) not on a map!\n",
-            __FILE__, STRING_OBJ_NAME(op), TAG(op));
-        return 0;
+        owner = hitter;
     }
 
-    op_tag = op->count;
-    m = op->map;
-    x = op->x + OVERLAY_X(dir);
-    y = op->y + OVERLAY_Y(dir);
-    msp = MSP_GET(m, x, y);
-
-    if (!msp)
+    FOREACH_OBJECT_IN_MSP(this, msp, next)
     {
-        return 0;
-    }
+        tag_t this_tag = this->count;
 
-    mflags = msp->flags;
-    next = msp->last;
-
-    if (next)
-        next_tag = next->count;
-
-    if (!(tmp_obj = get_owner(op)))
-        tmp_obj = op;
-    if (tmp_obj->head)
-        tmp_obj = tmp_obj->head;
-
-    while (next)
-    {
-        if (!OBJECT_VALID(next, next_tag))
+        if (this == hitter ||                                 // don't hurt self
+            get_friendship(owner, this) >= FRIENDSHIP_HELP || // friends don't hurt friends
+            !IS_LIVE(this))                                   // can only hit live objects (for now)
         {
-            /* There may still be objects that were above 'next', but there is no
-             * simple way to find out short of copying all object references and
-             * tags into a temporary array before we start processing the first
-             * object.  That's why we just abort.
-             *
-             * This happens whenever attack spells (like fire) hit a pile
-             * of objects. This is not a bug - nor an error.
-             *
-             * Gecko: this may be a little different now, since we don't really destroy object until
-             * end of timestep.
-             */
-            break;
-        }
-        tmp = next;
-        next = tmp->above;
-        if (next)
-            next_tag = next->count;
-
-        if (OBJECT_FREE(tmp))
-        {
-            LOG(llevBug, "BUG:: %s/hit_map(): found freed object (%s[%d])\n",
-                __FILE__, STRING_OBJ_NAME(tmp), TAG(tmp));
-            break;
+            continue;
         }
 
-        /* Something could have happened to 'tmp' while 'tmp->below' was processed.
-         * For example, 'tmp' was put in an icecube.
-         * This is one of the few cases where on_same_map should not be used.
-         */
-        if (tmp->map != m || tmp->x != x || tmp->y != y)
-            continue;
-
-        /* monsters on the same side don't hurt each other */
-        if(get_friendship(tmp_obj, tmp) >= FRIENDSHIP_HELP)
-            continue;
-
-         /* Can only hit live objects (for now) */
-         if(!IS_LIVE(tmp))
-            continue;
-
-#if 0
-        damage_ob(tmp, op->stats.dam, op, ENV_ATTACK_CHECK);
-        retflag |= 1;
-        if (!OBJECT_VALID(op, op_tag))
-            break;
-#else
-        if (!trigger_object_plugin_event(EVENT_ATTACK, tmp, op, op, NULL, NULL,
-            NULL, NULL, SCRIPT_FIX_ALL))
+        if (!trigger_object_plugin_event(EVENT_ATTACK, this, hitter, hitter, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
         {
-            damage_ob(tmp, op->stats.dam, op, ENV_ATTACK_CHECK);
-            retflag |= 1;
+            /* If hitter is no longer valid, that's an end to the function. */
+            if (!OBJECT_VALID(hitter, hitter_tag))
+            {
+                break;
+            }
 
-            if (!OBJECT_VALID(op, op_tag))
+            /* As long as this is still valid, damage it. */
+            if (OBJECT_VALID(this, this_tag))
+            {
+                damage_ob(this, hitter->stats.dam, hitter, ENV_ATTACK_CHECK);
+                r++;
+            }
+
+            /* If hitter is no longer valid, that's an end to the function. */
+            if (!OBJECT_VALID(hitter, hitter_tag))
             {
                 break;
             }
         }
-#endif
     }
 
-    return 0;
+    return r;
 }
 
 /* we need this called spread in the function before because sometimes we want drop
