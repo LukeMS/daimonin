@@ -317,6 +317,7 @@ account_status account_delete_player(NewSocket *ns, shstr_t *name)
         {
             ac->level[i] = ac->race[i] = ac->gender[i] = 0;
             ac->charname[i][0] = 0;
+            ac->nrof_chars -= 1;
             ret = ACCOUNT_STATUS_OK;
             /* to do NOT a break here will delete any entry in the case we have the same name
              * here more as one time (which should not happen and is a bug. But so we try on
