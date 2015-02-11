@@ -711,13 +711,6 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
     pl->last_save_tick = ROUND_TAG;
 
-    /* we hook in here perm dead later - ATM we don't allow a player loaded which was dead */
-    if (op->stats.hp <= 0)
-    {
-        if (op->stats.hp <= 0)
-            op->stats.hp = 1;
-    }
-
     /* This seems to compile without warnings now.  Don't know if it works
      * on SGI's or not, however.
      */
