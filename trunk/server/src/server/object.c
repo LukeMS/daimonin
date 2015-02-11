@@ -1744,16 +1744,19 @@ object_t *kill_object(object_t *victim, object_t *killer, const char *headline, 
                     play_sound_map(msp, SOUND_OB_EVAPORATE, SOUND_NORMAL);
                     ndi(NDI_UNIQUE, 0, victim, "%s vibrates violently, then evaporates.",
                         QUERY_SHORT_NAME(this, victim)); // is evaporate really a sensible verb here?
-                    victim->stats.hp = victim->stats.maxhp;
+                    victim->stats.hp = -1; // maxed by fix_player()
                     remove_ob(this);
                     break;
                 }
             }
+
+            FIX_PLAYER(victim, "life saved in kill_object()");
+        }
+        else
+        {
+            CLEAR_FLAG(victim, FLAG_LIFESAVE);
         }
 
-        /* Should we call fix_player() instead for players? Seems like a big
-         * overhead but what of those with multiple items of lifesaving? */
-        CLEAR_FLAG(victim, FLAG_LIFESAVE);
         return victim;
     }
 
@@ -2039,9 +2042,9 @@ static void KillPlayer(player_t *pl, object_t *killer, object_t *killer_owner, c
     (void)cure_what_ails_you(victim, ST1_FORCE_CONFUSED);
     (void)cure_what_ails_you(victim, ST1_FORCE_BLIND);
     (void)cure_what_ails_you(victim, ST1_FORCE_POISON);
-    victim->stats.hp = victim->stats.maxhp;
-    victim->stats.sp = victim->stats.maxsp;
-    victim->stats.grace = victim->stats.maxgrace;
+    victim->stats.hp = -1; // maxed by fix_player()
+    victim->stats.sp = -1; // maxed by fix_player()
+    victim->stats.grace = -1; // maxed by fix_player()
 
     /* STEP 3: Do some final things before the respawning (ie, while victim is
      * at the scene of his imminent demise). */
@@ -2102,6 +2105,7 @@ static void KillPlayer(player_t *pl, object_t *killer, object_t *killer_owner, c
     /* STEP 4: Respawn victim. */
     (void)enter_map_by_name(victim, pl->savebed_map, pl->orig_savebed_map, pl->bed_x, pl->bed_y, pl->bed_status);
     play_sound_player_only(pl, SOUND_PLAYER_DIES, SOUND_NORMAL, 0, 0);
+    FIX_PLAYER(victim, "kill_object()");
 }
 
 static void KillMonster(object_t *victim, object_t *killer, object_t *killer_owner)
