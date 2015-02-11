@@ -1204,15 +1204,19 @@ void ai_avoid_line_of_fire(object_t *op, struct mob_behaviour_param *params, mov
             continue;
 
         missile = tmp->obj;
-        owner = get_owner(missile);
 
-        /* Temp debug log. */
-        if (!owner)
+        /* This happens when the owner is removed (eg, a mob archer -- or his
+         * spawn point -- is on a map which times out or is killed while his
+         * missile is in flight). */
+        /* TODO: I'm not totally convinced there in't also a bug here so lets
+         * leave a technical log message. */
+        if (!(owner = get_owner(missile)))
         {
-            LOG(llevMapbug, "Missile (%s[%d]) on map %s has no owner!\n",
+            LOG(llevInfo, "Ownerless missile (%s[%d] on %s %d,%d) removed!\n",
                 STRING_OBJ_NAME(missile), TAG(missile),
-                STRING_MAP_PATH(missile->map));
-
+                STRING_MAP_PATH(missile->map), missile->x, missile->y);
+            remove_ob(missile);
+            check_walk_off(missile, NULL, MOVE_APPLY_VANISHED);
             return;
         }
 
