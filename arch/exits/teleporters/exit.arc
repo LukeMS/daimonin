@@ -17,9 +17,9 @@ walk_on 1
 fly_on 1
 end
 
-Object exit_green
+Object exit_wavy
 name exit
-face exit_green.101
+face exit_wavy.101
 player_only 1
 speed 0.1
 hp -1
@@ -29,9 +29,28 @@ layer 5
 type 66
 sub_type 1
 no_pick 1
-animation exit_green
+animation exit_wavy
 is_animated 1
-anim_speed 5
+anim_speed 1
+walk_on 1
+fly_on 1
+end
+#
+Object exit_wavy1
+name exit
+face exit_wavy1.101
+player_only 1
+speed 0.1
+hp -1
+sp -1
+no_teleport 1
+layer 5
+type 66
+sub_type 1
+no_pick 1
+animation exit_wavy1
+is_animated 1
+anim_speed 1
 walk_on 1
 fly_on 1
 end
