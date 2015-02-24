@@ -3,8 +3,30 @@ anim exit
 exit.101
 exit.102
 mina
-# exit_green
-anim exit_green
-exit_green.101
-exit_green.102
+
+# exit_wavy
+anim exit_wavy
+exit_wavy.101
+exit_wavy.102
+exit_wavy.103
+exit_wavy.102
+exit_wavy.103
+exit_wavy.101
+exit_wavy.104
+exit_wavy.104
+exit_wavy.102
+mina
+
+# exit_wavy1
+anim exit_wavy1
+exit_wavy1.101
+exit_wavy1.102
+exit_wavy1.103
+exit_wavy1.102
+exit_wavy1.103
+exit_wavy1.101
+exit_wavy1.102
+exit_wavy1.101
+exit_wavy1.101
+exit_wavy1.102
 mina
