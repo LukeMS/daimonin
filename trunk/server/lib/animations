@@ -372,6 +372,18 @@ archer.152
 archer.151
 archer.152
 mina
+anim archeryflag
+facings 9
+dummy.111
+archeryflag.u.151
+archeryflag.u.131
+archeryflag.u.131
+archeryflag.u.151
+archeryflag.u.151
+archeryflag.u.131
+archeryflag.u.131
+archeryflag.u.151
+mina
 anim arrow
 facings 9
 arrow.101
@@ -5519,81 +5531,81 @@ druj_skull.374
 mina
 anim dwarf_female
 facings 25
-dwarf.041
-dwarf.042
-dwarf.041
-dwarf.111
-dwarf.112
-dwarf.113
-dwarf.121
-dwarf.122
-dwarf.123
-dwarf.131
-dwarf.132
-dwarf.133
-dwarf.141
-dwarf.142
-dwarf.143
-dwarf.151
-dwarf.152
-dwarf.153
-dwarf.161
-dwarf.162
-dwarf.163
-dwarf.171
-dwarf.172
-dwarf.173
-dwarf.181
-dwarf.182
-dwarf.183
-dwarf.211
-dwarf.212
-dwarf.213
-dwarf.221
-dwarf.222
-dwarf.223
-dwarf.231
-dwarf.232
-dwarf.233
-dwarf.241
-dwarf.242
-dwarf.243
-dwarf.251
-dwarf.252
-dwarf.253
-dwarf.261
-dwarf.262
-dwarf.263
-dwarf.271
-dwarf.272
-dwarf.273
-dwarf.281
-dwarf.282
-dwarf.283
-dwarf.311
-dwarf.312
-dwarf.313
-dwarf.321
-dwarf.322
-dwarf.323
-dwarf.331
-dwarf.332
-dwarf.333
-dwarf.341
-dwarf.342
-dwarf.343
-dwarf.351
-dwarf.352
-dwarf.353
-dwarf.361
-dwarf.362
-dwarf.363
-dwarf.371
-dwarf.372
-dwarf.373
-dwarf.381
-dwarf.382
-dwarf.383
+dwarf_female.041
+dwarf_female.042
+dwarf_female.041
+dwarf_female.111
+dwarf_female.112
+dwarf_female.113
+dwarf_female.121
+dwarf_female.122
+dwarf_female.123
+dwarf_female.131
+dwarf_female.132
+dwarf_female.133
+dwarf_female.141
+dwarf_female.142
+dwarf_female.143
+dwarf_female.151
+dwarf_female.152
+dwarf_female.153
+dwarf_female.161
+dwarf_female.162
+dwarf_female.163
+dwarf_female.171
+dwarf_female.172
+dwarf_female.173
+dwarf_female.181
+dwarf_female.182
+dwarf_female.183
+dwarf_female.211
+dwarf_female.212
+dwarf_female.213
+dwarf_female.221
+dwarf_female.222
+dwarf_female.223
+dwarf_female.231
+dwarf_female.232
+dwarf_female.233
+dwarf_female.241
+dwarf_female.242
+dwarf_female.243
+dwarf_female.251
+dwarf_female.252
+dwarf_female.253
+dwarf_female.261
+dwarf_female.262
+dwarf_female.263
+dwarf_female.271
+dwarf_female.272
+dwarf_female.273
+dwarf_female.281
+dwarf_female.282
+dwarf_female.283
+dwarf_female.311
+dwarf_female.312
+dwarf_female.313
+dwarf_female.321
+dwarf_female.322
+dwarf_female.323
+dwarf_female.331
+dwarf_female.332
+dwarf_female.333
+dwarf_female.341
+dwarf_female.342
+dwarf_female.343
+dwarf_female.351
+dwarf_female.352
+dwarf_female.353
+dwarf_female.361
+dwarf_female.362
+dwarf_female.363
+dwarf_female.371
+dwarf_female.372
+dwarf_female.373
+dwarf_female.381
+dwarf_female.382
+dwarf_female.383
 mina
 anim dwarf_fighter
 facings 25
@@ -5675,81 +5687,81 @@ dwarf_fighter.133
 mina
 anim dwarf_male
 facings 25
-dwarf.041
-dwarf.042
-dwarf.041
-dwarf.111
-dwarf.112
-dwarf.113
-dwarf.121
-dwarf.122
-dwarf.123
-dwarf.131
-dwarf.132
-dwarf.133
-dwarf.141
-dwarf.142
-dwarf.143
-dwarf.151
-dwarf.152
-dwarf.153
-dwarf.161
-dwarf.162
-dwarf.163
-dwarf.171
-dwarf.172
-dwarf.173
-dwarf.181
-dwarf.182
-dwarf.183
-dwarf.211
-dwarf.212
-dwarf.213
-dwarf.221
-dwarf.222
-dwarf.223
-dwarf.231
-dwarf.232
-dwarf.233
-dwarf.241
-dwarf.242
-dwarf.243
-dwarf.251
-dwarf.252
-dwarf.253
-dwarf.261
-dwarf.262
-dwarf.263
-dwarf.271
-dwarf.272
-dwarf.273
-dwarf.281
-dwarf.282
-dwarf.283
-dwarf.311
-dwarf.312
-dwarf.313
-dwarf.321
-dwarf.322
-dwarf.323
-dwarf.331
-dwarf.332
-dwarf.333
-dwarf.341
-dwarf.342
-dwarf.343
-dwarf.351
-dwarf.352
-dwarf.353
-dwarf.361
-dwarf.362
-dwarf.363
-dwarf.371
-dwarf.372
-dwarf.373
-dwarf.381
-dwarf.382
-dwarf.383
+dwarf_male.041
+dwarf_male.042
+dwarf_male.041
+dwarf_male.111
+dwarf_male.112
+dwarf_male.113
+dwarf_male.121
+dwarf_male.122
+dwarf_male.123
+dwarf_male.131
+dwarf_male.132
+dwarf_male.133
+dwarf_male.141
+dwarf_male.142
+dwarf_male.143
+dwarf_male.151
+dwarf_male.152
+dwarf_male.153
+dwarf_male.161
+dwarf_male.162
+dwarf_male.163
+dwarf_male.171
+dwarf_male.172
+dwarf_male.173
+dwarf_male.181
+dwarf_male.182
+dwarf_male.183
+dwarf_male.211
+dwarf_male.212
+dwarf_male.213
+dwarf_male.221
+dwarf_male.222
+dwarf_male.223
+dwarf_male.231
+dwarf_male.232
+dwarf_male.233
+dwarf_male.241
+dwarf_male.242
+dwarf_male.243
+dwarf_male.251
+dwarf_male.252
+dwarf_male.253
+dwarf_male.261
+dwarf_male.262
+dwarf_male.263
+dwarf_male.271
+dwarf_male.272
+dwarf_male.273
+dwarf_male.281
+dwarf_male.282
+dwarf_male.283
+dwarf_male.311
+dwarf_male.312
+dwarf_male.313
+dwarf_male.321
+dwarf_male.322
+dwarf_male.323
+dwarf_male.331
+dwarf_male.332
+dwarf_male.333
+dwarf_male.341
+dwarf_male.342
+dwarf_male.343
+dwarf_male.351
+dwarf_male.352
+dwarf_male.353
+dwarf_male.361
+dwarf_male.362
+dwarf_male.363
+dwarf_male.371
+dwarf_male.372
+dwarf_male.373
+dwarf_male.381
+dwarf_male.382
+dwarf_male.383
 mina
 anim dwarf_noble
 facings 25
@@ -6271,9 +6283,28 @@ anim exit
 exit.101
 exit.102
 mina
-anim exit_green
-exit_green.101
-exit_green.102
+anim exit_wavy
+exit_wavy.101
+exit_wavy.102
+exit_wavy.103
+exit_wavy.102
+exit_wavy.103
+exit_wavy.101
+exit_wavy.104
+exit_wavy.104
+exit_wavy.102
+mina
+anim exit_wavy1
+exit_wavy1.101
+exit_wavy1.102
+exit_wavy1.103
+exit_wavy1.102
+exit_wavy1.103
+exit_wavy1.101
+exit_wavy1.102
+exit_wavy1.101
+exit_wavy1.101
+exit_wavy1.102
 mina
 anim female1
 facings 25
@@ -10848,6 +10879,96 @@ golem_lava.384
 golem_lava.385
 golem_lava.386
 mina
+anim legs_chain_acid
+legs_chain_acid.101
+legs_chain_acid.102
+legs_chain_acid.103
+legs_chain_acid.104
+mina
+anim legs_chain_elec
+legs_chain_elec.101
+legs_chain_elec.102
+legs_chain_elec.103
+legs_chain_elec.104
+mina
+anim legs_chain_fire
+legs_chain_fire.101
+legs_chain_fire.102
+legs_chain_fire.103
+legs_chain_fire.104
+mina
+anim legs_chain_ice
+legs_chain_ice.101
+legs_chain_ice.102
+legs_chain_ice.103
+legs_chain_ice.104
+mina
+anim legs_chain_poison
+legs_chain_poison.101
+legs_chain_poison.102
+legs_chain_poison.103
+legs_chain_poison.104
+mina
+anim legs_leather_acid
+legs_leather_acid.101
+legs_leather_acid.102
+legs_leather_acid.103
+legs_leather_acid.104
+mina
+anim legs_leather_elec
+legs_leather_elec.101
+legs_leather_elec.102
+legs_leather_elec.103
+legs_leather_elec.104
+mina
+anim legs_leather_fire
+legs_leather_fire.101
+legs_leather_fire.102
+legs_leather_fire.103
+legs_leather_fire.104
+mina
+anim legs_leather_ice
+legs_leather_ice.101
+legs_leather_ice.102
+legs_leather_ice.103
+legs_leather_ice.104
+mina
+anim legs_leather_poison
+legs_leather_poison.101
+legs_leather_poison.102
+legs_leather_poison.103
+legs_leather_poison.104
+mina
+anim legs_plate_acid
+legs_plate_acid.101
+legs_plate_acid.102
+legs_plate_acid.103
+legs_plate_acid.104
+mina
+anim legs_plate_elec
+legs_plate_elec.101
+legs_plate_elec.102
+legs_plate_elec.103
+legs_plate_elec.104
+mina
+anim legs_plate_fire
+legs_plate_fire.101
+legs_plate_fire.102
+legs_plate_fire.103
+legs_plate_fire.104
+mina
+anim legs_plate_ice
+legs_plate_ice.101
+legs_plate_ice.102
+legs_plate_ice.103
+legs_plate_ice.104
+mina
+anim legs_plate_poison
+legs_plate_poison.101
+legs_plate_poison.102
+legs_plate_poison.103
+legs_plate_poison.104
+mina
 anim level_up
 sparkle_lup.101
 sparkle_lup.102
@@ -12066,6 +12187,18 @@ mage_old.152
 mage_old.151
 mage_old.152
 mina
+anim magflag
+facings 9
+dummy.111
+magflag.u.151
+magflag.u.131
+magflag.u.131
+magflag.u.151
+magflag.u.151
+magflag.u.131
+magflag.u.131
+magflag.u.151
+mina
 anim magic_mouth
 facings 9
 magic_mouth.101
@@ -12300,6 +12433,18 @@ monk.151
 monk.152
 monk.151
 monk.152
+mina
+anim monkflag
+facings 9
+dummy.111
+monkflag.u.151
+monkflag.u.131
+monkflag.u.131
+monkflag.u.151
+monkflag.u.151
+monkflag.u.131
+monkflag.u.131
+monkflag.u.151
 mina
 anim mouse
 facings 25
@@ -12926,6 +13071,84 @@ ogre.352
 ogre.151
 ogre.351
 ogre.352
+mina
+anim ogre_male
+facings 25
+ogre_male.041
+ogre_male.042
+ogre_male.041
+ogre_male.111
+ogre_male.112
+ogre_male.113
+ogre_male.121
+ogre_male.122
+ogre_male.123
+ogre_male.131
+ogre_male.132
+ogre_male.133
+ogre_male.141
+ogre_male.142
+ogre_male.143
+ogre_male.151
+ogre_male.152
+ogre_male.153
+ogre_male.161
+ogre_male.162
+ogre_male.163
+ogre_male.171
+ogre_male.172
+ogre_male.173
+ogre_male.181
+ogre_male.182
+ogre_male.183
+ogre_male.211
+ogre_male.212
+ogre_male.213
+ogre_male.221
+ogre_male.222
+ogre_male.223
+ogre_male.231
+ogre_male.232
+ogre_male.233
+ogre_male.241
+ogre_male.242
+ogre_male.243
+ogre_male.251
+ogre_male.252
+ogre_male.253
+ogre_male.261
+ogre_male.262
+ogre_male.263
+ogre_male.271
+ogre_male.272
+ogre_male.273
+ogre_male.281
+ogre_male.282
+ogre_male.283
+ogre_male.311
+ogre_male.312
+ogre_male.313
+ogre_male.321
+ogre_male.322
+ogre_male.323
+ogre_male.331
+ogre_male.332
+ogre_male.333
+ogre_male.341
+ogre_male.342
+ogre_male.343
+ogre_male.351
+ogre_male.352
+ogre_male.353
+ogre_male.361
+ogre_male.362
+ogre_male.363
+ogre_male.371
+ogre_male.372
+ogre_male.373
+ogre_male.381
+ogre_male.382
+ogre_male.383
 mina
 anim open_flame
 open_flame.101
@@ -13920,6 +14143,48 @@ pair_human.151
 pair_human.151
 pair_human.151
 pair_human.151
+mina
+anim palflag
+facings 9
+dummy.111
+palflag.u.151
+palflag.u.131
+palflag.u.131
+palflag.u.151
+palflag.u.151
+palflag.u.131
+palflag.u.131
+palflag.u.151
+mina
+anim pants_acid
+pants_acid.101
+pants_acid.102
+pants_acid.103
+pants_acid.104
+mina
+anim pants_elec
+pants_elec.101
+pants_elec.102
+pants_elec.103
+pants_elec.104
+mina
+anim pants_fire
+pants_fire.101
+pants_fire.102
+pants_fire.103
+pants_fire.104
+mina
+anim pants_ice
+pants_ice.101
+pants_ice.102
+pants_ice.103
+pants_ice.104
+mina
+anim pants_poison
+pants_poison.101
+pants_poison.102
+pants_poison.103
+pants_poison.104
 mina
 anim parrot
 facings 25
@@ -15600,6 +15865,18 @@ priest_robed.131
 priest_robed.132
 priest_robed.133
 mina
+anim priestflag
+facings 9
+dummy.111
+priestflag.u.151
+priestflag.u.131
+priestflag.u.131
+priestflag.u.151
+priestflag.u.151
+priestflag.u.131
+priestflag.u.131
+priestflag.u.151
+mina
 anim prison_deco1.131
 facings 9
 dummy.111
@@ -16379,6 +16656,44 @@ rattle_snake.153
 rattle_snake.154
 rattle_snake.153
 rattle_snake.154
+mina
+anim ring_agrion
+ring_agrion.101
+ring_agrion.102
+ring_agrion.101
+ring_agrion.103
+ring_agrion.101
+ring_agrion.104
+mina
+anim ring_bling
+ring_bling.101
+ring_bling.102
+ring_bling.103
+ring_bling.104
+ring_bling.105
+ring_bling.106
+ring_bling.107
+ring_bling.108
+mina
+anim ring_fire1
+ring_fire1.101
+ring_fire2.101
+mina
+anim ring_ice1
+ring_ice1.101
+ring_ice2.101
+mina
+anim ring_priest
+ring_priest.101
+ring_priest.102
+ring_priest.103
+ring_priest.104
+ring_priest.105
+ring_priest.106
+mina
+anim ring_storm1
+ring_storm1.101
+ring_storm2.101
 mina
 anim ring_wall.151
 facings 9
@@ -18015,6 +18330,18 @@ snowman_evil2.152
 snowman_evil2.151
 snowman_evil2.152
 mina
+anim sorcflag
+facings 9
+dummy.111
+sorcflag.u.151
+sorcflag.u.131
+sorcflag.u.131
+sorcflag.u.151
+sorcflag.u.151
+sorcflag.u.131
+sorcflag.u.131
+sorcflag.u.151
+mina
 anim sparkle_black_golem_mage
 facings 25
 corpse_golem.101
@@ -19592,6 +19919,30 @@ mina
 anim wand_frozenice
 wand_frozenice.101
 wand_frozenice.102
+mina
+anim war_magflag
+facings 9
+dummy.111
+war_magflag.u.151
+war_magflag.u.131
+war_magflag.u.131
+war_magflag.u.151
+war_magflag.u.151
+war_magflag.u.131
+war_magflag.u.131
+war_magflag.u.151
+mina
+anim warflag
+facings 9
+dummy.111
+warflag.u.151
+warflag.u.131
+warflag.u.131
+warflag.u.151
+warflag.u.151
+warflag.u.131
+warflag.u.131
+warflag.u.151
 mina
 anim wasp_giant
 facings 25
