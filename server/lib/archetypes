@@ -1054,6 +1054,17 @@ is_animated 1
 anim_speed 4
 no_pick 1
 end
+Object archeryflag
+editor_folder masks/flags
+name archery guild flag
+face archeryflag.u.151
+animation archeryflag
+is_turnable 1
+direction 5
+type 77
+no_pick 1
+layer 7
+end
 Object armour_cloth
 editor_folder items/armour
 name cloth armour
@@ -1187,6 +1198,7 @@ name tree
 layer 5
 face au_tree1.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -1197,6 +1209,7 @@ name tree
 layer 5
 face au_tree2.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -1207,6 +1220,7 @@ name tree
 layer 5
 face au_tree3.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -4535,6 +4549,7 @@ layer 4
 face cactus.101
 is_wooded 1
 no_pick 1
+weight 200
 type 79
 end
 Object cactus1
@@ -10874,7 +10889,7 @@ editor_folder mobs/elves
 name Drow Captain
 face drow_captain.151
 race drow
-randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d9;loot_melee&d11
+randomitems loot;wealth_normal&D65;loot_base&D34;loot_magic&d9;loot_melee&d11;uc_shield_drow&d150
 type 80
 layer 6
 identified 1
@@ -11205,7 +11220,7 @@ terrain_flag 1
 weapon_speed 3.5
 container 110000
 speed 0.95
-face dwarf.151
+face dwarf_female.151
 animation dwarf_female
 is_animated 1
 anim_speed 3
@@ -11226,6 +11241,7 @@ can_use_weapon 1
 is_player 1
 weight 85000
 food 750
+is_named 1
 end
 Object dwarf_fighter
 editor_folder mobs/dwarves
@@ -11287,7 +11303,7 @@ end
 Object dwarf_male
 editor_folder intern/player
 race dwarf
-face dwarf.151
+face dwarf_male.151
 randomitems player_dwarf_male
 layer 6
 can_open_door 1
@@ -11320,6 +11336,7 @@ can_use_weapon 1
 is_player 1
 weight 95000
 food 750
+is_named 1
 end
 Object dwarf_noble
 editor_folder mobs/dwarves
@@ -11810,6 +11827,7 @@ can_use_weapon 1
 is_player 1
 weight 70000
 food 750
+is_named 1
 end
 Object elf_male
 editor_folder intern/player
@@ -11847,6 +11865,7 @@ can_use_weapon 1
 is_player 1
 weight 70000
 food 750
+is_named 1
 end
 Object elf_toytable
 editor_folder themed/xmas
@@ -12064,10 +12083,10 @@ anim_speed 5
 walk_on 1
 fly_on 1
 end
-Object exit_green
+Object exit_wavy
 editor_folder exits/teleporters
 name exit
-face exit_green.101
+face exit_wavy.101
 player_only 1
 speed 0.1
 hp -1
@@ -12077,9 +12096,28 @@ layer 5
 type 66
 sub_type 1
 no_pick 1
-animation exit_green
+animation exit_wavy
 is_animated 1
-anim_speed 5
+anim_speed 1
+walk_on 1
+fly_on 1
+end
+Object exit_wavy1
+editor_folder exits/teleporters
+name exit
+face exit_wavy1.101
+player_only 1
+speed 0.1
+hp -1
+sp -1
+no_teleport 1
+layer 5
+type 66
+sub_type 1
+no_pick 1
+animation exit_wavy1
+is_animated 1
+anim_speed 1
 walk_on 1
 fly_on 1
 end
@@ -14335,6 +14373,42 @@ terrain_type 1
 type 71
 no_pick 1
 end
+Object floor_half_flagm1
+editor_folder masks/flagstone
+name stones
+face floor_half_flagm1.101
+no_teleport 1
+layer 2
+type 28
+no_pick 1
+end
+Object floor_half_flagm2
+editor_folder masks/flagstone
+name stones
+face floor_half_flagm2.101
+no_teleport 1
+layer 2
+type 28
+no_pick 1
+end
+Object floor_half_flagm3
+editor_folder masks/flagstone
+name stones
+face floor_half_flagm3.101
+no_teleport 1
+layer 2
+type 28
+no_pick 1
+end
+Object floor_half_flagm4
+editor_folder masks/flagstone
+name stones
+face floor_half_flagm4.101
+no_teleport 1
+layer 2
+type 28
+no_pick 1
+end
 Object floor_honeycomb
 editor_folder floors/honeycomb
 name floor
@@ -16239,7 +16313,6 @@ is_used_up 1
 invulnerable 1
 material 1
 changing 1
-generator 1
 speed -0.003
 speed_left -1.0
 blocksview 1
@@ -16261,7 +16334,6 @@ is_used_up 1
 invulnerable 1
 material 1
 changing 1
-generator 1
 speed -0.003
 speed_left -1.0
 blocksview 0
@@ -16283,7 +16355,6 @@ is_used_up 1
 invulnerable 1
 material 1
 changing 1
-generator 1
 speed -0.003
 speed_left -1.0
 blocksview 0
@@ -19328,6 +19399,42 @@ terrain_type 1
 type 71
 no_pick 1
 end
+Object grassd_half_1
+editor_folder masks/grass
+name grass
+face grassd_half_1.101
+no_teleport 1
+layer 2
+type 28
+no_pick 1
+end
+Object grassd_half_2
+editor_folder masks/grass
+name grass
+face grassd_half_2.101
+no_teleport 1
+layer 2
+type 28
+no_pick 1
+end
+Object grassd_half_3
+editor_folder masks/grass
+name grass
+face grassd_half_3.101
+no_teleport 1
+layer 2
+type 28
+no_pick 1
+end
+Object grassd_half_4
+editor_folder masks/grass
+name grass
+face grassd_half_4.101
+no_teleport 1
+layer 2
+type 28
+no_pick 1
+end
 Object grassd_m1
 editor_folder masks/grass
 name grass
@@ -20222,6 +20329,7 @@ can_use_weapon 1
 is_player 1
 weight 53000
 food 750
+is_named 1
 end
 Object half_elf_male
 editor_folder intern/player
@@ -20259,6 +20367,7 @@ can_use_weapon 1
 is_player 1
 weight 70000
 food 750
+is_named 1
 end
 Object hammer
 editor_folder items/weapon
@@ -21199,6 +21308,7 @@ can_use_weapon 1
 is_player 1
 weight 55000
 food 750
+is_named 1
 end
 Object human_male
 editor_folder intern/player
@@ -21236,6 +21346,7 @@ can_use_weapon 1
 is_player 1
 weight 70000
 food 750
+is_named 1
 end
 Object icecake
 editor_folder items/organic
@@ -23631,6 +23742,116 @@ value 75
 weight 750
 nrof 1
 end
+Object legs_chain_acid
+editor_folder items/armour
+name chain legs
+type 143
+face legs_chain_acid.101
+layer 3
+last_heal 40
+weight 750
+item_level 5
+resist_impact 10
+resist_cleave 10
+resist_slash 10
+resist_pierce 10
+animation legs_chain_acid
+is_animated 1
+anim_speed 2
+speed 1
+value 75
+material_real 65
+material 2
+nrof 1
+end
+Object legs_chain_elec
+editor_folder items/armour
+name chain legs
+type 143
+face legs_chain_elec.101
+layer 3
+last_heal 40
+weight 750
+item_level 5
+resist_impact 10
+resist_cleave 10
+resist_slash 10
+resist_pierce 10
+animation legs_chain_elec
+is_animated 1
+anim_speed 2
+speed 1
+value 75
+material_real 65
+material 2
+nrof 1
+end
+Object legs_chain_fire
+editor_folder items/armour
+name chain legs
+type 143
+face legs_chain_fire.101
+layer 3
+last_heal 40
+weight 750
+item_level 5
+resist_impact 10
+resist_cleave 10
+resist_slash 10
+resist_pierce 10
+animation legs_chain_fire
+is_animated 1
+anim_speed 2
+speed 1
+value 75
+material_real 65
+material 2
+nrof 1
+end
+Object legs_chain_ice
+editor_folder items/armour
+name chain legs
+type 143
+face legs_chain_ice.101
+layer 3
+last_heal 40
+weight 750
+item_level 5
+resist_impact 10
+resist_cleave 10
+resist_slash 10
+resist_pierce 10
+animation legs_chain_ice
+is_animated 1
+anim_speed 2
+speed 1
+value 75
+material_real 65
+material 2
+nrof 1
+end
+Object legs_chain_poison
+editor_folder items/armour
+name chain legs
+type 143
+face legs_chain_poison.101
+layer 3
+last_heal 40
+weight 750
+item_level 5
+resist_impact 10
+resist_cleave 10
+resist_slash 10
+resist_pierce 10
+animation legs_chain_poison
+is_animated 1
+anim_speed 2
+speed 1
+value 75
+material_real 65
+material 2
+nrof 1
+end
 Object legs_frozenice
 editor_folder items/armour
 name frozenice legs
@@ -23669,6 +23890,111 @@ value 50
 weight 550
 nrof 1
 end
+Object legs_leather_acid
+editor_folder items/armour
+name acid leather legs
+type 143
+face legs_leather_acid.101
+layer 3
+weight 550
+ac 1
+resist_impact 6
+resist_cleave 6
+resist_slash 6
+resist_pierce 6
+animation legs_leather_acid
+is_animated 1
+anim_speed 2
+speed 1
+value 50
+material_real 193
+material 8
+nrof 1
+end
+Object legs_leather_elec
+editor_folder items/armour
+name leather legs
+type 143
+face legs_leather_elec.101
+layer 3
+weight 550
+ac 1
+resist_impact 6
+resist_cleave 6
+resist_slash 6
+resist_pierce 6
+animation legs_leather_elec
+is_animated 1
+anim_speed 2
+speed 1
+value 50
+material_real 193
+material 8
+nrof 1
+end
+Object legs_leather_fire
+editor_folder items/armour
+name leather legs
+type 143
+face legs_leather_fire.101
+layer 3
+weight 550
+ac 1
+resist_impact 6
+resist_cleave 6
+resist_slash 6
+resist_pierce 6
+animation legs_leather_fire
+is_animated 1
+anim_speed 2
+speed 1
+value 50
+material_real 193
+material 8
+nrof 1
+end
+Object legs_leather_ice
+editor_folder items/armour
+name leather legs
+type 143
+face legs_leather_ice.101
+layer 3
+weight 550
+ac 1
+resist_impact 6
+resist_cleave 6
+resist_slash 6
+resist_pierce 6
+animation legs_leather_ice
+is_animated 1
+anim_speed 2
+speed 1
+value 50
+material_real 193
+material 8
+nrof 1
+end
+Object legs_leather_poison
+editor_folder items/armour
+name leather legs
+type 143
+face legs_leather_poison.101
+layer 3
+weight 550
+ac 1
+resist_impact 6
+resist_cleave 6
+resist_slash 6
+resist_pierce 6
+animation legs_leather_poison
+is_animated 1
+anim_speed 2
+speed 1
+value 50
+material_real 193
+material 8
+nrof 1
+end
 Object legs_plate
 editor_folder items/armour
 name plate legs
@@ -23686,6 +24012,121 @@ material_real 65
 material 2
 value 90
 weight 1250
+nrof 1
+end
+Object legs_plate_acid
+editor_folder items/armour
+name acid plate legs
+type 143
+face legs_plate_acid.101
+layer 3
+last_heal 48
+weight 1250
+ac 3
+item_level 10
+resist_impact 12
+resist_cleave 12
+resist_slash 12
+resist_pierce 12
+animation legs_plate_acid
+is_animated 1
+anim_speed 2
+speed 1
+value 90
+material_real 65
+material 2
+nrof 1
+end
+Object legs_plate_elec
+editor_folder items/armour
+name plate legs
+type 143
+face legs_plate_elec.101
+layer 3
+last_heal 48
+weight 1250
+ac 3
+item_level 10
+resist_impact 12
+resist_cleave 12
+resist_slash 12
+resist_pierce 12
+animation legs_plate_elec
+is_animated 1
+anim_speed 2
+speed 1
+value 90
+material_real 65
+material 2
+nrof 1
+end
+Object legs_plate_fire
+editor_folder items/armour
+name acid plate legs
+type 143
+face legs_plate_fire.101
+layer 3
+last_heal 48
+weight 1250
+ac 3
+item_level 10
+resist_impact 12
+resist_cleave 12
+resist_slash 12
+resist_pierce 12
+animation legs_plate_fire
+is_animated 1
+anim_speed 2
+speed 1
+value 90
+material_real 65
+material 2
+nrof 1
+end
+Object legs_plate_ice
+editor_folder items/armour
+name plate legs
+type 143
+face legs_plate_ice.101
+layer 3
+last_heal 48
+weight 1250
+ac 3
+item_level 10
+resist_impact 12
+resist_cleave 12
+resist_slash 12
+resist_pierce 12
+animation legs_plate_ice
+is_animated 1
+anim_speed 2
+speed 1
+value 90
+material_real 65
+material 2
+nrof 1
+end
+Object legs_plate_poison
+editor_folder items/armour
+name plate legs
+type 143
+face legs_plate_poison.101
+layer 3
+last_heal 48
+weight 1250
+ac 3
+item_level 10
+resist_impact 12
+resist_cleave 12
+resist_slash 12
+resist_pierce 12
+animation legs_plate_poison
+is_animated 1
+anim_speed 2
+speed 1
+value 90
+material_real 65
+material 2
 nrof 1
 end
 Object legs_santa
@@ -24286,6 +24727,7 @@ type 79
 face lo_tree1.101
 no_pick 1
 no_pass 1
+weight 500
 blocksview 1
 is_wooded 1
 end
@@ -24297,6 +24739,7 @@ type 79
 face lo_tree2.101
 no_pick 1
 no_pass 1
+weight 500
 blocksview 1
 is_wooded 1
 end
@@ -24308,6 +24751,7 @@ type 79
 face lo_tree3.101
 no_pick 1
 no_pass 1
+weight 500
 blocksview 1
 is_wooded 1
 end
@@ -24319,6 +24763,7 @@ type 79
 face lo_tree4.101
 no_pick 1
 no_pass 1
+weight 500
 blocksview 1
 is_wooded 1
 end
@@ -24330,6 +24775,7 @@ type 79
 face lo_tree5.101
 no_pick 1
 no_pass 1
+weight 500
 blocksview 1
 is_wooded 1
 end
@@ -24342,6 +24788,7 @@ mpart_id 3
 face lo_tree6.101
 no_pass 1
 no_pick 1
+weight 500
 blocksview 1
 end
 More
@@ -24389,6 +24836,7 @@ type 79
 mpart_id 15
 face lo_tree7.101
 no_pick 1
+weight 500
 end
 More
 Object lo_tree7_a
@@ -24994,11 +25442,9 @@ nrof 1
 end
 Object loot_container
 editor_folder intern/intern
-type 79
+type 37
 sys_object 1
 layer 0
-name monster
-title (loot)
 identified 1
 no_save 1
 end
@@ -25308,6 +25754,17 @@ animation mage_old
 is_animated 1
 anim_speed 4
 no_pick 1
+end
+Object magflag
+editor_folder masks/flags
+name mage guild flag
+face magflag.u.151
+animation magflag
+is_turnable 1
+direction 5
+type 77
+no_pick 1
+layer 7
 end
 Object magic_ear
 editor_folder special/communicate
@@ -25930,6 +26387,17 @@ is_animated 1
 anim_speed 4
 no_pick 1
 end
+Object monkflag
+editor_folder masks/flags
+name monk guild flag
+face monkflag.u.151
+animation monkflag
+is_turnable 1
+direction 5
+type 77
+no_pick 1
+layer 7
+end
 Object mouse
 editor_folder mobs/animals
 name Mouse
@@ -26236,6 +26704,7 @@ is_animated 1
 anim_speed 4
 speed 1
 no_pick 1
+weight 200
 type 79
 end
 Object mushroom_spot1
@@ -26243,6 +26712,7 @@ editor_folder scenery/plants
 name mushrooms
 face mushroom_spot1.101
 no_pick 1
+weight 100
 type 79
 layer 4
 end
@@ -26251,6 +26721,7 @@ editor_folder scenery/plants
 name mushrooms
 face mushroom_spot2.101
 no_pick 1
+weight 100
 type 79
 layer 4
 end
@@ -26831,6 +27302,44 @@ animation ogre
 is_animated 1
 anim_speed 4
 no_pick 1
+end
+Object ogre_male
+editor_folder intern/player
+race giant
+randomitems player_ogre_male
+layer 6
+can_open_door 1
+no_pick 1
+is_male 1
+is_neutral 1
+identified 1
+direction 5
+terrain_flag 1
+weapon_speed 3.5
+container 110000
+speed 0.95
+face ogre_male.151
+animation ogre_male
+is_animated 1
+anim_speed 3
+type 1
+level 1
+hp -1
+maxhp 8
+sp -1
+maxsp 3
+grace -1
+maxgrace 3
+ac 2
+wc 0
+thac0 85
+thacm 5
+can_use_armour 1
+can_use_weapon 1
+is_player 1
+weight 85000
+food 750
+is_named 1
 end
 Object oil_lamp
 editor_folder items/light
@@ -27658,6 +28167,17 @@ animation pair_human
 no_pass 1
 no_pick 1
 end
+Object palflag
+editor_folder masks/flags
+name paladin guild flag
+face palflag.u.151
+animation palflag
+is_turnable 1
+direction 5
+type 77
+no_pick 1
+layer 7
+end
 Object pallasch
 editor_folder items/weapon
 name pallasch
@@ -27716,6 +28236,161 @@ resist_drain 4
 resist_depletion 4
 resist_corruption 4
 resist_confusion 4
+resist_fear 4
+resist_slow 4
+resist_paralyze 4
+resist_snare 4
+value 5
+material_real 449
+material 128
+nrof 1
+end
+Object pants_acid
+editor_folder items/armour
+name pants
+type 143
+face pants_acid.101
+layer 3
+last_heal 0
+weight 400
+ac 4
+item_level 1
+resist_impact 3
+resist_cleave 3
+resist_pierce 3
+resist_slash 3
+resist_drain 4
+resist_depletion 4
+resist_corruption 4
+resist_confusion 4
+animation pants_acid
+is_animated 1
+anim_speed 2
+speed 1
+resist_fear 4
+resist_slow 4
+resist_paralyze 4
+resist_snare 4
+value 5
+material_real 449
+material 128
+nrof 1
+end
+Object pants_elec
+editor_folder items/armour
+name pants
+type 143
+face pants_elec.101
+layer 3
+last_heal 0
+weight 400
+ac 4
+item_level 1
+resist_impact 3
+resist_cleave 3
+resist_pierce 3
+resist_slash 3
+resist_drain 4
+resist_depletion 4
+resist_corruption 4
+resist_confusion 4
+animation pants_elec
+is_animated 1
+anim_speed 2
+speed 1
+resist_fear 4
+resist_slow 4
+resist_paralyze 4
+resist_snare 4
+value 5
+material_real 449
+material 128
+nrof 1
+end
+Object pants_fire
+editor_folder items/armour
+name pants
+type 143
+face pants_fire.101
+layer 3
+last_heal 0
+weight 400
+ac 4
+item_level 1
+resist_impact 3
+resist_cleave 3
+resist_pierce 3
+resist_slash 3
+resist_drain 4
+resist_depletion 4
+resist_corruption 4
+resist_confusion 4
+animation pants_fire
+is_animated 1
+anim_speed 2
+speed 1
+resist_fear 4
+resist_slow 4
+resist_paralyze 4
+resist_snare 4
+value 5
+material_real 449
+material 128
+nrof 1
+end
+Object pants_ice
+editor_folder items/armour
+name pants
+type 143
+face pants_ice.101
+layer 3
+last_heal 0
+weight 400
+ac 4
+item_level 1
+resist_impact 3
+resist_cleave 3
+resist_pierce 3
+resist_slash 3
+resist_drain 4
+resist_depletion 4
+resist_corruption 4
+resist_confusion 4
+animation pants_ice
+is_animated 1
+anim_speed 2
+speed 1
+resist_fear 4
+resist_slow 4
+resist_paralyze 4
+resist_snare 4
+value 5
+material_real 449
+material 128
+nrof 1
+end
+Object pants_poison
+editor_folder items/armour
+name pants
+type 143
+face pants_poison.101
+layer 3
+last_heal 0
+weight 400
+ac 4
+item_level 1
+resist_impact 3
+resist_cleave 3
+resist_pierce 3
+resist_slash 3
+resist_drain 4
+resist_depletion 4
+resist_corruption 4
+resist_confusion 4
+animation pants_poison
+is_animated 1
+anim_speed 2
+speed 1
 resist_fear 4
 resist_slow 4
 resist_paralyze 4
@@ -29634,6 +30309,7 @@ name plant
 layer 4
 face plant1.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant10
@@ -29642,6 +30318,7 @@ name plant
 layer 4
 face plant10.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant11
@@ -29650,6 +30327,7 @@ name plant
 layer 4
 face plant11.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant12
@@ -29658,6 +30336,7 @@ name plant
 layer 4
 face plant12.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant13
@@ -29666,6 +30345,7 @@ name plant
 layer 4
 face plant13.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant14
@@ -29674,6 +30354,7 @@ name plant
 layer 4
 face plant14.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant15
@@ -29682,6 +30363,7 @@ name plant
 layer 4
 face plant15.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant16
@@ -29690,6 +30372,7 @@ name plant
 layer 4
 face plant16.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant17
@@ -29698,6 +30381,7 @@ name plant
 layer 4
 face plant17.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant18
@@ -29706,6 +30390,7 @@ name plant
 layer 4
 face plant18.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant19
@@ -29714,6 +30399,7 @@ name plant
 layer 4
 face plant19.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant1_wall.151
@@ -29733,6 +30419,7 @@ name plant
 layer 4
 face plant2.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant20
@@ -29741,6 +30428,7 @@ name plant
 layer 4
 face plant20.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant21
@@ -29749,6 +30437,7 @@ name plant
 layer 4
 face plant21.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant22
@@ -29757,6 +30446,7 @@ name plant
 layer 4
 face plant22.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant2_wall.151
@@ -29776,6 +30466,7 @@ name plant
 layer 4
 face plant3.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant4
@@ -29784,6 +30475,7 @@ name plant
 layer 4
 face plant4.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant5
@@ -29792,6 +30484,7 @@ name plant
 layer 4
 face plant5.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant6
@@ -29800,6 +30493,7 @@ name plant
 layer 4
 face plant6.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant7
@@ -29808,6 +30502,7 @@ name plant
 layer 4
 face plant7.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant8
@@ -29816,6 +30511,7 @@ name plant
 layer 4
 face plant8.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant9
@@ -29824,6 +30520,7 @@ name plant
 layer 4
 face plant9.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant_big1
@@ -29835,6 +30532,7 @@ type 79
 mpart_id 1
 layer 5
 no_pick 1
+weight 200
 end
 More
 Object plant_big1b
@@ -29852,6 +30550,7 @@ name flower
 layer 4
 face plant_flower1.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant_flower10
@@ -29860,6 +30559,7 @@ name flower
 layer 4
 face plant_flower10.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant_flower11
@@ -29868,6 +30568,7 @@ name flower
 layer 4
 face plant_flower11.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant_flower12
@@ -29876,6 +30577,7 @@ name flower
 layer 4
 face plant_flower12.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant_flower13
@@ -29884,6 +30586,7 @@ name flower
 layer 4
 face plant_flower13.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant_flower14
@@ -29892,6 +30595,7 @@ name flower
 layer 4
 face plant_flower14.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant_flower2
@@ -29900,6 +30604,7 @@ name flower
 layer 4
 face plant_flower2.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant_flower3
@@ -29908,6 +30613,7 @@ name flower
 layer 4
 face plant_flower3.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant_flower4
@@ -29916,6 +30622,7 @@ name flower
 layer 4
 face plant_flower4.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant_flower5
@@ -29924,6 +30631,7 @@ name flower
 layer 4
 face plant_flower5.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant_flower6
@@ -29932,6 +30640,7 @@ name flower
 layer 4
 face plant_flower6.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant_flower7
@@ -29940,6 +30649,7 @@ name flower
 layer 4
 face plant_flower7.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant_flower8
@@ -29948,6 +30658,7 @@ name flower
 layer 4
 face plant_flower8.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant_flower9
@@ -29956,6 +30667,7 @@ name flower
 layer 4
 face plant_flower9.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant_mushroom1
@@ -29964,6 +30676,7 @@ name mushroom
 layer 4
 face plant_mushroom1.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant_mushroom2
@@ -29972,6 +30685,7 @@ name mushroom
 layer 4
 face plant_mushroom2.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant_mushroom3
@@ -29980,6 +30694,7 @@ name mushroom
 layer 4
 face plant_mushroom3.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant_mushroom4
@@ -29988,6 +30703,7 @@ name mushroom
 layer 4
 face plant_mushroom4.101
 no_pick 1
+weight 100
 type 79
 end
 Object plant_mushroom5
@@ -29996,6 +30712,7 @@ name mushroom
 layer 4
 face plant_mushroom5.101
 no_pick 1
+weight 100
 type 79
 end
 Object plate_field
@@ -30191,12 +30908,29 @@ is_animated 1
 anim_speed 8
 speed 1
 end
+Object portal_azure
+editor_folder exits/portals
+type 66
+sub_type 1
+layer 5
+name big azure portal
+face portal_azure.101
+hp -1
+sp -1
+no_pick 1
+animation portal_azure
+is_animated 1
+anim_speed 2
+speed 1
+walk_on 1
+fly_on 1
+end
 Object portal_big
 editor_folder exits/portals
 type 66
 sub_type 1
 layer 5
-name big portal
+name big blue portal
 face portal_big.101
 hp -1
 sp -1
@@ -30204,6 +30938,7 @@ no_pick 1
 animation portal_big
 is_animated 1
 anim_speed 2
+speed 1
 walk_on 1
 fly_on 1
 end
@@ -30255,6 +30990,40 @@ y 1
 x 1
 no_teleport 1
 no_pick 1
+end
+Object portal_red
+editor_folder exits/portals
+type 66
+sub_type 1
+layer 5
+name big red portal
+face portal_red.101
+hp -1
+sp -1
+no_pick 1
+animation portal_red
+is_animated 1
+anim_speed 2
+speed 1
+walk_on 1
+fly_on 1
+end
+Object portal_yellow
+editor_folder exits/portals
+type 66
+sub_type 1
+layer 5
+name big yellow portal
+face portal_yellow.101
+hp -1
+sp -1
+no_pick 1
+animation portal_yellow
+is_animated 1
+anim_speed 2
+speed 1
+walk_on 1
+fly_on 1
 end
 Object portcullisTrg
 editor_folder gates/portcullises
@@ -30384,6 +31153,7 @@ name potted plant
 layer 4
 face potted_plant1.101
 no_pick 1
+weight 200
 type 79
 end
 Object potted_plant2
@@ -30392,6 +31162,7 @@ name potted plant
 layer 4
 face potted_plant2.101
 no_pick 1
+weight 200
 type 79
 end
 Object potted_plant3
@@ -30400,6 +31171,7 @@ name potted plant
 layer 4
 face potted_plant3.101
 no_pick 1
+weight 200
 type 79
 end
 Object potted_plant4
@@ -30408,6 +31180,7 @@ name potted plant
 layer 4
 face potted_plant4.101
 no_pick 1
+weight 200
 type 79
 end
 Object potted_plant5
@@ -30416,6 +31189,7 @@ name potted plant
 layer 4
 face potted_plant5.101
 no_pick 1
+weight 200
 type 79
 end
 Object pottery1.101
@@ -30689,6 +31463,17 @@ animation priest_robed
 is_animated 1
 anim_speed 4
 no_pick 1
+end
+Object priestflag
+editor_folder masks/flags
+name priest guild flag
+face priestflag.u.151
+animation priestflag
+is_turnable 1
+direction 5
+type 77
+no_pick 1
+layer 7
 end
 Object prison_deco1.131
 editor_folder scenery/beds
@@ -31039,6 +31824,7 @@ name pumpkin
 layer 4
 face pumpkin_01.101
 no_pick 1
+weight 100
 type 79
 end
 Object pumpkin_02
@@ -31047,6 +31833,7 @@ name pumpkin
 layer 4
 face pumpkin_02.101
 no_pick 1
+weight 100
 type 79
 end
 Object pumpkin_03
@@ -31055,6 +31842,7 @@ name pumpkin
 layer 4
 face pumpkin_03.101
 no_pick 1
+weight 100
 type 79
 end
 Object pumpkin_04
@@ -31063,6 +31851,7 @@ name pumpkin
 layer 4
 face pumpkin_04.101
 no_pick 1
+weight 100
 type 79
 end
 Object pumpkin_05
@@ -31071,6 +31860,7 @@ name pumpkin
 layer 4
 face pumpkin_05.101
 no_pick 1
+weight 100
 type 79
 end
 Object pumpkin_06
@@ -31079,6 +31869,7 @@ name pumpkin
 layer 4
 face pumpkin_06.101
 no_pick 1
+weight 100
 type 79
 end
 Object pvp_stat_force
@@ -31895,6 +32686,7 @@ name flower
 layer 4
 face red_flower.101
 no_pick 1
+weight 100
 type 79
 end
 Object red_flowers
@@ -31903,6 +32695,7 @@ name flower
 layer 4
 face red_flowers.101
 no_pick 1
+weight 100
 type 79
 end
 Object redrose
@@ -36000,6 +36793,15 @@ type 79
 layer 4
 nrof 1
 end
+Object shovel_dig
+editor_folder items/tools
+name shovel
+face shovel_dig.101
+no_pick 1
+type 79
+layer 4
+nrof 1
+end
 Object shovel_dirt
 editor_folder scenery/tools
 name shovel
@@ -38762,6 +39564,7 @@ type 79
 face snowy_autree2.101
 no_pick 1
 no_pass 1
+weight 500
 blocksview 1
 is_wooded 1
 end
@@ -38773,6 +39576,7 @@ type 79
 face snowy_burnedtree1.101
 no_pick 1
 no_pass 1
+weight 500
 blocksview 1
 is_wooded 1
 end
@@ -38784,6 +39588,7 @@ type 79
 face snowy_burnedtree2.101
 no_pick 1
 no_pass 1
+weight 500
 blocksview 1
 is_wooded 1
 end
@@ -38795,6 +39600,7 @@ type 79
 face snowy_pinetree1.101
 no_pick 1
 no_pass 1
+weight 500
 blocksview 1
 is_wooded 1
 end
@@ -38806,6 +39612,7 @@ type 79
 face snowy_pinetree2.101
 no_pick 1
 no_pass 1
+weight 500
 blocksview 1
 is_wooded 1
 end
@@ -39126,6 +39933,7 @@ type 79
 face snowy_tree1.101
 no_pick 1
 no_pass 1
+weight 500
 blocksview 1
 is_wooded 1
 end
@@ -39137,6 +39945,7 @@ type 79
 face snowy_tree2.101
 no_pick 1
 no_pass 1
+weight 500
 blocksview 1
 is_wooded 1
 end
@@ -39148,6 +39957,7 @@ type 79
 face snowy_tree_big1.101
 no_pick 1
 no_pass 1
+weight 500
 blocksview 1
 is_wooded 1
 end
@@ -39159,6 +39969,7 @@ type 79
 face snowy_tree_big2.101
 no_pick 1
 no_pass 1
+weight 500
 blocksview 1
 is_wooded 1
 end
@@ -39170,6 +39981,7 @@ type 79
 face snowy_tree_bigb1.101
 no_pick 1
 no_pass 1
+weight 500
 blocksview 1
 is_wooded 1
 end
@@ -39181,6 +39993,7 @@ type 79
 face snowy_tree_bigb2.101
 no_pick 1
 no_pass 1
+weight 500
 blocksview 1
 is_wooded 1
 end
@@ -39192,6 +40005,7 @@ type 79
 face snowy_treeb1.101
 no_pick 1
 no_pass 1
+weight 500
 blocksview 1
 is_wooded 1
 end
@@ -39212,6 +40026,17 @@ material 32
 material_real -1
 value 8
 weight 240
+end
+Object sorcflag
+editor_folder masks/flags
+name sorcerer guild flag
+face sorcflag.u.151
+animation sorcflag
+is_turnable 1
+direction 5
+type 77
+no_pick 1
+layer 7
 end
 Object sparkle_black_golem_mage
 editor_folder mobs/summoned
@@ -39468,6 +40293,7 @@ name flower
 layer 4
 face spike_flower.101
 no_pick 1
+weight 100
 type 79
 end
 Object spiked_boots
@@ -41587,6 +42413,7 @@ face thorns.101
 type 79
 layer 4
 no_pick 1
+weight 100
 is_wooded 1
 end
 Object throne.111
@@ -42253,6 +43080,7 @@ name tree
 layer 5
 face tree20.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42263,6 +43091,7 @@ name tree
 layer 5
 face tree21.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42273,6 +43102,7 @@ name tree
 layer 5
 face tree22.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42283,6 +43113,7 @@ name tree
 layer 5
 face tree23.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42293,6 +43124,7 @@ name tree
 layer 5
 face tree24.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42303,6 +43135,7 @@ name tree
 layer 5
 face tree25.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42313,6 +43146,7 @@ name tree
 layer 5
 face tree26.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42325,6 +43159,7 @@ face tree27.101
 no_pick 1
 type 79
 no_pass 1
+weight 500
 is_wooded 1
 end
 Object tree27_winter
@@ -42335,6 +43170,7 @@ type 79
 face tree27_winter.101
 no_pick 1
 no_pass 1
+weight 500
 blocksview 1
 is_wooded 1
 end
@@ -42344,6 +43180,7 @@ name tree
 layer 5
 face tree28.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42354,6 +43191,7 @@ name tree
 layer 5
 face tree29.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42364,6 +43202,7 @@ name tree
 layer 5
 face tree30.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42374,6 +43213,7 @@ name tree
 layer 5
 face tree31.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42384,6 +43224,7 @@ name tree
 layer 5
 face tree32.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42396,6 +43237,7 @@ type 79
 face tree32_winter.101
 no_pick 1
 no_pass 1
+weight 500
 blocksview 1
 is_wooded 1
 end
@@ -42405,6 +43247,7 @@ name tree
 layer 5
 face tree33.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42417,6 +43260,7 @@ type 79
 face tree33_winter.101
 no_pick 1
 no_pass 1
+weight 500
 blocksview 1
 is_wooded 1
 end
@@ -42426,6 +43270,7 @@ name tree
 layer 5
 face tree34.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42436,6 +43281,7 @@ name tree
 layer 5
 face tree35.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42446,6 +43292,7 @@ name tree
 layer 5
 face tree36.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42456,6 +43303,7 @@ name tree
 layer 5
 face tree37.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42466,6 +43314,7 @@ name tree
 layer 5
 face tree38.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42476,6 +43325,7 @@ name tree
 layer 5
 face tree39.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42486,6 +43336,7 @@ name tree
 layer 5
 face tree40.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42496,6 +43347,7 @@ name tree
 layer 5
 face tree41.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42506,6 +43358,7 @@ name tree
 layer 5
 face tree42.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42516,6 +43369,7 @@ name tree
 layer 5
 face tree43.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42528,6 +43382,7 @@ type 79
 face tree43_winter.101
 no_pick 1
 no_pass 1
+weight 500
 blocksview 1
 is_wooded 1
 end
@@ -42537,6 +43392,7 @@ name tree
 layer 5
 face tree44.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42549,6 +43405,7 @@ type 79
 face tree44_winter.101
 no_pick 1
 no_pass 1
+weight 500
 blocksview 1
 is_wooded 1
 end
@@ -42558,6 +43415,7 @@ name tree
 layer 5
 face tree45.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42570,6 +43428,7 @@ type 79
 face tree45_winter.101
 no_pick 1
 no_pass 1
+weight 500
 blocksview 1
 is_wooded 1
 end
@@ -42579,6 +43438,7 @@ name tree
 layer 5
 face tree46.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42589,6 +43449,7 @@ name tree
 layer 5
 face tree47.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42599,6 +43460,7 @@ name tree
 layer 5
 face tree48.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42609,6 +43471,7 @@ name tree
 layer 5
 face tree49.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42619,6 +43482,7 @@ name tree
 layer 5
 face tree50.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42629,6 +43493,7 @@ name tree
 layer 5
 face tree51.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42639,6 +43504,7 @@ name apple tree
 layer 5
 face apple_tree.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42650,6 +43516,7 @@ name tree
 type 79
 face tree_big.101
 no_pick 1
+weight 500
 no_pass 1
 is_wooded 1
 end
@@ -42661,6 +43528,7 @@ name tree
 face tree_big2.101
 no_pick 1
 no_pass 1
+weight 500
 is_wooded 1
 end
 Object tree_big3
@@ -42671,6 +43539,7 @@ name tree
 face tree_big3.101
 no_pick 1
 no_pass 1
+weight 500
 is_wooded 1
 end
 Object tree_big4
@@ -42681,6 +43550,7 @@ face tree_big4.101
 type 79
 no_pick 1
 no_pass 1
+weight 500
 is_wooded 1
 end
 Object tree_big4b
@@ -42691,6 +43561,7 @@ type 79
 face tree_big4b.101
 no_pick 1
 no_pass 1
+weight 500
 is_wooded 1
 end
 Object tree_big5
@@ -42701,6 +43572,7 @@ type 79
 face tree_big5.101
 no_pick 1
 no_pass 1
+weight 500
 is_wooded 1
 end
 Object tree_big5_winter
@@ -42711,6 +43583,7 @@ face tree_big5_winter.101
 type 79
 no_pick 1
 no_pass 1
+weight 500
 blocksview 1
 is_wooded 1
 end
@@ -42722,6 +43595,7 @@ face tree_big5b.101
 type 79
 no_pick 1
 no_pass 1
+weight 500
 is_wooded 1
 end
 Object tree_branch1
@@ -42730,6 +43604,7 @@ name branch
 layer 4
 face tree_branch1.101
 no_pick 1
+weight 100
 type 79
 end
 Object tree_branch1_winter
@@ -42738,6 +43613,7 @@ name branch
 layer 4
 face tree_branch1_winter.101
 no_pick 1
+weight 100
 type 79
 end
 Object tree_branch2
@@ -42746,6 +43622,7 @@ name branch
 layer 4
 face tree_branch2.101
 no_pick 1
+weight 100
 type 79
 end
 Object tree_branch2_winter
@@ -42754,6 +43631,7 @@ name branch
 layer 4
 face tree_branch2_winter.101
 no_pick 1
+weight 100
 type 79
 end
 Object tree_branch3
@@ -42762,6 +43640,7 @@ name branch
 layer 4
 face tree_branch3.101
 no_pick 1
+weight 100
 type 79
 end
 Object tree_branch3_winter
@@ -42770,6 +43649,7 @@ name branch
 layer 4
 face tree_branch3_winter.101
 no_pick 1
+weight 100
 type 79
 end
 Object tree_burned1
@@ -42778,6 +43658,7 @@ name burned tree
 layer 5
 face tree_burned1.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42788,6 +43669,7 @@ name burned tree
 layer 5
 face tree_burned2.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42798,6 +43680,7 @@ name burned tree
 layer 5
 face tree_burned2_winter.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 blocksview 1
@@ -42809,6 +43692,7 @@ name burned tree
 layer 5
 face tree_burned3.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42819,6 +43703,7 @@ name burned tree
 layer 5
 face tree_burned4.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42830,6 +43715,7 @@ layer 4
 face tree_cut1.101
 is_wooded 1
 no_pick 1
+weight 500
 type 79
 end
 Object tree_orange
@@ -42838,6 +43724,7 @@ name orange tree
 layer 5
 face orange_tree.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -42849,6 +43736,7 @@ face tree_small.101
 layer 4
 type 79
 no_pick 1
+weight 500
 is_wooded 1
 end
 Object tree_small_dead
@@ -42858,6 +43746,7 @@ face tree_smalld.101
 layer 4
 type 79
 no_pick 1
+weight 500
 is_wooded 1
 end
 Object tree_stone1
@@ -42868,6 +43757,7 @@ type 79
 face tree_stone1.101
 no_pass 1
 no_pick 1
+weight 500
 end
 Object tree_stump_a
 editor_folder scenery/trees
@@ -42875,6 +43765,7 @@ name tree stump
 layer 4
 face tree_stump_a.101
 no_pick 1
+weight 500
 type 79
 end
 Object tree_stump_b
@@ -42883,6 +43774,7 @@ name tree stump
 layer 4
 face tree_stump_b.101
 no_pick 1
+weight 500
 type 79
 end
 Object tree_stump_c
@@ -42891,6 +43783,7 @@ name tree stump
 layer 4
 face tree_stump_c.101
 no_pick 1
+weight 500
 type 79
 end
 Object tree_stump_d
@@ -42899,6 +43792,7 @@ name tree stump
 layer 4
 face tree_stump_d.101
 no_pick 1
+weight 500
 type 79
 end
 Object tree_stump_e
@@ -42907,6 +43801,7 @@ name tree stump
 layer 4
 face tree_stump_e.101
 no_pick 1
+weight 500
 type 79
 end
 Object tree_stump_large_a
@@ -42915,6 +43810,7 @@ name tree stump
 layer 4
 face tree_stump_large_a.101
 no_pick 1
+weight 500
 type 79
 end
 Object tree_stump_large_b
@@ -42923,6 +43819,7 @@ name tree stump
 layer 4
 face tree_stump_large_b.101
 no_pick 1
+weight 500
 type 79
 end
 Object tree_stump_large_c
@@ -42931,6 +43828,7 @@ name tree stump
 layer 4
 face tree_stump_large_c.101
 no_pick 1
+weight 500
 type 79
 end
 Object tree_stump_large_d
@@ -42939,6 +43837,7 @@ name tree stump
 layer 4
 face tree_stump_large_d.101
 no_pick 1
+weight 500
 type 79
 end
 Object trident
@@ -47747,6 +48646,166 @@ type 77
 no_pick 1
 no_pass 1
 end
+Object wall_stone_round1_1
+editor_folder walls/stone
+name stone wall round
+face wall_stone_round1.d.111
+blocksview 1
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone_round1_3
+editor_folder walls/stone
+name stone wall round
+face wall_stone_round1.d.131
+blocksview 1
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone_round2_1
+editor_folder walls/stone
+name stone wall round
+face wall_stone_round2.d.111
+blocksview 1
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone_round2_3
+editor_folder walls/stone
+name stone wall round
+face wall_stone_round2.d.131
+blocksview 1
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone_round3_1
+editor_folder walls/stone
+name stone wall round
+face wall_stone_round3.d.111
+blocksview 1
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone_round3_3
+editor_folder walls/stone
+name stone wall round
+face wall_stone_round3.d.131
+blocksview 1
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone_round4
+editor_folder walls/stone
+name stone wall round
+face wall_stone_round.d.141
+blocksview 1
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone_round_8
+editor_folder walls/stone
+name stone wall round
+face wall_stone_round.d.181
+blocksview 1
+layer 5
+type 77
+no_pick 1
+no_pass 1
+end
+Object wall_stone_roundd1_1
+editor_folder walls/stone
+name stone wall round
+face wall_stone_roundd5.d.111
+blocksview 1
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone_roundd1_3
+editor_folder walls/stone
+name stone wall round
+face wall_stone_roundd5.d.131
+blocksview 1
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone_roundd2_1
+editor_folder walls/stone
+name stone wall round
+face wall_stone_roundd6.d.111
+blocksview 1
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone_roundd2_3
+editor_folder walls/stone
+name stone wall round
+face wall_stone_roundd6.d.131
+blocksview 1
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone_roundd3_1
+editor_folder walls/stone
+name stone wall round
+face wall_stone_roundd7.d.111
+blocksview 1
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone_roundd3_3
+editor_folder walls/stone
+name stone wall round
+face wall_stone_roundd7.d.131
+blocksview 1
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone_roundd5
+editor_folder walls/stone
+name stone wall round
+face wall_stone_roundd5.d.141
+blocksview 1
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone_roundd_8
+editor_folder walls/stone
+name stone wall round
+face wall_stone_roundd.d.181
+blocksview 1
+layer 5
+type 77
+no_pick 1
+no_pass 1
+end
 Object wall_stone_w.111
 editor_folder walls/stone
 name stone wall
@@ -48066,6 +49125,86 @@ layer 5
 no_pick 1
 no_pass 1
 end
+Object wall_wood_round1_1
+editor_folder walls/wood
+name wood wall round
+face wall_wood_round1.d.111
+blocksview 1
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_wood_round1_3
+editor_folder walls/wood
+name wood wall round
+face wall_wood_round1.d.131
+blocksview 1
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_wood_round2_1
+editor_folder walls/wood
+name wood wall round
+face wall_wood_round2.d.111
+blocksview 1
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_wood_round2_3
+editor_folder walls/wood
+name wood wall round
+face wall_wood_round2.d.131
+blocksview 1
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_wood_round3_1
+editor_folder walls/wood
+name wood wall round
+face wall_wood_round3.d.111
+blocksview 1
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_wood_round3_3
+editor_folder walls/wood
+name wood wall round
+face wall_wood_round3.d.131
+blocksview 1
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_wood_round4
+editor_folder walls/wood
+name wood wall round
+face wall_wood_round.d.141
+blocksview 1
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_wood_round_8
+editor_folder walls/wood
+name wood wall round
+face wall_wood_round.d.181
+blocksview 1
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
 Object wall_wood_w_1
 editor_folder walls/wood
 name wood wall
@@ -48117,6 +49256,28 @@ weight 450
 material 16
 is_named 1
 nrof 1
+end
+Object war_magflag
+editor_folder masks/flags
+name battle mage guild flag
+face war_magflag.u.151
+animation war_magflag
+is_turnable 1
+direction 5
+type 77
+no_pick 1
+layer 7
+end
+Object warflag
+editor_folder masks/flags
+name warrior guild flag
+face warflag.u.151
+animation warflag
+is_turnable 1
+direction 5
+type 77
+no_pick 1
+layer 7
 end
 Object warts
 editor_folder forces/disease
@@ -48223,6 +49384,7 @@ name water lily
 layer 4
 face water_lily1.101
 no_pick 1
+weight 100
 no_teleport 1
 type 79
 end
@@ -48232,6 +49394,7 @@ name water lily
 layer 4
 face water_lily2.101
 no_pick 1
+weight 100
 no_teleport 1
 type 79
 end
@@ -48241,6 +49404,7 @@ name water lily
 layer 4
 face water_lily3.101
 no_pick 1
+weight 100
 no_teleport 1
 type 79
 end
@@ -48250,6 +49414,7 @@ name water plant
 layer 4
 face water_plant1.101
 no_pick 1
+weight 100
 no_teleport 1
 type 79
 end
@@ -48259,6 +49424,7 @@ name water plant
 layer 4
 face water_plant2.101
 no_pick 1
+weight 100
 no_teleport 1
 type 79
 end
@@ -48268,6 +49434,7 @@ name water plant
 layer 4
 face water_plant3.101
 no_pick 1
+weight 100
 no_teleport 1
 type 79
 end
@@ -48277,6 +49444,7 @@ name water plant
 layer 4
 face water_plant4.101
 no_pick 1
+weight 100
 no_teleport 1
 type 79
 end
@@ -48286,6 +49454,7 @@ name water plant
 layer 4
 face water_plant5.101
 no_pick 1
+weight 100
 no_teleport 1
 type 79
 end
@@ -48295,6 +49464,7 @@ name water plant
 layer 4
 face water_plant6.101
 no_pick 1
+weight 100
 no_teleport 1
 type 79
 end
@@ -49314,6 +50484,7 @@ name tree
 layer 5
 face tree_b.101
 no_pick 1
+weight 500
 type 79
 no_pass 1
 is_wooded 1
@@ -49325,6 +50496,7 @@ name tree
 type 79
 face tree_c.101
 no_pick 1
+weight 500
 is_wooded 1
 end
 Object worm
