@@ -4,6 +4,12 @@ exit.101
 exit.102
 mina
 
+# exit
+anim exit_green
+exit_green.101
+exit_green.102
+mina
+
 # exit_wavy
 anim exit_wavy
 exit_wavy.101
