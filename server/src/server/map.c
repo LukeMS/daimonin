@@ -4580,8 +4580,11 @@ uint32 overlay_is_back_blocked(sint8 index, msp_t *msp, uint32 flags)
         y2 = msp->y + OVERLAY_Y(i);
         msp2 = MSP_GET(m2, x2, y2);
 
-        if (!msp2 ||
-            (msp2->flags & flags))
+        if (!msp2)
+        {
+            return MSP_FLAG_OUT_OF_MAP;
+        }
+        else if ((msp2->flags & flags))
         {
             return (msp2->flags & flags);
         }
@@ -4592,8 +4595,11 @@ uint32 overlay_is_back_blocked(sint8 index, msp_t *msp, uint32 flags)
     y2 = msp->y + OVERLAY_Y(Back[index][1]);
     msp2 = MSP_GET(m2, x2, y2);
 
-    if (!msp2 ||
-        (msp2->flags & flags))
+    if (!msp2)
+    {
+        return MSP_FLAG_OUT_OF_MAP;
+    }
+    else if ((msp2->flags & flags))
     {
         return (msp2->flags & flags);
     }
