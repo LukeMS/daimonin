@@ -3793,7 +3793,6 @@ void msp_update(map_t *m, msp_t *mspace, sint16 x, sint16 y)
     msp_t *msp;
     uint32    flags,
               oldflags;
-    uint8     i;
 
     if (mspace)
     {

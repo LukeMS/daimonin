@@ -283,7 +283,7 @@ sint32 get_tad_offset_from_string(const char *string)
     do
     {
         char    buf[MEDIUM_BUF];
-        sint64  value;
+        sint32  value;
         char   *endp;
 
         cp = get_token(cp, buf, 0);

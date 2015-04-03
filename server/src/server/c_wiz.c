@@ -1057,7 +1057,7 @@ int command_inventory(object_t *op, char *params)
         if (items == 0)
         {
             ndi(NDI_UNIQUE, 0, op, "You carry nothing.");
-            return;
+            return COMMANDS_RTN_VAL_OK_SILENT;
         }
         else
         {
@@ -1069,7 +1069,7 @@ int command_inventory(object_t *op, char *params)
     else
     {
         if (items == 0)
-            return;
+            return COMMANDS_RTN_VAL_OK_SILENT;
         else
         {
             length = 28;
@@ -1213,7 +1213,6 @@ static int AddExp(object_t *op, char *params, const char *command)
     int     snr,
             exp;
     player_t *pl;
-    object_t *skill, *skillgroup;
 
     if (!params ||
         (n = sscanf(params, "%s %d %d", name, &snr, &exp)) == 0)

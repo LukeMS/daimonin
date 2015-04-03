@@ -1203,10 +1203,10 @@ static int Game_EnumerateCoins(lua_State *L)
     gold = value / 10000;
     value -= gold * 10000;
     silver = value / 100;
-    lua_pushnumber(L, value - silver * 100);
-    lua_pushnumber(L, silver);
-    lua_pushnumber(L, gold);
-    lua_pushnumber(L, mithril);
+    lua_pushnumber(L, (lua_Number) (value - silver * 100));
+    lua_pushnumber(L, (lua_Number) silver);
+    lua_pushnumber(L, (lua_Number) gold);
+    lua_pushnumber(L, (lua_Number) mithril);
     return 4;
 }
 

@@ -139,7 +139,7 @@ object_t *find_arrow(object_t *op, const char *type)
 {
     object_t *this,
            *next,
-           *that;
+           *that=NULL;
 
     FOREACH_OBJECT_IN_OBJECT(this, op, next)
     {

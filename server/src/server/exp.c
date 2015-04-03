@@ -448,7 +448,6 @@ sint32 add_exp(object_t *op, int exp, int skill_nr, int cap)
  */
 static int AdjustExp(object_t *pl, object_t *op, int exp, int cap)
 {
-    object_t *tmp;
     int     i;
     sint32  sk_exp, pl_exp;
 
@@ -472,7 +471,7 @@ static int AdjustExp(object_t *pl, object_t *op, int exp, int cap)
         }
         else // Indirect leveling
         {
-            int  bonus = (exp > 0 && CONTR(pl)->exp_bonus) ? (((double)exp / 100.0) * CONTR(pl)->exp_bonus) : 0,
+            int  bonus = (exp > 0 && CONTR(pl)->exp_bonus) ? (int) (((double)exp / 100.0) * CONTR(pl)->exp_bonus) : 0,
                  total = exp + bonus;
             char buf[TINY_BUF];
 

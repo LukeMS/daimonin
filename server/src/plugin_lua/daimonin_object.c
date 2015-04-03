@@ -1186,7 +1186,6 @@ static int GameObject_GetSkill(lua_State *L)
                 nr;
     player_t     *pl;
     object_t     *skill;
-    int         direct;
 
     if (lua_isnumber(L, 2))
     {
@@ -3250,7 +3249,7 @@ static int GameObject_CheckOneDropQuest(lua_State *L)
     char       *arch_name;
     char       *name, *title = NULL;
     object_t     *walk,
-               *next;;
+               *next;
     lua_object *self;
 
     get_lua_args(L, "Os|s", &self, &arch_name, &name, &title);

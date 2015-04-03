@@ -1173,11 +1173,11 @@ void move_player_mover(object_t *op)
             {
                 if (that->type == PLAYERMOVER)
                 {
-                    that->speed_left = -0.99;
+                    that->speed_left = -0.99f;
                 }
                 else if (IS_LIVE(that))
                 {
-                    op->speed_left = -1.1;  /* wait until the next thing gets out of the way */
+                    op->speed_left = -1.1f;  /* wait until the next thing gets out of the way */
                 }
             }
 
@@ -1684,7 +1684,7 @@ void move_marker(object_t *op)
 
                 if (op->stats.food)
                 {
-                    current->speed = 0.01;
+                    current->speed = 0.01f;
                     current->speed_left = (float)-op->stats.food;
                 }
                 else
