@@ -1,0 +1,453 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ReleaseLog|Win32">
+      <Configuration>ReleaseLog</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{6A3BD0B7-270E-4B12-B4ED-13F63FE5E136}</ProjectGuid>
+    <RootNamespace>daimonin_server</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'" />
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">
+    <BuildLog>
+      <Path>
+      </Path>
+    </BuildLog>
+    <Midl>
+      <TypeLibraryName>.\ReleaseLog/daimonin_server.tlb</TypeLibraryName>
+    </Midl>
+    <ClCompile>
+      <Optimization>Full</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <AdditionalIncludeDirectories>..\..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WINSOCK_DEPRECATED_NO_WARNINGS;_CONSOLE;DEBUG;WIN32;NDEBUG;LUA_PLUGIN_EXPORTS;_CRT_SECURE_NO_DEPRECATE;DAI_DEVELOPMENT_CODE;DAI_DEVELOPMENT_CONTENT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)daimonin.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ProgramDataBaseFileName>$(IntDir)</ProgramDataBaseFileName>
+      <XMLDocumentationFileName>
+      </XMLDocumentationFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <CallingConvention>Cdecl</CallingConvention>
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0407</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>wsock32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>.\ReleaseLog/daimonin_server.exe</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
+      <SubSystem>Console</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy ReleaseLog\*.exe ..\..\..\*.exe</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <BuildLog>
+      <Path>
+      </Path>
+    </BuildLog>
+    <Midl>
+      <TypeLibraryName>.\Debug/daimonin_server.tlb</TypeLibraryName>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <AdditionalIncludeDirectories>..\..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WINSOCK_DEPRECATED_NO_WARNINGS;_CONSOLE;DEBUG;DEBUG_MOVEATTACK;WIN32;NDEBUG;LUA_PLUGIN_EXPORTS;_CRT_SECURE_NO_DEPRECATE;DAI_DEVELOPMENT_CODE;DAI_DEVELOPMENT_CONTENT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>
+      </PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ProgramDataBaseFileName>$(IntDir)</ProgramDataBaseFileName>
+      <XMLDocumentationFileName>
+      </XMLDocumentationFileName>
+      <BrowseInformation>
+      </BrowseInformation>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CallingConvention>Cdecl</CallingConvention>
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0407</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>wsock32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>.\Debug/daimonin_server.exe</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>.\Debug/daimonin_server.pdb</ProgramDatabaseFile>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapFileName>.\Debug/daimonin_server.map</MapFileName>
+      <SubSystem>Console</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy Debug\*.exe ..\..\..\*.exe</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\src\porting\porting.c" />
+    <ClCompile Include="..\..\..\src\protocol\protocol.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\socket\account.c" />
+    <ClCompile Include="..\..\..\src\socket\commands.c" />
+    <ClCompile Include="..\..\..\src\socket\connect.c" />
+    <ClCompile Include="..\..\..\src\socket\init.c" />
+    <ClCompile Include="..\..\..\src\socket\loop.c" />
+    <ClCompile Include="..\..\..\src\socket\lowlevel.c" />
+    <ClCompile Include="..\..\..\src\socket\metaserver.c" />
+    <ClCompile Include="..\..\..\src\socket\read.c" />
+    <ClCompile Include="..\..\..\src\socket\request.c" />
+    <ClCompile Include="..\..\..\src\socket\startup.c" />
+    <ClCompile Include="..\..\..\src\socket\write.c" />
+    <ClCompile Include="..\..\..\src\tests\benchmark_main.c" />
+    <ClCompile Include="..\..\..\src\tests\test_main.c" />
+    <ClCompile Include="..\..\..\src\server\aggro.c" />
+    <ClCompile Include="..\..\..\src\server\anim.c" />
+    <ClCompile Include="..\..\..\src\server\arch.c" />
+    <ClCompile Include="..\..\..\src\server\artifact.c" />
+    <ClCompile Include="..\..\..\src\server\button.c" />
+    <ClCompile Include="..\..\..\src\server\exp.c" />
+    <ClCompile Include="..\..\..\src\server\food.c" />
+    <ClCompile Include="..\..\..\src\server\guild.c" />
+    <ClCompile Include="..\..\..\src\server\hashfunc.c" />
+    <ClCompile Include="..\..\..\src\server\hashtable.c" />
+    <ClCompile Include="..\..\..\src\server\holy.c" />
+    <ClCompile Include="..\..\..\src\server\image.c" />
+    <ClCompile Include="..\..\..\src\server\info.c" />
+    <ClCompile Include="..\..\..\src\server\item.c" />
+    <ClCompile Include="..\..\..\src\server\links.c" />
+    <ClCompile Include="..\..\..\src\server\living.c" />
+    <ClCompile Include="..\..\..\src\server\loader.c" />
+    <ClCompile Include="..\..\..\src\server\logger.c" />
+    <ClCompile Include="..\..\..\src\server\los.c" />
+    <ClCompile Include="..\..\..\src\server\map.c" />
+    <ClCompile Include="..\..\..\src\server\map_tile.c" />
+    <ClCompile Include="..\..\..\src\server\material.c" />
+    <ClCompile Include="..\..\..\src\server\mempool.c" />
+    <ClCompile Include="..\..\..\src\server\missile.c" />
+    <ClCompile Include="..\..\..\src\server\object.c" />
+    <ClCompile Include="..\..\..\src\server\quest.c" />
+    <ClCompile Include="..\..\..\src\server\re-cmp.c" />
+    <ClCompile Include="..\..\..\src\server\readable.c" />
+    <ClCompile Include="..\..\..\src\server\recipe.c" />
+    <ClCompile Include="..\..\..\src\server\shstr_ng.c" />
+    <ClCompile Include="..\..\..\src\server\sounds.c" />
+    <ClCompile Include="..\..\..\src\server\stats.c" />
+    <ClCompile Include="..\..\..\src\server\treasure.c" />
+    <ClCompile Include="..\..\..\src\server\utils.c" />
+    <ClCompile Include="..\..\..\src\server\view_inv.c" />
+    <ClCompile Include="..\..\..\src\server\view_map.c" />
+    <ClCompile Include="..\..\..\src\porting\win32.c" />
+    <ClCompile Include="..\..\..\src\server\aiconfig.c" />
+    <ClCompile Include="..\..\..\src\server\alchemy.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\apply.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\attack.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\ban.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\c_chat.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\c_misc.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\c_move.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\c_new.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\c_object.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\c_party.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\c_range.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\c_wiz.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\calendar.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\channel.c" />
+    <ClCompile Include="..\..\..\src\server\container.c" />
+    <ClCompile Include="..\..\..\src\server\disease.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\egoitem.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\gmaster.c" />
+    <ClCompile Include="..\..\..\src\server\gods.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\init.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\ipcompare.c" />
+    <ClCompile Include="..\..\..\src\server\login.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\main.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\monster.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\monster_behaviours.c" />
+    <ClCompile Include="..\..\..\src\server\monster_behaviourset.c" />
+    <ClCompile Include="..\..\..\src\server\monster_memory.c" />
+    <ClCompile Include="..\..\..\src\server\move.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\mtrand.c" />
+    <ClCompile Include="..\..\..\src\server\npc_communicate.c" />
+    <ClCompile Include="..\..\..\src\server\pathfinder.c" />
+    <ClCompile Include="..\..\..\src\server\pets.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\player.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\plugins.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\resurrection.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\rune.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\shop.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\skill_util.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\skills.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\spawn_point.c" />
+    <ClCompile Include="..\..\..\src\server\spell_effect.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\spell_util.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\swamp.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\server\time.c">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\server/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">.\ReleaseLog\server/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\3rdparty\zlib\adler32.c" />
+    <ClCompile Include="..\..\..\src\3rdparty\zlib\compress.c" />
+    <ClCompile Include="..\..\..\src\3rdparty\zlib\crc32.c" />
+    <ClCompile Include="..\..\..\src\3rdparty\zlib\deflate.c" />
+    <ClCompile Include="..\..\..\src\3rdparty\zlib\trees.c" />
+    <ClCompile Include="..\..\..\src\3rdparty\zlib\zutil.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\..\src\server\loader.l">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\..\dev\win32\flex.exe -i  -o"%(RootDir)%(Directory)%(Filename).c" "%(FullPath)"
+</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)%(Filename).c;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">..\..\..\..\dev\win32\flex.exe -i  -o%(RootDir)%(Directory)%(Filename).c %(FullPath)
+</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">%(RootDir)%(Directory)%(Filename).c;%(Outputs)</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\src\3rdparty\zlib\crc32.h" />
+    <ClInclude Include="..\..\..\src\3rdparty\zlib\deflate.h" />
+    <ClInclude Include="..\..\..\src\3rdparty\zlib\trees.h" />
+    <ClInclude Include="..\..\..\src\3rdparty\zlib\zconf.h" />
+    <ClInclude Include="..\..\..\src\3rdparty\zlib\zlib.h" />
+    <ClInclude Include="..\..\..\src\3rdparty\zlib\zutil.h" />
+    <ClInclude Include="..\..\..\src\include\aggro.h" />
+    <ClInclude Include="..\..\..\src\include\aiconfig.h" />
+    <ClInclude Include="..\..\..\src\include\arch.h" />
+    <ClInclude Include="..\..\..\src\include\artifact.h" />
+    <ClInclude Include="..\..\..\src\include\attack.h" />
+    <ClInclude Include="..\..\..\src\include\behaviourdecl.h" />
+    <ClInclude Include="..\..\..\src\include\book.h" />
+    <ClInclude Include="..\..\..\src\include\calendar.h" />
+    <ClInclude Include="..\..\..\src\include\channel.h" />
+    <ClInclude Include="..\..\..\src\include\commands.h" />
+    <ClInclude Include="..\..\..\src\include\config.h" />
+    <ClInclude Include="..\..\..\src\include\define.h" />
+    <ClInclude Include="..\..\..\src\include\exp.h" />
+    <ClInclude Include="..\..\..\src\include\face.h" />
+    <ClInclude Include="..\..\..\src\include\global.h" />
+    <ClInclude Include="..\..\..\src\include\gmaster.h" />
+    <ClInclude Include="..\..\..\src\include\god.h" />
+    <ClInclude Include="..\..\..\src\include\hashfunc.h" />
+    <ClInclude Include="..\..\..\src\include\hashtable.h" />
+    <ClInclude Include="..\..\..\src\include\ipcompare.h" />
+    <ClInclude Include="..\..\..\src\include\libproto.h" />
+    <ClInclude Include="..\..\..\src\include\links.h" />
+    <ClInclude Include="..\..\..\src\include\living.h" />
+    <ClInclude Include="..\..\..\src\include\loader.h" />
+    <ClInclude Include="..\..\..\src\include\logger.h" />
+    <ClInclude Include="..\..\..\src\include\map.h" />
+    <ClInclude Include="..\..\..\src\include\material.h" />
+    <ClInclude Include="..\..\..\src\include\mempool.h" />
+    <ClInclude Include="..\..\..\src\include\metrics.h" />
+    <ClInclude Include="..\..\..\src\include\monster.h" />
+    <ClInclude Include="..\..\..\src\include\newclient.h" />
+    <ClInclude Include="..\..\..\src\include\newserver.h" />
+    <ClInclude Include="..\..\..\src\include\object.h" />
+    <ClInclude Include="..\..\..\src\include\pathfinder.h" />
+    <ClInclude Include="..\..\..\src\include\player.h" />
+    <ClInclude Include="..\..\..\src\include\plugin.h" />
+    <ClInclude Include="..\..\..\src\include\plugproto.h" />
+    <ClInclude Include="..\..\..\src\include\protocol.h" />
+    <ClInclude Include="..\..\..\src\include\quest.h" />
+    <ClInclude Include="..\..\..\src\include\race.h" />
+    <ClInclude Include="..\..\..\src\include\re-cmp.h" />
+    <ClInclude Include="..\..\..\src\include\recipe.h" />
+    <ClInclude Include="..\..\..\src\include\shstr_ng.h" />
+    <ClInclude Include="..\..\..\src\include\skills.h" />
+    <ClInclude Include="..\..\..\src\include\sockproto.h" />
+    <ClInclude Include="..\..\..\src\include\sounds.h" />
+    <ClInclude Include="..\..\..\src\include\spells.h" />
+    <ClInclude Include="..\..\..\src\include\sproto.h" />
+    <ClInclude Include="..\..\..\src\include\stats.h" />
+    <ClInclude Include="..\..\..\src\include\testproto.h" />
+    <ClInclude Include="..\..\..\src\include\timeutils.h" />
+    <ClInclude Include="..\..\..\src\include\treasure.h" />
+    <ClInclude Include="..\..\..\src\include\win32.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="plugin_lua\plugin_lua.vcxproj">
+      <Project>{5e1879d7-accd-4847-991c-d04368e1300f}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
