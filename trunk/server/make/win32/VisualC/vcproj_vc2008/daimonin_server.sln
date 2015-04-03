@@ -1,12 +1,19 @@
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C++ Express 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "daimonin_server", "daimonin_server.vcxproj", "{6A3BD0B7-270E-4B12-B4ED-13F63FE5E136}"
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual C++ Express 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "daimonin_server", "daimonin_server.vcproj", "{6A3BD0B7-270E-4B12-B4ED-13F63FE5E136}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5E1879D7-ACCD-4847-991C-D04368E1300F} = {5E1879D7-ACCD-4847-991C-D04368E1300F}
+	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "plugin_lua", "plugin_lua\plugin_lua.vcxproj", "{5E1879D7-ACCD-4847-991C-D04368E1300F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "plugin_lua", "plugin_lua\plugin_lua.vcproj", "{5E1879D7-ACCD-4847-991C-D04368E1300F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{20D4E564-6917-426D-8AB8-70F5CC019891} = {20D4E564-6917-426D-8AB8-70F5CC019891}
+		{A179CC7C-0092-415E-8E60-575F3ED1CF3B} = {A179CC7C-0092-415E-8E60-575F3ED1CF3B}
+	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lualib", "lua\Lualib.vcxproj", "{20D4E564-6917-426D-8AB8-70F5CC019891}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lualib", "lua\Lualib.vcproj", "{20D4E564-6917-426D-8AB8-70F5CC019891}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lualiblib", "lua\Lualiblib.vcxproj", "{A179CC7C-0092-415E-8E60-575F3ED1CF3B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lualiblib", "lua\Lualiblib.vcproj", "{A179CC7C-0092-415E-8E60-575F3ED1CF3B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
