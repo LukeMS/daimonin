@@ -954,7 +954,7 @@ void copy_object(object_t *from, object_t *to)
     if (to->speed < 0 &&
         to->speed_left == to->arch->clone.speed_left)
     {
-        to->speed_left += (RANDOM() % 90) / 100.0;
+        to->speed_left += (float) ((RANDOM() % 90) / 100.0);
     }
 
     CLEAR_FLAG(to, FLAG_IN_ACTIVELIST); // perhaps our source is on active list - ignore!
@@ -2327,7 +2327,6 @@ object_t *insert_ob_in_map(object_t *const op, map_t *m, object_t *const origina
     sint16          x,
                     y;
     msp_t       *msp;
-    int             lt, layer, layer_inv;
     map_t      *old_map = op->map;
 
     /* some tests to check all is ok... some cpu ticks

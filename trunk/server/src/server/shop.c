@@ -265,8 +265,8 @@ sint64 query_money(object_t *where, moneyblock_t *money)
 
                 if (cointype)
                 {
-                    money->mode == MONEY_MODE_AMOUNT;
-                    *cointype += (this->nrof * this->value);
+                    money->mode = MONEY_MODE_AMOUNT;
+                    *cointype += (uint32)(this->nrof * this->value);
                 }
             }
         }
@@ -490,22 +490,22 @@ int get_money_from_string(char *string, struct moneyblock_t *money)
                 if (!strncasecmp("mithril", endp, len))
                 {
                     money->mode = MONEY_MODE_AMOUNT;
-                    money->mithril += value;
+                    money->mithril += (uint32) value; // the conversion *can* fail but the uint32 removes the casting warning
                 }
                 else if (!strncasecmp("gold", endp, len))
                 {
                     money->mode = MONEY_MODE_AMOUNT;
-                    money->gold += value;
+                    money->gold += (uint32) value;
                 }
                 else if (!strncasecmp("silver", endp, len))
                 {
                     money->mode = MONEY_MODE_AMOUNT;
-                    money->silver += value;
+                    money->silver += (uint32) value;
                 }
                 else if (!strncasecmp("copper", endp, len))
                 {
                     money->mode = MONEY_MODE_AMOUNT;
-                    money->copper += value;
+                    money->copper += (uint32) value;
                 }
             }
         }
@@ -541,22 +541,22 @@ int enumerate_coins(sint64 value, struct moneyblock_t *money)
     memset(money, 0, sizeof(struct moneyblock_t));
     money->mode = MONEY_MODE_NOTHING;
 
-    if ((money->mithril = value / 10000000))
+    if ((money->mithril = (uint32)(value / 10000000)))
     {
         money->mode = MONEY_MODE_AMOUNT;
         value -= money->mithril * 10000000;
     }
-    if ((money->gold = value / 10000))
+    if ((money->gold = (uint32)(value / 10000)))
     {
         money->mode = MONEY_MODE_AMOUNT;
         value -= money->gold * 10000;
     }
-    if ((money->silver = value / 100))
+    if ((money->silver = (uint32) (value / 100)))
     {
         money->mode = MONEY_MODE_AMOUNT;
         value -= money->silver * 100;
     }
-    if ((money->copper = value))
+    if ((money->copper = (uint32) value))
         money->mode = MONEY_MODE_AMOUNT;
 
     return money->mode;

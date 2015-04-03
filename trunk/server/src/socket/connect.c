@@ -44,10 +44,11 @@
  */
 void InitConnection(NewSocket *ns, char *ip)
 {
+#ifdef WIN32
+    u_long temp = 1;
+#endif
     LOG(llevSystem, "Initializing socket... ");
 #ifdef WIN32 /* ***WIN32 SOCKET: init win32 non blocking socket */
-    u_long temp = 1;
-
     if (ioctlsocket(ns->fd, FIONBIO, &temp) == -1)
     {
         LOG(llevError, "FAILED!\n");

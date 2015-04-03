@@ -172,7 +172,7 @@ sint8 move_ob(object_t *who, sint8 dir, object_t *originator)
 int teleport(object_t *teleporter, object_t *user)
 {
     object_t *altern[TINY_BUF];
-    int     i, j, k, nrofalt = 0;
+    int     i, j, nrofalt = 0;
     object_t *other_teleporter;
     msp_t  *msp;
     object_t *this;

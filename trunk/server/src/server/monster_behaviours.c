@@ -48,7 +48,6 @@ int mob_can_see_obj(object_t *op, object_t *obj, struct mob_known_obj *known_obj
 {
     int     aggro_range,
             stealth_range;
-    player_t *pl;
 
     /* Cache values */
     static tag_t cached_op_tag, cached_obj_tag;
