@@ -9,14 +9,11 @@ height 24
 difficulty 1
 outdoor 1
 darkness -1
-tile_path_1 marsh/marsh_0305
 tile_path_2 castle_0106
 tile_path_3 castle_0005
-tile_path_4 marsh/marsh_0204
 tile_path_5 castle_0107
 tile_path_6 castle_0105
 tile_path_7 castle_0a05
-tile_path_8 marsh/marsh_0205
 end
 arch grass_thick2
 end

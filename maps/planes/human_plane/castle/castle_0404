@@ -1538,7 +1538,6 @@ x 10
 y 8
 end
 arch tele_stone
-slaying castleb_0203
 hp 3
 sp 17
 x 10
@@ -1577,7 +1576,6 @@ x 10
 y 12
 end
 arch hole
-slaying /nonpub/base/grey_cave/castleb_0404
 hp 10
 sp 11
 walk_on 1
