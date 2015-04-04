@@ -368,18 +368,6 @@ x 2
 y 10
 end
 arch stairs_stone_down
-name Traps Test
-msg
-You have decided to go into the thief test? Well, you have more on your hands now then you used to, thats for sure!
-In this room, the object is to throw one of those rocks onto that button down south (num pad 3). It is not as easy as you may think. Also, make sure that when the rock finally falls on the button, that you are on this square.
-To get out, just apply a basin in the beginning of a room if not instructed otherwise.
-This map will automatically reset itself every 15 minutes, regardless of who or what is in there. If an item is on the ground, it is gone at reset. Do not drop items in this test--ever.
-RIDDLE:
-When someone tells you to go into the sparkly light, do you do it? It will change the course of your life!
-*******IMPORTANT*******
-DO NOT EVER DROP ITEMS IN THIS MAP!! YOU WILL RUN THE HIGH RISK OF LOSING THEM --FOREVER--.
-endmsg
-slaying /nonpub/uni/castle/tests/traps/traps_test_0000
 hp 12
 sp 10
 x 2

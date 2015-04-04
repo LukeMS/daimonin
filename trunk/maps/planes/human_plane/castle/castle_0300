@@ -2745,7 +2745,6 @@ x 18
 y 13
 end
 arch hole
-slaying /nonpub/base/grey_cave/castleb_0300
 hp 20
 sp 13
 walk_on 1

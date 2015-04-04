@@ -256,7 +256,6 @@ x 2
 y 5
 end
 arch hole
-slaying /nonpub/base/grey_cave/castleb_0405
 hp 2
 sp 6
 walk_on 1

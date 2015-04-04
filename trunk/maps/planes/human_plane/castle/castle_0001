@@ -17,7 +17,6 @@ tile_path_3 castle_0000
 tile_path_4 castle_0a01
 tile_path_5 castle_0102
 tile_path_6 castle_0100
-tile_path_7 ../mountain_0303
 tile_path_8 castle_0a02
 end
 arch grassd_2

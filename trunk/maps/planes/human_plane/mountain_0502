@@ -11,10 +11,7 @@ outdoor 1
 darkness -1
 tile_path_1 castle/castle_0100
 tile_path_2 castle/castle_020a
-tile_path_3 forest_0702
-tile_path_4 mountain_0402
 tile_path_5 castle/castle_0200
-tile_path_7 forest_0602
 tile_path_8 castle/castle_0000
 end
 arch grassd_2

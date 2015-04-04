@@ -15,8 +15,6 @@ tile_path_1 castle_0200
 tile_path_2 castle_030a
 tile_path_4 ../mountain_0502
 tile_path_5 castle_0300
-tile_path_6 castle_030b
-tile_path_7 ../forest_0702
 tile_path_8 castle_0100
 background_music ColeForeverPiano.ogg
 end

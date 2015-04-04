@@ -1059,7 +1059,6 @@ y 18
 end
 arch stairs_stone_down
 direction 5
-slaying library_quest/library_secret
 hp 11
 sp 11
 x 8

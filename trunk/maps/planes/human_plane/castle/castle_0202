@@ -543,7 +543,6 @@ x 4
 y 15
 end
 arch stairs_stone_down
-slaying granery_quest/granery_0003
 hp 1
 sp 22
 direction 1
