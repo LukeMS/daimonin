@@ -1357,6 +1357,61 @@ value 330000
 type 116
 end
 #
+Allowed all
+chance 5
+difficulty 70
+artifact fire_sphere
+def_arch jewel_generic
+editor 3:items/jewel/spheres
+Object
+face fire_sphere.101
+type 116
+end
+#
+Allowed all
+chance 5
+difficulty 70
+artifact ice_sphere
+def_arch jewel_generic
+editor 3:items/jewel/spheres
+Object
+face ice_sphere.101
+type 116
+end
+#
+Allowed all
+chance 5
+difficulty 70
+artifact lightning_sphere
+def_arch jewel_generic
+editor 3:items/jewel/spheres
+Object
+face lightning_sphere.101
+type 116
+end
+#
+Allowed all
+chance 5
+difficulty 70
+artifact water_sphere
+def_arch jewel_generic
+editor 3:items/jewel/spheres
+Object
+face water_sphere.101
+type 116
+end
+#
+Allowed all
+chance 5
+difficulty 70
+artifact wind_sphere
+def_arch jewel_generic
+editor 3:items/jewel/spheres
+Object
+face wind_sphere.101
+type 116
+end
+#
 # Containers
 #
 # The editor 3: is a trick, because we had given out some of these containers
