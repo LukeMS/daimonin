@@ -1365,6 +1365,7 @@ artifact fire_sphere
 def_arch sphere_generic
 editor 3:items/jewel/spheres
 Object
+name Fire sphere
 type 116
 face fire_sphere.101
 animation fire_sphere
@@ -1388,6 +1389,7 @@ artifact ice_sphere
 def_arch sphere_generic
 editor 3:items/jewel/spheres
 Object
+name Ice sphere
 type 116
 face ice_sphere.101
 animation ice_sphere
@@ -1411,6 +1413,7 @@ artifact lightning_sphere
 def_arch sphere_generic
 editor 3:items/jewel/spheres
 Object
+name Lightning sphere
 type 116
 face lightning_sphere.101
 animation lightning_sphere
@@ -1434,6 +1437,7 @@ artifact water_sphere
 def_arch sphere_generic
 editor 3:items/jewel/spheres
 Object
+name Water sphere
 type 116
 face water_sphere.101
 animation water_sphere
@@ -1457,6 +1461,7 @@ artifact wind_sphere
 def_arch sphere_generic
 editor 3:items/jewel/spheres
 Object
+name Wind sphere
 type 116
 face wind_sphere.101
 animation wind_sphere
