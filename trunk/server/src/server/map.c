@@ -459,29 +459,35 @@ static void AllocateMap(map_t *m)
 
     /* On map load we set some msp->floor_flags for every msp depending on
      * map-wide settings. These may subsequently be toggled when floor objects
-     * are loaded or during play by scripts. */
+     * are loaded or during play by scripts. Be sure to turn off the map flag
+     * else reloading a swapped map will reverse all the msp flags again. */
     if ((m->flags & MAP_FLAG_OUTDOOR))
     {
+        m->flags &= ~MAP_FLAG_OUTDOOR;
         flags |= MSP_FLAG_DAYLIGHT;
     }
 
     if ((m->flags & MAP_FLAG_PVP))
     {
+        m->flags &= ~MAP_FLAG_PVP;
         flags |= MSP_FLAG_PVP;
     }
 
     if ((m->flags & MAP_FLAG_NO_SPELLS))
     {
+        m->flags &= ~MAP_FLAG_NO_SPELLS;
         flags |= MSP_FLAG_NO_SPELLS;
     }
 
     if ((m->flags & MAP_FLAG_NO_PRAYERS))
     {
+        m->flags &= ~MAP_FLAG_NO_PRAYERS;
         flags |= MSP_FLAG_NO_PRAYERS;
     }
 
     if ((m->flags & MAP_FLAG_NO_HARM))
     {
+        m->flags &= ~MAP_FLAG_NO_HARM;
         flags |= MSP_FLAG_NO_HARM;
     }
 
