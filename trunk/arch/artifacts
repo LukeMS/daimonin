@@ -3096,23 +3096,8 @@ value 4653
 end
 #
 #
-# LEGS
+LEGS
 #
-#
-Allowed !pants
-chance 80
-artifact legs_mass
-def_arch legs_leather
-editor 2:items/armour/legs
-Object
-title of mass
-type 143
-is_magical 1
-value 5
-cursed_perm 1
-cursed 1
-weight 25000
-end
 #
 Allowed legs_chain
 chance 40
@@ -3123,7 +3108,12 @@ def_arch legs_chain
 editor 2:items/armour/legs
 Object
 title of minor fire protection
+face legs_chain_fire.101
 item_level_art 2
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_chain_fire
 resist_fire 5
 is_magical 1
 value 3500
@@ -3138,7 +3128,12 @@ def_arch legs_chain
 editor 2:items/armour/legs
 Object
 title of minor cold protection
+face legs_chain_ice.101
 item_level_art 2
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_chain_ice
 resist_cold 5
 is_magical 1
 value 3500
@@ -3153,7 +3148,12 @@ def_arch legs_chain
 editor 2:items/armour/legs
 Object
 title of minor electricity protection
+face legs_chain_elec.101
 item_level_art 2
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_chain_elec
 resist_electricity 5
 is_magical 1
 value 3500
@@ -3168,7 +3168,12 @@ def_arch legs_chain
 editor 2:items/armour/legs
 Object
 title of minor poison protection
+face legs_chain_poison.101
 item_level_art 2
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_chain_poison
 resist_poison 5
 is_magical 1
 value 3500
@@ -3183,7 +3188,12 @@ def_arch legs_chain
 editor 2:items/armour/legs
 Object
 title of minor acid protection
+face legs_chain_acid.101
 item_level_art 2
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_chain_acid
 resist_acid 5
 is_magical 1
 value 3500
@@ -3198,7 +3208,12 @@ def_arch legs_chain
 editor 2:items/armour/legs
 Object
 title of lesser fire protection
+face legs_chain_fire.101
 item_level_art 7
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_chain_fire
 resist_fire 10
 is_magical 1
 value 3750
@@ -3213,7 +3228,12 @@ def_arch legs_chain
 editor 2:items/armour/legs
 Object
 title of lesser cold protection
+face legs_chain_ice.101
 item_level_art 7
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_chain_ice
 resist_cold 10
 is_magical 1
 value 3850
@@ -3228,7 +3248,12 @@ def_arch legs_chain
 editor 2:items/armour/legs
 Object
 title of lesser electricity protection
+face legs_chain_elec.101
 item_level_art 7
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_chain_elec
 resist_electricity 10
 is_magical 1
 value 3850
@@ -3243,7 +3268,12 @@ def_arch legs_chain
 editor 2:items/armour/legs
 Object
 title of lesser poison protection
+face legs_chain_poison.101
 item_level_art 7
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_chain_poison
 resist_poison 10
 is_magical 1
 value 3850
@@ -3258,7 +3288,12 @@ def_arch legs_chain
 editor 2:items/armour/legs
 Object
 title of lesser acid protection
+face legs_chain_acid.101
 item_level_art 7
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_chain_acid
 resist_acid 10
 is_magical 1
 value 3850
@@ -3273,7 +3308,12 @@ def_arch legs_chain
 editor 2:items/armour/legs
 Object
 title of small fire protection
+face legs_chain_fire.101
 item_level_art 15
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_chain_fire
 resist_fire 15
 is_magical 1
 value 4230
@@ -3288,7 +3328,12 @@ def_arch legs_chain
 editor 2:items/armour/legs
 Object
 title of small cold protection
+face legs_chain_ice.101
 item_level_art 15
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_chain_ice
 resist_cold 15
 is_magical 1
 value 4230
@@ -3303,7 +3348,12 @@ def_arch legs_chain
 editor 2:items/armour/legs
 Object
 title of small electricity protection
+face legs_chain_elec.101
 item_level_art 15
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_chain_elec
 resist_electricity 15
 is_magical 1
 value 4230
@@ -3318,7 +3368,12 @@ def_arch legs_chain
 editor 2:items/armour/legs
 Object
 title of small poison protection
+face legs_chain_poison.101
 item_level_art 15
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_chain_poison
 resist_poison 15
 is_magical 1
 value 4230
@@ -3333,7 +3388,12 @@ def_arch legs_chain
 editor 2:items/armour/legs
 Object
 title of small acid protection
+face legs_chain_acid.101
 item_level_art 15
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_chain_acid
 resist_acid 15
 is_magical 1
 value 4230
@@ -3348,7 +3408,12 @@ def_arch legs_chain
 editor 2:items/armour/legs
 Object
 title of medium fire protection
+face legs_chain_fire.101
 item_level_art 25
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_chain_fire
 resist_fire 20
 is_magical 1
 value 4653
@@ -3363,7 +3428,12 @@ def_arch legs_chain
 editor 2:items/armour/legs
 Object
 title of medium cold protection
+face legs_chain_ice.101
 item_level_art 25
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_chain_ice
 resist_cold 20
 is_magical 1
 value 4653
@@ -3378,7 +3448,12 @@ def_arch legs_chain
 editor 2:items/armour/legs
 Object
 title of medium electricity protection
+face legs_chain_elec.101
 item_level_art 25
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_chain_elec
 resist_electricity 20
 is_magical 1
 value 4653
@@ -3393,7 +3468,12 @@ def_arch legs_chain
 editor 2:items/armour/legs
 Object
 title of medium poison protection
+face legs_chain_poison.101
 item_level_art 25
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_chain_poison
 resist_poison 20
 is_magical 1
 value 4653
@@ -3408,7 +3488,12 @@ def_arch legs_chain
 editor 2:items/armour/legs
 Object
 title of medium acid protection
+face legs_chain_acid.101
 item_level_art 25
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_chain_acid
 resist_acid 20
 is_magical 1
 value 4653
@@ -3423,7 +3508,12 @@ def_arch legs_plate
 editor 2:items/armour/legs
 Object
 title of minor fire protection
+face legs_plate_fire.101
 item_level_art 2
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_plate_fire
 resist_fire 5
 is_magical 1
 value 3500
@@ -3438,7 +3528,12 @@ def_arch legs_plate
 editor 2:items/armour/legs
 Object
 title of minor cold protection
+face legs_plate_ice.101
 item_level_art 2
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_plate_ice
 resist_cold 5
 is_magical 1
 value 3500
@@ -3453,7 +3548,12 @@ def_arch legs_plate
 editor 2:items/armour/legs
 Object
 title of minor electricity protection
+face legs_plate_elec.101
 item_level_art 2
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_plate_elec
 resist_electricity 5
 is_magical 1
 value 3500
@@ -3468,7 +3568,12 @@ def_arch legs_plate
 editor 2:items/armour/legs
 Object
 title of minor poison protection
+face legs_plate_poison.101
 item_level_art 2
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_plate_poison
 resist_poison 5
 is_magical 1
 value 3500
@@ -3483,7 +3588,12 @@ def_arch legs_plate
 editor 2:items/armour/legs
 Object
 title of minor acid protection
+face legs_plate_acid.101
 item_level_art 2
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_plate_acid
 resist_acid 5
 is_magical 1
 value 3500
@@ -3498,7 +3608,12 @@ def_arch legs_plate
 editor 2:items/armour/legs
 Object
 title of lesser fire protection
+face legs_plate_fire.101
 item_level_art 7
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_plate_fire
 resist_fire 10
 is_magical 1
 value 3750
@@ -3513,7 +3628,12 @@ def_arch legs_plate
 editor 2:items/armour/legs
 Object
 title of lesser cold protection
+face legs_plate_ice.101
 item_level_art 7
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_plate_ice
 resist_cold 10
 is_magical 1
 value 3850
@@ -3528,7 +3648,12 @@ def_arch legs_plate
 editor 2:items/armour/legs
 Object
 title of lesser electricity protection
+face legs_plate_elec.101
 item_level_art 7
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_plate_elec
 resist_electricity 10
 is_magical 1
 value 3850
@@ -3543,7 +3668,12 @@ def_arch legs_plate
 editor 2:items/armour/legs
 Object
 title of lesser poison protection
+face legs_plate_poison.101
 item_level_art 7
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_plate_poison
 resist_poison 10
 is_magical 1
 value 3850
@@ -3558,7 +3688,12 @@ def_arch legs_plate
 editor 2:items/armour/legs
 Object
 title of lesser acid protection
+face legs_plate_acid.101
 item_level_art 7
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_plate_acid
 resist_acid 10
 is_magical 1
 value 3850
@@ -3573,7 +3708,12 @@ def_arch legs_plate
 editor 2:items/armour/legs
 Object
 title of small fire protection
+face legs_plate_fire.101
 item_level_art 15
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_plate_fire
 resist_fire 15
 is_magical 1
 value 4230
@@ -3588,7 +3728,12 @@ def_arch legs_plate
 editor 2:items/armour/legs
 Object
 title of small cold protection
+face legs_plate_ice.101
 item_level_art 15
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_plate_ice
 resist_cold 15
 is_magical 1
 value 4230
@@ -3603,7 +3748,12 @@ def_arch legs_plate
 editor 2:items/armour/legs
 Object
 title of small electricity protection
+face legs_plate_elec.101
 item_level_art 15
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_plate_elec
 resist_electricity 15
 is_magical 1
 value 4230
@@ -3618,7 +3768,12 @@ def_arch legs_plate
 editor 2:items/armour/legs
 Object
 title of small poison protection
+face legs_plate_poison.101
 item_level_art 15
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_plate_poison
 resist_poison 15
 is_magical 1
 value 4230
@@ -3633,7 +3788,12 @@ def_arch legs_plate
 editor 2:items/armour/legs
 Object
 title of small acid protection
+face legs_plate_acid.101
 item_level_art 15
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_plate_acid
 resist_acid 15
 is_magical 1
 value 4230
@@ -3648,7 +3808,12 @@ def_arch legs_plate
 editor 2:items/armour/legs
 Object
 title of medium fire protection
+face legs_plate_fire.101
 item_level_art 25
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_plate_fire
 resist_fire 20
 is_magical 1
 value 4653
@@ -3663,7 +3828,12 @@ def_arch legs_plate
 editor 2:items/armour/legs
 Object
 title of medium cold protection
+face legs_plate_ice.101
 item_level_art 25
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_plate_ice
 resist_cold 20
 is_magical 1
 value 4653
@@ -3678,7 +3848,12 @@ def_arch legs_plate
 editor 2:items/armour/legs
 Object
 title of medium electricity protection
+face legs_plate_elec.101
 item_level_art 25
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_plate_elec
 resist_electricity 20
 is_magical 1
 value 4653
@@ -3693,7 +3868,12 @@ def_arch legs_plate
 editor 2:items/armour/legs
 Object
 title of medium poison protection
+face legs_plate_poison.101
 item_level_art 25
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_plate_poison
 resist_poison 20
 is_magical 1
 value 4653
@@ -3708,7 +3888,12 @@ def_arch legs_plate
 editor 2:items/armour/legs
 Object
 title of medium acid protection
+face legs_plate_acid.101
 item_level_art 25
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_plate_acid
 resist_acid 20
 is_magical 1
 value 4653
@@ -3723,7 +3908,12 @@ def_arch pants
 editor 2:items/armour/legs
 Object
 title of minor fire protection
+face pants_fire.101
 item_level_art 2
+is_animated 1
+anim_speed 2
+speed 1
+animation pants_fire
 resist_fire 5
 is_magical 1
 value 3500
@@ -3738,7 +3928,12 @@ def_arch pants
 editor 2:items/armour/legs
 Object
 title of minor cold protection
+face pants_ice.101
 item_level_art 2
+is_animated 1
+anim_speed 2
+speed 1
+animation pants_ice
 resist_cold 5
 is_magical 1
 value 3500
@@ -3753,7 +3948,12 @@ def_arch pants
 editor 2:items/armour/legs
 Object
 title of minor electricity protection
+face pants_elec.101
 item_level_art 2
+is_animated 1
+anim_speed 2
+speed 1
+animation pants_elec
 resist_electricity 5
 is_magical 1
 value 3500
@@ -3768,7 +3968,12 @@ def_arch pants
 editor 2:items/armour/legs
 Object
 title of minor poison protection
+face pants_poison.101
 item_level_art 2
+is_animated 1
+anim_speed 2
+speed 1
+animation pants_poison
 resist_poison 5
 is_magical 1
 value 3500
@@ -3783,7 +3988,12 @@ def_arch pants
 editor 2:items/armour/legs
 Object
 title of minor acid protection
+face pants_acid.101
 item_level_art 2
+is_animated 1
+anim_speed 2
+speed 1
+animation pants_acid
 resist_acid 5
 is_magical 1
 value 3500
@@ -3798,7 +4008,12 @@ def_arch pants
 editor 2:items/armour/legs
 Object
 title of lesser fire protection
+face pants_fire.101
 item_level_art 7
+is_animated 1
+anim_speed 2
+speed 1
+animation pants_fire
 resist_fire 10
 is_magical 1
 value 3750
@@ -3813,7 +4028,12 @@ def_arch pants
 editor 2:items/armour/legs
 Object
 title of lesser cold protection
+face pants_ice.101
 item_level_art 7
+is_animated 1
+anim_speed 2
+speed 1
+animation pants_ice
 resist_cold 10
 is_magical 1
 value 3850
@@ -3828,7 +4048,12 @@ def_arch pants
 editor 2:items/armour/legs
 Object
 title of lesser electricity protection
+face pants_elec.101
 item_level_art 7
+is_animated 1
+anim_speed 2
+speed 1
+animation pants_elec
 resist_electricity 10
 is_magical 1
 value 3850
@@ -3843,7 +4068,12 @@ def_arch pants
 editor 2:items/armour/legs
 Object
 title of lesser poison protection
+face pants_poison.101
 item_level_art 7
+is_animated 1
+anim_speed 2
+speed 1
+animation pants_poison
 resist_poison 10
 is_magical 1
 value 3850
@@ -3858,7 +4088,12 @@ def_arch pants
 editor 2:items/armour/legs
 Object
 title of lesser acid protection
+face pants_acid.101
 item_level_art 7
+is_animated 1
+anim_speed 2
+speed 1
+animation pants_acid
 resist_acid 10
 is_magical 1
 value 3850
@@ -3873,7 +4108,12 @@ def_arch pants
 editor 2:items/armour/legs
 Object
 title of small fire protection
+face pants_fire.101
 item_level_art 15
+is_animated 1
+anim_speed 2
+speed 1
+animation pants_fire
 resist_fire 15
 is_magical 1
 value 4230
@@ -3888,7 +4128,12 @@ def_arch pants
 editor 2:items/armour/legs
 Object
 title of small cold protection
+face pants_ice.101
 item_level_art 15
+is_animated 1
+anim_speed 2
+speed 1
+animation pants_ice
 resist_cold 15
 is_magical 1
 value 4230
@@ -3903,7 +4148,12 @@ def_arch pants
 editor 2:items/armour/legs
 Object
 title of small electricity protection
+face pants_elec.101
 item_level_art 15
+is_animated 1
+anim_speed 2
+speed 1
+animation pants_elec
 resist_electricity 15
 is_magical 1
 value 4230
@@ -3918,7 +4168,12 @@ def_arch pants
 editor 2:items/armour/legs
 Object
 title of small poison protection
+face pants_poison.101
 item_level_art 15
+is_animated 1
+anim_speed 2
+speed 1
+animation pants_poison
 resist_poison 15
 is_magical 1
 value 4230
@@ -3933,7 +4188,12 @@ def_arch pants
 editor 2:items/armour/legs
 Object
 title of small acid protection
+face pants_acid.101
 item_level_art 15
+is_animated 1
+anim_speed 2
+speed 1
+animation pants_acid
 resist_acid 15
 is_magical 1
 value 4230
@@ -3948,7 +4208,12 @@ def_arch pants
 editor 2:items/armour/legs
 Object
 title of medium fire protection
+face pants_fire.101
 item_level_art 25
+is_animated 1
+anim_speed 2
+speed 1
+animation pants_fire
 resist_fire 20
 is_magical 1
 value 4653
@@ -3963,7 +4228,12 @@ def_arch pants
 editor 2:items/armour/legs
 Object
 title of medium cold protection
+face pants_ice.101
 item_level_art 25
+is_animated 1
+anim_speed 2
+speed 1
+animation pants_ice
 resist_cold 20
 is_magical 1
 value 4653
@@ -3978,7 +4248,12 @@ def_arch pants
 editor 2:items/armour/legs
 Object
 title of medium electricity protection
+face pants_elec.101
 item_level_art 25
+is_animated 1
+anim_speed 2
+speed 1
+animation pants_elec
 resist_electricity 20
 is_magical 1
 value 4653
@@ -3993,7 +4268,12 @@ def_arch pants
 editor 2:items/armour/legs
 Object
 title of medium poison protection
+face pants_poison.101
 item_level_art 25
+is_animated 1
+anim_speed 2
+speed 1
+animation pants_poison
 resist_poison 20
 is_magical 1
 value 4653
@@ -4008,7 +4288,12 @@ def_arch pants
 editor 2:items/armour/legs
 Object
 title of medium acid protection
+face pants_acid.101
 item_level_art 25
+is_animated 1
+anim_speed 2
+speed 1
+animation pants_acid
 resist_acid 20
 is_magical 1
 value 4653
@@ -4023,7 +4308,12 @@ def_arch legs_leather
 editor 2:items/armour/legs
 Object
 title of minor fire protection
+face legs_leather_fire.101
 item_level_art 2
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_leather_fire
 resist_fire 5
 is_magical 1
 value 3500
@@ -4038,7 +4328,12 @@ def_arch legs_leather
 editor 2:items/armour/legs
 Object
 title of minor cold protection
+face legs_leather_ice.101
 item_level_art 2
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_leather_ice
 resist_cold 5
 is_magical 1
 value 3500
@@ -4053,7 +4348,12 @@ def_arch legs_leather
 editor 2:items/armour/legs
 Object
 title of minor electricity protection
+face legs_leather_elec.101
 item_level_art 2
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_leather_elec
 resist_electricity 5
 is_magical 1
 value 3500
@@ -4068,7 +4368,12 @@ def_arch legs_leather
 editor 2:items/armour/legs
 Object
 title of minor poison protection
+face legs_leather_poison.101
 item_level_art 2
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_leather_poison
 resist_poison 5
 is_magical 1
 value 3500
@@ -4083,7 +4388,12 @@ def_arch legs_leather
 editor 2:items/armour/legs
 Object
 title of minor acid protection
+face legs_leather_acid.101
 item_level_art 2
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_leather_acid
 resist_acid 5
 is_magical 1
 value 3500
@@ -4098,7 +4408,12 @@ def_arch legs_leather
 editor 2:items/armour/legs
 Object
 title of lesser fire protection
+face legs_leather_fire.101
 item_level_art 7
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_leather_fire
 resist_fire 10
 is_magical 1
 value 3750
@@ -4113,7 +4428,12 @@ def_arch legs_leather
 editor 2:items/armour/legs
 Object
 title of lesser cold protection
+face legs_leather_ice.101
 item_level_art 7
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_leather_ice
 resist_cold 10
 is_magical 1
 value 3850
@@ -4128,7 +4448,12 @@ def_arch legs_leather
 editor 2:items/armour/legs
 Object
 title of lesser electricity protection
+face legs_leather_elec.101
 item_level_art 7
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_leather_elec
 resist_electricity 10
 is_magical 1
 value 3850
@@ -4143,7 +4468,12 @@ def_arch legs_leather
 editor 2:items/armour/legs
 Object
 title of lesser poison protection
+face legs_leather_poison.101
 item_level_art 7
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_leather_poison
 resist_poison 10
 is_magical 1
 value 3850
@@ -4158,7 +4488,12 @@ def_arch legs_leather
 editor 2:items/armour/legs
 Object
 title of lesser acid protection
+face legs_leather_acid.101
 item_level_art 7
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_leather_acid
 resist_acid 10
 is_magical 1
 value 3850
@@ -4173,7 +4508,12 @@ def_arch legs_leather
 editor 2:items/armour/legs
 Object
 title of small fire protection
+face legs_leather_fire.101
 item_level_art 15
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_leather_fire
 resist_fire 15
 is_magical 1
 value 4230
@@ -4188,7 +4528,12 @@ def_arch legs_leather
 editor 2:items/armour/legs
 Object
 title of small cold protection
+face legs_leather_ice.101
 item_level_art 15
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_leather_ice
 resist_cold 15
 is_magical 1
 value 4230
@@ -4203,7 +4548,12 @@ def_arch legs_leather
 editor 2:items/armour/legs
 Object
 title of small electricity protection
+face legs_leather_elec.101
 item_level_art 15
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_leather_elec
 resist_electricity 15
 is_magical 1
 value 4230
@@ -4218,7 +4568,12 @@ def_arch legs_leather
 editor 2:items/armour/legs
 Object
 title of small poison protection
+face legs_leather_poison.101
 item_level_art 15
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_leather_poison
 resist_poison 15
 is_magical 1
 value 4230
@@ -4233,7 +4588,12 @@ def_arch legs_leather
 editor 2:items/armour/legs
 Object
 title of small acid protection
+face legs_leather_acid.101
 item_level_art 15
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_leather_acid
 resist_acid 15
 is_magical 1
 value 4230
@@ -4248,7 +4608,12 @@ def_arch legs_leather
 editor 2:items/armour/legs
 Object
 title of medium fire protection
+face legs_leather_fire.101
 item_level_art 25
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_leather_fire
 resist_fire 20
 is_magical 1
 value 4653
@@ -4263,7 +4628,12 @@ def_arch legs_leather
 editor 2:items/armour/legs
 Object
 title of medium cold protection
+face legs_leather_ice.101
 item_level_art 25
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_leather_ice
 resist_cold 20
 is_magical 1
 value 4653
@@ -4278,7 +4648,12 @@ def_arch legs_leather
 editor 2:items/armour/legs
 Object
 title of medium electricity protection
+face legs_leather_elec.101
 item_level_art 25
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_leather_elec
 resist_electricity 20
 is_magical 1
 value 4653
@@ -4293,7 +4668,12 @@ def_arch legs_leather
 editor 2:items/armour/legs
 Object
 title of medium poison protection
+face legs_leather_poison.101
 item_level_art 25
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_leather_poison
 resist_poison 20
 is_magical 1
 value 4653
@@ -4308,7 +4688,12 @@ def_arch legs_leather
 editor 2:items/armour/legs
 Object
 title of medium acid protection
+face legs_leather_acid.101
 item_level_art 25
+is_animated 1
+anim_speed 2
+speed 1
+animation legs_leather_acid
 resist_acid 20
 is_magical 1
 value 4653
