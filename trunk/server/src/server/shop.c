@@ -43,6 +43,8 @@ sint64 query_cost(object_t *tmp, object_t *who, int flag)
         bon = (-1.0f + stats_penalty[who->stats.Cha]);
     else if(who->stats.Cha > 10)
         bon = ((float)(who->stats.Cha - 10) / 100.0f);
+	else if(who->stats.Cha > 40)
+		bon = ((float)(30) / 100.0f);
 
     if ((number = tmp->nrof) == 0)
         number = 1;
