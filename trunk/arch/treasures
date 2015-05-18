@@ -3307,11 +3307,13 @@ treasureone food_drink
   arch booze_generic
     magic 0
     chance 30
+	artifact_chance 90
     quality_range 7
   more
   arch drink_generic
     magic 0
     chance 20
+	artifact_chance 90
     quality_range 7
 end
 ##############################################################
