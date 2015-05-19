@@ -3273,6 +3273,7 @@ treasureone food_backery
   arch bread
     magic 0
     chance 50
+	artifact_chance 90
     quality_range 7
   more
   arch bread1
