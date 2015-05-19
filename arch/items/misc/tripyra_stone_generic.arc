@@ -5,7 +5,7 @@ layer 3
 face tripyra_stone_chaos.101
 type 79
 nrof 1
-material 64
+material 0
 can_stack 1
 material_real 0
 item_quality 100
