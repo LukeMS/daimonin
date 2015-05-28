@@ -7267,7 +7267,7 @@ def_arch bracers_ac
 editor 2:items/armour/bracers
 Object
 title of medium strength
-face bracers3.101
+face bracers_med_str.101
 item_level_art 25
 str 4
 type 104
