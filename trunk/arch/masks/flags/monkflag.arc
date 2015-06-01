@@ -1,6 +1,6 @@
 Object monkflag
 name monk guild flag
-face monkflag.u.151
+face monkflag.151
 animation monkflag
 is_turnable 1
 direction 5

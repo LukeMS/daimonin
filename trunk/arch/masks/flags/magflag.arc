@@ -1,6 +1,6 @@
 Object magflag
 name mage guild flag
-face magflag.u.151
+face magflag.151
 animation magflag
 is_turnable 1
 direction 5

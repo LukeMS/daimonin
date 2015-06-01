@@ -1,6 +1,6 @@
 Object sorcflag
 name sorcerer guild flag
-face sorcflag.u.151
+face sorcflag.151
 animation sorcflag
 is_turnable 1
 direction 5
