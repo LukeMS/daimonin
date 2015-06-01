@@ -1,6 +1,6 @@
 Object archeryflag
 name archery guild flag
-face archeryflag.u.151
+face archeryflag.151
 animation archeryflag
 is_turnable 1
 direction 5

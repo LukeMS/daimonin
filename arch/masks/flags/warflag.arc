@@ -1,6 +1,6 @@
 Object warflag
 name warrior guild flag
-face warflag.u.151
+face warflag.151
 animation warflag
 is_turnable 1
 direction 5

@@ -1,6 +1,6 @@
 Object priestflag
 name priest guild flag
-face priestflag.u.151
+face priestflag.151
 animation priestflag
 is_turnable 1
 direction 5

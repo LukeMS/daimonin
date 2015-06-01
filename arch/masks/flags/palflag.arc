@@ -1,6 +1,6 @@
 Object palflag
 name paladin guild flag
-face palflag.u.151
+face palflag.151
 animation palflag
 is_turnable 1
 direction 5
