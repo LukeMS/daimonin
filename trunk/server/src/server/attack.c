@@ -180,7 +180,6 @@ int attack_ob(object_t *target, object_t *hitter, object_t *hit_obj)
     attack_envmode_t env_attack;
     int     hitdam, roll;
     tag_t   op_tag, hitter_tag;
-    object_t *owner;
 
     /* GetAttackMode will pre-check and adjust *ANY* topic.
      * Including setting ->head objects and checking maps
@@ -203,12 +202,14 @@ int attack_ob(object_t *target, object_t *hitter, object_t *hit_obj)
     /* TODO: To prevent exploits (A lures the mob so B can follow behind
      * scoring multiple stealth hits) we should only allow a stealth hit when
      * the mob is not alert. */
-    if (is_aimed_missile(hit_obj) &&
-        target->type == MONSTER &&
-        (owner = get_owner(hit_obj)) &&
-        !mob_can_see_obj(target, owner, MOB_DATA(target)->known_mobs))
+    /* Done, but the 'new' AI system of ai knowledge and the cf-era ob->enemy
+     * are not especially well integrated yet so it may have some problems. */
+    if (target->type == MONSTER &&
+        !OBJECT_VALID(target->enemy, target->enemy_count) &&
+        is_aimed_missile(hit_obj) &&
+        !mob_can_see_obj(target, hitter, MOB_DATA(target)->known_mobs))
     {
-        ndi(NDI_ORANGE, 0, owner, "Stealth attack direct hit! (+50%% damage)");
+        ndi(NDI_ORANGE, 0, hitter, "Stealth attack direct hit! (+50%% damage)");
         hitdam = (int)((double)hitdam * 1.5);
 
         goto force_direct_hit;
