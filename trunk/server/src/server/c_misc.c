@@ -229,10 +229,6 @@ int command_who(object_t *op, char *params)
                   (player_active == 1) ? "is" : "are", player_active,
                   (player_active == 1) ? "" : "s", cp);
 
-#ifdef DAI_DEVELOPMENT_CODE
-    show_stream_info(&CONTR(op)->socket);
-#endif
-
     return 0;
 }
 
