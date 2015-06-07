@@ -18,9 +18,6 @@ export dai_builddir="${dai_home}/build"
 # ${builddir}/server/data/log.
 export dai_logsdir=""
 
-# On refresh time-stamped backups of persistent data files go here.
-export dai_bakdir="${dai_home}/bak"
-
 
 ########
 # File/process names
