@@ -13,21 +13,6 @@ then
 fi
 
 echo
-echo "#######################################################"
-echo "### Permanently backup some persistent server files ###"
-echo "#######################################################"
-if [ ! -d ${dai_bakdir} ]
-then
-    mkdir ${dai_bakdir}
-fi
-
-cp ${dai_builddir}/server/data/ban_file ${dai_bakdir}/ban_file.${fromtime}
-cp ${dai_builddir}/server/data/clockdata ${dai_bakdir}/clockdata.${fromtime}
-cp ${dai_builddir}/server/data/gmaster_file ${dai_bakdir}/gmaster_file.${fromtime}
-cp ${dai_builddir}/server/data/motd ${dai_bakdir}/motd.${fromtime}
-cp ${dai_builddir}/server/data/settings ${dai_bakdir}/settings.${fromtime}
-
-echo
 echo "#######################"
 echo "### Kill gameserver ###"
 echo "#######################"

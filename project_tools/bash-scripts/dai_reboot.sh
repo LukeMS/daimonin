@@ -171,14 +171,6 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
             fi
 
             echo
-            echo "### Backup some persistent server files."
-            cp ${dai_builddir}/server/data/ban_file ${dai_home}/ban_file
-            cp ${dai_builddir}/server/data/clockdata ${dai_home}/clockdata
-            cp ${dai_builddir}/server/data/gmaster_file ${dai_home}/gmaster_file
-            cp ${dai_builddir}/server/data/motd ${dai_home}/motd
-            cp ${dai_builddir}/server/data/settings ${dai_home}/settings
-
-            echo
             echo "### Remove previous build."
             {
                 rm -rf ${dai_builddir}/arch
@@ -339,14 +331,6 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
             then
                 ${dai_home}/${dai_recollect_sh} ${dai_builddir}/arch ${dai_builddir}/server/lib
             fi
-
-            echo
-            echo "### Restore the persistent files."
-            cp ${dai_home}/ban_file ${dai_builddir}/server/data/ban_file
-            cp ${dai_home}/clockdata ${dai_builddir}/server/data/clockdata
-            cp ${dai_home}/gmaster_file ${dai_builddir}/server/data/gmaster_file
-            cp ${dai_home}/motd ${dai_builddir}/server/data/motd
-            cp ${dai_home}/settings ${dai_builddir}/server/data/settings
         }
         echo
         echo "################################################################################"
