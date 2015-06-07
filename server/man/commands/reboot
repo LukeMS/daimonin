@@ -17,10 +17,3 @@
    ~No automatic restart!~
    <seconds> defaults to 0.
    Restricted to SAs only.
-
-~Additional for development servers only:~
-
-~Syntax~: /reboot restart <seconds> <stream> 
-~Syntax~: /reboot restart <stream>
-~Description~:
-   Recompiles the server using <stream>.

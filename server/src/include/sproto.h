@@ -405,7 +405,6 @@ int                         player_save(object_t *op);
 addme_login_msg             player_load(NewSocket *ns, const char *name);
 addme_login_msg             player_create(NewSocket *ns,player_t **pl_ret,char *name,int race,int gender,int skill_nr);
 void                        player_addme_failed(NewSocket *ns, int error_msg);
-void                        show_stream_info(NewSocket *ns);
 /* main.c */
 char                       *crypt_string(char *str);
 int                         get_new_instance_num(void);

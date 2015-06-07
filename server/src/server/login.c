@@ -869,10 +869,6 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
         }
     }
 
-#ifdef DAI_DEVELOPMENT_CODE
-    show_stream_info(&pl->socket);
-#endif
-
     /* Report any scheduled shutdown to the new player. */
     shutdown_agent(-1, SERVER_EXIT_NORMAL, pl, NULL);
 
@@ -974,66 +970,4 @@ void player_addme_failed(NewSocket *ns, int error_msg)
     sbptr = ACTIVE_SOCKBUF(ns);
     SockBuf_AddChar(sbptr, error_msg);
     SOCKBUF_REQUEST_FINISH(ns, SERVER_CMD_ADDME_FAIL, SOCKBUF_DYNAMIC);
-}
-
-/* Message ns with details of the stream this server is built from. */
-void show_stream_info(NewSocket *ns)
-{
-    char  buf[MEDIUM_BUF];
-    FILE *fp;
-
-    /* Sanity. */
-    if (!ns ||
-        !ns->pl ||
-        !ns->pl->ob)
-    {
-        return;
-    }
-
-    LOG(llevSystem, "read stream file...\n");
-    sprintf(buf, "%s/%s", settings.localdir, "stream");
-
-    if ((fp = fopen(buf, "r")))
-    {
-        char  *cp;
-        shstr_t *hash;
-
-        if (!fgets(buf, sizeof(buf), fp))
-        {
-            LOG(llevBug, "BUG: error in stream file\n");
-
-            return;
-        }
-
-        if ((cp = strchr(buf, '\n')))
-        {
-            *cp = '\0';
-        }
-
-        if ((hash = add_string(buf)) == shstr_cons.none)
-        {
-            ndi(NDI_UNIQUE, 0, ns->pl->ob, "Server compiled with trunk only.");
-        }
-        else
-        {
-            ndi(NDI_UNIQUE, 0, ns->pl->ob, "Server compiled with ~%s~ stream.",
-                          buf);
-
-            while (fgets(buf, sizeof(buf), fp))
-            {
-                if ((cp = strchr(buf, '\n')))
-                {
-                    *cp = '\0';
-                }
-
-                if (buf[0])
-                {
-                    ndi(NDI_UNIQUE, 0, ns->pl->ob, "%s", buf);
-                }
-            }
-        }
-
-        FREE_AND_CLEAR_HASH(hash);
-        fclose(fp);
-    }
 }

@@ -237,23 +237,11 @@ int command_reboot(object_t *op, char *params)
     /* Restart server. */
     else if (subcommand == subcommands.restart)
     {
-        char stream[TINY_BUF] = "";
-
         FREE_AND_CLEAR_HASH(subcommand);
-#ifdef DAI_DEVELOPMENT_CODE
-        time = 30;
-
-        if (cp)
-        {
-            if (!sscanf(cp, "%d %s", &time, stream))
-            {
-               sscanf(cp, "%s", stream);
-            }
-        }
-#else
-
-#ifdef DAI_DEVELOPMENT_CONTENT
-        time = 30;
+#if defined DAI_DEVELOPMENT_CODE
+        time = 15;
+#elif defined DAI_DEVELOPMENT_CONTENT
+        time = 60;
 #else
         time = 300;
 #endif
@@ -262,7 +250,6 @@ int command_reboot(object_t *op, char *params)
         {
             sscanf(cp, "%d", &time);
         }
-#endif
 
         /* Gmasters below SA have a minimum reboot time of 30s. */
         if (!(CONTR(op)->gmaster_mode & GMASTER_MODE_SA) &&
@@ -270,30 +257,6 @@ int command_reboot(object_t *op, char *params)
         {
             time = 30;
         }
-
-#ifdef DAI_DEVELOPMENT_CODE
-        if (stream[0] &&
-            !strpbrk(stream, "\"&*/ "))
-        {
-            char  buf[HUGE_BUF];
-            FILE *fp;
-
-            sprintf(buf, "%s/%s", settings.localdir, "stream");
-
-            if (!(fp = fopen(buf, "w")))
-            {
-                LOG(llevSystem, "Write '%s'... FAILED!\n", buf);
-                LOG(llevBug, "BUG:: %s/command_reboot(): Cannot open file for writing!\n",
-                    __FILE__);
-            }
-            else
-            {
-                LOG(llevSystem, "Write '%s'... OK!\n", buf);
-                fprintf(fp, "%s", stream);
-                fclose(fp);
-            }
-        }
-#endif
 
         shutdown_agent(time, SERVER_EXIT_RESTART, CONTR(op),
                        "Server will recompile and arches and maps will be updated.");
