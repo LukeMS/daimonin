@@ -26,7 +26,6 @@ cp ${dai_builddir}/server/data/clockdata ${dai_bakdir}/clockdata.${fromtime}
 cp ${dai_builddir}/server/data/gmaster_file ${dai_bakdir}/gmaster_file.${fromtime}
 cp ${dai_builddir}/server/data/motd ${dai_bakdir}/motd.${fromtime}
 cp ${dai_builddir}/server/data/settings ${dai_bakdir}/settings.${fromtime}
-cp ${dai_builddir}/server/data/stream ${dai_bakdir}/stream.${fromtime}
 
 echo
 echo "#######################"
@@ -72,16 +71,6 @@ then
     if [ -n "${dai_gridarta_repo}" ]
     then
         svn cleanup ${dai_svndir}/gridarta
-    fi
-
-    if [ -e ${dai_home}/stream ]
-    then
-        read stream < ${dai_home}/stream
-
-        if [ ${stream} != "none" ]
-        then
-            rm -rf ${dai_svndir}/daimonin/stream/*
-        fi
     fi
 
     if [ -n "${dai_use_newarch}" ]

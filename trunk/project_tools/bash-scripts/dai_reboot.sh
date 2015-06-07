@@ -28,9 +28,8 @@ server_exit[255]="MANUAL_REBOOT"
 fromtime=`date +%Y%m%d_%H%M%S%Z --utc`
 totime="UNKNOWN"
 
-# Default reason code for the reboot and stream.
+# Default reason code for the reboot.
 reason=255
-stream="none"
 
 ########
 # Parse the command line for options.
@@ -44,15 +43,10 @@ do
             echo "Options:"
             echo "  -h, --help		display this help and exit"
             echo "  -r, --reason=NUMBER	the reason why the server was rebooted"
-            echo "  -s, --stream=STRING	the stream with which to rebuild"
             exit
             ;;
         "(-r|--reason)(=.+)")
             reason=`expr match ${1} '.*\([0-9]+\)$'`
-            ;;
-        "(-s|--stream)(=.+)")
-            stream=`expr match ${1} '.*=\([0-9A-Za-z_]+\)$'`
-            echo "${stream}" >${dai_builddir}/server/data/stream
             ;;
         *)
             echo "${dai_reboot_sh}: unrecognised option: '${1}'"
@@ -155,8 +149,6 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
                     mkdir ${dai_svndir}/daimonin/${dai_gameserver}
                 fi
 
-                mkdir ${dai_svndir}/daimonin/stream
-
                 if [ -n "${dai_gridarta_repo}" ]
                 then
                     mkdir ${dai_svndir}/gridarta
@@ -185,34 +177,6 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
             cp ${dai_builddir}/server/data/gmaster_file ${dai_home}/gmaster_file
             cp ${dai_builddir}/server/data/motd ${dai_home}/motd
             cp ${dai_builddir}/server/data/settings ${dai_home}/settings
-            cp ${dai_builddir}/server/data/stream ${dai_home}/stream
-
-            if [ -f ${dai_home}/stream ]
-            then
-                echo
-                echo -n "### Read stream... "
-                read stream < ${dai_home}/stream
-                echo -n "which is '${stream}' "
-            else
-                echo
-                echo -n "### No stream exists "
-            fi
-
-            if [ ${stream} == "none" ]
-            then
-                echo "so nothing to do."
-            else
-                svn info ${dai_daimonin_repo}/streams/${stream} > /dev/null
-
-                if [ $? -ne 0 ]
-                then
-                    echo "but there was a svn error (does ${stream} exist?) so reset to 'none'."
-                    stream="none"
-                    echo "${stream}" > ${dai_home}/stream
-                else
-                    rm -rf ${dai_svndir}/daimonin/stream/*
-                fi
-            fi
 
             echo
             echo "### Remove previous build."
@@ -237,13 +201,6 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
             fi
 
             svn export --force ${dai_svndir}/daimonin/${dai_gameserver}/server ${dai_builddir}/server
-
-            if [ ${stream} != "none" ]
-            then
-                echo "  # from ${dai_daimonin_repo}/streams/${stream}"
-                svn co ${dai_daimonin_repo}/streams/${stream}/server ${dai_svndir}/daimonin/stream/server
-                svn export --force ${dai_svndir}/daimonin/stream/server ${dai_builddir}/server
-            fi
 
             echo
             echo "### Checkout/update and export arches"
@@ -279,13 +236,6 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
             if [ ${dai_gameserver} != "trunk" ]
             then
                 svn export --force ${dai_svndir}/daimonin/${dai_gameserver}/arch ${dai_builddir}/arch
-            fi
-
-            if [ ${stream} != "none" ]
-            then
-                echo "  # from ${dai_daimonin_repo}/streams/${stream}"
-                svn co ${dai_daimonin_repo}/streams/${stream}/arch ${dai_svndir}/daimonin/stream/arch
-                svn export --force ${dai_svndir}/daimonin/stream/arch ${dai_builddir}/arch
             fi
 
             if [ -n "${dai_daiserv_repo}" ]
@@ -338,13 +288,6 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
             then
                 svn export --force ${dai_svndir}/daimonin/${dai_gameserver}/maps ${dai_builddir}/maps
              fi
-
-            if [ ${stream} != "none" ]
-            then
-                echo "  # from ${dai_daimonin_repo}/streams/${stream}"
-                svn co ${dai_daimonin_repo}/streams/${stream}/maps ${dai_svndir}/daimonin/stream/maps
-                svn export --force ${dai_svndir}/daimonin/stream/maps ${dai_builddir}/maps
-            fi
 
             if [ -n "${dai_daiserv_repo}" ]
             then
@@ -404,7 +347,6 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
             cp ${dai_home}/gmaster_file ${dai_builddir}/server/data/gmaster_file
             cp ${dai_home}/motd ${dai_builddir}/server/data/motd
             cp ${dai_home}/settings ${dai_builddir}/server/data/settings
-            cp ${dai_home}/stream ${dai_builddir}/server/data/stream
         }
         echo
         echo "################################################################################"
