@@ -41,19 +41,12 @@ echo "Copy binaries"
 instbin $srcdir/server/$prgname $basedir/$prgname_dst
 instbin $srcdir/plugin_lua/$luaplug $basedir/plugins/$luaplug_dst
 
-echo "Create data folders"
-mmkdir $datadir
-mmkdir $datadir/tmp
-mmkdir $datadir/log
-mmkdir $datadir/accounts
-mmkdir $datadir/players
-mmkdir $datadir/unique-items
-mmkdir $datadir/global
+# Install datadir if it does not already exist (ie, a new installation). Once
+# this has been done once, this dir is persistent between reboots. It is left
+# to server admins to arrange backups.
+[ ! -d $datadir ] && echo "Install new persistent data" && cp -r $installdir/data $datadir
 
-echo "Copy server data"
-cp $installdir/* $datadir
-
-mmkdir $libdir
 echo "Copy arch and lib files"
+mmkdir $libdir
 cp $basedir/../arch/* $libdir
 echo "done."
