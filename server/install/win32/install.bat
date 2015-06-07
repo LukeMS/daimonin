@@ -6,12 +6,6 @@ rem (this weak base installer can't handle different /arch folders)
 rem c) Michael Toennies 2002/2003
 
 cd ..\..
+if not exist data xcopy install\data data /i /s /e
 md lib
 copy ..\arch\*.* lib\*.*
-md data
-md data\tmp
-md data\log
-md data\players
-md data\unique-items
-md data\global
-copy install\*. data\*.
