@@ -262,16 +262,7 @@ end
 arch letter
 name letter - a'pply to read
 msg
-Welcome to your new appartment!
-You have several containers here
-you can use to store your valuable
-items. Notice, that even the weapon
-rack there is a container.
-All items here will be PERMANENT
-saved - even after a server restart.
-To ensure that nothing bad can happens,
-type "/save" when you leave here to force
-a saving of this appartment.
+Welcome to your new apartment! Items left here, either in the provided containers or just dropped on the floor, will be ~permanently~ stored.
 endmsg
 x 2
 y 1
