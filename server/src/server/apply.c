@@ -1652,9 +1652,9 @@ static void ApplyBook(object_t *op, object_t *tmp)
     {
         if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED))
         {
-            SET_FLAG(tmp, FLAG_IDENTIFIED);
-            esrv_update_item(UPD_FLAGS | UPD_NAME, tmp);
+            identify(tmp);
         }
+
         /*add_exp(op,exp_gain,op->chosen_skill->stats.sp, 1);*/
         SET_FLAG(tmp, FLAG_NO_SKILL_IDENT); /* so no more xp gained from this book */
     }
@@ -1819,7 +1819,6 @@ static void ApplySpellbook(object_t *op, object_t *tmp)
     if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED))
     {
         identify(tmp);
-        esrv_update_item(UPD_FLAGS | UPD_NAME, tmp);
     }
 
     if (check_spell_known(op, tmp->stats.sp) && (tmp->stats.Wis || find_special_prayer_mark(op, tmp->stats.sp) == NULL))
@@ -1874,9 +1873,6 @@ static void ApplyScroll(object_t *op, object_t *tmp)
         return;
     }
 
-    if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-        identify(tmp);
-
     if (scroll_spell < 0 || scroll_spell >= NROFREALSPELLS)
     {
         ndi(NDI_UNIQUE, 0, op, "The scroll just doesn't make sense!");
@@ -1910,6 +1906,11 @@ static void ApplyScroll(object_t *op, object_t *tmp)
     if(trigger_object_plugin_event(EVENT_APPLY, tmp, op, NULL,
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
         return;
+
+    if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED))
+    {
+        identify(tmp);
+    }
 
     ndi(NDI_WHITE, 0, op, "The scroll of %s turns to dust.", spells[tmp->stats.sp].name);
     cast_spell(op, tmp, op->facing ? op->facing : 4, scroll_spell, 0, spellScroll, NULL);
