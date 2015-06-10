@@ -132,6 +132,11 @@ void esrv_send_item(object_t *op)
 
 void esrv_update_item(uint16 flags, object_t *op)
 {
+    /* Lets not play about -- updating items is borked so redirect to a full
+     * send as new.
+     *
+     * -- Smacky 20150610 */
+#if 0
     /* Due to some buggy code in at least 0.10.6 and earlier clients updates
      * for items in non-player inventories cause the item to appear in the
      * below window so we must resend the full item details (which implicitly
@@ -145,10 +150,22 @@ void esrv_update_item(uint16 flags, object_t *op)
             UPD_DIRECTION | UPD_NAME | UPD_ANIM | UPD_ANIMSPEED | UPD_NROF,
             op);
     }
+    /* Seems a similar bug updating items on maps.
+     *
+     * -- Smacky 20150610 */
+    else if (op->map)
+    {
+        NotifyClients(SERVER_CMD_ITEMX, UPD_FLAGS | UPD_WEIGHT | UPD_FACE |
+            UPD_DIRECTION | UPD_NAME | UPD_ANIM | UPD_ANIMSPEED | UPD_NROF,
+            op);
+    }
     else
     {
         NotifyClients(SERVER_CMD_UPITEM, flags, op);
     }
+#else
+    esrv_send_item(op);
+#endif
 }
 
 void esrv_del_item(object_t *op)
