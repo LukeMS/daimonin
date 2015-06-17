@@ -354,7 +354,7 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
 
             if [ -z "${dai_use_valgrind}" ]
             then
-                ./${dai_server_exe} ${dai_server_options} -log ${tlogfile},${clogile}
+                ./${dai_server_exe} ${dai_server_options} -log ${tlogfile},${clogfile}
             else
                 valgrind ./${dai_server_exe} ${dai_server_options} -log ,${clogfile} 2>${tlogfile}
             fi
