@@ -1066,6 +1066,11 @@ void fatal_signal(int make_core, int close_sockets, uint8 status)
         save_ban_file();
     }
 
+/* I'm not clear what abort() is meant to achieve here. AFAICS it just does
+ * exit() but we lose the status info.
+ *
+ * -- Smacky 20150626 */
+#if 0
     if (make_core)
     {
         abort();
@@ -1074,6 +1079,9 @@ void fatal_signal(int make_core, int close_sockets, uint8 status)
     {
         exit(status);
     }
+#else
+    exit(status);
+#endif
 }
 
 

@@ -540,32 +540,28 @@ while (0)
 
 #define POW2(x) ((x) * (x))
 
-enum
-{
-    /* The so-called 'normal' exit */
-    SERVER_EXIT_NORMAL,
-
-    /* Certain gmasters can cause these exits */
-    SERVER_EXIT_RESTART, // Server will reboot
-    SERVER_EXIT_SHUTDOWN, // Server will not reboot
-
-    /* Specific internal errors */
-    SERVER_EXIT_ARTIFACT, // An artifact file is broken
-    SERVER_EXIT_TREASURE, // A treasure file is broken
-
-    /* General logging errors which cause the server to suicide */
-    SERVER_EXIT_FATAL, // A llevFatal was logged
-    SERVER_EXIT_FLOOD, // Too many llevBugs were logged
-
-    /* Various signals (not used on Windows) */
-    SERVER_EXIT_SIGSEGV,
-    SERVER_EXIT_SIGINT,
-    SERVER_EXIT_SIGQUIT,
-    SERVER_EXIT_SIGPIPE,
-    SERVER_EXIT_SIGBUS,
-    SERVER_EXIT_SIGTERM,
-    SERVER_EXIT_SIGHUP,
-};
+/* Various exit codes. While there does not seem to be a real standard for
+ * these things, I have adopted the accepted bash usage. The essnce of this is
+ * 0 means all OK, 1 is a general error (I've assigned it to shutdown), 2 is 
+ * reserved and not really applicable here, 3-125 are free (I've assigned the
+ * ones we use), 126-128 are reserved and not really applicable here, 128+n are
+ * for POSIX signal n (signals do have standard values).
+ *
+ * -- Smacky 20150626 */
+#define SERVER_EXIT_NORMAL   0
+#define SERVER_EXIT_SHUTDOWN 1
+#define SERVER_EXIT_RESTART  3
+#define SERVER_EXIT_ARTIFACT 4
+#define SERVER_EXIT_TREASURE 5
+#define SERVER_EXIT_FATAL    6
+#define SERVER_EXIT_FLOOD    7
+#define SERVER_EXIT_SIGHUP   (128 + 1)
+#define SERVER_EXIT_SIGINT   (128 + 2)
+#define SERVER_EXIT_SIGQUIT  (128 + 3)
+#define SERVER_EXIT_SIGBUS   (128 + 7)
+#define SERVER_EXIT_SIGSEGV  (128 + 11)
+#define SERVER_EXIT_SIGPIPE  (128 + 13)
+#define SERVER_EXIT_SIGTERM  (128 + 15)
 
 #define ROUND_TAG            pticks /* put this here because the DIFF */
 
