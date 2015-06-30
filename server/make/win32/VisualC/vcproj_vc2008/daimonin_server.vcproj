@@ -393,7 +393,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="..\..\..\..\dev\win32\flex.exe -i  -o$(InputDir)$(InputName).c $(InputPath)&#x0D;&#x0A;"
+							CommandLine="..\flex.exe -i  -o$(InputDir)$(InputName).c $(InputPath)&#x0D;&#x0A;"
 							Outputs="$(InputDir)$(InputName).c"
 						/>
 					</FileConfiguration>
@@ -402,7 +402,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="..\..\..\..\dev\win32\flex.exe -i  -o&quot;$(InputDir)$(InputName).c&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
+							CommandLine="..\flex.exe -i  -o&quot;$(InputDir)$(InputName).c&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
 							Outputs="$(InputDir)$(InputName).c"
 						/>
 					</FileConfiguration>

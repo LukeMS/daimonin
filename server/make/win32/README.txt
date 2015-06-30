@@ -17,9 +17,9 @@ o First step: You must compile the program.
   project, this will compile all others automatically too.
   Then - in visual studio 6 - press <F7> to compile.
 
-  In the win32 folder of the /dev folder is a flex.exe. This is the flex
+  In this folder is a flex.exe. This is the flex
   program, used to generate loader.c from loader.l and reader.c from reader.l.
-  The vc project setup will run this automatically using custom build commands.
+  The cb/vc project setup will run this automatically using custom build commands.
   Don't change the position of the flex.exe or the folder tree of the projects or
   the flex run will fail! You can change the content of loader.l/reader.l in the
   vc studio like a normal c-file. The compiler will look at the depencies and generate

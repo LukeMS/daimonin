@@ -372,10 +372,10 @@
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\..\src\server\loader.l">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\..\dev\win32\flex.exe -i  -o"%(RootDir)%(Directory)%(Filename).c" "%(FullPath)"
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\flex.exe -i  -o"%(RootDir)%(Directory)%(Filename).c" "%(FullPath)"
 </Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)%(Filename).c;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">..\..\..\..\dev\win32\flex.exe -i  -o%(RootDir)%(Directory)%(Filename).c %(FullPath)
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">..\flex.exe -i  -o%(RootDir)%(Directory)%(Filename).c %(FullPath)
 </Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseLog|Win32'">%(RootDir)%(Directory)%(Filename).c;%(Outputs)</Outputs>
     </CustomBuild>
