@@ -23,7 +23,7 @@
 					<Add library="winmm" />
 				</Linker>
 				<ExtraCommands>
-					<Add before="..\..\..\..\dev\win32\flex.exe -i -o..\..\..\src\server\loader.c  ..\..\..\src\server\loader.l" />
+					<Add before="..\flex.exe -i -o..\..\..\src\server\loader.c  ..\..\..\src\server\loader.l" />
 				</ExtraCommands>
 			</Target>
 			<Target title="Debug">
@@ -44,7 +44,7 @@
 					<Add library="winmm" />
 				</Linker>
 				<ExtraCommands>
-					<Add before="..\..\..\..\dev\win32\flex.exe -i -o..\..\..\src\server\loader.c  ..\..\..\src\server\loader.l" />
+					<Add before="..\flex.exe -i -o..\..\..\src\server\loader.c  ..\..\..\src\server\loader.l" />
 				</ExtraCommands>
 			</Target>
 		</Build>
