@@ -1035,15 +1035,15 @@ void StatsCmd(char *data, int len)
                     WIDGET_REDRAW(MAIN_LVL_ID);
                     break;
                 case CS_STAT_WC:
-                    cpl.stats.wc = GetUINT16_String(data + i);
+                    cpl.stats.wc = GetSINT16_String(data + i);
                     i += 2;
                     break;
                 case CS_STAT_AC:
-                    cpl.stats.ac = GetUINT16_String(data + i);
+                    cpl.stats.ac = GetSINT16_String(data + i);
                     i += 2;
                     break;
                 case CS_STAT_DAM:
-                    cpl.stats.dam = GetUINT16_String(data + i);
+                    cpl.stats.dam = GetSINT16_String(data + i);
                     cpl.stats.dps = (float)cpl.stats.dam/10.0f;
                     i += 2;
                     break;
