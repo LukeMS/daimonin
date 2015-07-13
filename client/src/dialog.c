@@ -77,26 +77,27 @@ enum
     ATT_SUM
 };
 
-static char *weapon_skill[] =
-    {
-        "-","slash","impact","cleave","pierce"
-    };
+static _attribute Attribute[] =
+{
+    {"STR", "Strength",     8,15, 4, 0}, {"DEX", "Dextery",      8,15, 4, 0}, {"CON", "Constitution", 8,15, 4, 0},
+    {"INT", "Intellect",    8,15, 4, 0}, {"WIS", "Wisdom",       8,15, 4, 0}, {"POW", "Power",        8,15, 4, 0},
+    {"CHA", "Charisma",     8,15, 4, 0}
+};
 
-static _attribute   attribute[]                     =
-    {
-        {"STR", "Strength",     8,15, 4, 0}, {"DEX", "Dextery",      8,15, 4, 0}, {"CON", "Constitution", 8,15, 4, 0},
-        {"INT", "Intellect",    8,15, 4, 0}, {"WIS", "Wisdom",       8,15, 4, 0}, {"POW", "Power",        8,15, 4, 0},
-        {"CHA", "Charisma",     8,15, 4, 0}
-    };
-#define SUM_ATTRIBUTE (sizeof(attribute)/sizeof(_attribute))
+static char *WeaponSkill[] =
+{
+    "-","slash","impact","cleave","pierce"
+};
 
-char               *gender[]                        =
-    {
-        "male", "female", "hermaphrodite", "neuter"
-    };
-#define SUM_GENDER (sizeof(gender)/sizeof(char*))
+static char *Gender[] =
+{
+    "male", "female", "hermaphrodite", "neuter"
+};
 
-int                 gen                             = 0;
+static char *Race[] =
+{
+    "human", "elf", "half-elf", "dwarf", "ogre"
+};
 
 /******************************************************************
  Option Menue
@@ -1357,7 +1358,7 @@ void show_newplayer_server(void)
 
     for (i = 0; i < ATT_SUM; i++)
     {
-        sprintf(buf, "%s: %d", attribute[i].name, new_character.stats[i]);
+        sprintf(buf, "%s: %d", Attribute[i].name, new_character.stats[i]);
         string_blt(ScreenSurface, &font_small, buf, x + 130, y + CREATE_Y0 + (i + 4) * 17, COLOR_WHITE, NULL, NULL);
     }
 
@@ -1393,7 +1394,7 @@ void show_newplayer_server(void)
     for (i = 0; i < ATT_SUM; i++)
     {
         id += 2;
-        sprintf(buf, "%s:", attribute[i].name);
+        sprintf(buf, "%s:", Attribute[i].name);
 
         if (create_list_set.entry_nr == i + 2)
             string_blt(ScreenSurface, &font_small, buf, x + 130, y + CREATE_Y0 + (i + 4) * 17, COLOR_GREEN, NULL, NULL);
@@ -1441,7 +1442,7 @@ void show_newplayer_server(void)
     else
         string_blt(ScreenSurface, &font_small, "Race:", x + 130, y + CREATE_Y0 + 0 * 17 + 2, COLOR_WHITE, NULL, NULL);
 
-    sprintf(buf,"%s %s", gender[new_character.gender_selected], new_character.name);
+    sprintf(buf,"%s %s", Gender[new_character.gender_selected], new_character.name);
     if (create_list_set.entry_nr == 0)
         delta = add_rangebox(x + 170, y + CREATE_Y0 + 0 * 17, ++id, 80, 0, buf, COLOR_GREEN);
     else
@@ -1547,9 +1548,9 @@ void show_newplayer_server(void)
         string_blt(ScreenSurface, &font_small, "W-Skill:", x + 130, y + CREATE_Y0 + 1 * 17 + 2, COLOR_WHITE, NULL, NULL);
 
     if (create_list_set.entry_nr == 1)
-        delta = add_rangebox(x + 170, y + CREATE_Y0 + 1 * 17, ++id, 80, 0, weapon_skill[new_character.skill_selected+1], COLOR_GREEN);
+        delta = add_rangebox(x + 170, y + CREATE_Y0 + 1 * 17, ++id, 80, 0, WeaponSkill[new_character.skill_selected+1], COLOR_GREEN);
     else
-        delta = add_rangebox(x + 170, y + CREATE_Y0 + 1 * 17, ++id, 80, 0, weapon_skill[new_character.skill_selected+1], COLOR_WHITE);
+        delta = add_rangebox(x + 170, y + CREATE_Y0 + 1 * 17, ++id, 80, 0, WeaponSkill[new_character.skill_selected+1], COLOR_WHITE);
 
     if (create_list_set.key_change && create_list_set.entry_nr == 1)
     {
@@ -2114,7 +2115,7 @@ void show_account(void)
         {
             char_count++;
             string_blt(ScreenSurface, &font_large_out, account.name[i], x+120, y+100+i*50, COLOR_WHITE, NULL, NULL);
-            sprintf(buf,"%s %s on Level %d", account.race[i]?"Elfish":"Human", account.gender[i]?"Female":"Male", account.level[i]);
+            sprintf(buf,"%s %s (level ~%d~)", Gender[account.gender[i]], Race[account.race[i]], account.level[i]);
             string_blt(ScreenSurface, &font_small, buf, x+120, y+116+i*50, COLOR_WHITE, NULL, NULL);
         }
     }
