@@ -197,7 +197,7 @@ object_t *create_missile(object_t * const owner, const object_t * const bow, obj
         arrow->last_sp += owner->chosen_skill->last_sp;
 
         /* as a special adjustment we increase the WC with the dexterity skill + equipment bonus */
-        arrow->stats.wc = (int)((float)arrow->stats.wc * get_player_stat_bonus(owner->stats.Dex))+CONTR(owner)->wc_bonus;
+        arrow->stats.wc = (int)((float)arrow->stats.wc * stat_bonus[owner->stats.Dex])+CONTR(owner)->wc_bonus;
 
         arrow->level = owner->chosen_skill->level;
 
@@ -205,8 +205,8 @@ object_t *create_missile(object_t * const owner, const object_t * const bow, obj
         arrow->stats.dam = (sint16) ((float) arrow->stats.dam * LEVEL_DAMAGE(owner->chosen_skill->level));
         /* boni for throwing are 50% str + 50% dex (archery 100% dex, melee 100% str) + equipment bonus */
         arrow->stats.dam = (int)(((float)arrow->stats.dam
-                        * (get_player_stat_bonus(owner->stats.Str)/2.0f 
-                           + get_player_stat_bonus(owner->stats.Dex)/2.0f)) /10.0f)+CONTR(owner)->dam_bonus;
+                        * (stat_bonus[owner->stats.Str]/2.0f 
+                           + stat_bonus[owner->stats.Dex]/2.0f)) /10.0f)+CONTR(owner)->dam_bonus;
     }
     else /* its a mob or other "living" threaded object_t */
     {
@@ -214,7 +214,7 @@ object_t *create_missile(object_t * const owner, const object_t * const bow, obj
         /* for mobs we simply get the mob level for the dmg adjustment AND, to cover the stats increase
          * of players, we use the level+10 (to avoid negative values) as stat bonus! */
         arrow->stats.dam = (sint16) ((float) (arrow->stats.dam * LEVEL_DAMAGE(arrow->level) * 
-                                                get_player_stat_bonus(arrow->level+10))/10.0f);
+                                                stat_bonus[arrow->level+10])/10.0f);
     }
 
     /* and finally the item condition! (mob & players) */
@@ -771,7 +771,7 @@ void stop_missile(object_t *op)
 //
 //        /* boni for throwing are 50% str + 50% dex (archery 100% dex, melee 100% str) */
 //        throw_ob->stats.dam = (int)(((float)throw_ob->stats.dam * 
-//            (get_player_stat_bonus(thrower->stats.Str)/2.0f + get_player_stat_bonus(thrower->stats.Dex)/2.0f)) /10.0f);
+//            (stat_bonus[thrower->stats.Str]/2.0f + stat_bonus[thrower->stats.Dex]/2.0f)) /10.0f);
 //
 //        /* thats the damage bonus from equipment like rings */
 //        throw_ob->stats.dam += CONTR(thrower)->dam_bonus;

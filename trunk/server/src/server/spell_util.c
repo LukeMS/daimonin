@@ -3116,7 +3116,7 @@ int SP_lvl_dam_adjust(int level, int spell_type, int base_dam, int stats_bonus)
 
     /* we simulate a stats bonus if needed to have a more progressive damage behaviour */
     if(stats_bonus >= 0)
-        dam_adj = (int) (((float) base_dam * LEVEL_DAMAGE(level) * get_player_stat_bonus(stats_bonus)));
+        dam_adj = (int) (((float) base_dam * LEVEL_DAMAGE(level) * stat_bonus[stats_bonus]));
     else
         dam_adj = (int) (((float) base_dam * LEVEL_DAMAGE(level)));
 

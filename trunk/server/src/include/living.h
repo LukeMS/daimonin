@@ -28,11 +28,16 @@
 
 /* defines the stat range for strength and such for PLAYERS
  * to avoid the signed 8 bit border, we should assume to
- * mirror the with fix_player() altered stats to player struct
- */
-
-#define MAX_STAT        125  /* The maximum legal value of any stat */
+ * mirror the with fix_player() altered stats to player struct */
+/* TODO: The plan is to make MAX_STAT 200 or 250 (because a larger potential
+ * range is good, and doubling the max allows plenty of progression in play
+ * without makine current item+s, creation values, etc meaningless). This
+ * will need stat_t increased from sint8 to sint16 which requires much more
+ * testing then I am prepared to invest ATM.
+ *
+ * -- Smacky 20150714 */
 #define MIN_STAT        1   /* The minimum legal value of any stat */
+#define MAX_STAT        125  /* The maximum legal value of any stat */
 
 enum stat_nr_t
 {
@@ -51,7 +56,7 @@ enum stat_nr_t
 
 extern const char  *attacks[NROFATTACKS];
 extern const char  *spellpathnames[NRSPELLPATHS];
-extern const float  stats_penalty[10];
+extern const float  stat_bonus[MAX_STAT];
 extern const char  *lose_msg[STAT_NROF];
 extern const char  *restore_msg[STAT_NROF];
 extern const char  *stat_name[STAT_NROF];
@@ -97,7 +102,6 @@ extern object_t    *check_obj_stat_buffs(object_t *ob, object_t *pl);
 extern void         drain_stat(object_t *op);
 extern void         drain_specific_stat(object_t *op, int deplete_stats);
 extern void         drain_level(object_t *op, int level, int mode, int ticks);
-extern float        get_player_stat_bonus(int value);
 extern void         fix_player_weight(object_t *op);
 #ifdef DEBUG_FIX_PLAYER
 extern void         fix_player(object_t *op, char *msg);

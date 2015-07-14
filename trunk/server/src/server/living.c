@@ -79,8 +79,18 @@ static int MobACWC[MAXMOBLEVEL + 1] =
 /* when we carry more as this of our weight_limit, we get encumbered. */
 #define ENCUMBRANCE_LIMIT 0.35f
 
-/* for stat values 0 to 9 */
-const float stats_penalty[10] = {0.1f, 0.15f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f};
+/* stat_bonus[] is a multiplier for any stat value. */
+/* TODO: Currently this is just a steady and predictable progression from 1-200
+ * subdivided into 4 broad categories (1-9 malus, 10-19 creation, 20-99 normal,
+ * 100+ exceptional). This will be refined over time. */
+const float stat_bonus[MAX_STAT] =
+{
+    0.00f, // 0 is impossible
+    0.10f, 0.20f, 0.30f, 0.40f, 0.50f, 0.60f, 0.70f, 0.80f, 0.90f, // 1-9 gives a malus
+    1.00f, 1.10f, 1.20f, 1.30f, 1.40f, 1.50f, 1.60f, 1.70f, 1.80f, 1.90f, // 10-19 is the racial start range
+    2.00f, 2.10f, 2.20f, 2.30f, 2.40f, 2.50f, 2.60f, 2.70f, 2.80f, 2.90f, 3.00f, 3.10f, 3.20f, 3.30f, 3.40f, 3.50f, 3.60f, 3.70f, 3.80f, 3.90f, 4.00f, 4.10f, 4.20f, 4.30f, 4.40f, 4.50f, 4.60f, 4.70f, 4.80f, 4.90f, 5.00f, 5.10f, 5.20f, 5.30f, 5.40f, 5.50f, 5.60f, 5.70f, 5.80f, 5.90f, 6.00f, 6.10f, 6.20f, 6.30f, 6.40f, 6.50f, 6.60f, 6.70f, 6.80f, 6.90f, 7.00f, 7.10f, 7.20f, 7.30f, 7.40f, 7.50f, 7.60f, 7.70f, 7.80f, 7.90f, 8.00f, 8.10f, 8.20f, 8.30f, 8.40f, 8.50f, 8.60f, 8.70f, 8.80f, 8.90f, 9.00f, 9.10f, 9.20f, 9.30f, 9.40f, 9.50f, 9.60f, 9.70f, 9.80f, 9.90f, // 20-99 is the 'normal' in play range
+    10.00f, 10.10f, 10.20f, 10.30f, 10.40f, 10.50f, 10.60f, 10.70f, 10.80f, 10.90f, 11.00f, 11.10f, 11.20f, 11.30f, 11.40f, 11.50f, 11.60f, 11.70f, 11.80f, 11.90f, 12.00f, 12.10f, 12.20f, 12.30f, 12.40f, 12.50f,  // 100+ are exceptional values
+};
 
 static const char *drain_msg[STAT_NROF] =
 {
@@ -751,37 +761,6 @@ void drain_level(object_t *op, int level, int mode, int ticks)
     FIX_PLAYER(op, "drain_level"); /* will redirect to fix_monster() automatically */
     if(op->type == PLAYER)
         ndi(NDI_UNIQUE, 0, op, "You lose a level!");
-}
-
-/* Calculate the weight limit.
- * We get op.stats.Str and add/sub num to it.
- * Will allow to calculate the limit pre fix_player()
- * when applying an item for example.
- */
-static inline uint32 get_player_weight_limit(object_t *op, int num)
-{
-    uint32 w = op->weight_limit; /* we get the max weight from the player arch */
-    int tmp;
-
-    tmp = op->stats.Str + num;
-
-    if(tmp < 10)
-        w = (int)((float)w * stats_penalty[tmp]);
-    else
-        w = w + (tmp-10)*5000; /* 5kg more for 1 str skill point over 10*/
-
-    return w;
-}
-
-/* same as above just we get an float as a % multiplier.
- * every point > 10 will add a bonus of 1% (aka 0.01)
- */
-float get_player_stat_bonus(int value)
-{
-    if(value < 10)
-        return stats_penalty[value];
-
-    return 1.0f + ((float) (value-10) * 0.01f);
 }
 
 /* helper function to catch double applied items from same type (like 2 helms at once for example) */
@@ -1712,14 +1691,14 @@ void fix_player(object_t *op)
              * but we add in wc modifier from equipment - means ATM a ring wc+2 will add wc to melee AND
              * to distance!
              */
-            pl->dist_wc = (int)((float)(tmp_wc + skill_ptr->stats.wc) * get_player_stat_bonus(op->stats.Dex))+ pl->wc_bonus;
+            pl->dist_wc = (int)((float)(tmp_wc + skill_ptr->stats.wc) * stat_bonus[op->stats.Dex])+ pl->wc_bonus;
 
             /* lets calculate the real dmg and dps */
             pl->dist_dps = (int) ((float) tmp_dam * LEVEL_DAMAGE(skill_ptr->level)); /* dmg level adjusted */
 
             /* and now we adjust it by the stats and devide by 10 - thats the "real dmg" now */
             pl->dist_dps = (int)(((float)pl->dist_dps *
-                (get_player_stat_bonus(op->stats.Str)/2.0f + get_player_stat_bonus(op->stats.Dex)/2.0f)) /10.0f);
+                (stat_bonus[op->stats.Str]/2.0f + stat_bonus[op->stats.Dex]/2.0f)) /10.0f);
 
             /* the damage bonus of rings and stuff are added AFTER dmg adjustment! */
             f = (float) (pl->equipment[PLAYER_EQUIP_BOW]->item_condition) / 100.0f;
@@ -1836,7 +1815,7 @@ void fix_player(object_t *op)
     check_stat_bounds(&(op->stats));
 
     /* now the last adds - stat boni to dam and wc! */
-    op->stats.dam = (int)((float)op->stats.dam * get_player_stat_bonus(op->stats.Str) /10.0f);
+    op->stats.dam = (int)((float)op->stats.dam * stat_bonus[op->stats.Str] /10.0f);
     if (op->stats.dam < 0)
         op->stats.dam = 0;
 
@@ -1929,7 +1908,11 @@ void fix_player(object_t *op)
     }
 
     /* calculate the max. value what the player can carry */
-    pl->weight_limit = get_player_weight_limit(op, 0);
+    /* TODO: This is an approximation of what was here before -- allows 5kg for
+     * each point of Str > 10.
+     *
+     * -- Smacky 20150714 */
+    pl->weight_limit = op->weight_limit + 50000 * stat_bonus[op->stats.Str] - 50000;
 
     /* we calculate this: we get weight_limit - ENCUMBRANCE_LIMIT %. Thats around 35% of the
     * value ATM. Thats our base. Then we check how much of this last 35% we really carry. Thats
@@ -1973,9 +1956,9 @@ void fix_player(object_t *op)
         op->stats.maxgrace += pl->levgrace[i];
 
     /* now adjust with the % of the stats mali/boni. */
-    op->stats.maxhp = (int) ((float) op->stats.maxhp * get_player_stat_bonus(op->stats.Con)) + max_boni_hp;
-    op->stats.maxsp = (int) ((float) op->stats.maxsp * get_player_stat_bonus(op->stats.Pow)) + max_boni_sp;
-    op->stats.maxgrace = (int) ((float) op->stats.maxgrace * get_player_stat_bonus(op->stats.Wis)) + max_boni_grace;
+    op->stats.maxhp = (int) ((float) op->stats.maxhp * stat_bonus[op->stats.Con]) + max_boni_hp;
+    op->stats.maxsp = (int) ((float) op->stats.maxsp * stat_bonus[op->stats.Pow]) + max_boni_sp;
+    op->stats.maxgrace = (int) ((float) op->stats.maxgrace * stat_bonus[op->stats.Wis]) + max_boni_grace;
 
     if (op->stats.maxhp < 1)
         op->stats.maxhp = 1;
@@ -2024,7 +2007,7 @@ void fix_player(object_t *op)
     pl->spell_fumble = temp_fumble + pl->encumbrance - op->stats.Int;
 
     /* wc and ac are level independent in the thac system - but Dex effects both now */
-    f = get_player_stat_bonus(op->stats.Dex);
+    f = stat_bonus[op->stats.Dex];
     op->stats.ac = (int) ((float)(op->stats.ac + ac) * f);
     op->stats.wc = (int) ((float)(op->stats.wc + pl->wc_bonus) * f);
 
