@@ -36,15 +36,6 @@ sint64 query_cost(object_t *tmp, object_t *who, int flag)
 {
     sint64  val;
     int     number; /* used to better calculate value */
-    float   bon=0.0f;
-    const float                     stats_penalty[10] = {0.1f, 0.15f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f}; /* used for stats 0-9 */
-
-    if(who->stats.Cha < 10)
-        bon = (-1.0f + stats_penalty[who->stats.Cha]);
-    else if(who->stats.Cha > 10)
-        bon = ((float)(who->stats.Cha - 10) / 100.0f);
-	else if(who->stats.Cha > 40)
-		bon = ((float)(30) / 100.0f);
 
     if ((number = tmp->nrof) == 0)
         number = 1;
@@ -57,17 +48,36 @@ sint64 query_cost(object_t *tmp, object_t *who, int flag)
     {
         if (is_cursed_or_damned(tmp))
             return 0;
-		else if (tmp->type == GEM || tmp->type == TYPE_JEWEL || tmp->type == TYPE_PEARL || tmp->type == TYPE_NUGGET) /* selling unidentified gems is *always* stupid */
-			val = tmp->value * number;
         else
-		{
-			if (flag == F_BUY)
-			    val = (sint64)((float)(tmp->value * number) *(1.0f - bon));
-			else if (flag == F_SELL)
-			    val = (sint64)((float)(tmp->value * number) *(0.5f + bon));
-                        else // F_TRUE
-                            val = tmp->value * number;
-		}
+        {
+            if (flag == F_TRUE)
+            {
+                val = tmp->value * number;
+            }
+            else
+            {
+                /* Charisma bonus -- very basic, do not bother with maluses,
+                 * every point of Cha = 0.2%. As MAX_STAT = 125 the max bonus
+                 * is 25%. */
+                float bonus = (float)tmp->value * stat_bonus[who->stats.Cha] / 50.0f;
+                /* Shop profit margin -- also very basic, shop add 25% when
+                 * selling, or subtracts 25% when buying, to tmp->value. This
+                 * is then offset by the player's Cha bonus. */
+                float profit = (float)tmp->value * 25.0f / 100.0f;
+
+                if (flag == F_BUY)
+                {
+                    val = (sint64)((float)tmp->value + profit - bonus);
+                }
+                else if (flag == F_SELL)
+                {
+                    val = (sint64)((float)tmp->value - profit + bonus);
+                }
+
+                /* No bulk discounts or anything ATM. */
+                val *= number;
+            }
+        }
     }
     else /* This area deals with objects that are not identified, but can be */
     {
@@ -76,21 +86,11 @@ sint64 query_cost(object_t *tmp, object_t *who, int flag)
             if (flag == F_BUY)
             {
                 LOG(llevMapbug, "MAPBUG:: Asking for buy-value of unidentified object %s.\n", STRING_OBJ_NAME(tmp));
-                val = tmp->arch->clone.value * number;
+                val = tmp->arch->clone.value * number * 100;
             }
-            else    /* Trying to sell something, or get true value */
+            else    /* Trying to sell something, or get true value -- *always* stupid */
             {
-                if (tmp->type == GEM || tmp->type == TYPE_JEWEL || tmp->type == TYPE_PEARL || tmp->type == TYPE_NUGGET) /* selling unidentified gems is *always* stupid */
-                    val = number * 3;
-                else if (tmp->type == POTION)
-                    val = number * 50; /* Don't want to give anything away */
-                else
-				{
-					if (flag == F_BUY)
-						val = (sint64)((float)(tmp->arch->clone.value * number) *(1.0f - bon));
-					else
-						val = (sint64)((float)(tmp->arch->clone.value * number) *(0.5f + bon));
-				}
+                val = number;
             }
         }
         else
@@ -100,10 +100,12 @@ sint64 query_cost(object_t *tmp, object_t *who, int flag)
             if (flag == F_BUY)
             {
                 LOG(llevBug, "BUG: Asking for buy-value of unidentified object without arch.\n");
-                val = number * 100;
+                val = number * 1000;
             }
             else
-                val = number * 80;
+            {
+                val = number;
+            }
         }
     }
 
