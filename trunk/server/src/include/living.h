@@ -56,7 +56,7 @@ enum stat_nr_t
 
 extern const char  *attacks[NROFATTACKS];
 extern const char  *spellpathnames[NRSPELLPATHS];
-extern const float  stat_bonus[MAX_STAT];
+extern const float  stat_bonus[MAX_STAT + 1];
 extern const char  *lose_msg[STAT_NROF];
 extern const char  *restore_msg[STAT_NROF];
 extern const char  *stat_name[STAT_NROF];

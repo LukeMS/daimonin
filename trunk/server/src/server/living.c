@@ -83,7 +83,7 @@ static int MobACWC[MAXMOBLEVEL + 1] =
 /* TODO: Currently this is just a steady and predictable progression from 1-200
  * subdivided into 4 broad categories (1-9 malus, 10-19 creation, 20-99 normal,
  * 100+ exceptional). This will be refined over time. */
-const float stat_bonus[MAX_STAT] =
+const float stat_bonus[MAX_STAT + 1] =
 {
     0.00f, // 0 is impossible
     0.10f, 0.20f, 0.30f, 0.40f, 0.50f, 0.60f, 0.70f, 0.80f, 0.90f, // 1-9 gives a malus
