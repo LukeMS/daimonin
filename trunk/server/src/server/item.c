@@ -1749,6 +1749,11 @@ static object_t *NoDiscardContainer(object_t *who, object_t *what)
 
     FOREACH_OBJECT_IN_OBJECT(this, what, next)
     {
+        if (QUERY_FLAG(this, FLAG_SYS_OBJECT))
+        {
+            continue;
+        }
+
         if (this->type == CONTAINER &&
             this->inv)
         {
