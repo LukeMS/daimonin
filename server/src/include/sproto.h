@@ -653,7 +653,7 @@ int                         SP_level_strength_adjust(object_t *op, object_t *cas
 int                         SP_level_spellpoint_cost(object_t *op, object_t *caster, int spell_type);
 int                         look_up_spell_by_name(object_t *op, const char *spname);
 void                        shuffle_attack(object_t *op, int change_face);
-int                         SP_lvl_dam_adjust(int level, int spell_type, int base_dam, int stats_bonus);
+int                         SP_lvl_dam_adjust(int level, int spell_type, int base_dam);
 /* stats.c */
 void                        stats_event(stats_event_type type, ...);
 /* time.c */
