@@ -1239,8 +1239,7 @@ void move_fired_arch(object_t *op)
     remove_ob(op);
     check_walk_off(op, NULL, 0);
 
-    if (!msp ||
-        !op->other_arch)
+    if (!msp)
     {
         return;
     }
