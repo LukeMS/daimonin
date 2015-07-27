@@ -3103,10 +3103,12 @@ int SP_lvl_dam_adjust(int level, int spell_type, int base_dam)
     /* get a base damage when we don't have one from caller */
     if (base_dam == -1)
         base_dam = spells[spell_type].bdam;
- 
+
     /* ensure a legal level value */
     if (level < 0)
         level = 1;
- 
-    return (int)(((float)base_dam * LEVEL_DAMAGE(level)));
+
+    return (int)((float)base_dam * LEVEL_DAMAGE(level) * 0.1f);
 }
+
+
