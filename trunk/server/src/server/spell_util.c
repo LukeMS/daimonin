@@ -1823,7 +1823,7 @@ int fire_bolt(object_t *op, object_t *caster, int dir, int type, int magic)
 
     set_owner(tmp, op);
     tmp->level = casting_level(caster, type);
-    tmp_dam = (float)SP_lvl_dam_adjust(tmp->level, type, spells[type].bdam, 0);
+    tmp_dam = (float)SP_lvl_dam_adjust(tmp->level, type, spells[type].bdam);
     /* give bonus or malus to damage depending on if the player/mob is attuned/repelled to that spell path */
     tmp->stats.dam = (int)(tmp_dam * PATH_DMG_MULT(op, find_spell(type)));
     tmp->stats.hp = spells[type].bdur;
@@ -1889,7 +1889,7 @@ int fire_arch(object_t *op, object_t *caster, sint16 x, sint16 y, int dir, arche
     if (tmp == NULL)
         return 0;
     tmp->stats.sp = type;
-    tmp_dam = (float) SP_lvl_dam_adjust(level, type, spells[type].bdam, 0);
+    tmp_dam = (float) SP_lvl_dam_adjust(level, type, spells[type].bdam);
     /* give bonus or malus to damage depending on if the player/mob is attuned/repelled to that spell path */
     tmp->stats.dam = (int) (tmp_dam * PATH_DMG_MULT(op, find_spell(type)));
     tmp->stats.hp = spells[type].bdur + SP_level_strength_adjust(op, caster, type);
@@ -1983,7 +1983,7 @@ int cast_cone(object_t *op, object_t *caster, int dir, int strength, int spell_t
         /* for b4, we grap the damage from the spell def table - in that way we can use the
          * arch "firebreath" for different spells with different settings
          */
-        tmp_dam = (float) SP_lvl_dam_adjust(level, spell_type, spells[spell_type].bdam , 0);
+        tmp_dam = (float) SP_lvl_dam_adjust(level, spell_type, spells[spell_type].bdam);
         /* lets check the originator of the spell (player, mob) has bonus/malus from spell path */
         tmp->stats.dam = (int) (tmp_dam * PATH_DMG_MULT(op, find_spell(spell_type)));
 
@@ -2679,7 +2679,7 @@ void explode_object(object_t *op)
 //        case POISONCLOUD:
 //        case FBALL:
 //          {
-//              tmp->stats.dam = (sint16) SP_lvl_dam_adjust(op->level, op->stats.sp, tmp->stats.dam, 0);
+//              tmp->stats.dam = (sint16) SP_lvl_dam_adjust(op->level, op->stats.sp, tmp->stats.dam);
 //
 //              /* I have to fix this. This code is for marking the object as "magic". Using
 //               * the attacktype for it, is somewhat brain dead. We have now the IS_MAGIC flag
@@ -3097,30 +3097,16 @@ int look_up_spell_by_name(object_t *op, const char *spname)
 
 /* we use our damage/level tables to adjust the base_dam. Normally, the damage increase
  * with the level of the caster - or if the caster is a living object, with the level
- * of the used skill. We can also assign a stats bonus, similiar to the players if its >= 0.
- * Is the base dam = -1, we use the default spell table setting with spell_type to get
- * a valid base damage.
- */
-int SP_lvl_dam_adjust(int level, int spell_type, int base_dam, int stats_bonus)
+ * of the used skill. */
+int SP_lvl_dam_adjust(int level, int spell_type, int base_dam)
 {
-    int     dam_adj;
-
-
     /* get a base damage when we don't have one from caller */
     if (base_dam == -1)
         base_dam = spells[spell_type].bdam;
-
+ 
     /* ensure a legal level value */
     if (level < 0)
         level = 1;
-
-    /* we simulate a stats bonus if needed to have a more progressive damage behaviour */
-    if(stats_bonus >= 0)
-        dam_adj = (int) (((float) base_dam * LEVEL_DAMAGE(level) * stat_bonus[stats_bonus]));
-    else
-        dam_adj = (int) (((float) base_dam * LEVEL_DAMAGE(level)));
-
-    return dam_adj;
+ 
+    return (int)(((float)base_dam * LEVEL_DAMAGE(level)));
 }
-
-
