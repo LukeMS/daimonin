@@ -842,17 +842,16 @@ object_t *pick_up(object_t *who, object_t *what, object_t *where, uint32 nrof)
     /* When what is loot we go through a special process. */
     if (what->type == LOOT)
     {
-        object_t *looted = what->inv;
+        object_t *looted,
+                 *next;
 
         if (pl)
         {
             SET_FLAG(who, FLAG_NO_FIX_PLAYER);
         }
 
-        while (looted)
+        FOREACH_OBJECT_IN_OBJECT(looted, what, next)
         {
-            object_t *next = looted->below;
-
             /* Nested loots will be thrown away. */
             if (looted->type == LOOT)
             {
@@ -865,12 +864,10 @@ object_t *pick_up(object_t *who, object_t *what, object_t *where, uint32 nrof)
 
                 (void)PickUp(who, looted, where, nr, from, to);
             }
-
-            looted = next;
         }
 
         /* If there is still loot we couldn't pick up... */
-        if (looted)
+        if (what->inv)
         {
             /* When the loot is being given we want to give the script a chance
              * to deal with anything left over. */
@@ -899,24 +896,23 @@ object_t *pick_up(object_t *who, object_t *what, object_t *where, uint32 nrof)
 
                 /* Insert all the remaining contents of the loot in wherever the
                  * loot itself is. */
-                while (looted)
+                if (what->map)
                 {
-                    object_t *next = looted->below;
-
-                    remove_ob(looted);
-
-                    if (what->map)
+                    FOREACH_OBJECT_IN_OBJECT(looted, what, next)
                     {
+                        remove_ob(looted);
                         looted->x = what->x;
                         looted->y = what->y;
                         (void)insert_ob_in_map(looted, what->map, NULL, INS_NO_WALK_ON);
                     }
-                    else if (what->env)
+                }
+                else if (what->env)
+                {
+                    FOREACH_OBJECT_IN_OBJECT(looted, what, next)
                     {
+                        remove_ob(looted);
                         (void)insert_ob_in_ob(looted, what->env);
                     }
-
-                    looted = next;
                 }
             }
         }
