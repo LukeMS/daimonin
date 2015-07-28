@@ -32,7 +32,6 @@ f_plugin HookList[NR_OF_HOOKS] =
     CFWCreateObject,
     CFWCmdRSkill,
     CFWBecomeFollower,
-    CFWGetMapObject,
     CFWCommunicate,
     CFWFindPlayer,
     CFWManualApply,
