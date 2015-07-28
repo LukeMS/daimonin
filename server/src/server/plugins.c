@@ -745,24 +745,6 @@ CFParm * CFWBecomeFollower(CFParm *PParm)
 }
 
 /*****************************************************************************/
-/* pick_up wrapper.                                                          */
-/*****************************************************************************/
-/* 0 - picker object;                                                        */
-/* 1 - picked object.                                                        */
-/*****************************************************************************/
-CFParm * CFWGetMapObject(CFParm *PParm)
-{
-    static CFParm  CFP;
-    map_t     *m = (map_t *)PParm->Value[0];
-    sint16         x = *(sint16 *)PParm->Value[1],
-                   y = *(sint16 *)PParm->Value[2];
-    msp_t      *msp = MSP_GET(m, x, y);
-
-    CFP.Value[0] = (void *)msp->last;
-    return &CFP;
-}
-
-/*****************************************************************************/
 /* find_player wrapper.                                                      */
 /*****************************************************************************/
 /* 0 - name of the player to find.                                           */

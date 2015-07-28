@@ -530,7 +530,6 @@ void                        initOnePlugin(const char *pluginfile);
 void                        removePlugins(void);
 CFParm                     *CFWCmdRSkill(CFParm *PParm);
 CFParm                     *CFWBecomeFollower(CFParm *PParm);
-CFParm                     *CFWGetMapObject(CFParm *PParm);
 CFParm                     *CFWFindPlayer(CFParm *PParm);
 CFParm                     *CFWManualApply(CFParm *PParm);
 CFParm                     *CFWCheckSpellKnown(CFParm *PParm);

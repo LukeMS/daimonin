@@ -365,21 +365,26 @@ static int Map_Delete(lua_State *L)
 static int Map_GetFirstObjectOnSquare(lua_State *L)
 {
     lua_object *self;
-    int         x,
+    sint32      x,
                 y;
-    object_t     *val;
-    CFParm     *CFR,
-                CFP;
+    map_t      *m2;
+    sint16      x2,
+                y2;
+    msp_t      *msp;
+    object_t   *o = NULL;
 
     get_lua_args(L, "Mii", &self, &x, &y);
+    m2 = WHERE;
+    x2 = x;
+    y2 = y;
 
-    CFP.Value[0] = WHERE;
-    CFP.Value[1] = (void *) (&x);
-    CFP.Value[2] = (void *) (&y);
-    CFR = (PlugHooks[HOOK_GETMAPOBJECT]) (&CFP);
-    val = (object_t *) (CFR->Value[0]);
+    if ((msp = MSP_GET(m2, x2, y2)))
+    {
+        o = msp->last;
+    }
 
-    return push_object(L, &GameObject, val);
+    push_object(L, &GameObject, o);
+    return 1;
 }
 
 /*****************************************************************************/
