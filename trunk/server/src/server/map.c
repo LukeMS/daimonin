@@ -922,6 +922,9 @@ static void FreeAllObjects(map_t *m)
 
             while ((this = msp->last))
             {
+LOG(llevDebug,">>>>%d %d this=%s[%d] %d %d prev=%s[%d] %d %d\n",x,y,
+STRING_OBJ_NAME(this),TAG(this),this->x,this->y,
+STRING_OBJ_NAME(prev),TAG(prev),prev->x,prev->y);
                 if (this == prev)
                 {
                     LOG(llevBug, "BUG:: %s/FreeAllObjects(): Link error, bailing out.\n",
