@@ -917,11 +917,9 @@ object_t *pick_up(object_t *who, object_t *what, object_t *where, uint32 nrof)
             }
         }
 
-        /* Mark the loot for removal (so can be dealt with by a script before
-         * gc). */
         if (!(QUERY_FLAG(what, FLAG_REMOVED)))
         {
-            mark_object_removed(what);
+            remove_ob(what);
         }
     }
     /* When what is not loot, try to pick it up -- see PickUp(). If this fails,
