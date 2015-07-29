@@ -607,6 +607,7 @@ object_t *create_financial_loot(moneyblock_t *money, object_t *who, uint8 mode)
     }
 
     loot = arch_to_object(archetype_global._loot_container);
+    SET_FLAG(loot, FLAG_IS_NAMED); // suppress article in query_name()
     InsertCoin(0, money->mithril, loot);
     InsertCoin(1, money->gold, loot);
     InsertCoin(2, money->silver, loot);
