@@ -819,7 +819,7 @@ void draw_client_map2(player_t *pl)
             if (view_msp->fflag[MSP_CLAYER_OVER] != flag_over ||
                 view_msp->ff_probe[MSP_CLAYER_OVER] != probe_over)
             {
-                if (face_over)
+                if (flag_over)
                 {
                     ext_flag |= EXT_FLAG_FLAGS_OVER;
                 }
