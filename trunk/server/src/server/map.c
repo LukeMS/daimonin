@@ -3696,10 +3696,13 @@ static uint32 IsBlocked(msp_t *msp, object_t *what);
  * invisible objects. Gmaster is for visible, invisible, and gmaster_invis
  * objects. This means gmaster_layer is the true representation of the head of
  * the list of objects in a square. */
+/* TODO: Rewrite these comments (these refer to an old single-function,
+ * pre-slice version of the following). */
 void msp_rebuild_slices_without(msp_t *msp, object_t *op)
 {
     msp_slayer_t  s = op->layer - MSP_SLAYER_UNSLICED - 1;
-    object_t     *this;
+    object_t     *this,
+                 *next;
 
     if (!IS_GMASTER_INVIS(op))
     {
@@ -3707,12 +3710,19 @@ void msp_rebuild_slices_without(msp_t *msp, object_t *op)
         {
             if (msp->slayer[MSP_SLICE_VISIBLE][s] == op)
             {
-                for (this = op->below; this; this = this->below)
+                /* Cannot guarantee the order of objects beyond that
+                 * MSP_SLAYER_SYSTEM layers are at the ->first end of the msp
+                 * and other layers are at the ->last end. So browse from
+                 * ->last until we find a MSP_SLAYER_SYSTEM. */
+                FOREACH_OBJECT_IN_MSP(this, msp, next)
                 {
-                    if (this->layer <= MSP_SLAYER_UNSLICED)
+                    if (this->layer == MSP_SLAYER_SYSTEM)
                     {
                         this = NULL;
-                        break;
+                    }
+                    else if (this == op)
+                    {
+                        continue;
                     }
                     else if (this->layer == op->layer &&
                              !IS_GMASTER_INVIS(this) &&
@@ -3729,12 +3739,15 @@ void msp_rebuild_slices_without(msp_t *msp, object_t *op)
 
         if (msp->slayer[MSP_SLICE_INVISIBLE][s] == op)
         {
-            for (this = op->below; this; this = this->below)
+            FOREACH_OBJECT_IN_MSP(this, msp, next)
             {
-                if (this->layer <= MSP_SLAYER_UNSLICED)
+                if (this->layer == MSP_SLAYER_SYSTEM)
                 {
                     this = NULL;
-                    break;
+                }
+                else if (this == op)
+                {
+                    continue;
                 }
                 else if (this->layer == op->layer &&
                          !IS_GMASTER_INVIS(this))
@@ -3750,12 +3763,15 @@ void msp_rebuild_slices_without(msp_t *msp, object_t *op)
 
     if (msp->slayer[MSP_SLICE_GMASTER][s] == op)
     {
-        for (this = op->below; this; this = this->below)
+        FOREACH_OBJECT_IN_MSP(this, msp, next)
         {
-            if (this->layer <= MSP_SLAYER_UNSLICED)
+            if (this->layer == MSP_SLAYER_SYSTEM)
             {
                 this = NULL;
-                break;
+            }
+            else if (this == op)
+            {
+                continue;
             }
             else if (this->layer == op->layer &&
                      !IS_GMASTER_INVIS(this))
