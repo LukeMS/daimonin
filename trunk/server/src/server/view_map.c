@@ -779,7 +779,7 @@ void draw_client_map2(player_t *pl)
             if (view_msp->fflag[MSP_CLAYER_UNDER] != flag_under ||
                 view_msp->ff_probe[MSP_CLAYER_UNDER] != probe_under)
             {
-                if (face_under)
+                if (flag_under)
                 {
                     ext_flag |= EXT_FLAG_FLAGS_UNDER;
                 }
