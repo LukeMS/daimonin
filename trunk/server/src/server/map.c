@@ -64,7 +64,6 @@ static char  *PathToName(shstr_t *path_sh);
 static void   LoadObjects(map_t *m, FILE *fp, int mapflags);
 static void   UpdateMapTiles(map_t *m);
 static void   SaveObjects(map_t *m, FILE *fp);
-static void   FreeAllObjects(map_t *m);
 #ifdef RECYCLE_TMP_MAPS
 static void   WriteMapLog(void);
 #endif
@@ -789,20 +788,42 @@ static void FreeMap(map_t *m)
     /* remove linked spawn points (small list of objectlink_t *) */
     remove_linked_spawn_list(m);
 
-    /* I put this before FreeAllObjects() -
-     * because the link flag is now tested in destroy_object()
-     * to have a clean handling of temporary/dynamic buttons on
-     * a map. Because we delete now the FLAG_LINKED from the object
-     * in objectlink_free() we don't trigger it inside destroy_object() */
+    /* Remove buttons. */
     if (m->buttons)
     {
         objectlink_free(m->buttons);
         m->buttons = NULL;
     }
 
+    /* Remove objects. */
     if (m->spaces)
     {
-        FreeAllObjects(m);
+        sint16    x,
+                  y,
+                  xl = m->width,
+                  yl = m->height;
+
+        for (x = 0; x < xl; x++)
+        {
+            for (y = 0; y < yl; y++)
+            {
+                msp_t    *msp = MSP_RAW(m, x, y);
+                object_t *this,
+                         *next;
+
+                FOREACH_OBJECT_IN_MSP(this, msp, next)
+                {
+                    this = (this->head) ? this->head : this;
+
+                    /* this is important - we can't be sure after we removed
+                     * all objects from the map, that the map structure will still
+                     * stay in the memory. If not, the object GC will try - and obj->map
+                     * will point to a free map struct... (/resetmap for example) */
+                    activelist_remove(this);
+                    remove_ob(this); /* technical remove - no check off */
+                }
+            }
+        }
     }
 
     /* Active list sanity check.
@@ -835,6 +856,9 @@ static void FreeMap(map_t *m)
      * active objects, if only as a reminder that this needs to be looked into,
      * but then quietly removes such leftovers.
      * -- Smacky 20101113 */
+    /* TODO: Not sure this is needed at all. Needs thought.
+     *
+     * -- Smacky 20150805 */
 #if 0
     if(m->active_objects->active_next)
     {
@@ -899,53 +923,6 @@ static void FreeMap(map_t *m)
     FREE_AND_CLEAR_HASH(m->reference);
     m->in_memory = MAP_MEMORY_SWAPPED;
     /* Note: m->path, m->orig_path and m->tmppath are freed in delete_map */
-}
-
-/*
- * Remove and free all objects in the given map.
- */
-
-static void FreeAllObjects(map_t *m)
-{
-    sint16  x,
-            y,
-            xl = MAP_WIDTH(m),
-            yl = MAP_HEIGHT(m);
-    object_t *this;
-
-    for (x = 0; x < xl; x++)
-    {
-        for (y = 0; y < yl; y++)
-        {
-            msp_t *msp = MSP_GET(m, x, y);
-            object_t   *prev = NULL;
-
-            while ((this = msp->last))
-            {
-                if (this == prev)
-                {
-                    LOG(llevBug, "BUG:: %s/FreeAllObjects(): Link error, bailing out (%s[%d] %d,%d)!\n",
-                       __FILE__, STRING_OBJ_NAME(this), TAG(this), x, y);
-                    break;
-                }
-
-                prev = this;
-
-                if (this->head)
-                {
-                    this = this->head;
-                }
-
-                /* this is important - we can't be sure after we removed
-                 * all objects from the map, that the map structure will still
-                 * stay in the memory. If not, the object GC will try - and obj->map
-                 * will point to a free map struct... (/resetmap for example)
-                 */
-                activelist_remove(this);
-                remove_ob(this); /* technical remove - no check off */
-            }
-        }
-    }
 }
 
 /*
