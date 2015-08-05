@@ -1,4 +1,5 @@
 Object fog
+name fog
 face fog.111
 other_arch fog
 terrain_flag 65535
