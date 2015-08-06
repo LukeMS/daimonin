@@ -511,6 +511,7 @@ sint8 enter_map(object_t *who, msp_t *msp, object_t *originator, uint8 oflags, u
     /* do some action special for players after we have inserted them */
     if (pl)
     {
+        set_mappath_by_map(who);
         pl->count = 0;
 
         if (pl->tadoffset != who->map->tadoffset)
