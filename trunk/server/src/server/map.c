@@ -145,6 +145,13 @@ char *create_mapdir_pathname(const char *name)
  * libdir & mapdir). Otherwise, we assume the name given is fully complete. */
 sint8 check_path(const char *name, uint8 prepend_dir)
 {
+    /* Sanity check. */
+    if (!name ||
+        *name == '\0')
+    {
+        return -1;
+    }
+
     if (prepend_dir)
     {
         char buf[MAXPATHLEN];
