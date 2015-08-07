@@ -511,7 +511,6 @@ sint8 enter_map(object_t *who, msp_t *msp, object_t *originator, uint8 oflags, u
     /* do some action special for players after we have inserted them */
     if (pl)
     {
-        set_mappath_by_map(who);
         pl->count = 0;
 
         if (pl->tadoffset != who->map->tadoffset)
@@ -632,7 +631,7 @@ sint8 enter_map_by_name(object_t *who, shstr_t *path_sh, shstr_t *orig_path_sh, 
             /* Something is wrong with our bind point... reset */
             if (!m)
             {
-                set_bindpath_by_default(pl);
+                MAP_SET_PLAYER_BED_INFO_DEFAULT(pl);
                 m = ready_map_name(shstr_cons.emergency_mappath, shstr_cons.emergency_mappath, MAP_STATUS_MULTI, reference);
 
                 /* If we can't load the emergency map, something is probably really screwed up, so bail out now. */

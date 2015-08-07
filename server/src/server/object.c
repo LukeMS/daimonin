@@ -2511,6 +2511,7 @@ object_t *insert_ob_in_map(object_t *const op, map_t *m, object_t *const origina
 
             op->map->player_first = op;
             pl->update_los = 1;
+            MAP_SET_PLAYER_MAP_INFO_CURRENT(pl);
         }
     }
 

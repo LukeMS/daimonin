@@ -450,7 +450,6 @@ int command_goto(object_t *op, char *params)
 
     msp = MSP_RAW(m, x, y);
     (void)enter_map(op, msp, NULL, OVERLAY_FORCE | OVERLAY_FIRST_AVAILABLE | OVERLAY_FIXED, 0);
-    set_mappath_by_map(op);
     FREE_ONLY_HASH(orig_path_sh);
     FREE_ONLY_HASH(path_sh);
     return COMMANDS_RTN_VAL_OK_SILENT;
