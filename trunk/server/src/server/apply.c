@@ -2109,15 +2109,12 @@ static void ApplyPoison(object_t *op, object_t *tmp)
 
 static void ApplySavebed(player_t *pl, object_t *bed)
 {
-    if (trigger_object_plugin_event(EVENT_APPLY, bed, pl->ob, NULL, NULL, NULL,
-                                    NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+    if (trigger_object_plugin_event(EVENT_APPLY, bed, pl->ob, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
     {
         return;
     }
 
-    /* update respawn position */
-    set_bindpath_by_name(pl, pl->ob->map->path, pl->ob->map->orig_path,
-                         pl->ob->map->status, pl->ob->x, pl->ob->y);
+    MAP_SET_PLAYER_BED_INFO_CURRENT(pl);
     ndi(NDI_UNIQUE, 0, pl->ob, "In future you will respawn here.");
 }
 

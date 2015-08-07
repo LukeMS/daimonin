@@ -2203,63 +2203,6 @@ static char *PathToName(shstr_t *path_sh)
     return buf;
 }
 
-/* initialize the player struct map & bind pathes */
-void set_mappath_by_default(player_t *pl)
-{
-    FREE_AND_ADD_REF_HASH(pl->maplevel, shstr_cons.start_mappath);
-    FREE_AND_ADD_REF_HASH(pl->orig_map, shstr_cons.start_mappath);
-    pl->status = FALLBACK_START_MAP_STATUS;
-    pl->map_x = FALLBACK_START_MAP_X;
-    pl->map_y = FALLBACK_START_MAP_Y;
-}
-
-void set_mappath_by_map(object_t *op)
-{
-    player_t *pl = CONTR(op);
-
-    if(!pl)
-        return;
-
-    FREE_AND_ADD_REF_HASH(pl->maplevel, op->map->path);
-    FREE_AND_ADD_REF_HASH(pl->orig_map, op->map->orig_path);
-    pl->status = op->map->status;
-    pl->map_x = op->x;
-    pl->map_y = op->y;
-}
-
-void set_mappath_by_name(player_t *pl, const char *dst, const char *src, int status, int x, int y)
-{
-    if(!dst)
-        dst = src;
-
-    FREE_AND_ADD_REF_HASH(pl->maplevel, dst);
-    FREE_AND_ADD_REF_HASH(pl->orig_map, src);
-    pl->status = status;
-    pl->map_x = x;
-    pl->map_y = y;
-}
-
-void set_bindpath_by_default(player_t *pl)
-{
-    FREE_AND_ADD_REF_HASH(pl->savebed_map, shstr_cons.bind_mappath);
-    FREE_AND_ADD_REF_HASH(pl->orig_savebed_map, shstr_cons.bind_mappath);
-    pl->bed_status = BIND_MAP_STATUS;
-    pl->bed_x = BIND_MAP_X;
-    pl->bed_y = BIND_MAP_Y;
-}
-
-void set_bindpath_by_name(player_t *pl, const char *dst, const char *src, int status, int x, int y)
-{
-    if(!dst)
-        dst = src;
-
-    FREE_AND_ADD_REF_HASH(pl->savebed_map, dst);
-    FREE_AND_ADD_REF_HASH(pl->orig_savebed_map, src);
-    pl->bed_status = status;
-    pl->bed_x = x;
-    pl->bed_y = y;
-}
-
 /* now, this function is the very deep core of the whole server map &
 * object handling. To understand the tiled map handling, you have to
 * understand the flow of this function. It can now called recursive

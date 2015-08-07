@@ -102,17 +102,10 @@ int player_save(object_t *op)
                  pl->gmaster_stealth, pl->privacy, pl->p_ver, pl->listening, pl->mode,
                  pl->base_skill_group[0],pl->base_skill_group[1],pl->base_skill_group[2]);
 
-    if (op->map != NULL)
-        set_mappath_by_map(op);
-
     fprintf(fp, "map %s\n", pl->maplevel);
-    if(pl->maplevel != pl->orig_map)
-        fprintf(fp, "o_map %s\n", pl->orig_map);
-
+    fprintf(fp, "o_map %s\n", pl->orig_map);
     fprintf(fp, "savebed_map %s\n", pl->savebed_map);
-    if(pl->savebed_map != pl->orig_savebed_map)
-        fprintf(fp, "o_bed %s\n", pl->orig_savebed_map);
-
+    fprintf(fp, "o_bed %s\n", pl->orig_savebed_map);
     fprintf(fp, "map_s %d\nbed_s %d\nmap_x %d\nmap_y %d\nbed_x %d\nbed_y %d\n",
                 MAP_STATUS_TYPE(pl->status), MAP_STATUS_TYPE(pl->bed_status), pl->map_x, pl->map_y, pl->bed_x, pl->bed_y);
 
@@ -591,21 +584,23 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
             LOG(llevDebug, "Debug: load_player(%s) unknown line in player file: %s\n", name, bufall);
     } /* End of loop loading the character file */
 
-    /* ensure we have a valid map we can the player kick put in later.
-     * when needed fallback to the defined start maps
-     */
-    if(!pl->orig_map || !pl->maplevel)
+    /* Ensure we have a valid map we can the player kick put in later.
+     * when needed fallback to the defined start maps. */
+    if (!pl->maplevel)
     {
-        if(!pl->maplevel) /* bad bug! */
-            set_mappath_by_default(pl);
-
+        MAP_SET_PLAYER_MAP_INFO_DEFAULT(pl);
+    }
+    else if (!pl->orig_map)
+    {
         FREE_AND_ADD_REF_HASH(pl->orig_map, pl->maplevel);
     }
-    if(!pl->orig_savebed_map || !pl->savebed_map)
-    {
-        if(!pl->savebed_map)
-            set_bindpath_by_default(pl);
 
+    if (!pl->savebed_map)
+    {
+        MAP_SET_PLAYER_BED_INFO_DEFAULT(pl);
+    }
+    else if (!pl->orig_savebed_map)
+    {
         FREE_AND_ADD_REF_HASH(pl->orig_savebed_map, pl->savebed_map);
     }
 
@@ -931,8 +926,8 @@ addme_login_msg player_create(NewSocket *ns, player_t **pl_ret, char *name, int 
     pl->orig_stats.Cha = op->stats.Cha = player_template[race].cha;
 
     /* setup start point and default maps */
-    set_mappath_by_default(pl);
-    set_bindpath_by_default(pl);
+    MAP_SET_PLAYER_MAP_INFO_DEFAULT(pl);
+    MAP_SET_PLAYER_BED_INFO_DEFAULT(pl);
     op->x = pl->map_x;
     op->y = pl->map_y;
 

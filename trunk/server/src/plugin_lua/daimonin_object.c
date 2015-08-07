@@ -3593,23 +3593,27 @@ static int GameObject_CheckInventory(lua_State *L)
 /*****************************************************************************/
 static int GameObject_SetSaveBed(lua_State *L)
 {
-    lua_object *self, *map;
-    int         x, y;
+    lua_object *self,
+               *map;
+    sint32      x,
+                y;
+    player_t   *pl;
+    map_t      *m;
 
     get_lua_args(L, "OMii", &self, &map, &x, &y);
 
-    if (WHO->type == PLAYER)
+    if (WHO->type != PLAYER)
     {
-        player_t *pl = CONTR(WHO);
-
-       /* set_bindpath_by_name(...); exchange later  */
-        FREE_AND_ADD_REF_HASH(pl->savebed_map, map->data.map->path);
-        FREE_AND_ADD_REF_HASH(pl->orig_savebed_map, map->data.map->orig_path);
-        pl->bed_status = MAP_STATUS_TYPE(map->data.map->status);
-        pl->bed_x = x;
-        pl->bed_y = y;
+        return luaL_error(L, "object:SetSaveBed() can only be called on a player!");
     }
 
+    pl = CONTR(WHO);
+    m = map->data.map;
+    FREE_AND_ADD_REF_HASH(pl->savebed_map, m->path);
+    FREE_AND_ADD_REF_HASH(pl->orig_savebed_map, m->orig_path);
+    pl->bed_status = MAP_STATUS_TYPE(m->status);
+    pl->bed_x = x;
+    pl->bed_y = y;
     return 0;
 }
 

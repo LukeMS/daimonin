@@ -300,6 +300,42 @@ enum map_memory_t
                                 pticks_second; \
     }
 
+/* MAP_SET_PLAYER_MAP_INFO_DEFAULT() sets the map info fields in _PL_'s player
+ * structure to default values. */
+#define MAP_SET_PLAYER_MAP_INFO_DEFAULT(_PL_) \
+    FREE_AND_ADD_REF_HASH((_PL_)->maplevel, shstr_cons.start_mappath); \
+    FREE_AND_ADD_REF_HASH((_PL_)->orig_map, shstr_cons.start_mappath); \
+    (_PL_)->status = FALLBACK_START_MAP_STATUS; \
+    (_PL_)->map_x = FALLBACK_START_MAP_X; \
+    (_PL_)->map_y = FALLBACK_START_MAP_Y;
+
+/* MAP_SET_PLAYER_MAP_INFO_CURRENT() sets the map info fields in _PL_'s player
+ * structure to the current map's values. */
+#define MAP_SET_PLAYER_MAP_INFO_CURRENT(_PL_) \
+    FREE_AND_ADD_REF_HASH((_PL_)->maplevel, (_PL_)->ob->map->path); \
+    FREE_AND_ADD_REF_HASH((_PL_)->orig_map, (_PL_)->ob->map->orig_path); \
+    (_PL_)->status = (_PL_)->ob->map->status; \
+    (_PL_)->map_x = (_PL_)->ob->x; \
+    (_PL_)->map_y = (_PL_)->ob->y;
+
+/* MAP_SET_PLAYER_BED_INFO_DEFAULT() sets the bed info fields in _PL_'s player
+ * structure to default values. */
+#define MAP_SET_PLAYER_BED_INFO_DEFAULT(_PL_) \
+    FREE_AND_ADD_REF_HASH((_PL_)->savebed_map, shstr_cons.bind_mappath); \
+    FREE_AND_ADD_REF_HASH((_PL_)->orig_savebed_map, shstr_cons.bind_mappath); \
+    (_PL_)->bed_status = BIND_MAP_STATUS; \
+    (_PL_)->bed_x = BIND_MAP_X; \
+    (_PL_)->bed_y = BIND_MAP_Y;
+
+/* MAP_SET_PLAYER_BED_INFO_CURRENT() sets the bed info fields in _PL_'s player
+ * structure to the current map's values. */
+#define MAP_SET_PLAYER_BED_INFO_CURRENT(_PL_) \
+    FREE_AND_ADD_REF_HASH((_PL_)->savebed_map, (_PL_)->ob->map->path); \
+    FREE_AND_ADD_REF_HASH((_PL_)->orig_savebed_map, (_PL_)->ob->map->orig_path); \
+    (_PL_)->bed_status = (_PL_)->ob->map->status; \
+    (_PL_)->bed_x = (_PL_)->ob->x; \
+    (_PL_)->bed_y = (_PL_)->ob->y;
+
 /* Unaligned: 248/412
  * Internal padding: 0/0
  * Trailing padding: 0/4
@@ -377,11 +413,6 @@ extern shstr_t  *create_instance_path_sh(player_t *pl, shstr_t *orig_path_sh, ui
 extern map_t  *ready_map_name(shstr_t *path_sh, shstr_t *orig_path_sh, uint32 flags, shstr_t *reference);
 extern void    clean_tmp_map(map_t *m);
 extern void    free_all_maps(void);
-extern void    set_bindpath_by_name(player_t *pl, const char *dst, const char *src, int status, int x, int y);
-extern void    set_bindpath_by_default(player_t *pl);
-extern void    set_mappath_by_name(player_t *pl, const char *dst, const char *src, int status, int x, int y);
-extern void    set_mappath_by_map(object_t *op);
-extern void    set_mappath_by_default(player_t *pl);
 extern uint16  map_player_unlink(map_t *m, shstr_t *path_sh);
 extern void    map_player_link(map_t *m, sint16 x, sint16 y, uint8 flag);
 extern void    read_map_log(void);
