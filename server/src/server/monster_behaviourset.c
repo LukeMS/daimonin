@@ -41,7 +41,8 @@ static struct mob_behaviourset *generated_behavioursets = NULL;
 /* List of behavioursets parsed by parse_behaviourconfig() */
 static struct mob_behaviourset *parsed_behavioursets    = NULL;
 
-static int check_behaviour_parameters(struct mob_behaviour *behaviour);
+static int check_behaviour_parameters(object_t *op, struct mob_behaviour *behaviour);
+static int parse_behaviour_parameters(object_t *op, const char *start, const char *end, struct mob_behaviour *behaviour);
 
 /*
  * Memory management functions
@@ -307,42 +308,42 @@ struct mob_behaviourset * generate_behaviourset(object_t *op)
     last->parameters[AIPARAM_FRIENDSHIP_SAME_ALIGNMENT].flags |= AI_PARAM_PRESENT;
     last->parameters[AIPARAM_FRIENDSHIP_OPPOSITE_ALIGNMENT].intvalue = (long)behaviourclasses[BEHAVIOURCLASS_PROCESSES].behaviours[AIBEHAVIOUR_FRIENDSHIP].params[AIPARAM_FRIENDSHIP_OPPOSITE_ALIGNMENT].defaultvalue;
     last->parameters[AIPARAM_FRIENDSHIP_OPPOSITE_ALIGNMENT].flags |= AI_PARAM_PRESENT;
-    check_behaviour_parameters(last);
+    check_behaviour_parameters(op, last);
 
     last = last->next = init_behaviour(BEHAVIOURCLASS_PROCESSES, AIBEHAVIOUR_ATTRACTION);
-    check_behaviour_parameters(last);
+    check_behaviour_parameters(op, last);
     if (!QUERY_FLAG(op, FLAG_NO_ATTACK))
     {
         last = last->next = init_behaviour(BEHAVIOURCLASS_PROCESSES, AIBEHAVIOUR_CHOOSE_ENEMY);
         last->parameters[AIPARAM_CHOOSE_ENEMY_ANTILURE_DISTANCE].intvalue = (long)
             behaviourclasses[BEHAVIOURCLASS_PROCESSES].behaviours[AIBEHAVIOUR_CHOOSE_ENEMY].params[AIPARAM_CHOOSE_ENEMY_ANTILURE_DISTANCE].defaultvalue;
-        check_behaviour_parameters(last);
+        check_behaviour_parameters(op, last);
     }
 
     /* Behaviours for melee-only fighters */
     if(!QUERY_FLAG(op, FLAG_READY_SPELL) && !QUERY_FLAG(op, FLAG_READY_BOW))
     {
         last = last->next = init_behaviour(BEHAVIOURCLASS_PROCESSES, AIBEHAVIOUR_LOOK_FOR_ENEMY_MISSILES);
-        check_behaviour_parameters(last);
+        check_behaviour_parameters(op, last);
     }
 
     /* Moves */
     if (QUERY_FLAG(op, FLAG_STAND_STILL))
     {
         last = set->behaviours[BEHAVIOURCLASS_MOVES] = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_STAND_STILL);
-        check_behaviour_parameters(last);
+        check_behaviour_parameters(op, last);
     }
     else
     {
         last = set->behaviours[BEHAVIOURCLASS_MOVES] = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_SLEEP);
-        check_behaviour_parameters(last);
+        check_behaviour_parameters(op, last);
 
         if (op->run_away)
         {
             last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_RUN_AWAY_FROM_ENEMY);
             last->parameters[AIPARAM_RUN_AWAY_FROM_ENEMY_HP_THRESHOLD].intvalue = op->run_away;
             last->parameters[AIPARAM_RUN_AWAY_FROM_ENEMY_HP_THRESHOLD].flags |= AI_PARAM_PRESENT;
-            check_behaviour_parameters(last);
+            check_behaviour_parameters(op, last);
         }
 
         if (!QUERY_FLAG(op, FLAG_NO_ATTACK))
@@ -356,17 +357,17 @@ struct mob_behaviourset * generate_behaviourset(object_t *op)
                     behaviourclasses[BEHAVIOURCLASS_MOVES].behaviours[AIBEHAVIOUR_KEEP_DISTANCE_TO_ENEMY].params[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MIN_DIST].defaultvalue;
                 last->parameters[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MAX_DIST].intvalue = (long)
                     behaviourclasses[BEHAVIOURCLASS_MOVES].behaviours[AIBEHAVIOUR_KEEP_DISTANCE_TO_ENEMY].params[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MAX_DIST].defaultvalue;
-                check_behaviour_parameters(last);
+                check_behaviour_parameters(op, last);
 
                 last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_OPTIMIZE_LINE_OF_FIRE);
-                check_behaviour_parameters(last);
+                check_behaviour_parameters(op, last);
             }
 
             /* Behaviours for melee-only fighters */
             if(!QUERY_FLAG(op, FLAG_READY_SPELL) && !QUERY_FLAG(op, FLAG_READY_BOW))
             {
                 last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_AVOID_LINE_OF_FIRE);
-                check_behaviour_parameters(last);
+                check_behaviour_parameters(op, last);
             }
 
             /* TODO: any behaviours for melee figheters
@@ -376,16 +377,16 @@ struct mob_behaviourset * generate_behaviourset(object_t *op)
             */
 
             last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_MOVE_TOWARDS_ENEMY);
-            check_behaviour_parameters(last);
+            check_behaviour_parameters(op, last);
             last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_MOVE_TOWARDS_ENEMY_LAST_KNOWN_POS);
-            check_behaviour_parameters(last);
+            check_behaviour_parameters(op, last);
             last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_SEARCH_FOR_LOST_ENEMY);
-            check_behaviour_parameters(last);
+            check_behaviour_parameters(op, last);
         }
         if(find_waypoint(op, NULL))
         {
             last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_MOVE_TOWARDS_WAYPOINT);
-            check_behaviour_parameters(last);
+            check_behaviour_parameters(op, last);
         }
         if (QUERY_FLAG(op, FLAG_RANDOM_MOVE))
         {
@@ -400,12 +401,12 @@ struct mob_behaviourset * generate_behaviourset(object_t *op)
                 last->parameters[AIPARAM_MOVE_RANDOMLY_YLIMIT].intvalue = op->item_level;
                 last->parameters[AIPARAM_MOVE_RANDOMLY_YLIMIT].flags |= AI_PARAM_PRESENT;
             }
-            check_behaviour_parameters(last);
+            check_behaviour_parameters(op, last);
         }
         else
         {
             last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_MOVE_TOWARDS_HOME);
-            check_behaviour_parameters(last);
+            check_behaviour_parameters(op, last);
         }
     }
 
@@ -442,7 +443,7 @@ static int parse_stringint_parameter(struct mob_behaviour_param *param, const ch
 
 /** Ensures all mandatory parameters were supplied, and
  * fills in default values for non-present optional parameters */
-static int check_behaviour_parameters(struct mob_behaviour *behaviour)
+static int check_behaviour_parameters(object_t *op, struct mob_behaviour *behaviour)
 {
     unsigned int i;
 
@@ -452,8 +453,9 @@ static int check_behaviour_parameters(struct mob_behaviour *behaviour)
         {
             if (behaviour->declaration->params[i].attribs & AI_MANDATORY_PARAM)
             {
-                LOG(llevBug, "BUG: mandatory parameter %s not given for behaviour %s\n",
-                    behaviour->declaration->params[i].name, behaviour->declaration->name);
+                LOG(llevMapbug, "MAPBUG:: Mandatory parameter %s not given for behaviour %s (%s[%d] @ %s %d %d)!\n",
+                    behaviour->declaration->params[i].name, behaviour->declaration->name,
+                    STRING_OBJ_NAME(op), TAG(op), STRING_MAP_PATH(op->map), op->x, op->y);
                 cleanup_behaviour_parameters(behaviour);
                 behaviour->parameters = NULL;
                 return -1;
@@ -469,12 +471,12 @@ static int check_behaviour_parameters(struct mob_behaviour *behaviour)
                       behaviour->parameters[i].stringvalue = add_string(behaviour->declaration->params[i].defaultvalue);
                       break;
                     case AI_STRINGINT_TYPE:
-//                      LOG(llevBug, "Loading default STRINGINT parameter for %s:%s\n", behaviour->declaration->name, behaviour->declaration->params[i].name);
                       if(parse_stringint_parameter(&behaviour->parameters[i], behaviour->declaration->params[i].defaultvalue))
-                          LOG(llevBug, "BUG: Bad STRINGINT default value (\"%s\") for parameter %s:%s\n",
-                              (char *)behaviour->declaration->params[i].defaultvalue,
-                              behaviour->declaration->name,
-                              behaviour->declaration->params[i].name);
+                      {
+                          LOG(llevMapbug, "MAPBUG:: Parameter %s for behaviour %s, bad STRINGINT default value '%s' (%s[%d] @ %s %d %d)!\n",
+                              behaviour->declaration->params[i].name, behaviour->declaration->name, (char *)behaviour->declaration->params[i].defaultvalue,
+                              STRING_OBJ_NAME(op), TAG(op), STRING_MAP_PATH(op->map), op->x, op->y);
+                      }
                       break;
                 }
             }
@@ -487,7 +489,7 @@ static int check_behaviour_parameters(struct mob_behaviour *behaviour)
 /* Parse a single parameter=value pair into a
  * mob_behaviour_param struct
  * Returns: 0 at success, non-zero on failure */
-static int parse_behaviour_parameters(const char *start, const char *end, struct mob_behaviour *behaviour)
+static int parse_behaviour_parameters(object_t *op, const char *start, const char *end, struct mob_behaviour *behaviour)
 {
     char                        namebuf[256], valuebuf[256], *ptr;
     struct mob_behaviour_param *param;
@@ -536,7 +538,9 @@ static int parse_behaviour_parameters(const char *start, const char *end, struct
 
         if (paramdecl == NULL)
         {
-            LOG(llevBug, "BUG: undefined parameter %s for behaviour %s\n", namebuf, behaviour->declaration->name);
+            LOG(llevMapbug, "MAPBUG:: Undefined parameter %s for behaviour %s (%s[%d] @ %s %d %d)!\n",
+                namebuf, behaviour->declaration->name,
+                STRING_OBJ_NAME(op), TAG(op), STRING_MAP_PATH(op->map), op->x, op->y);
             continue;
         }
 
@@ -554,7 +558,9 @@ static int parse_behaviour_parameters(const char *start, const char *end, struct
             }
             else
             {
-                LOG(llevBug, "BUG: parameter %s given twice for behaviour %s\n", namebuf, behaviour->declaration->name);
+                LOG(llevMapbug, "MAPBUG:: Parameter %s given twice for behaviour %s (%s[%d] @ %s %d %d)!\n",
+                    namebuf, behaviour->declaration->name,
+                    STRING_OBJ_NAME(op), TAG(op), STRING_MAP_PATH(op->map), op->x, op->y);
                 continue;
             }
         }
@@ -570,26 +576,36 @@ static int parse_behaviour_parameters(const char *start, const char *end, struct
             case AI_STRING_TYPE:
               param->stringvalue = add_string(valuebuf);
               param->flags |= AI_PARAM_PRESENT;
-//              LOG(llevDebug, "parameter '%s' for behaviour %s, string value '%s'\n", namebuf, behaviour->declaration->name, valuebuf);
+//              LOG(llevMapbug, "MAPBUG:: Parameter %s for behaviour %s, string value '%s' (%s[%d] @ %s %d %d)!\n",
+//                  namebuf, behaviour->declaration->name, valuebuf,
+//                  STRING_OBJ_NAME(op), TAG(op), STRING_MAP_PATH(op->map), op->x, op->y);
               break;
 
             case AI_STRINGINT_TYPE:
               if(parse_stringint_parameter(param, valuebuf))
-                  LOG(llevBug, "BUG: Bad STRINGINT format (\"%s\") for parameter %s\n", valuebuf, namebuf);
+              {
+                  LOG(llevMapbug, "MAPBUG:: Parameter %s for behaviour %s, bad STRINGINT format '%s' (%s[%d] @ %s %d %d)!\n",
+                      namebuf, behaviour->declaration->name, valuebuf,
+                      STRING_OBJ_NAME(op), TAG(op), STRING_MAP_PATH(op->map), op->x, op->y);
+              }
               else
               {
                   param->flags |= AI_PARAM_PRESENT;
-//                  LOG(llevDebug, "parameter '%s' for behaviour %s, stringint value '%s':%d\n", namebuf, behaviour->declaration->name, param->stringvalue, param->intvalue);
+//                  LOG(llevMapbug, "MAPBUG:: Parameter %s for behaviour %s, stringint value '%s':%d (%s[%d] @ %s %d %d)!\n",
+//                      namebuf, behaviour->declaration->name, param->stringvalue, param->intvalue,
+//                      STRING_OBJ_NAME(op), TAG(op), STRING_MAP_PATH(op->map), op->x, op->y);
               }
               break;
 
             default:
-              LOG(llevBug, "BUG: unknown type for parameter %s\n", namebuf);
+              LOG(llevMapbug, "MAPBUG:: Parameter %s for behaviour %s, unknown type (%s[%d] @ %s %d %d)!\n",
+                  namebuf, behaviour->declaration->name,
+                  STRING_OBJ_NAME(op), TAG(op), STRING_MAP_PATH(op->map), op->x, op->y);
               break;
         }
     }
 
-    return check_behaviour_parameters(behaviour);
+    return check_behaviour_parameters(op, behaviour);
 }
 
 static struct mob_behaviour *setup_plugin_behaviour(
@@ -686,7 +702,7 @@ static struct mob_behaviour *setup_behaviour(
     if (new_behaviour->parameters)
     {
         /* Parse behaviour parameters */
-        if (parse_behaviour_parameters(tok_end, conf_text, new_behaviour) == -1)
+        if (parse_behaviour_parameters(op, tok_end, conf_text, new_behaviour) == -1)
         {
             LOG(llevBug, "BUG: bad parameterlist for %s of %s\n", buf, STRING_OBJ_NAME(op));
             return_poolchunk(new_behaviour, pool_mob_behaviour);
