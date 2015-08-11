@@ -722,7 +722,7 @@ extern sint8 overlay_y[OVERLAY_MAX];
 #define OVERLAY_Y(_V_) overlay_y[(_V_)]
 
 extern sint8  overlay_find_free(msp_t *msp, object_t *what, sint8 start, sint8 stop, uint8 ins_flags);
-extern sint8 overlay_find_free_by_flags(msp_t *msp, object_t *who, uint8 oflags);
+extern sint8  overlay_find_free_by_flags(msp_t *msp, object_t *who, uint8 oflags);
 extern sint8  overlay_find_dir(msp_t *msp, object_t *exclude);
 extern uint32 overlay_is_back_blocked(sint8 index, msp_t *msp, uint32 flags);
 
