@@ -1,7 +1,7 @@
 Object oclunus
 name Oclunus
 face oclunus.151
-race beholder
+race overseer
 randomitems spells_beholder;loot;wealth_normal&D67;loot_base&D30;loot_magic&d9;loot_melee&d12
 mpart_id 3
 type 80
