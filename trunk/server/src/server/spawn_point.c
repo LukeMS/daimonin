@@ -25,118 +25,10 @@
 
 #include <global.h>
 
-static object_t *Spawn(object_t *mob, object_t *spawn);
 static void Autogen(object_t *monster, sint16 diff);
 static void RemoveStuff(object_t *where);
 static void InsertLoot(object_t *op, object_t *mob, object_t *tmp);
 static objectlink_t *get_linked_spawn(object_t *spawn);
-
-/* drop a monster on the map, by copying a monster object or
- * monster object head. Add treasures.
- */
-static object_t *Spawn(object_t *mob, object_t *spawn)
-{
-    object_t     *monster = NULL;
-    uint8       oflags;
-    sint8       start,
-                stop,
-                i;
-    msp_t   *msp;
-
-    /* TODO: The following overlay stuff should eventually be standardized and
-     * expanded and moved to a general overlay_foo function which can be called
-     * in all situations where something is responsible for putting something
-     * on a map (eg, exits, creators). For now the following provides backwards
-     * compatible functionality (that is, maps continue to work as they used
-     * to).
-     *
-     * -- Smacky 20140527 */
-    /* ->last_eat is a flag to specify whether the insertion should be
-     * within LOS. */
-    if (spawn->last_eat)
-    {
-         oflags = OVERLAY_WITHIN_LOS;
-    }
-    else
-    {
-         oflags = 0;
-    }
-
-    /* ->last_heal is the insertion mode and may be:
-     *   0: <do not insert>
-     *   1: first available location
-     *   2: fixed location
-     *   3: random location, 1 square radius
-     *   4: random location, 2 squares radius
-     *   5: random location, 3 squares radius
-     *   6: random location, progressive radius */
-    switch (spawn->last_heal)
-    {
-        case 0:
-        return NULL;
-
-        case 1:
-        oflags |= OVERLAY_FIRST_AVAILABLE;
-        start = 0;
-        stop = OVERLAY_7X7;
-        break;
-
-        case 2:
-        oflags |= OVERLAY_FORCE;
-        start = 0;
-        stop = 1;
-        break;
-
-        case 3:
-        start = 1;
-        stop = OVERLAY_3X3;
-        break;
-
-        case 4:
-        start = OVERLAY_3X3;
-        stop = OVERLAY_5X5;
-        break;
-
-        case 5:
-        start = OVERLAY_5X5;
-        stop = OVERLAY_7X7;
-        break;
-
-        case 6:
-        start = 0;
-        stop = OVERLAY_7X7;
-        break;
-
-    }
-
-    msp = MSP_KNOWN(spawn);
-    i = overlay_find_free(msp, mob, start, stop, oflags);
-
-    /* No free spot? No spawn. */
-    if (i == -1)
-    {
-        return NULL;
-    }
-
-    /* We're not actually (re)moving mob, just temporarily setting ->env,
-     * ->map, ->x, and ->y so that when it is cloned to monster, monster
-     * will have sensible values. */
-    mob->env = NULL;
-    mob->map = spawn->map;
-    mob->x = spawn->x + OVERLAY_X(i);
-    mob->y = spawn->y + OVERLAY_Y(i);
-    monster = clone_object(mob, MODE_INVENTORY);
-    mob->env = spawn;
-    mob->map = NULL;
-
-    if (monster)
-    {
-        monster->type = MONSTER;
-        Autogen(monster, spawn->map->difficulty);
-    }
-
-    return monster;
-}
 
 /* TODO: Would it be better to stick the autogen stuff in the
  * spawnpoint rather than each spawn mob?
@@ -321,11 +213,13 @@ static void InsertLoot(object_t *op, object_t *mob, object_t *tmp)
  */
 void spawn_point(object_t *op)
 {
-    msp_t *msp;
+    msp_t    *msp = MSP_KNOWN(op);
+    uint8     oflags;
+    sint8     i;
     sint16    b;
     int       rmt,
               tag;
-    object_t   *tmp,
+    object_t *tmp,
              *mob,
              *next,
              *loot;
@@ -336,7 +230,6 @@ void spawn_point(object_t *op)
         {
             if (op->last_eat) /* check darkness if needed */
             {
-                msp = MSP_KNOWN(op);
                 b = brightness[ABS(op->last_eat)] * ((op->last_eat < 0) ? -1 : 1);
 
                 if (MSP_IS_APPROPRIATE_BRIGHTNESS(msp, b))
@@ -413,7 +306,6 @@ void spawn_point(object_t *op)
             /* we have a possible hit - control special settings now */
             if (tmp->last_eat) /* darkness */
             {
-                msp = MSP_KNOWN(op);
                 b = brightness[ABS(tmp->last_eat)] * ((tmp->last_eat < 0) ? -1 : 1);
 
                 if (!MSP_IS_APPROPRIATE_BRIGHTNESS(msp, b))
@@ -440,13 +332,30 @@ void spawn_point(object_t *op)
     FREE_AND_COPY_HASH(loot->name, mob->name);
     /* Use InsertLoot() to extract the loot into the loot singularity. */
     InsertLoot(op, loot, mob->inv);
+    /* This determines in which msp the spawned mob is inserted.
+     *
+     * 0.10.5/6 allowed the mapper to modify the insertion point via spawn
+     * point attributes. However, this was never sensibly or even effectively
+     * used and so has been withdrawn.
+     *
+     * This will insert the mob at the first available msp in the 7x7 grid
+     * centered on the spawn point and withing LOS of the spawn point (so a
+     * point in a house won't spawn in the street, but beware of windows). */
+    oflags = OVERLAY_RANDOM | OVERLAY_SPECIAL | OVERLAY_WITHIN_LOS | OVERLAY_FIRST_AVAILABLE;
 
-    if (!(mob = Spawn(mob, op)))
+    if (!(mob = clone_object(mob, MODE_INVENTORY)) ||
+        (i = overlay_find_free_by_flags(msp, mob, oflags)) == -1)
     {
         mark_object_removed(loot);
-
         return; /* that happens when we have no free spot....*/
     }
+
+    mob->env = NULL;
+    mob->map = msp->map;
+    mob->x = msp->x + OVERLAY_X(i);
+    mob->y = msp->y + OVERLAY_Y(i);
+    mob->type = MONSTER;
+    Autogen(mob, op->map->difficulty);
 
     /* normal spawning may be interrupted by a script, allowing you to do
      * clever things to the mob. This is an apply event because trigger is
