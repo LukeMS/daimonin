@@ -40,9 +40,8 @@ typedef struct blstr
 
 static blocks block[MAP_CLIENT_X][MAP_CLIENT_Y];
 
-inline void clear_los(object_t *op);
-
-static void SetWall(player_t *pl, int x, int y);
+static void ExpandSight(player_t *pl);
+static void BlockVista(player_t *pl, int x, int y);
 
 /*
  * initialises the array used by the LOS routines.
@@ -162,48 +161,45 @@ void set_block(int x, int y, int bx, int by)
 #endif
 }
 
+#if 0
 /* update_los() recalculates the array which specifies what is
- * visible for the given player-object. */
-void update_los(object_t *op)
+ * visible for the given player. */
+void update_los(player_t *pl)
 {
-    player_t *pl = CONTR(op);
-    sint16  dx = pl->socket.mapx_2,
-            dy = pl->socket.mapy_2,
-            x,
-            y;
-
-    if (QUERY_FLAG(op, FLAG_REMOVED))
-    {
-        return;
-    }
+    object_t *who = pl->ob;
+    sint16    i,
+              j;
 
 #ifdef DEBUG_CORE
-    LOG(llevDebug, "LOS - %s\n", STRING_OBJ_NAME(op));
+    LOG(llevDebug, "LOS - %s\n", STRING_OBJ_NAME(who));
 #endif
 
-    clear_los(op);
+    /* Reset the array -- all msps are visible. */
+    (void)memset((void *)pl->blocked_los, BLOCKED_LOS_VISIBLE, sizeof(pl->blocked_los));
 
+    /* For wizpass, that is all. */
     if (pl->gmaster_wizpass)
     {
         return;
     }
 
-    for (x = (MAP_CLIENT_X - pl->socket.mapx) / 2; x < (MAP_CLIENT_X + pl->socket.mapx) / 2; x++)
+    /* Work through the array, determining what is visible or not based on what
+     * is actually on the map. */
+    for (i = (MAP_CLIENT_X - pl->socket.mapx) / 2; i < (MAP_CLIENT_X + pl->socket.mapx) / 2; i++)
     {
-        for (y = (MAP_CLIENT_Y - pl->socket.mapy) / 2; y < (MAP_CLIENT_Y + pl->socket.mapy) / 2; y++)
+        for (j = (MAP_CLIENT_Y - pl->socket.mapy) / 2; j < (MAP_CLIENT_Y + pl->socket.mapy) / 2; j++)
         {
-            map_t *m = op->map;
-            /* ax, ay are coordinates as indexed into the look window */
-            sint16     ax = x - (MAP_CLIENT_X - pl->socket.mapx) / 2,
-                       ay = y - (MAP_CLIENT_Y - pl->socket.mapy) / 2,
-                       x2 = op->x + x - MAP_CLIENT_X / 2,
-                       y2 = op->y + y - MAP_CLIENT_Y / 2;
-            msp_t  *msp = MSP_GET(m, x2, y2);
+            map_t  *m = who->map;
+            sint16  x = who->x + i - MAP_CLIENT_X / 2,
+                    y = who->y + j - MAP_CLIENT_Y / 2,
+                    ax = i - (MAP_CLIENT_X - pl->socket.mapx) / 2,
+                    ay = j - (MAP_CLIENT_Y - pl->socket.mapy) / 2;
+            msp_t  *msp = MSP_GET(m, x, y);
 
             /* this skips the "edges" of view area, the border tiles.
              * Naturally, this tiles can't block any view - there is
              * nothing behind them. */
-            if (!block[x][y].index)
+            if (!block[i][j].index)
             {
                 /* to handle the "blocksview update" right, we give this special
                  * tiles a "never use it to trigger a los_update()" flag.
@@ -254,30 +250,37 @@ void update_los(object_t *op)
 
             if (!msp)
             {
-                SetWall(pl, x, y);
+                BlockVista(pl, i, j);
                 pl->blocked_los[ax][ay] = BLOCKED_LOS_OUT_OF_MAP;
             }
             else if ((msp->flags & MSP_FLAG_BLOCKSVIEW))
             {
-                SetWall(pl, x, y);
+                BlockVista(pl, i, j);
                 pl->blocked_los[ax][ay] |= BLOCKED_LOS_BLOCKSVIEW;
             }
         }
     }
 
-    expand_sight(op);
+    ExpandSight(pl);
 
-    /* give us a area we can look through when we have xray - this
-     * stacks to normal LOS.
-     */
-    if (QUERY_FLAG(op, FLAG_XRAYS))
+    /* If the player has xray vision, unblock nearby blocked squares. */
+    /* TODO: Currently this is a fixed 9x9 area. Why not make it variable so
+     * that we can have greater and lesser demon eyes?
+     *
+     * -- Smacky 20150812 */
+    if (QUERY_FLAG(who, FLAG_XRAYS))
     {
-        for (x = -4; x <= 4; x++)
+        sint16 dx = pl->socket.mapx_2,
+               dy = pl->socket.mapy_2;
+
+        for (i = -4; i <= 4; i++)
         {
-            for (y = -4; y <= 4; y++)
+            for (j = -4; j <= 4; j++)
             {
-                if (pl->blocked_los[dx + x][dy + y] & BLOCKED_LOS_BLOCKED)
-                    pl->blocked_los[dx + x][dy + y] &= ~BLOCKED_LOS_BLOCKED;
+                if (pl->blocked_los[dx + i][dy + j] & BLOCKED_LOS_BLOCKED)
+                {
+                    pl->blocked_los[dx + i][dy + j] &= ~BLOCKED_LOS_BLOCKED;
+                }
             }
         }
     }
@@ -291,7 +294,7 @@ void update_los(object_t *op)
  * the view of the spaces 'behind' it, and those blocked
  * spaces behind it may block other spaces, etc.
  * In this way, the chain of visibility is set. */
-static void SetWall(player_t *pl, int x, int y)
+static void BlockVista(player_t *pl, int x, int y)
 {
     sint32  i;
     sint16  x2 = (MAP_CLIENT_X - pl->socket.mapx) / 2,
@@ -324,22 +327,12 @@ static void SetWall(player_t *pl, int x, int y)
             pl->blocked_los[ax][ay] |= BLOCKED_LOS_BLOCKED; /* this tile can't be seen */
         }
 
-        SetWall(pl, dx, dy);
+        BlockVista(pl, dx, dy);
     }
 }
 
 /*
- * Clears/initialises the los-array associated to the player
- * controlling the object.
- */
-
-inline void clear_los(object_t *op)
-{
-    (void) memset((void *) CONTR(op)->blocked_los, BLOCKED_LOS_VISIBLE, sizeof(CONTR(op)->blocked_los));
-}
-
-/*
- * expand_sight goes through the array of what the given player is
+ * ExpandSight goes through the array of what the given player is
  * able to see, and expands the visible area a bit, so the player will,
  * to a certain degree, be able to see into corners.
  * This is somewhat suboptimal, would be better to improve the formula.
@@ -348,22 +341,20 @@ inline void clear_los(object_t *op)
  * "pre calculated" LOS function.
  * It should be easy to do a better, optimized precalculation. MT-2004
  */
-#define BLOCKED_LOS_EXPAND 0x20
-
-void expand_sight(object_t *op)
+static void ExpandSight(player_t *pl)
 {
     int i, x, y, dx, dy;
 
-    for (x = 1; x < CONTR(op)->socket.mapx - 1; x++)    /* loop over inner squares */
+    for (x = 1; x < pl->socket.mapx - 1; x++)    /* loop over inner squares */
     {
-        for (y = 1; y < CONTR(op)->socket.mapy - 1; y++)
+        for (y = 1; y < pl->socket.mapy - 1; y++)
         {
 #if 0
-        LOG(llevInfo ,"expand_sight x,y = %d, %d  blocksview = %d, %d\n",
-            x, y, op->x-CONTR(op)->socket.mapx_2+x, op->y-CONTR(op)->socket.mapy_2+y);
+        LOG(llevInfo ,"ExpandSight x,y = %d, %d  blocksview = %d, %d\n",
+            x, y, op->x-pl->socket.mapx_2+x, op->y-pl->socket.mapy_2+y);
 #endif
-            if (CONTR(op)->blocked_los[x][y] <= BLOCKED_LOS_BLOCKSVIEW &&  /* if visible */
-                !(CONTR(op)->blocked_los[x][y] & BLOCKED_LOS_BLOCKSVIEW))  /* and not blocksview */
+            if (pl->blocked_los[x][y] <= BLOCKED_LOS_BLOCKSVIEW &&  /* if visible */
+                !(pl->blocked_los[x][y] & BLOCKED_LOS_BLOCKSVIEW))  /* and not blocksview */
             {
                 /* mark all directions */
                 for (i = 1; i <= 8; i += 1)
@@ -371,25 +362,258 @@ void expand_sight(object_t *op)
                     dx = x + OVERLAY_X(i);
                     dy = y + OVERLAY_Y(i);
 
-                    if (dx <0 || dy <0 || dx> CONTR(op)->socket.mapx || dy> CONTR(op)->socket.mapy)
+                    if (dx < 0 ||
+                        dx > pl->socket.mapx ||
+                        dy < 0 ||
+                        dy > pl->socket.mapy)
+                    {
                         continue;
+                    }
 
-                    if (CONTR(op)->blocked_los[dx][dy] & BLOCKED_LOS_BLOCKED)
-                        CONTR(op)->blocked_los[dx][dy] |= BLOCKED_LOS_EXPAND;
+                    if (pl->blocked_los[dx][dy] & BLOCKED_LOS_BLOCKED)
+                    {
+                        pl->blocked_los[dx][dy] |= BLOCKED_LOS_EXPAND;
+                    }
                 }
             }
         }
     }
 
-    for (x = 0; x < CONTR(op)->socket.mapx; x++)
+    for (x = 0; x < pl->socket.mapx; x++)
     {
-        for (y = 0; y < CONTR(op)->socket.mapy; y++)
+        for (y = 0; y < pl->socket.mapy; y++)
         {
-            if (CONTR(op)->blocked_los[x][y] & BLOCKED_LOS_EXPAND)
-                CONTR(op)->blocked_los[x][y] &= ~(BLOCKED_LOS_BLOCKED | BLOCKED_LOS_EXPAND);
+            if (pl->blocked_los[x][y] & BLOCKED_LOS_EXPAND)
+            {
+                pl->blocked_los[x][y] &= ~(BLOCKED_LOS_BLOCKED | BLOCKED_LOS_EXPAND);
+            }
         }
     }
 }
+#else
+/* update_los() recalculates the array which specifies what is
+ * visible for the given player. */
+void update_los(player_t *pl)
+{
+    object_t *who = pl->ob;
+    sint16    i,
+              j;
+
+#ifdef DEBUG_CORE
+    LOG(llevDebug, "LOS - %s\n", STRING_OBJ_NAME(who));
+#endif
+
+    /* Reset the array -- all msps are visible. */
+    (void)memset((void *)pl->blocked_los, BLOCKED_LOS_VISIBLE, sizeof(pl->blocked_los));
+
+    /* For wizpass, that is all. */
+    if (pl->gmaster_wizpass)
+    {
+        return;
+    }
+
+    /* Work through the array, determining what is visible or not based on what
+     * is actually on the map. */
+    for (i = (MAP_CLIENT_X - pl->socket.mapx) / 2; i < (MAP_CLIENT_X + pl->socket.mapx) / 2; i++)
+    {
+        for (j = (MAP_CLIENT_Y - pl->socket.mapy) / 2; j < (MAP_CLIENT_Y + pl->socket.mapy) / 2; j++)
+        {
+            map_t  *m = who->map;
+            sint16  x = who->x + i - MAP_CLIENT_X / 2,
+                    y = who->y + j - MAP_CLIENT_Y / 2,
+                    ax = i - (MAP_CLIENT_X - pl->socket.mapx) / 2,
+                    ay = j - (MAP_CLIENT_Y - pl->socket.mapy) / 2;
+            msp_t  *msp = MSP_GET(m, x, y);
+
+            /* this skips the "edges" of view area, the border tiles.
+             * Naturally, this tiles can't block any view - there is
+             * nothing behind them. */
+            if (!block[i][j].index)
+            {
+                /* to handle the "blocksview update" right, we give this special
+                 * tiles a "never use it to trigger a los_update()" flag.
+                 * blockview changes to this tiles will have no effect. */
+                if (!msp)
+                {
+                    pl->blocked_los[ax][ay] |= BLOCKED_LOS_OUT_OF_MAP;
+                }
+                else
+                {
+                    pl->blocked_los[ax][ay] |= BLOCKED_LOS_IGNORE;
+                }
+
+                continue;
+            }
+
+            /* If the converted coordinates are outside the viewable
+             * area for the client, return now. */
+            if (ax < 0 ||
+                ax >= pl->socket.mapx ||
+                ay < 0 ||
+                ay >= pl->socket.mapy)
+            {
+                continue;
+            }
+
+            /*LOG(llevNoLog,"SET_LOS: %d,%d\n", ax,ay);*/
+            /* If this space is already blocked, prune the processing - presumably
+             * whatever has set this space to be blocked has done the work and already
+             * done the dependency chain.
+             * but check for out_of_map to speedup our client map draw function. */
+            if (!(pl->blocked_los[ax][ay] & BLOCKED_LOS_OUT_OF_MAP))
+            {
+                if (!msp)
+                {
+                    if (!(pl->blocked_los[ax][ay] & BLOCKED_LOS_BLOCKED))
+                    {
+                        BlockVista(pl, i, j);
+                    }
+
+                    pl->blocked_los[ax][ay] |= BLOCKED_LOS_OUT_OF_MAP;
+                }
+                else if ((msp->flags & MSP_FLAG_BLOCKSVIEW))
+                {
+                    if (!(pl->blocked_los[ax][ay] & BLOCKED_LOS_BLOCKED))
+                    {
+                        BlockVista(pl, i, j);
+                    }
+
+                    pl->blocked_los[ax][ay] |= BLOCKED_LOS_BLOCKSVIEW;
+                }
+            }
+        }
+    }
+
+    ExpandSight(pl);
+
+    /* If the player has xray vision, unblock nearby blocked squares. */
+    /* TODO: Currently this is a fixed 9x9 area. Why not make it variable so
+     * that we can have greater and lesser demon eyes?
+     *
+     * -- Smacky 20150812 */
+    if (QUERY_FLAG(who, FLAG_XRAYS))
+    {
+        sint16 dx = pl->socket.mapx_2,
+               dy = pl->socket.mapy_2;
+
+        for (i = -4; i <= 4; i++)
+        {
+            for (j = -4; j <= 4; j++)
+            {
+                if (pl->blocked_los[dx + i][dy + j] & BLOCKED_LOS_BLOCKED)
+                {
+                    pl->blocked_los[dx + i][dy + j] &= ~BLOCKED_LOS_BLOCKED;
+                }
+            }
+        }
+    }
+}
+
+/* Used to initialise the array used by the LOS routines.
+ * x,y are indexes into the blocked[][] array.
+ * This recursively sets the blocked line of sight view.
+ * From the blocked[][] array, we know for example
+ * that if some particular space is blocked, it blocks
+ * the view of the spaces 'behind' it, and those blocked
+ * spaces behind it may block other spaces, etc.
+ * In this way, the chain of visibility is set. */
+static void BlockVista(player_t *pl, int x, int y)
+{
+    sint32  i;
+    sint16  x2 = (MAP_CLIENT_X - pl->socket.mapx) / 2,
+            y2 = (MAP_CLIENT_Y - pl->socket.mapy) / 2;
+
+    for (i = 0; i < block[x][y].index; i++)
+    {
+        sint16 dx = block[x][y].x[i],
+               dy = block[x][y].y[i],
+               ax = dx - x2,
+               ay = dy - y2;
+
+        if (ax < 0 ||
+            ax >= pl->socket.mapx ||
+            ay < 0 ||
+            ay >= pl->socket.mapy)
+        {
+            continue;
+        }
+
+#if 0
+        LOG(llevInfo ,"blocked %d %d -> %d %d\n",dx, dy, ax, ay);
+#endif
+        /* we need to adjust to the fact that the socket
+         * code wants the los to start from the 0,0
+         * and not be relative to middle of los array.
+         */
+        if (!(pl->blocked_los[ax][ay] & BLOCKED_LOS_OUT_OF_MAP))
+        {
+            pl->blocked_los[ax][ay] |= BLOCKED_LOS_BLOCKED; /* this tile can't be seen */
+        }
+
+        BlockVista(pl, dx, dy);
+    }
+}
+
+/*
+ * ExpandSight goes through the array of what the given player is
+ * able to see, and expands the visible area a bit, so the player will,
+ * to a certain degree, be able to see into corners.
+ * This is somewhat suboptimal, would be better to improve the formula.
+ */
+/* thats true: we should migrate this function asap in the los - a bit better
+ * "pre calculated" LOS function.
+ * It should be easy to do a better, optimized precalculation. MT-2004
+ */
+static void ExpandSight(player_t *pl)
+{
+    int i, x, y, dx, dy;
+
+    for (x = 1; x < pl->socket.mapx - 1; x++)    /* loop over inner squares */
+    {
+        for (y = 1; y < pl->socket.mapy - 1; y++)
+        {
+#if 0
+        LOG(llevInfo ,"ExpandSight x,y = %d, %d  blocksview = %d, %d\n",
+            x, y, op->x-pl->socket.mapx_2+x, op->y-pl->socket.mapy_2+y);
+#endif
+            if (pl->blocked_los[x][y] <= BLOCKED_LOS_BLOCKSVIEW &&  /* if visible */
+                !(pl->blocked_los[x][y] & BLOCKED_LOS_BLOCKSVIEW))  /* and not blocksview */
+            {
+                /* mark all directions */
+                for (i = 1; i <= 8; i += 1)
+                {
+                    dx = x + OVERLAY_X(i);
+                    dy = y + OVERLAY_Y(i);
+
+                    if (dx < 0 ||
+                        dx > pl->socket.mapx ||
+                        dy < 0 ||
+                        dy > pl->socket.mapy)
+                    {
+                        continue;
+                    }
+
+                    if ((pl->blocked_los[dx][dy] & BLOCKED_LOS_BLOCKED))
+                    {
+                        pl->blocked_los[dx][dy] |= BLOCKED_LOS_EXPAND;
+                    }
+                }
+            }
+        }
+    }
+
+    for (x = 0; x < pl->socket.mapx; x++)
+    {
+        for (y = 0; y < pl->socket.mapy; y++)
+        {
+            if ((pl->blocked_los[x][y] & BLOCKED_LOS_EXPAND))
+            {
+                pl->blocked_los[x][y] &= ~(BLOCKED_LOS_BLOCKED | BLOCKED_LOS_EXPAND);
+            }
+        }
+    }
+}
+#endif
 
 /*
  * Debug-routine which dumps the array which specifies the visible

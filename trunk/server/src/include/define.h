@@ -61,11 +61,13 @@
 // #define PORTAL_DESTINATION_NAME "Town portal destination"
 
 /* LOS (loc.c) defines */
-#define BLOCKED_LOS_VISIBLE     0x00    /* its visible */
-#define BLOCKED_LOS_IGNORE      0x01    /* ignore this tile for blocksview/visible changes! */
-#define BLOCKED_LOS_BLOCKSVIEW  0x02    /* visible but will block all behind */
-#define BLOCKED_LOS_BLOCKED     0x04    /* sight is blocked */
-#define BLOCKED_LOS_OUT_OF_MAP  0x08    /* tile is not visible because not part of legal map */
+#define BLOCKED_LOS_VISIBLE     0        // visible
+#define BLOCKED_LOS_IGNORE      (1 << 0) // ignore for blocksview/visible changes!
+#define BLOCKED_LOS_BLOCKSVIEW  (1 << 1) // visible but will block all behind
+#define BLOCKED_LOS_BLOCKED     (1 << 2) // sight is blocked
+#define BLOCKED_LOS_OUT_OF_MAP  (1 << 3) // not visible because not part of legal map
+#define BLOCKED_LOS_EXPAND      (1 << 5) // internal use
+
 
 /* TYPE DEFINES */
 /* Only add new values to this list if somewhere in the program code,

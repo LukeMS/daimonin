@@ -396,7 +396,6 @@ void set_gmaster_mode(player_t *pl, int mode_id)
     {
         pl->gmaster_wizpass = 1;
         pl->update_los = 1;
-        clear_los(pl->ob);
     }
 
     pl->socket.ext_title_flag =1;
