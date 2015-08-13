@@ -2532,10 +2532,10 @@ int command_wizpass(object_t *op, char *params)
         return COMMANDS_RTN_VAL_ERROR;
     }
 
-   pl->gmaster_wizpass = !pl->gmaster_wizpass;
-   ndi(NDI_UNIQUE, 0, op, "Toggled gmaster_wizpass to %u",
-                 pl->gmaster_wizpass);
-
+    pl->gmaster_wizpass = !pl->gmaster_wizpass;
+    pl->update_los = 1;
+    ndi(NDI_UNIQUE, 0, op, "Toggled gmaster_wizpass to %u",
+        pl->gmaster_wizpass);
     return COMMANDS_RTN_VAL_OK_SILENT;
 }
 

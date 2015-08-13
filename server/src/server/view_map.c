@@ -174,10 +174,12 @@ void draw_client_map(player_t *pl)
     }
 
     /* do LOS after calls to msp_update */
-    if (!pl->gmaster_wizpass &&
-        pl->update_los)
+    /* TODO: Not sure we even need this flag...
+     *
+     * -- Smacky 20150812 */
+    if (pl->update_los)
     {
-        update_los(who);
+        update_los(pl);
         pl->update_los = 0;
     }
 
