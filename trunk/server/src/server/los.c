@@ -591,7 +591,7 @@ static void ExpandSight(player_t *pl)
         LOG(llevInfo ,"ExpandSight x,y = %d, %d  blocksview = %d, %d\n",
             x, y, op->x-pl->socket.mapx_2+x, op->y-pl->socket.mapy_2+y);
 #endif
-            if (!(pl->blocked_los[x][y] & (BLOCKED_LOS_BLOCKSVIEW | BLOCKED_LOS_BLOCKED | BLOCKED_LOS_OUT_OF_MAP)))
+            if (!(pl->blocked_los[x][y] & (BLOCKED_LOS_BLOCKSVIEW | BLOCKED_LOS_BLOCKED | BLOCKED_LOS_OUT_OF_MAP | BLOCKED_LOS_EXPAND)))
             {
                 /* mark all directions */
                 for (i = 1; i <= 8; i++)
@@ -610,19 +610,9 @@ static void ExpandSight(player_t *pl)
                     if ((pl->blocked_los[dx][dy] & BLOCKED_LOS_BLOCKED))
                     {
                         pl->blocked_los[dx][dy] |= BLOCKED_LOS_EXPAND;
+                        pl->blocked_los[dx][dy] &= ~BLOCKED_LOS_BLOCKED;
                     }
                 }
-            }
-        }
-    }
-
-    for (x = 0; x < pl->socket.mapx; x++)
-    {
-        for (y = 0; y < pl->socket.mapy; y++)
-        {
-            if ((pl->blocked_los[x][y] & BLOCKED_LOS_EXPAND))
-            {
-                pl->blocked_los[x][y] &= ~(BLOCKED_LOS_BLOCKED | BLOCKED_LOS_EXPAND);
             }
         }
     }
