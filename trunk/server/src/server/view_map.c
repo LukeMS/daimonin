@@ -174,9 +174,6 @@ void draw_client_map(player_t *pl)
     }
 
     /* do LOS after calls to msp_update */
-    /* TODO: Not sure we even need this flag...
-     *
-     * -- Smacky 20150812 */
     if (pl->update_los)
     {
         update_los(pl);

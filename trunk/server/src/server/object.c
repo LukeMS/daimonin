@@ -1637,7 +1637,8 @@ static void RemoveFromMap(object_t *op)
         }
 
         pl->map_below = pl->map_above = NULL;
-        pl->update_los = 1;
+        /* No update on removal -- done on reinsertion. */
+        //pl->update_los = 1;
 
         /* a open container NOT in our player inventory = unlink (close) when we move */
         if (pl->container &&
