@@ -391,17 +391,32 @@ static void ExpandSight(player_t *pl)
     }
 }
 #else
-/* update_los() recalculates the array which specifies what is
- * visible for the given player. */
+/* update_los() recalculates the array which specifies what is visible for pl.
+ * In summary, it does this by first resetting each element to 0 so every
+ * square is visible. For gmaster_wizpass, this is all so just return. For
+ * others step through the array, comparing each element to the corresponding
+ * msp. */
 void update_los(player_t *pl)
 {
     object_t *who = pl->ob;
-    sint16    i,
+    sint16    mini = (MAP_CLIENT_X - pl->socket.mapx) / 2,
+              minj = (MAP_CLIENT_Y - pl->socket.mapy) / 2,
+              maxi = (MAP_CLIENT_X + pl->socket.mapx) / 2,
+              maxj = (MAP_CLIENT_Y + pl->socket.mapy) / 2,
+              i,
               j;
 
 #ifdef DEBUG_CORE
     LOG(llevDebug, "LOS - %s\n", STRING_OBJ_NAME(who));
 #endif
+
+    /* A blind player can see nothing except the square he is on. */
+    if (QUERY_FLAG(who, FLAG_BLIND))
+    {
+        (void)memset((void *)pl->blocked_los, BLOCKED_LOS_BLOCKED, sizeof(pl->blocked_los));
+        pl->blocked_los[mini / 2 + maxi / 2][minj / 2 + maxj / 2] = BLOCKED_LOS_VISIBLE;
+        return;
+    }
 
     /* Reset the array -- all msps are visible. */
     (void)memset((void *)pl->blocked_los, BLOCKED_LOS_VISIBLE, sizeof(pl->blocked_los));
@@ -414,15 +429,15 @@ void update_los(player_t *pl)
 
     /* Work through the array, determining what is visible or not based on what
      * is actually on the map. */
-    for (i = (MAP_CLIENT_X - pl->socket.mapx) / 2; i < (MAP_CLIENT_X + pl->socket.mapx) / 2; i++)
+    for (i = mini; i < maxi; i++)
     {
-        for (j = (MAP_CLIENT_Y - pl->socket.mapy) / 2; j < (MAP_CLIENT_Y + pl->socket.mapy) / 2; j++)
+        for (j = minj; j < maxj; j++)
         {
             map_t  *m = who->map;
             sint16  x = who->x + i - MAP_CLIENT_X / 2,
                     y = who->y + j - MAP_CLIENT_Y / 2,
-                    ax = i - (MAP_CLIENT_X - pl->socket.mapx) / 2,
-                    ay = j - (MAP_CLIENT_Y - pl->socket.mapy) / 2;
+                    ax = i - mini,
+                    ay = j - minj;
             msp_t  *msp = MSP_GET(m, x, y);
 
             /* this skips the "edges" of view area, the border tiles.
@@ -435,7 +450,7 @@ void update_los(player_t *pl)
                  * blockview changes to this tiles will have no effect. */
                 if (!msp)
                 {
-                    pl->blocked_los[ax][ay] |= BLOCKED_LOS_OUT_OF_MAP;
+                    pl->blocked_los[ax][ay] = BLOCKED_LOS_OUT_OF_MAP;
                 }
                 else
                 {
@@ -469,7 +484,7 @@ void update_los(player_t *pl)
                         BlockVista(pl, i, j);
                     }
 
-                    pl->blocked_los[ax][ay] |= BLOCKED_LOS_OUT_OF_MAP;
+                    pl->blocked_los[ax][ay] = BLOCKED_LOS_OUT_OF_MAP;
                 }
                 else if ((msp->flags & MSP_FLAG_BLOCKSVIEW))
                 {
@@ -576,11 +591,10 @@ static void ExpandSight(player_t *pl)
         LOG(llevInfo ,"ExpandSight x,y = %d, %d  blocksview = %d, %d\n",
             x, y, op->x-pl->socket.mapx_2+x, op->y-pl->socket.mapy_2+y);
 #endif
-            if (pl->blocked_los[x][y] <= BLOCKED_LOS_BLOCKSVIEW &&  /* if visible */
-                !(pl->blocked_los[x][y] & BLOCKED_LOS_BLOCKSVIEW))  /* and not blocksview */
+            if (!(pl->blocked_los[x][y] & (BLOCKED_LOS_BLOCKSVIEW | BLOCKED_LOS_BLOCKED | BLOCKED_LOS_OUT_OF_MAP)))
             {
                 /* mark all directions */
-                for (i = 1; i <= 8; i += 1)
+                for (i = 1; i <= 8; i++)
                 {
                     dx = x + OVERLAY_X(i);
                     dy = y + OVERLAY_Y(i);
