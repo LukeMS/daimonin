@@ -399,51 +399,52 @@ static void ExpandSight(player_t *pl)
 void update_los(player_t *pl)
 {
     object_t *who = pl->ob;
-    sint16    mini = (MAP_CLIENT_X - pl->socket.mapx) / 2,
-              minj = (MAP_CLIENT_Y - pl->socket.mapy) / 2,
-              maxi = (MAP_CLIENT_X + pl->socket.mapx) / 2,
-              maxj = (MAP_CLIENT_Y + pl->socket.mapy) / 2,
-              i,
-              j;
+    sint16    minbx = (MAP_CLIENT_X - pl->socket.mapx) / 2,
+              minby = (MAP_CLIENT_Y - pl->socket.mapy) / 2,
+              maxbx = (MAP_CLIENT_X + pl->socket.mapx) / 2,
+              maxby = (MAP_CLIENT_Y + pl->socket.mapy) / 2,
+              bx,
+              by;
 
 #ifdef DEBUG_CORE
     LOG(llevDebug, "LOS - %s\n", STRING_OBJ_NAME(who));
 #endif
 
+    /* Players with wizpass, can see all (use IGNORE rather than VISIBLE to
+     * skip pointless updates in view_map.c:draw_map()). */
+    if (pl->gmaster_wizpass)
+    {
+        (void)memset((void *)pl->blocked_los, BLOCKED_LOS_IGNORE, sizeof(pl->blocked_los));
+        return;
+    }
     /* A blind player can see nothing except the square he is on. */
-    if (QUERY_FLAG(who, FLAG_BLIND))
+    else if (QUERY_FLAG(who, FLAG_BLIND))
     {
         (void)memset((void *)pl->blocked_los, BLOCKED_LOS_BLOCKED, sizeof(pl->blocked_los));
-        pl->blocked_los[mini / 2 + maxi / 2][minj / 2 + maxj / 2] = BLOCKED_LOS_VISIBLE;
+        pl->blocked_los[minbx / 2 + maxbx / 2][minby / 2 + maxby / 2] = BLOCKED_LOS_IGNORE;
         return;
     }
 
     /* Reset the array -- all msps are visible. */
     (void)memset((void *)pl->blocked_los, BLOCKED_LOS_VISIBLE, sizeof(pl->blocked_los));
 
-    /* For wizpass, that is all. */
-    if (pl->gmaster_wizpass)
-    {
-        return;
-    }
-
     /* Work through the array, determining what is visible or not based on what
      * is actually on the map. */
-    for (i = mini; i < maxi; i++)
+    for (bx = minbx; bx < maxbx; bx++)
     {
-        for (j = minj; j < maxj; j++)
+        for (by = minby; by < maxby; by++)
         {
             map_t  *m = who->map;
-            sint16  x = who->x + i - MAP_CLIENT_X / 2,
-                    y = who->y + j - MAP_CLIENT_Y / 2,
-                    ax = i - mini,
-                    ay = j - minj;
+            sint16  x = who->x + bx - MAP_CLIENT_X / 2,
+                    y = who->y + by - MAP_CLIENT_Y / 2,
+                    ax = bx - minbx,
+                    ay = by - minby;
             msp_t  *msp = MSP_GET(m, x, y);
 
             /* this skips the "edges" of view area, the border tiles.
              * Naturally, this tiles can't block any view - there is
              * nothing behind them. */
-            if (!block[i][j].index)
+            if (!block[bx][by].index)
             {
                 /* to handle the "blocksview update" right, we give this special
                  * tiles a "never use it to trigger a los_update()" flag.
@@ -481,7 +482,7 @@ void update_los(player_t *pl)
                 {
                     if (!(pl->blocked_los[ax][ay] & BLOCKED_LOS_BLOCKED))
                     {
-                        BlockVista(pl, i, j);
+                        BlockVista(pl, bx, by);
                     }
 
                     pl->blocked_los[ax][ay] = BLOCKED_LOS_OUT_OF_MAP;
@@ -490,7 +491,7 @@ void update_los(player_t *pl)
                 {
                     if (!(pl->blocked_los[ax][ay] & BLOCKED_LOS_BLOCKED))
                     {
-                        BlockVista(pl, i, j);
+                        BlockVista(pl, bx, by);
                     }
 
                     pl->blocked_los[ax][ay] |= BLOCKED_LOS_BLOCKSVIEW;
@@ -499,26 +500,61 @@ void update_los(player_t *pl)
         }
     }
 
-    ExpandSight(pl);
+    /* Now we've filled the previously all-visible array with lots of blocked
+     * squares -- too many blocked squares. So go back over the array (except
+     * the edges) and for any unblocked square remove any blocks from its 8
+     * neighbours. */
+    for (bx = minbx + 1; bx < maxbx - 1; bx++)
+    {
+        for (by = minby + 1; by < maxby - 1; by++)
+        {
+            sint16 ax = bx - minbx,
+                   ay = by - minby;
+
+            if (!(pl->blocked_los[ax][ay] & (BLOCKED_LOS_BLOCKSVIEW | BLOCKED_LOS_BLOCKED | BLOCKED_LOS_OUT_OF_MAP | BLOCKED_LOS_EXPAND)))
+            {
+                sint8 i;
+
+                for (i = 1; i < OVERLAY_3X3; i++)
+                {
+                    sint16 dx = ax + OVERLAY_X(i),
+                           dy = ay + OVERLAY_Y(i);
+
+//                    if (dx < minbx ||
+//                        dx >= maxbx ||
+//                        dy < minby ||
+//                        dy >= maxby)
+//                    {
+//                        continue;
+//                    }
+
+                    if ((pl->blocked_los[dx][dy] & BLOCKED_LOS_BLOCKED))
+                    {
+                        pl->blocked_los[dx][dy] |= BLOCKED_LOS_EXPAND;
+                        pl->blocked_los[dx][dy] &= ~BLOCKED_LOS_BLOCKED;
+                    }
+                }
+            }
+        }
+    }
 
     /* If the player has xray vision, unblock nearby blocked squares. */
-    /* TODO: Currently this is a fixed 9x9 area. Why not make it variable so
-     * that we can have greater and lesser demon eyes?
+    /* TODO: Currently this is a fixed 2 square radius. Why not make it
+     * variable so that we can have greater and lesser demon eyes?
      *
      * -- Smacky 20150812 */
     if (QUERY_FLAG(who, FLAG_XRAYS))
     {
-        sint16 dx = pl->socket.mapx_2,
-               dy = pl->socket.mapy_2;
+        sint8 i;
 
-        for (i = -4; i <= 4; i++)
+        for (i = 1; i < OVERLAY_5X5; i++)
         {
-            for (j = -4; j <= 4; j++)
+            sint16 dx = pl->socket.mapx_2 + OVERLAY_X(i),
+                   dy = pl->socket.mapy_2 + OVERLAY_Y(i);
+
+            if (pl->blocked_los[dx][dy] & BLOCKED_LOS_BLOCKED)
             {
-                if (pl->blocked_los[dx + i][dy + j] & BLOCKED_LOS_BLOCKED)
-                {
-                    pl->blocked_los[dx + i][dy + j] &= ~BLOCKED_LOS_BLOCKED;
-                }
+                pl->blocked_los[dx][dy] &= ~BLOCKED_LOS_BLOCKED;
             }
         }
     }
@@ -566,55 +602,6 @@ static void BlockVista(player_t *pl, int x, int y)
         }
 
         BlockVista(pl, dx, dy);
-    }
-}
-
-/*
- * ExpandSight goes through the array of what the given player is
- * able to see, and expands the visible area a bit, so the player will,
- * to a certain degree, be able to see into corners.
- * This is somewhat suboptimal, would be better to improve the formula.
- */
-/* thats true: we should migrate this function asap in the los - a bit better
- * "pre calculated" LOS function.
- * It should be easy to do a better, optimized precalculation. MT-2004
- */
-static void ExpandSight(player_t *pl)
-{
-    int i, x, y, dx, dy;
-
-    for (x = 1; x < pl->socket.mapx - 1; x++)    /* loop over inner squares */
-    {
-        for (y = 1; y < pl->socket.mapy - 1; y++)
-        {
-#if 0
-        LOG(llevInfo ,"ExpandSight x,y = %d, %d  blocksview = %d, %d\n",
-            x, y, op->x-pl->socket.mapx_2+x, op->y-pl->socket.mapy_2+y);
-#endif
-            if (!(pl->blocked_los[x][y] & (BLOCKED_LOS_BLOCKSVIEW | BLOCKED_LOS_BLOCKED | BLOCKED_LOS_OUT_OF_MAP | BLOCKED_LOS_EXPAND)))
-            {
-                /* mark all directions */
-                for (i = 1; i <= 8; i++)
-                {
-                    dx = x + OVERLAY_X(i);
-                    dy = y + OVERLAY_Y(i);
-
-                    if (dx < 0 ||
-                        dx > pl->socket.mapx ||
-                        dy < 0 ||
-                        dy > pl->socket.mapy)
-                    {
-                        continue;
-                    }
-
-                    if ((pl->blocked_los[dx][dy] & BLOCKED_LOS_BLOCKED))
-                    {
-                        pl->blocked_los[dx][dy] |= BLOCKED_LOS_EXPAND;
-                        pl->blocked_los[dx][dy] &= ~BLOCKED_LOS_BLOCKED;
-                    }
-                }
-            }
-        }
     }
 }
 #endif
