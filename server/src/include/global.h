@@ -538,6 +538,89 @@ while (0)
 #define GETTIMEOFDAY(last_time) gettimeofday(last_time);
 #endif
 
+/* The TPR_*() macros are for timing code execution (TPR stands for Time Per
+ * Repetition).
+ *
+ * There are four macros, TPR_START(), TPR_STOP(), TPR_BREAK(), and
+ * TPR_GETDEVIATION(). Of these, you must use the first two. The third is
+ * optional but may be used multiple times, and the fOurth is for internal use
+ * only (you never call it directly).
+ *
+ * Usage is pretty simple. The macros are designed to time a function or part
+ * thereof. Of course this may (likely will) call other functions but the point
+ * is, each 'set' of calls must be within the same function.
+ *
+ * At the head of the function but after any function-wide automatic variable
+ * declarations, or from wherever you want to start timing execution, call
+ * TPR_START().
+ *
+ * At the foot of the function but before the final return, or wherever you
+ * want to finish timing exeecution, call TPR_STOP(S).
+ * 
+ * Between these two, 0-n times, you may call TPR_BREAK(S).
+ *
+ * STOP and BREAK both log a message which gives some basic info and the time
+ * (in seconds and microseconds) that has elapsed between when you called START
+ * and now (the deviation). S is a string to help you identify what is going
+ * on.
+ *
+ * STOP also remembers the highest and lowest deviations (that is the slowest
+ * and fastest execution times), the number of executions, and the average[1]
+ * deviation. All these statistic are also logged (BREAK has no effect on any
+ * of this).
+ *
+ * [1]: The arithmetic mean is used. This may change.
+ *
+ * There is a small overhead in using these macros so they probably should not
+ * generally be used in public non-development servers (ie, main). */
+#define TPR_START() \
+    { \
+        struct timeval tpr_a, \
+                       tpr_b; \
+        double         tpr_d; \
+        static double  tpr_h = 0.0, \
+                       tpr_l = 999.0, \
+                       tpr_p = 0.0; \
+        static uint32  tpr_r = 0; \
+        GETTIMEOFDAY(&tpr_a);
+
+#define TPR_BREAK(_S_) \
+        TPR_GETDEVIATION(); \
+        LOG(llevInfo, "TPR BREAK: %s:: d %f\n", \
+            (_S_), tpr_d);
+
+#define TPR_STOP(_S_) \
+        TPR_GETDEVIATION(); \
+        if (tpr_d > tpr_h) \
+        { \
+            tpr_h = tpr_d; \
+        } \
+        if (tpr_d < tpr_l) \
+        { \
+            tpr_l = tpr_d; \
+        } \
+        tpr_p += tpr_d; \
+        tpr_r++; \
+        LOG(llevInfo, "TPR STOP: %s:: d %f, h %f, l %f, p %f / %u\n", \
+            (_S_), tpr_d, tpr_h, tpr_l, tpr_p / (double)tpr_r, tpr_r); \
+    }
+
+#define TPR_GETDEVIATION() \
+        GETTIMEOFDAY(&tpr_b); \
+        if (tpr_b.tv_usec < tpr_a.tv_usec) \
+        { \
+          int tpr_n = (tpr_a.tv_usec - tpr_b.tv_usec) / 1000000 + 1; \
+          tpr_a.tv_usec -= 1000000 * tpr_n; \
+          tpr_a.tv_sec += tpr_n; \
+        } \
+        if (tpr_b.tv_usec - tpr_a.tv_usec > 1000000) \
+        { \
+          int tpr_n = (tpr_b.tv_usec - tpr_a.tv_usec) / 1000000; \
+          tpr_a.tv_usec += 1000000 * tpr_n; \
+          tpr_a.tv_sec -= tpr_n; \
+        } \
+        tpr_d = (double)(tpr_b.tv_sec - tpr_a.tv_sec) + (double)(tpr_b.tv_usec - tpr_a.tv_usec) / 1000000.0;
+
 #define POW2(x) ((x) * (x))
 
 /* Various exit codes. While there does not seem to be a real standard for
