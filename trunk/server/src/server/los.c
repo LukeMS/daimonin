@@ -170,6 +170,7 @@ void update_los(player_t *pl)
     sint16    i,
               j;
 
+    TPR_START();
 #ifdef DEBUG_CORE
     LOG(llevDebug, "LOS - %s\n", STRING_OBJ_NAME(who));
 #endif
@@ -180,6 +181,7 @@ void update_los(player_t *pl)
     /* For wizpass, that is all. */
     if (pl->gmaster_wizpass)
     {
+        TPR_BREAK("LOS wizpass");
         return;
     }
 
@@ -284,6 +286,8 @@ void update_los(player_t *pl)
             }
         }
     }
+
+    TPR_STOP("LOS full");
 }
 
 /* Used to initialise the array used by the LOS routines.
@@ -406,6 +410,7 @@ void update_los(player_t *pl)
               bx,
               by;
 
+    TPR_START();
 #ifdef DEBUG_CORE
     LOG(llevDebug, "LOS - %s\n", STRING_OBJ_NAME(who));
 #endif
@@ -415,6 +420,7 @@ void update_los(player_t *pl)
     if (pl->gmaster_wizpass)
     {
         (void)memset((void *)pl->blocked_los, BLOCKED_LOS_IGNORE, sizeof(pl->blocked_los));
+        TPR_BREAK("LOS wizpass");
         return;
     }
     /* A blind player can see nothing except the square he is on. */
@@ -422,6 +428,7 @@ void update_los(player_t *pl)
     {
         (void)memset((void *)pl->blocked_los, BLOCKED_LOS_BLOCKED, sizeof(pl->blocked_los));
         pl->blocked_los[minbx / 2 + maxbx / 2][minby / 2 + maxby / 2] = BLOCKED_LOS_IGNORE;
+        TPR_BREAK("LOS blind");
         return;
     }
 
@@ -558,6 +565,8 @@ void update_los(player_t *pl)
             }
         }
     }
+
+    TPR_STOP("LOS full");
 }
 
 /* Used to initialise the array used by the LOS routines.
