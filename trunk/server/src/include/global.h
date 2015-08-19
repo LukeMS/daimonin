@@ -564,45 +564,25 @@ while (0)
  * and now (the deviation). S is a string to help you identify what is going
  * on.
  *
- * STOP also remembers the highest and lowest deviations (that is the slowest
- * and fastest execution times), the number of executions, and the average[1]
- * deviation. All these statistic are also logged (BREAK has no effect on any
- * of this).
+ * STOP and BREAK are actually functionally nearly identical ATM. Nevertheless
+ * you should use the appropriate0 one as described above.
  *
- * [1]: The arithmetic mean is used. This may change.
- *
- * There is a small overhead in using these macros so they probably should not
- * generally be used in public non-development servers (ie, main). */
+ * There is a very small overhead in using these macros so they probably should
+ * not generally be used in public non-development servers (ie, main). */
 #define TPR_START() \
     { \
         struct timeval tpr_a, \
                        tpr_b; \
         double         tpr_d; \
-        static double  tpr_h = 0.0, \
-                       tpr_l = 999.0, \
-                       tpr_p = 0.0; \
-        static uint32  tpr_r = 0; \
         GETTIMEOFDAY(&tpr_a);
 
 #define TPR_BREAK(_S_) \
         TPR_GETDEVIATION(); \
-        LOG(llevInfo, "TPR BREAK: %s:: d %f\n", \
-            (_S_), tpr_d);
+        LOG(llevInfo, "TPR BREAK: %s:: %f\n", (_S_), tpr_d);
 
 #define TPR_STOP(_S_) \
         TPR_GETDEVIATION(); \
-        if (tpr_d > tpr_h) \
-        { \
-            tpr_h = tpr_d; \
-        } \
-        if (tpr_d < tpr_l) \
-        { \
-            tpr_l = tpr_d; \
-        } \
-        tpr_p += tpr_d; \
-        tpr_r++; \
-        LOG(llevInfo, "TPR STOP: %s:: d %f, h %f, l %f, p %f / %u\n", \
-            (_S_), tpr_d, tpr_h, tpr_l, tpr_p / (double)tpr_r, tpr_r); \
+        LOG(llevInfo, "TPR STOP: %s:: %f\n", (_S_), tpr_d); \
     }
 
 #define TPR_GETDEVIATION() \
