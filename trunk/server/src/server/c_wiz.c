@@ -2539,11 +2539,18 @@ int command_wizpass(object_t *op, char *params)
     return COMMANDS_RTN_VAL_OK_SILENT;
 }
 
-/* Toggles whether player sees first system object on square (instead of
- * fmask). */
+/* The matrix primarily determines whether player sees first system object on
+ * square (instead of fmask). Toggle the matrix with the command on its own.
+ *
+ * It also can be used to specify which clayers are sent to the client. In this
+ * mode you can, for example, turn off things under and over so you can observe
+ * floors and fmasks without clutter. Specify a number after the command. This
+ * is a bitmask of the clayers you want to see (1=floor, 2=fmask, 4=thing under,
+ * 8=thing over).So the example would be 3). */
 int command_matrix(object_t *op, char *params)
 {
     player_t *pl;
+    uint32    clayers;
 
     if (op->type != PLAYER ||
         !(pl = CONTR(op)))
@@ -2551,10 +2558,20 @@ int command_matrix(object_t *op, char *params)
         return COMMANDS_RTN_VAL_ERROR;
     }
 
-   pl->gmaster_matrix = !pl->gmaster_matrix;
-   ndi(NDI_UNIQUE, 0, op, "Toggled gmaster_matrix to %u",
-                 pl->gmaster_matrix);
+    clayers = (!pl->gmaster_matrix) ? 15 : 0;
 
+    if (params)
+    {
+        sscanf(params, "%u", &clayers);
+
+        if (clayers >= 16)
+        {
+            return COMMANDS_RTN_VAL_ERROR;
+        }
+    }
+
+    pl->gmaster_matrix = clayers;
+    ndi(NDI_UNIQUE, 0, op, "Set gmaster_matrix to %u", clayers);
     return COMMANDS_RTN_VAL_OK_SILENT;
 }
 

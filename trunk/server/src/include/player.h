@@ -124,7 +124,7 @@ struct player_t
     uint32              rest_sitting        : 1;            /* if true, player is sitting - sitting + rest mode = regeneration */
 
     uint8               gmaster_wizpass     : 1;    // 1= pass through walls, over move apply objects, etc
-    uint8               gmaster_matrix      : 1;    // 1= see first system object on square
+    uint8               gmaster_matrix      : 4;    // 1-15= see first system object on square and show clayers
     uint8               gmaster_stealth     : 1;    // 1= player undetectable to mobs
     uint8               gmaster_invis       : 1;    // 1= is invisible, only SAs can see
 

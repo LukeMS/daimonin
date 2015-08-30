@@ -242,6 +242,7 @@ void draw_client_map2(player_t *pl)
     msp_slice_t     msp_slice;
     NewSocket      *ns = &pl->socket;
     sockbuf_struct *sbptr;
+    uint8           show = (pl->gmaster_matrix) ? pl->gmaster_matrix : ((1 << MSP_CLAYER_NROF) - 1);
     sint16          x, y, ax, ay, x_start;
     uint32          xrays = QUERY_FLAG(who, FLAG_XRAYS),
                     infra = QUERY_FLAG(who, FLAG_SEE_IN_DARK);
@@ -557,6 +558,8 @@ void draw_client_map2(player_t *pl)
             }
 
             /* CLAYER 0 - floor. */
+            if ((show & (1 << MSP_CLAYER_FLOOR)))
+            {
             if (pl->gmaster_matrix &&
                 !msp->floor_face)
             {
@@ -580,8 +583,11 @@ void draw_client_map2(player_t *pl)
             {
                 face_floor = 0;
             }
+            }
 
             /* CLAYER 1 - fmask. */
+            if ((show & (1 << MSP_CLAYER_FMASK)))
+            {
             if (pl->gmaster_matrix &&
                 msp->first &&
                 msp->first->layer == MSP_SLAYER_SYSTEM)
@@ -596,8 +602,11 @@ void draw_client_map2(player_t *pl)
             {
                 face_fmask = 0;
             }
+            }
 
             /* CLAYER 2 - thing under. */
+            if ((show & (1 << MSP_CLAYER_UNDER)))
+            {
             if (clayer_under)
             {
                 object_t *head = (clayer_under->head) ? clayer_under->head : clayer_under;
@@ -668,8 +677,11 @@ void draw_client_map2(player_t *pl)
                     }
                 }
             }
+            }
 
             /* CLAYER 3 - thing over. */
+            if ((show & (1 << MSP_CLAYER_OVER)))
+            {
             if (clayer_over)
             {
                 object_t *head = (clayer_over->head) ? clayer_over->head : clayer_over;
@@ -739,6 +751,7 @@ void draw_client_map2(player_t *pl)
                         }
                     }
                 }
+            }
             }
 
             if (view_msp->faces[MSP_CLAYER_FLOOR] != face_floor)
