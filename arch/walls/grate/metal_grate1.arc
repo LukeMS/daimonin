@@ -5,6 +5,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object grate1_3
 name metal grate
@@ -13,6 +14,7 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object grate1_4
 name metal grate
@@ -21,6 +23,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object grate1_8
 name metal grate
@@ -29,6 +32,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object grate1_1e
 name metal grate
@@ -37,6 +41,7 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object grate1_3e
 name metal grate
@@ -45,4 +50,5 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end

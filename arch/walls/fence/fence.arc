@@ -5,6 +5,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object fence_01.112
 name fence
@@ -13,6 +14,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object fence_01.113
 name fence
@@ -21,6 +23,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object fence_01.121
 name fence
@@ -29,6 +32,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object fence_01.122
 name fence
@@ -37,6 +41,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object fence_01.131
 name fence
@@ -45,6 +50,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object fence_01.132
 name fence
@@ -53,6 +59,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object fence_01.133
 name fence
@@ -61,6 +68,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object fence_01.141
 name fence
@@ -69,6 +77,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object fence_01.142
 name fence
@@ -77,6 +86,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object fence_01.151
 name fence
@@ -85,6 +95,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object fence_01.152
 name fence
@@ -93,6 +104,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object fence_01.153
 name fence
@@ -101,6 +113,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object fence_01.161
 name fence
@@ -109,6 +122,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object fence_01.162
 name fence
@@ -117,6 +131,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object fence_01.171
 name fence
@@ -125,6 +140,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object fence_01.172
 name fence
@@ -133,6 +149,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object fence_01.173
 name fence
@@ -141,6 +158,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object fence_01.181
 name fence
@@ -149,6 +167,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object fence_01.182
 name fence
@@ -165,6 +184,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object small_fence1.121
 name fence
@@ -173,6 +193,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object small_fence1.131
 name fence
@@ -181,6 +202,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object small_fence1.141
 name fence
@@ -189,6 +211,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object small_fence1.161
 name fence
@@ -197,6 +220,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object small_fence1.181
 name fence
@@ -205,4 +229,5 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end

@@ -20,6 +20,7 @@ maxsp 0
 dam 1
 maxhp 20
 hp 20
+allowsview 1
 end
 
 Object grateTrg1_open

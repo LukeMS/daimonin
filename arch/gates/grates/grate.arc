@@ -38,4 +38,5 @@ dam 5
 attack_impact 100
 ac 1
 pass_thru 1
+allowsview 1
 end

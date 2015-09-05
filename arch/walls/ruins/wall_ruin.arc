@@ -140,6 +140,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_ruin_c1b
 name ruin
@@ -148,6 +149,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_ruin_c2a
 name ruin
@@ -156,6 +158,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_ruin_c2b
 name ruin
@@ -164,6 +167,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_ruin_c3a
 name ruin
@@ -172,6 +176,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_ruin_c3b
 name ruin
@@ -180,4 +185,5 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
