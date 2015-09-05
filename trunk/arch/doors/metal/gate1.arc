@@ -15,4 +15,5 @@ is_turnable 1
 direction 1
 type 20
 no_pick 1
+allowsview 1
 end

@@ -14,4 +14,5 @@ is_turnable 1
 msg
 You need a special key to open this door.
 endmsg
+allowsview 1
 end

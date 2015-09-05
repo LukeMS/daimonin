@@ -41,6 +41,7 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_stone_3w
 name stone wall
@@ -49,6 +50,7 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_stone_w.111
 name stone wall
@@ -57,6 +59,7 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_stone_w.131
 name stone wall
@@ -65,4 +68,5 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end

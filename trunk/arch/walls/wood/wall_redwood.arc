@@ -77,6 +77,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object redwall_wood_w_3
 name red wood wall
@@ -85,4 +86,5 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end

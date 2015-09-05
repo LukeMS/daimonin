@@ -1445,6 +1445,7 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_marble1w2.111
 name stone wall
@@ -1453,6 +1454,7 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_marble1w.111-01
 name stone wall
@@ -1461,6 +1463,7 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_marble1w.111-02
 name stone wall
@@ -1469,6 +1472,7 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_marble1w.111-03
 name stone wall
@@ -1477,6 +1481,7 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_marble1w.111-04
 name stone wall
@@ -1485,6 +1490,7 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_marble1w.111-05
 name stone wall
@@ -1493,6 +1499,7 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_marble1w.111-06
 name stone wall
@@ -1501,6 +1508,7 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_marble1w.111-07
 name stone wall
@@ -1509,6 +1517,7 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_marble1w.131
 name stone wall
@@ -1517,6 +1526,7 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_marble1w2.131
 name stone wall
@@ -1525,6 +1535,7 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_marble1w.131-01
 name stone wall
@@ -1533,6 +1544,7 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_marble1w.131-02
 name stone wall
@@ -1541,6 +1553,7 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_marble1w.131-03
 name stone wall
@@ -1549,6 +1562,7 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_marble1w.131-04
 name stone wall
@@ -1557,6 +1571,7 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_marble1w.131-05
 name stone wall
@@ -1565,6 +1580,7 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_marble1w.131-06
 name stone wall
@@ -1573,6 +1589,7 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_marble1w.131-07
 name stone wall
@@ -1581,6 +1598,7 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_marble1wb.111
 name stone wall
@@ -1589,6 +1607,7 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_marble1wb.3
 name stone wall
@@ -1597,4 +1616,5 @@ layer 5
 type 77
 no_pick 1
 no_pass 1
+allowsview 1
 end

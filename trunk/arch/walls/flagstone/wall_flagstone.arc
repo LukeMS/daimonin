@@ -41,6 +41,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_flagstone1_w.131
 name stone wall
@@ -49,6 +50,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_flagstone1_w2.111
 name stone wall
@@ -57,6 +59,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_flagstone1_w2.131
 name stone wall
@@ -65,6 +68,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_flagstone1b.111
 name stone wall
@@ -136,6 +140,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_flagstone2_w.131
 name stone wall
@@ -144,6 +149,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_fstone.100
 name stone wall
@@ -179,6 +185,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_flagstone1b_w.131
 name stone wall
@@ -187,4 +194,5 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
