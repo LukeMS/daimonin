@@ -7,6 +7,7 @@ direction 1
 no_pick 1
 type 79
 layer 4
+obscuresview 1
 end
 
 Object bench1b.111
@@ -18,6 +19,7 @@ direction 1
 no_pick 1
 type 79
 layer 4
+obscuresview 1
 end
 
 Object bench2.111

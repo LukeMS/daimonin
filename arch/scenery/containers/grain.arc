@@ -25,6 +25,7 @@ face grain4.101
 no_pick 1
 type 79
 layer 4
+obscuresview 1
 end
 Object grain5.101
 name grain
@@ -32,6 +33,7 @@ face grain5.101
 no_pick 1
 type 79
 layer 4
+obscuresview 1
 end
 Object grain5_r
 name grain
@@ -39,4 +41,5 @@ face grain5_rain.101
 no_pick 1
 type 79
 layer 4
+obscuresview 1
 end

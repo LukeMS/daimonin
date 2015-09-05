@@ -6,6 +6,7 @@ no_pick 1
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object cactus2
 name cactus
@@ -15,6 +16,7 @@ no_pick 1
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object cactus3
 name cactus
@@ -24,6 +26,7 @@ no_pick 1
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object cactus4
 name cactus
@@ -33,6 +36,7 @@ no_pick 1
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object cactus5
 name cactus
@@ -42,4 +46,5 @@ no_pick 1
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end

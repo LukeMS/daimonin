@@ -6,6 +6,7 @@ no_pick 1
 type 79
 layer 4
 mpart_id 1
+obscuresview 1
 end
 More
 Object table_long_bb
@@ -17,6 +18,7 @@ layer 4
 mpart_id 1
 mpart_nr 1
 x 1
+obscuresview 1
 end
 
 Object table_long_m
@@ -27,6 +29,7 @@ no_pick 1
 type 79
 layer 4
 mpart_id 1
+obscuresview 1
 end
 More
 Object table_long_mb
@@ -38,6 +41,7 @@ layer 4
 x 1
 mpart_id 1
 mpart_nr 1
+obscuresview 1
 end
 
 Object table_long_t
@@ -48,6 +52,7 @@ no_pick 1
 type 79
 layer 4
 mpart_id 1
+obscuresview 1
 end
 More
 Object table_long_tb
@@ -59,4 +64,5 @@ layer 4
 x 1
 mpart_id 1
 mpart_nr 1
+obscuresview 1
 end

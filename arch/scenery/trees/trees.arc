@@ -36,6 +36,7 @@ no_pick 1
 no_pass 1
 weight 500
 is_wooded 1
+obscuresview 1
 end
 Object tree_big3
 layer 5
@@ -46,6 +47,7 @@ no_pick 1
 no_pass 1
 weight 500
 is_wooded 1
+obscuresview 1
 end
 Object tree_big4
 layer 5
@@ -56,6 +58,7 @@ no_pick 1
 no_pass 1
 weight 500
 is_wooded 1
+obscuresview 1
 end
 Object tree_big5
 layer 5
@@ -66,6 +69,7 @@ no_pick 1
 no_pass 1
 weight 500
 is_wooded 1
+obscuresview 1
 end
 Object tree_big4b
 layer 5
@@ -76,6 +80,7 @@ no_pick 1
 no_pass 1
 weight 500
 is_wooded 1
+obscuresview 1
 end
 Object tree_big5b
 layer 5
@@ -86,4 +91,5 @@ no_pick 1
 no_pass 1
 weight 500
 is_wooded 1
+obscuresview 1
 end

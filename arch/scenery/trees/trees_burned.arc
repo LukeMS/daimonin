@@ -7,6 +7,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree_burned2
 name burned tree
@@ -48,4 +49,5 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
