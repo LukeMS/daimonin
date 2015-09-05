@@ -6,6 +6,7 @@ material 64
 layer 5
 no_pick 1
 no_pass 1
+obscuresview 1
 end
 Object crystal_purple_s
 name crystal
@@ -24,6 +25,7 @@ material 64
 layer 5
 no_pick 1
 no_pass 1
+obscuresview 1
 end
 Object crystal_red_s
 name crystal
@@ -42,6 +44,7 @@ material 64
 layer 5
 no_pick 1
 no_pass 1
+obscuresview 1
 end
 Object crystal_yellow_s
 name crystal
@@ -60,6 +63,7 @@ material 64
 layer 5
 no_pick 1
 no_pass 1
+obscuresview 1
 end
 Object crystal_green_s
 name crystal
@@ -78,6 +82,7 @@ material 64
 layer 5
 no_pick 1
 no_pass 1
+obscuresview 1
 end
 Object crystal_blue_s
 name crystal
@@ -96,6 +101,7 @@ material 64
 layer 5
 no_pick 1
 no_pass 1
+obscuresview 1
 end
 Object crystal_white_s
 name crystal

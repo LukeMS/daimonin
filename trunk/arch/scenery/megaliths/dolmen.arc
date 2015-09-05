@@ -7,6 +7,7 @@ mpart_id 5
 layer 5
 no_pass 1
 no_pick 1
+obscuresview 1
 end
 More
 Object dolmen_a
@@ -18,6 +19,7 @@ layer 5
 type 79
 no_pass 1
 no_pick 1
+obscuresview 1
 end
 More
 Object dolmen_b
@@ -29,6 +31,7 @@ layer 5
 type 79
 no_pass 1
 no_pick 1
+obscuresview 1
 end
 More
 Object dolmen_c
@@ -40,6 +43,7 @@ layer 5
 type 79
 no_pass 1
 no_pick 1
+obscuresview 1
 end
 More
 Object dolmen_d
@@ -52,6 +56,7 @@ layer 5
 type 79
 no_pass 1
 no_pick 1
+obscuresview 1
 end
 More
 Object dolmen_e
@@ -64,4 +69,5 @@ layer 5
 type 79
 no_pass 1
 no_pick 1
+obscuresview 1
 end

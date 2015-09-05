@@ -6,4 +6,5 @@ is_turnable 1
 direction 1
 type 79
 layer 3
+obscuresview 1
 end

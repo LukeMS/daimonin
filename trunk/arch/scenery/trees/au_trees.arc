@@ -7,6 +7,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object au_tree2
 name tree
@@ -17,6 +18,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object au_tree3
 name tree
@@ -27,4 +29,5 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end

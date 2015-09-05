@@ -14,6 +14,7 @@ type 79
 face pillar_black1b.101
 no_pass 1
 no_pick 1
+obscuresview 1
 end
 
 Object pillar_black1c
@@ -26,6 +27,7 @@ is_turnable 1
 direction 1
 no_pass 1
 no_pick 1
+obscuresview 1
 end
 
 Object pillar_black1d
@@ -38,6 +40,7 @@ is_turnable 1
 direction 1
 no_pass 1
 no_pick 1
+obscuresview 1
 end
 
 Object pillar_black2a
@@ -56,6 +59,7 @@ type 79
 face pillar_black2b.101
 no_pass 1
 no_pick 1
+obscuresview 1
 end
 
 Object pillar_black2c
@@ -68,6 +72,7 @@ is_turnable 1
 direction 1
 no_pass 1
 no_pick 1
+obscuresview 1
 end
 
 Object pillar_black2d
@@ -80,4 +85,5 @@ is_turnable 1
 direction 1
 no_pass 1
 no_pick 1
+obscuresview 1
 end

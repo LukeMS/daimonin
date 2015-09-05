@@ -7,6 +7,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree21
 name tree
@@ -17,6 +18,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree22
 name tree
@@ -27,6 +29,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree23
 name tree
@@ -37,6 +40,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree24
 name tree
@@ -47,6 +51,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree25
 name tree
@@ -57,6 +62,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree26
 name tree
@@ -67,6 +73,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree27
 name tree
@@ -77,6 +84,7 @@ type 79
 no_pass 1
 weight 500
 is_wooded 1
+obscuresview 1
 end
 Object tree28
 name tree
@@ -87,6 +95,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree29
 name tree
@@ -97,6 +106,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree30
 name tree
@@ -107,6 +117,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree31
 name tree
@@ -117,6 +128,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree32
 name tree
@@ -127,6 +139,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree33
 name tree
@@ -137,6 +150,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree34
 name tree
@@ -147,6 +161,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree35
 name tree
@@ -157,6 +172,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree36
 name tree
@@ -167,6 +183,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree37
 name tree
@@ -177,6 +194,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree38
 name tree
@@ -187,6 +205,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree39
 name tree
@@ -197,6 +216,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree40
 name tree
@@ -207,6 +227,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree41
 name tree
@@ -217,6 +238,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree42
 name tree
@@ -227,6 +249,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree43
 name tree
@@ -257,6 +280,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree46
 name tree
@@ -277,6 +301,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree48
 name tree
@@ -287,6 +312,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree49
 name tree
@@ -297,6 +323,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree50
 name tree
@@ -307,6 +334,7 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end
 Object tree51
 name tree
@@ -317,4 +345,5 @@ weight 500
 type 79
 no_pass 1
 is_wooded 1
+obscuresview 1
 end

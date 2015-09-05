@@ -92,6 +92,7 @@ mpart_id 3
 face tent_large.131
 no_pass 1
 no_pick 1
+obscuresview 1
 end
 More
 Object tent_large_a
@@ -103,6 +104,7 @@ mpart_nr 1
 x 1
 no_pass 1
 no_pick 1
+obscuresview 1
 end
 More
 Object tent_large_b
@@ -114,6 +116,7 @@ mpart_nr 2
 y 1
 no_pass 1
 no_pick 1
+obscuresview 1
 end
 More
 Object tent_large_c
@@ -126,6 +129,7 @@ x 1
 y 1
 no_pass 1
 no_pick 1
+obscuresview 1
 end
 Object tent_large2
 name large tent
@@ -135,6 +139,7 @@ mpart_id 3
 face tent_large.151
 no_pass 1
 no_pick 1
+obscuresview 1
 end
 More
 Object tent_large2_a
@@ -146,6 +151,7 @@ mpart_nr 1
 x 1
 no_pass 1
 no_pick 1
+obscuresview 1
 end
 More
 Object tent_large2_b
@@ -157,6 +163,7 @@ mpart_nr 2
 y 1
 no_pass 1
 no_pick 1
+obscuresview 1
 end
 More
 Object tent_large2_c
@@ -169,4 +176,5 @@ x 1
 y 1
 no_pass 1
 no_pick 1
+obscuresview 1
 end

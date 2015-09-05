@@ -7,6 +7,7 @@ mpart_id 1
 layer 5
 no_pick 1
 weight 200
+obscuresview 1
 end
 More
 Object plant_big1b
@@ -17,4 +18,5 @@ layer 5
 mpart_nr 1
 type 79
 no_pick 1
+obscuresview 1
 end
