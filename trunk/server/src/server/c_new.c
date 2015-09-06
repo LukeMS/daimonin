@@ -213,7 +213,7 @@ int command_target(object_t *op, char *params)
                 xx > x2 ||
                 yy < -y2 ||
                 yy > y2 ||
-                pl->blocked_los[xx + x2][yy + y2] > BLOCKED_LOS_BLOCKSVIEW)
+                (pl->blocked_los[xx + x2][yy + y2] & (BLOCKED_LOS_BLOCKED | BLOCKED_LOS_OUT_OF_MAP)))
             {
                 continue;
             }
@@ -267,7 +267,7 @@ int command_target(object_t *op, char *params)
                 xx > x2 ||
                 yy < -y2 ||
                 yy > y2 ||
-                pl->blocked_los[xx + x2][yy + y2] > BLOCKED_LOS_BLOCKSVIEW)
+                (pl->blocked_los[xx + x2][yy + y2] & (BLOCKED_LOS_BLOCKED | BLOCKED_LOS_OUT_OF_MAP)))
             {
                 continue;
             }
@@ -364,7 +364,7 @@ dirty_jump_in1:
                 msp = MSP_GET(m, x, y);
 
                 if (!msp ||
-                    pl->blocked_los[xx + x2][yy + y2] > BLOCKED_LOS_BLOCKSVIEW)
+                    (pl->blocked_los[xx + x2][yy + y2] & (BLOCKED_LOS_BLOCKED | BLOCKED_LOS_OUT_OF_MAP)))
                 {
                     if ((n + 1) == NROF_MAP_NODE)
                         n = -1;
@@ -446,7 +446,7 @@ dirty_jump_in1:
             msp = MSP_GET(m, x, y);
 
             if (!msp ||
-                pl->blocked_los[xx][yy] > BLOCKED_LOS_BLOCKSVIEW)
+                (pl->blocked_los[xx][yy] & (BLOCKED_LOS_BLOCKED | BLOCKED_LOS_OUT_OF_MAP)))
             {
                 if ((n + 1) == NROF_MAP_NODE)
                     n = -1;

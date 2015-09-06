@@ -534,6 +534,14 @@ extern void    map_transfer_apartment_items(map_t *map_old, map_t *map_new, sint
         { \
             (_F_) |= MSP_FLAG_NO_PRAYERS; \
         } \
+        if (QUERY_FLAG((_O_), FLAG_OBSCURESVIEW)) \
+        { \
+            (_F_) |= MSP_FLAG_OBSCURESVIEW; \
+        } \
+        if (QUERY_FLAG((_O_), FLAG_ALLOWSVIEW)) \
+        { \
+            (_F_) |= MSP_FLAG_ALLOWSVIEW; \
+        } \
         if (QUERY_FLAG((_O_), FLAG_BLOCKSVIEW)) \
         { \
             (_F_) |= MSP_FLAG_BLOCKSVIEW; \
@@ -599,13 +607,13 @@ extern void    map_transfer_apartment_items(map_t *map_old, map_t *map_new, sint
 #define MSP_FLAG_DOOR_CLOSED   (1 << 15) // a closed door is blocking this msp
 #define MSP_FLAG_REFL_CASTABLE (1 << 16) // one or more objects on this msp reflect spells/prayers
 #define MSP_FLAG_REFL_MISSILE  (1 << 17) // one or more objects on this msp reflect missiles
-#define MSP_FLAG_BLOCKSVIEW    (1 << 18) // one or more objects on this msp block los
-#define MSP_FLAG_WALK_ON       (1 << 19) // one or more objects on this msp react when something enters the msp by 'walking'
-#define MSP_FLAG_WALK_OFF      (1 << 20) // one or more objects on this msp react when something leaves the msp by 'walking'
-#define MSP_FLAG_FLY_ON        (1 << 21) // one or more objects on this msp react when something leaves the msp by flying
-#define MSP_FLAG_FLY_OFF       (1 << 22) // one or more objects on this msp react when something enters the msp by flying
-/* (1 << 23) is free */
-/* (1 << 24) is free */
+#define MSP_FLAG_OBSCURESVIEW  (1 << 18) // one or more objects on this msp obscure los
+#define MSP_FLAG_ALLOWSVIEW    (1 << 19) // one or more objects on this msp allow los
+#define MSP_FLAG_BLOCKSVIEW    (1 << 20) // one or more objects on this msp block los
+#define MSP_FLAG_WALK_ON       (1 << 21) // one or more objects on this msp react when something enters the msp by 'walking'
+#define MSP_FLAG_WALK_OFF      (1 << 22) // one or more objects on this msp react when something leaves the msp by 'walking'
+#define MSP_FLAG_FLY_ON        (1 << 23) // one or more objects on this msp react when something leaves the msp by flying
+#define MSP_FLAG_FLY_OFF       (1 << 24) // one or more objects on this msp react when something enters the msp by flying
 /* (1 << 25) is free */
 /* (1 << 26) is free */
 /* (1 << 27) is free */

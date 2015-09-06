@@ -351,7 +351,7 @@ static const char *GameObject_flags[NUM_FLAGS + 1 + 1] =
     /*  20 */ "f_is_neutral",
     /*  21 */ "f_see_invisible",
     /*  22 */ "f_can_roll",
-    /*  23 */ NULL, // free
+    /*  23 */ "f_obscuresview",
     /*  24 */ "f_is_turnable",
     /*  25 */ "f_walk_off",
     /*  26 */ "f_fly_on",
@@ -362,7 +362,7 @@ static const char *GameObject_flags[NUM_FLAGS + 1 + 1] =
     /*  31 */ "f_changing",
     /*  32 */ "f_splitting",
     /*  33 */ "f_hitback",
-    /*  34 */ NULL, // free
+    /*  34 */ "f_allowsview",
     /*  35 */ "f_blocksview",
     /*  36 */ "f_undead",
     /*  37 */ "?f_fix_player",

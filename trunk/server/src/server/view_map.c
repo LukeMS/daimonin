@@ -385,11 +385,25 @@ void draw_client_map2(player_t *pl)
              * impact to our LOS. */
             if (!(blos & BLOCKED_LOS_IGNORE)) // border msp, we can ignore every LOS change
             {
+                if ((msp->flags & MSP_FLAG_OBSCURESVIEW))
+                {
+                    if (!(blos & BLOCKED_LOS_OBSCURESVIEW))
+                    {
+                        pl->update_los = 1;
+                    }
+                }
+                else
+                {
+                    if ((blos & BLOCKED_LOS_OBSCURESVIEW))
+                    {
+                        pl->update_los = 1;
+                    }
+                }
+
                 if ((msp->flags & MSP_FLAG_BLOCKSVIEW))
                 {
-                    if (!blos)
+                    if (!(blos & BLOCKED_LOS_BLOCKSVIEW))
                     {
-                        /*LOG(llevNoLog,"SET_BV(%d,%d): was bv is now %d\n", nx,ny,blos);*/
                         pl->update_los = 1;
                     }
                 }
@@ -397,7 +411,6 @@ void draw_client_map2(player_t *pl)
                 {
                     if ((blos & BLOCKED_LOS_BLOCKSVIEW))
                     {
-                        /*LOG(llevNoLog,"SET_BV(%d,%d): was visible is now %d\n", nx,ny,blos);*/
                         pl->update_los = 1;
                     }
                 }
@@ -434,6 +447,11 @@ void draw_client_map2(player_t *pl)
             /* when we arrived here, this tile IS visible - now lets collect the data of it
                  * and update the client when something has changed.
                  */
+            if ((blos & BLOCKED_LOS_OBSCURED))
+            {
+                d /= 4;
+            }
+
             /* we should do this with a table */
             if (d > 640)
                 d = 210;

@@ -437,6 +437,7 @@ op->oz= op->z;
 ^make_invisible{S}			SET_OR_CLEAR_FLAG(op, FLAG_MAKE_INVISIBLE, IVAL);
 ^make_ethereal{S}			SET_OR_CLEAR_FLAG(op, FLAG_MAKE_ETHEREAL, IVAL);
 ^can_roll{S} 				SET_OR_CLEAR_FLAG(op, FLAG_CAN_ROLL, IVAL);
+^obscuresview{S}			SET_OR_CLEAR_FLAG(op, FLAG_OBSCURESVIEW, IVAL);
 ^is_turnable{S}				SET_OR_CLEAR_FLAG(op, FLAG_IS_TURNABLE, IVAL);
 ^is_used_up{S}				SET_OR_CLEAR_FLAG(op, FLAG_IS_USED_UP, IVAL);
 ^is_invisible{S}			SET_OR_CLEAR_FLAG(op, FLAG_IS_INVISIBLE, IVAL);
@@ -469,6 +470,7 @@ op->oz= op->z;
 ^splitting{S}	    SET_OR_CLEAR_FLAG(op, FLAG_SPLITTING, IVAL);
 ^hitback{S}  	    SET_OR_CLEAR_FLAG(op, FLAG_HITBACK, IVAL);
 ^startequip{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NO_DROP, IVAL); // deprecated -- use ^no_drop(S)
+^allowsview{S}	    SET_OR_CLEAR_FLAG(op, FLAG_ALLOWSVIEW, IVAL);
 ^blocksview{S}	    SET_OR_CLEAR_FLAG(op, FLAG_BLOCKSVIEW, IVAL);
 ^undead{S}  	    SET_OR_CLEAR_FLAG(op, FLAG_UNDEAD, IVAL);
 ^scared{S}  	    SET_OR_CLEAR_FLAG(op, FLAG_SCARED, IVAL);
@@ -943,7 +945,7 @@ static const char *flag_names[NUM_FLAGS + 1] =
     /*  20 */ "is_neutral",
     /*  21 */ "see_invisible",
     /*  22 */ "can_roll",
-    /*  23 */ NULL, // free
+    /*  23 */ "obscuresview",
     /*  24 */ "is_turnable",
     /*  25 */ "walk_off",
     /*  26 */ "fly_on",
@@ -954,7 +956,7 @@ static const char *flag_names[NUM_FLAGS + 1] =
     /*  31 */ "changing",
     /*  32 */ "splitting",
     /*  33 */ "hitback",
-    /*  34 */ NULL, // free
+    /*  34 */ "allowsview",
     /*  35 */ "blocksview",
     /*  36 */ "undead",
     /*  37 */ NULL, // FLAG_FIX_PLAYER

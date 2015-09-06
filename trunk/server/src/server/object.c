@@ -1206,6 +1206,8 @@ void update_object(object_t *op, int action)
             op->type == GRAVESTONE ||
             QUERY_FLAG(op, FLAG_ALIVE) ||
             QUERY_FLAG(op, FLAG_IS_PLAYER) ||
+            QUERY_FLAG(op, FLAG_OBSCURESVIEW) ||
+            QUERY_FLAG(op, FLAG_ALLOWSVIEW) ||
             QUERY_FLAG(op, FLAG_BLOCKSVIEW) ||
             QUERY_FLAG(op, FLAG_DOOR_CLOSED) ||
             QUERY_FLAG(op, FLAG_PASS_THRU) ||

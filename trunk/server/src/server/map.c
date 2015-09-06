@@ -2498,6 +2498,16 @@ static void LoadObjects(map_t *m, FILE *fp, int mapflags)
             else
             CLEAR_MULTI_FLAG(tmp->more, FLAG_LEVITATE);
 
+            if (QUERY_FLAG(op, FLAG_OBSCURESVIEW))
+                SET_MULTI_FLAG(op->more, FLAG_OBSCURESVIEW)
+            else
+            CLEAR_MULTI_FLAG(tmp->more, FLAG_OBSCURESVIEW);
+
+            if (QUERY_FLAG(op, FLAG_ALLOWSVIEW))
+                SET_MULTI_FLAG(op->more, FLAG_ALLOWSVIEW)
+            else
+            CLEAR_MULTI_FLAG(tmp->more, FLAG_ALLOWSVIEW);
+
             if (QUERY_FLAG(op, FLAG_BLOCKSVIEW))
                 SET_MULTI_FLAG(op->more, FLAG_BLOCKSVIEW)
             else

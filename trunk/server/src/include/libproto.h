@@ -113,6 +113,7 @@ extern void             save_object(FILE *fp, object_t *op, int flag);
 /* los.c */
 extern void             init_block(void);
 extern void             set_block(int x, int y, int bx, int by);
+extern int              command_los(object_t *op, char *params);
 extern void             update_los(player_t *pl);
 extern int              has_carried_lights(object_t *op);
 extern void             print_los(object_t *op);
