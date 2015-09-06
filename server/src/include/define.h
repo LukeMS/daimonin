@@ -61,13 +61,15 @@
 // #define PORTAL_DESTINATION_NAME "Town portal destination"
 
 /* LOS (loc.c) defines */
-#define BLOCKED_LOS_VISIBLE     0        // visible
-#define BLOCKED_LOS_IGNORE      (1 << 0) // ignore for blocksview/visible changes!
-#define BLOCKED_LOS_BLOCKSVIEW  (1 << 1) // visible but will block all behind
-#define BLOCKED_LOS_BLOCKED     (1 << 2) // sight is blocked
-#define BLOCKED_LOS_OUT_OF_MAP  (1 << 3) // not visible because not part of legal map
-#define BLOCKED_LOS_EXPAND      (1 << 5) // internal use
-
+#define BLOCKED_LOS_VISIBLE      0        // visible
+#define BLOCKED_LOS_IGNORE       (1 << 0) // ignore for blocksview/visible changes!
+#define BLOCKED_LOS_OBSCURESVIEW (1 << 1) // visible but will obscure all behind
+#define BLOCKED_LOS_ALLOWSVIEW   (1 << 2) // visible/nonblocking as normal but part of a continuous wall
+#define BLOCKED_LOS_BLOCKSVIEW   (1 << 3) // visible but will block all behind
+#define BLOCKED_LOS_OBSCURED     (1 << 4) // sight is partly blocked/in shadow/indistinct
+#define BLOCKED_LOS_BLOCKED      (1 << 5) // sight is blocked
+#define BLOCKED_LOS_OUT_OF_MAP   (1 << 6) // not visible because not part of legal map
+#define BLOCKED_LOS_INTERNAL     (1 << 7) // internal use
 
 /* TYPE DEFINES */
 /* Only add new values to this list if somewhere in the program code,
@@ -618,7 +620,7 @@
 #define FLAG_IS_NEUTRAL     20 /* alignment of this object: we need the explicit neutral setting for items */
 #define FLAG_SEE_INVISIBLE  21 /* Will see invisible player */
 #define FLAG_CAN_ROLL       22 /* Object can be rolled */
-/* flag 23 is free */
+#define FLAG_OBSCURESVIEW   23 /* Object obscures view */
 
 #define FLAG_IS_TURNABLE    24 /* Object can change face with direction */
 #define FLAG_WALK_OFF       25 /* Object is applied when left */
@@ -639,7 +641,7 @@
 /* Start of values in flags[1] */
 #define FLAG_SPLITTING      32 /* Object splits into stats.food other objs */
 #define FLAG_HITBACK        33 /* Object will hit back when hit */
-/* flag 34 is free */
+#define FLAG_ALLOWSVIEW     34 /* Object allows view (windows, fences, etc) */
 #define FLAG_BLOCKSVIEW     35 /* Object blocks view */
 #define FLAG_UNDEAD         36 /* Monster is undead */
 #define FLAG_FIX_PLAYER     37 /* fix_player() WILL be called one time (use it dynamically in scripts!) */

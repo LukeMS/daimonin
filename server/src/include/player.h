@@ -119,6 +119,7 @@ struct player_t
 
     uint32              name_changed        : 1;            /* If true, the player has set a name. */
     uint32              update_los          : 1;                /* If true, update_los() in draw(), and clear */
+    uint32              use_old_los         : 1;
     uint32              combat_mode         : 1;            /* if true, player is in combat mode, attacking with weapon */
     uint32              rest_mode           : 1;            /* if true, player is going "resting" - resting mode will be interrupted when player moves or get hit */
     uint32              rest_sitting        : 1;            /* if true, player is sitting - sitting + rest mode = regeneration */
