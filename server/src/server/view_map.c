@@ -809,11 +809,26 @@ void draw_client_map2(player_t *pl)
             if (view_msp->fflag[MSP_CLAYER_UNDER] != flag_under ||
                 view_msp->ff_probe[MSP_CLAYER_UNDER] != probe_under)
             {
-                if (flag_under)
+                /* This was changed in r7818/7819 to a test on flag_under
+                 * which fixes the 'ghost target' bug. In itself this probably
+                 * is correct but unfortunately the 0.10.z client also tests
+                 * face meaning that a sc mismatch here means targeting does
+                 * not loop but gets stuck on the last map object. Tweaking the
+                 * client code too should fix this but while 0.10.7 is in
+i                * development it is easiest to leave the 'ghost target' bug in
+                 * and at least have targeting looping (and no, testing both
+                 * face and flag does not work). */
+                if (face_under)
                 {
                     ext_flag |= EXT_FLAG_FLAGS_UNDER;
                 }
 
+                /* Does this make sense? I get the first part because we'll
+                 * have skipped the above ff_probe test if we passed the fflag
+                 * test. Well I sort of get it.  As ff_probe is reset here come
+                 * what may who cares if we test or not? And then the second
+                 * part means we turn on FFLAG_PROBE but only if it already is
+                 * on... */
                 if (view_msp->ff_probe[MSP_CLAYER_UNDER] != probe_under && 
                     (flag_under & FFLAG_PROBE)) /* ugly, but we must test it twice to submit implicit changes right */
                 {
@@ -849,11 +864,26 @@ void draw_client_map2(player_t *pl)
             if (view_msp->fflag[MSP_CLAYER_OVER] != flag_over ||
                 view_msp->ff_probe[MSP_CLAYER_OVER] != probe_over)
             {
-                if (flag_over)
+                /* This was changed in r7818/7819 to a test on flag_over
+                 * which fixes the 'ghost target' bug. In itself this probably
+                 * is correct but unfortunately the 0.10.z client also tests
+                 * face meaning that a sc mismatch here means targeting does
+                 * not loop but gets stuck on the last map object. Tweaking the
+                 * client code too should fix this but while 0.10.7 is in
+i                * development it is easiest to leave the 'ghost target' bug in
+                 * and at least have targeting looping (and no, testing both
+                 * face and flag does not work). */
+                if (face_over)
                 {
                     ext_flag |= EXT_FLAG_FLAGS_OVER;
                 }
 
+                /* Does this make sense? I get the first part because we'll
+                 * have skipped the above ff_probe test if we passed the fflag
+                 * test. Well I sort of get it.  As ff_probe is reset here come
+                 * what may who cares if we test or not? And then the second
+                 * part means we turn on FFLAG_PROBE but only if it already is
+                 * on... */
                 if (view_msp->ff_probe[MSP_CLAYER_OVER] != probe_over && 
                     (flag_over & FFLAG_PROBE)) /* ugly, but we must test it twice to submit implicit changes right */
                 {
