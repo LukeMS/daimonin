@@ -710,8 +710,8 @@ int player_can_view(object_t *pl, object_t *op)
          <= (CONTR(pl)->socket.mapx_2)
          && FABS(dy)
          <= (CONTR(pl)->socket.mapy_2)
-         && CONTR(pl)->blocked_los[dx + (CONTR(pl)->socket.mapx_2)][dy + (CONTR(pl)->socket.mapy_2)]
-         <= BLOCKED_LOS_BLOCKSVIEW)
+         && CONTR(pl)->los_array[dx + (CONTR(pl)->socket.mapx_2)][dy + (CONTR(pl)->socket.mapy_2)]
+         <= LOS_FLAG_BLOCKSVIEW)
             return 1;
         op = op->more;
     }

@@ -111,11 +111,6 @@ extern char            *get_ob_diff(const object_t *op, const object_t *op2);
 extern void             save_object(FILE *fp, object_t *op, int flag);
 /* logger.c */
 /* los.c */
-extern void             init_block(void);
-extern void             set_block(int x, int y, int bx, int by);
-extern void             update_los(player_t *pl);
-extern int              obj_in_line_of_sight(object_t *op, object_t *obj, rv_t *rv);
-extern void             los_find_target(player_t *pl, uint8 mode, sint16 start, sint16 stop, sint16 ox, sint16 oy);
 extern void             adjust_light_source(msp_t *msp, int light);
 extern void             check_light_source_list(map_t *map);
 extern void             remove_light_source_list(map_t *map);
