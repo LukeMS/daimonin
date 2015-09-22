@@ -121,6 +121,7 @@ struct player_t
     uint32              update_los          : 1;                /* If true, update_los() in draw(), and clear */
     uint32              use_old_los         : 1;
     uint32              combat_mode         : 1;            /* if true, player is in combat mode, attacking with weapon */
+    uint32              update_target       : 1; // 1= update client with targeting info
     uint32              rest_mode           : 1;            /* if true, player is going "resting" - resting mode will be interrupted when player moves or get hit */
     uint32              rest_sitting        : 1;            /* if true, player is sitting - sitting + rest mode = regeneration */
 
@@ -153,8 +154,12 @@ struct player_t
 
     object_t             *selected_weapon;        /* thats the weapon in our hand */
     object_t             *skill_weapon;           /* thats the hth skill we use when we not use a weapon (like karate) */
-    object_t             *target_object;          /* our target */
-
+    object_t             *target_ob;
+    tag_t                 target_tag;
+    sint16                target_index;
+    uint8                 target_mode;
+    sint8                 target_level;
+    sint8                 target_colr;
     object_t             *equipment[PLAYER_EQUIP_MAX]; /* pointers to applied items in the players inventory */
     object_t             *skill_ptr[NROFSKILLS];       /* quick jump table to skill objects in the players inv. */
 
@@ -199,6 +204,7 @@ struct player_t
     int                 dps;                    /* damge per second value from fix_player() for client and info */
     int                 last_dps;
     int                 target_hp;              /* for the client target HP marker - special shadow*/
+    char                target_hp_p;        /* for the client target HP real % value*/
     int                 set_skill_weapon;       /* skill number of used weapon skill for fast access */
     int                 set_skill_archery;      /* same for archery */
     int                 bed_x;                      /* x,y - coordinates of respawn (savebed) */
@@ -236,12 +242,6 @@ struct player_t
     object_t             *exp_calc_obj;
     uint32              mark_count;                 /* count or mark object_t */
     sint32              skill_exp[NROFSKILLS];      /* shadow register for updating skill values to client */
-    uint32              target_object_count;        /* count of target - NOTE: if we target ourself, this count it 0
-                                                    * this will kick us out of enemy target routines - all functions
-                                                    * who handle self target know it and use only target_object -
-                                                    * for our own player object the pointer will never change for us.
-                                                    */
-    uint32              target_map_pos;             /* last target search position */
     uint32              mode;                       /* Mode of player for pickup. */
     sint32              group_id;                   /* unique group id number - this is a unique number like the object count */
     sint32              group_status;               /* status of invite or group */
@@ -271,7 +271,6 @@ struct player_t
     uint32              update_ticker;              /* global_round tick where player was updated */
     float               speed;                      /* shadow speed value, set in fix_player() to cover flag effects */
 
-    sint16              target_level;
     sint16              age;        /* the age of our player */
     sint16              age_add;    /* unnatural changes to our age - can be removed by restoration */
     sint16              age_changes; /* permanent changes .... very bad (or good when younger) */
@@ -282,8 +281,6 @@ struct player_t
 
     uint16              nrofknownspells;    /* Index in the above array */
     sint16              known_spells[NROFREALSPELLS]; /* Spells known by the player */
-
-    char                target_hp_p;        /* for the client target HP real % value*/
 
     int                 gen_hp;                     /* Bonuses to regeneration speed of hp in % */
     int                 gen_sp;                     /* Bonuses to regeneration speed of sp in % */
@@ -316,7 +313,7 @@ struct player_t
 
 
     /* for smaller map sizes, only the the first elements are used (ie, upper left) */
-    int                 blocked_los[MAP_CLIENT_X][MAP_CLIENT_Y]; /* in fact we only need char size, but use int for faster access */
+    uint32              blocked_los[MAP_CLIENT_X][MAP_CLIENT_Y]; /* in fact we only need char size, but use int for faster access */
 
     char                levhp[MAXLEVEL + 1];            /* What the player gained on that level */
     char                levsp[MAXLEVEL + 1];

@@ -27,13 +27,6 @@
 
 #include <global.h>
 
-#define MAX_PETS 2      /* Maximum number of pets at any time */
-#define MAX_PERMAPETS 2 /* Maximum number of non-temporary pets */
-
-#define PET_VALID(pet_ol, _owner_) \
-    (OBJECT_VALID((pet_ol)->objlink.ob, (pet_ol)->id) && \
-     (pet_ol)->objlink.ob->owner == (_owner_) && (pet_ol)->objlink.ob->owner_count == (_owner_)->count)
-
 /* force: 1 to force, 0 for normal usage
    If force is 0, a normal pet addition is done, which may fail for
    several reasons. If force is 1, the pet is forced which may still
@@ -137,17 +130,6 @@ int add_pet(object_t *owner, object_t *pet, int force)
     }
 
     return 0;
-}
-
-void update_pets_combat_mode(object_t *owner)
-{
-    objectlink_t *ol;
-
-    for(ol = CONTR(owner)->pets; ol; ol = ol->next)
-    {
-        if(PET_VALID(ol, owner))
-            SET_OR_CLEAR_FLAG(ol->objlink.ob, FLAG_UNAGGRESSIVE, !CONTR(owner)->combat_mode);
-    }
 }
 
 void save_pet(object_t *pet)

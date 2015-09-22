@@ -143,10 +143,6 @@ extern _subcommand subcommands;
 #define EMOTE_THINK 54
 #define EMOTE_ME    55
 
-#define TARGET_ENEMY  0
-#define TARGET_FRIEND 1
-#define TARGET_SELF   2
-
 /* Return values from command functions */
 #define COMMANDS_RTN_VAL_OK 0         // Command completed OK
 #define COMMANDS_RTN_VAL_SYNTAX 1     // Basic syntax error

@@ -60,17 +60,6 @@
 
 // #define PORTAL_DESTINATION_NAME "Town portal destination"
 
-/* LOS (loc.c) defines */
-#define BLOCKED_LOS_VISIBLE      0        // visible
-#define BLOCKED_LOS_IGNORE       (1 << 0) // ignore for blocksview/visible changes!
-#define BLOCKED_LOS_OBSCURESVIEW (1 << 1) // visible but will obscure all behind
-#define BLOCKED_LOS_ALLOWSVIEW   (1 << 2) // visible/nonblocking as normal but part of a continuous wall
-#define BLOCKED_LOS_BLOCKSVIEW   (1 << 3) // visible but will block all behind
-#define BLOCKED_LOS_OBSCURED     (1 << 4) // sight is partly blocked/in shadow/indistinct
-#define BLOCKED_LOS_BLOCKED      (1 << 5) // sight is blocked
-#define BLOCKED_LOS_OUT_OF_MAP   (1 << 6) // not visible because not part of legal map
-#define BLOCKED_LOS_INTERNAL     (1 << 7) // internal use
-
 /* TYPE DEFINES */
 /* Only add new values to this list if somewhere in the program code,
  * it is actually needed.  Just because you add a new monster does not
@@ -987,3 +976,132 @@ enum apply_flag
 
 #define PLUGINS
 #endif /* ifndef __DEFINE_H */
+
+/* TODO: Move to own file. */
+
+#ifndef __LOS_H
+#define __LOS_H
+
+/* BLOCKED_LOS_* are flags for the LoS array. */
+#define BLOCKED_LOS_VISIBLE      0        // visible
+#define BLOCKED_LOS_IGNORE       (1 << 0) // ignore for blocksview/visible changes!
+#define BLOCKED_LOS_OBSCURESVIEW (1 << 1) // visible but will obscure all behind
+#define BLOCKED_LOS_ALLOWSVIEW   (1 << 2) // visible/nonblocking as normal but part of a continuous wall
+#define BLOCKED_LOS_BLOCKSVIEW   (1 << 3) // visible but will block all behind
+#define BLOCKED_LOS_OBSCURED     (1 << 4) // sight is partly blocked/in shadow/indistinct
+#define BLOCKED_LOS_BLOCKED      (1 << 5) // sight is blocked
+#define BLOCKED_LOS_OUT_OF_MAP   (1 << 6) // not visible because not part of legal map
+#define BLOCKED_LOS_INTERNAL     (1 << 7) // internal use
+
+/* LOS_TARGET_* are modes for targeting. */
+#define LOS_TARGET_SELF   0
+#define LOS_TARGET_ENEMY  1
+#define LOS_TARGET_FRIEND 2
+#define LOS_TARGET_TALK   3
+#define LOS_TARGET_MOUSE  4
+
+/* LOS_VALIDATE_TARGET() checks that _O_ is a valid object with tag _T_ -- or
+ * if _T_ is 0 assume _O_ is already known to be valid -- and not invisible to
+ * _PL_. If so, return _O_. If not, return NULL. */
+#define LOS_VALIDATE_TARGET(_PL_, _O_, _T_) \
+    (((!(_T_) || \
+       OBJECT_VALID((_O_), (_T_))) && \
+      !IS_GMASTER_INVIS_TO((_O_), (_PL_)->ob) && \
+      !IS_NORMAL_INVIS_TO((_O_), (_PL_)->ob)) ? (_O_) : NULL)
+
+/* LOS_GET_REAL_TARGET_MODE() returns the target mode to be sent to the client
+ * according to the parameters: _O_ is the target object (which should already
+ * have been validated); _M_ is the full target mode as sent from the client;
+ * _F_ is the friendship value between the player and this target. */
+/* TODO: Dai does not use a traditional alignment system (for the most part --
+ * there ARE good/neutral/evil object flags which are remnants from CF). Rather
+ * we use friendship. This system is rudimentary. The basic idea is that the
+ * friendship between two creatures is measured on a pretty open-ended scale
+ * where anything <= ATTACK means the two are enemies, anything >= HELP means
+ * friends, and any other value means neutral. In terms of targeting, the
+ * client does not recognize neutral targets. Changing this would require a
+ * x.Y.z update. For now we just say neutrals are classed as friends.
+ *
+ * -- Smacky 20150918 */
+#define LOS_GET_REAL_TARGET_MODE(_O_, _M_, _F_) \
+    ((((_M_) == LOS_TARGET_ENEMY && \
+       (_F_) <= FRIENDSHIP_ATTACK) || \
+      ((_M_) == LOS_TARGET_FRIEND && \
+       (_F_) > FRIENDSHIP_ATTACK) || \
+      ((_M_) == LOS_TARGET_TALK && \
+       (_O_)->type != PLAYER) || \
+      ((_M_) >= LOS_TARGET_MOUSE)) ? \
+     (((_F_) <= FRIENDSHIP_ATTACK) ? LOS_TARGET_ENEMY : LOS_TARGET_FRIEND) : LOS_TARGET_SELF)
+
+/* LOS_SET_TARGET() sets the various target pointers for _PL_ according to the
+ * other parameters. Most important of these is _M_ (mode). This should be one
+ * of LOS_TARGET_SELF, LOS_TARGET_ENEMY, or LOS_TARGET_FRIEND. When it is SELF,
+ * essentially _O_ and _I_ are ignored and _PL_->ob and 0 are used instead.
+ * The macro also sets _PL_->ob->enemy/enemy_count. Here when _M_ is ENEMY,
+ * they are set according to _O_. Otherwise they are NULL/0. */
+#define LOS_SET_TARGET(_PL_, _O_, _M_, _I_) \
+    if ((_M_) == LOS_TARGET_SELF) \
+    { \
+        (_PL_)->target_ob = (_PL_)->ob; \
+        (_PL_)->target_tag = 0; \
+        (_PL_)->target_index = 0; \
+        (_PL_)->target_level = (_PL_)->ob->level; \
+        (_PL_)->target_colr = NDI_YELLOW; \
+    } \
+    else \
+    { \
+        (_PL_)->target_ob = (_O_); \
+        (_PL_)->target_tag = TAG((_O_)); \
+        (_PL_)->target_index = (_I_); \
+        (_PL_)->target_level = (_O_)->level; \
+        if ((_O_)->level < level_color[(_PL_)->ob->level].yellow) \
+        { \
+            if ((_O_)->level < level_color[(_PL_)->ob->level].green) \
+            { \
+                (_PL_)->target_colr = NDI_GREY; \
+            } \
+            else \
+            { \
+                if ((_O_)->level < level_color[(_PL_)->ob->level].blue) \
+                { \
+                    (_PL_)->target_colr = NDI_GREEN; \
+                } \
+                else \
+                { \
+                    (_PL_)->target_colr = NDI_BLUE; \
+                } \
+            } \
+        } \
+        else \
+        { \
+            if ((_O_)->level >= level_color[(_PL_)->ob->level].purple) \
+            { \
+                (_PL_)->target_colr = NDI_PURPLE; \
+            } \
+            else if ((_O_)->level >= level_color[(_PL_)->ob->level].red) \
+            { \
+                (_PL_)->target_colr = NDI_RED; \
+            } \
+            else if ((_O_)->level >= level_color[(_PL_)->ob->level].orange) \
+            { \
+                (_PL_)->target_colr = NDI_ORANGE; \
+            } \
+            else \
+            { \
+                (_PL_)->target_colr = NDI_YELLOW; \
+            } \
+        } \
+    } \
+    (_PL_)->target_mode = (_M_); \
+    if ((_M_) == LOS_TARGET_ENEMY) \
+    { \
+        (_PL_)->ob->enemy = (_O_); \
+        (_PL_)->ob->enemy_count = TAG((_O_)); \
+    } \
+    else \
+    { \
+        (_PL_)->ob->enemy = NULL; \
+        (_PL_)->ob->enemy_count = 0; \
+    }
+
+#endif /* ifndef __LOS_H */

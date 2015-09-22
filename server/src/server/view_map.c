@@ -305,7 +305,7 @@ void draw_client_map2(player_t *pl)
 
         for (x = x_start; x >= who->x - pl->socket.mapx_2; x--, ax--)
         {
-            int           blos = pl->blocked_los[ax][ay];
+            uint32        blos = pl->blocked_los[ax][ay];
             view_msp_t   *view_msp = &pl->socket.lastmap.cells[ax][ay];
             map_t        *m;
             sint16        nx,
@@ -367,6 +367,12 @@ void draw_client_map2(player_t *pl)
                     LOG(llevInfo, "INFO:: draw_client_map2() out_of_map for player <%s> map:%s (%d,%d)\n",
                         STRING_OBJ_NAME(who), STRING_MAP_PATH(m), x, y);
                 }
+
+                /* Well now we know this msp is OOM so flag it as such.
+                 * update_los() skips OOM when in wizpass mode but knowing this
+                 * saves time during targeting so lets make use of this 'free'
+                 * info. */
+                pl->blocked_los[ax][ay] = BLOCKED_LOS_OUT_OF_MAP;
 
                 if (view_msp->count != -1)
                 {
@@ -684,7 +690,7 @@ void draw_client_map2(player_t *pl)
                     }
 
                     /* show target to player (this is personlized data)*/
-                    if (pl->target_object_count == head->count)
+                    if (pl->target_tag == head->count)
                     {
                         flag_under |= FFLAG_PROBE;
 
@@ -759,7 +765,7 @@ void draw_client_map2(player_t *pl)
                     }
 
                     /* show target to player (this is personlized data)*/
-                    if (pl->target_object_count == head->count)
+                    if (pl->target_tag == head->count)
                     {
                         flag_over |= FFLAG_PROBE;
 

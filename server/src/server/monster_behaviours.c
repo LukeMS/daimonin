@@ -608,10 +608,13 @@ int get_npc_attitude(object_t *op, object_t *other)
 */
 int get_friendship(object_t *op, object_t *other)
 {
-    if(op == NULL || other == NULL)
+    struct mob_known_obj *known;
+
+    if (!op ||
+        !other)
     {
-        LOG(llevBug, "BUG: get_friendship('%s', '%s') with NULL parameter\n",
-                STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
+        LOG(llevBug, "BUG:: %s:get_friendship('%s', '%s'): NULL parameter!\n",
+            __FILE__, STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
         return 0;
     }
 
@@ -625,51 +628,27 @@ int get_friendship(object_t *op, object_t *other)
         return FRIENDSHIP_HELP;
     }
 
-    if(op->type == MONSTER)
+    switch (op->type)
     {
-        struct mob_known_obj *known;
-
-        /* Do we know anything? */
-        if(MOB_DATA(op) == NULL)
+        case PLAYER:
+        if (other->type == PLAYER)
         {
-            LOG(llevDebug, "Warning: AI not initialized when requesting friendship of monster '%s' towards '%s'.\n",
-                    STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
-            return 0;
-        }
+// If PvP is enabled, see if op and other are friends (same group).
+#ifdef USE_PVP
+            msp_t *msp_op = MSP_KNOWN(op),
+                  *msp_other = MSP_KNOWN(other);
 
-        /* Do we already know this other? */
-        for(known = MOB_DATA(op)->known_mobs; known; known = known->next)
-            if(known->obj == other && known->obj_count == other->count)
-                return known->friendship;
-
-        /* Calculate it then */
-        return get_npc_attitude(op, other);
-    }
-    else if (op->type == PLAYER)
-    {
-        /* Try reverse lookup */
-        if(other->type == MONSTER)
-            return get_friendship(other, op);
-        else if (other->type == PLAYER)
-        {
-            msp_t  *msp_op = MSP_KNOWN(op),
-                      *msp_other = MSP_KNOWN(other);
-
-            /* Check for PvP. TODO: group PvP */
             if ((msp_op->flags & MSP_FLAG_PVP) &&
                 (msp_other->flags & MSP_FLAG_PVP))
             {
-// If PvP is enabled, see if op and other are friends (same group).
-#ifdef USE_PVP
                 // Loop through the group and if other is in it, op and other are friends.
                 if ((CONTR(op)->group_status & GROUP_STATUS_GROUP))
                 {
-                    player_t *tmp;
+                    object_t *member;
 
-                    for (tmp = CONTR(CONTR(op)->group_leader); tmp->group_next; tmp = CONTR(tmp->group_next))
+                    for (member = CONTR(op)->group_leader; member; member = CONTR(member)->group_next)
                     {
-                        if (tmp &&
-                            tmp->ob == other)
+                        if (member == other)
                         {
                             return FRIENDSHIP_HELP;
                         }
@@ -678,24 +657,43 @@ int get_friendship(object_t *op, object_t *other)
 
                 // Otherwise, let them kill each other.
                 return FRIENDSHIP_ATTACK;
-#else
-                return FRIENDSHIP_HELP;
+            }
 #endif
-           } else
-                return FRIENDSHIP_HELP;
+            return FRIENDSHIP_HELP;
+        }
+        /* Try reverse lookup */
+        else if (other->type == MONSTER)
+        {
+            object_t *tmp = op;
+
+            op = other;
+            other = tmp;
         }
         else
         {
-#ifdef DEBUG_FRIENDSHIP_WARNING
-            LOG(llevDebug, "Warning: get_friendship('%s':player, '%s') with non-player/monster other.\n",
-                    STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
-#endif
             return 0;
         }
+
+        case MONSTER:
+        /* Do we already know this other? */
+        for (known = MOB_DATA(op)->known_mobs; known; known = known->next)
+        {
+            if (known->obj == other &&
+                known->obj_count == other->count)
+            {
+                return known->friendship;
+            }
+        }
+
+        /* Calculate it then */
+        return get_npc_attitude(op, other);
     }
 
-    /* Unhandled op types are for example POISON, DISEASE */
-
+#ifdef DEBUG_FRIENDSHIP_WARNING
+    LOG(llevDebug, "DEBUG:: %s:get_friendship() between %s[%d] (%d) and %s[%d] (%d)!\n",
+        __FILE__, STRING_OBJ_NAME(op), TAG(op), op->type,
+        STRING_OBJ_NAME(other), TAG(other), other->type);
+#endif
     return 0;
 }
 

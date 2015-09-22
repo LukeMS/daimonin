@@ -537,3 +537,15 @@ struct object_t
 #define MODE_NO_INVENTORY 1
 
 #endif /* ifndef __OBJECT_H */
+
+#ifndef __PETS_H
+#define __PETS_H
+
+#define MAX_PETS 2      /* Maximum number of pets at any time */
+#define MAX_PERMAPETS 2 /* Maximum number of non-temporary pets */
+
+#define PET_VALID(pet_ol, _owner_) \
+    (OBJECT_VALID((pet_ol)->objlink.ob, (pet_ol)->id) && \
+     (pet_ol)->objlink.ob->owner == (_owner_) && (pet_ol)->objlink.ob->owner_count == (_owner_)->count)
+
+#endif /* ifndef __PETS_H */

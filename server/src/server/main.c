@@ -210,31 +210,79 @@ void process_players2(map_t *map)
 
     for (pl = first_player; pl != NULL; pl = pl->next)
     {
+        object_t *who = pl->ob;
+
         if(pl->socket.status != Ns_Playing)
             continue;
 
         /* thats for debug spells - if enabled, mana/grace is always this value
-            pl->ob->stats.grace = 900;
-            pl->ob->stats.sp = 900;
+            who->stats.grace = 900;
+            who->stats.sp = 900;
             */
 
-        /* look our target is still valid - if not, update client
-             * we handle op->enemy for the player here too!
-             */
-        if (pl->ob->map &&
-            (!pl->target_object ||
-             (pl->target_object != pl->ob &&
-              pl->target_object_count != pl->target_object->count) ||
-             !OBJECT_ACTIVE(pl->target_object) ||
-             QUERY_FLAG(pl->target_object, FLAG_SYS_OBJECT) ||
-             pl->target_object->level != pl->target_level ||
-             IS_GMASTER_INVIS_TO(pl->target_object, pl->ob) ||
-             IS_NORMAL_INVIS_TO(pl->target_object, pl->ob)))
+        /* Check that our target is still valid  -- if not, update client. When
+         * mode is SELF, assume that all is well. */
+        /* NOTE: In currrent practical terms this is a rather ridiculous
+         * concern, because the times are so small. But if Dai gets many (100s)
+         * more players in future and/or the tick time is reduced it may be
+         * less daft.
+         *
+         * On my machine the old code took, regardless of mode and assuming the
+         * target was valid, 6-7 ums. This code takes 2-4 ums when mode == SELF
+         * or 8-17 ums (usually 10-12) otherwise -- but see below for how to
+         * reduce this.
+         *
+         * -- Smacky 20150919 */
+        if (pl->target_mode != LOS_TARGET_SELF)
         {
-            send_target_command(pl);
+           object_t *target = LOS_VALIDATE_TARGET(pl, pl->target_ob, pl->target_tag);
+
+            /* No target (probably means it was a mob which has recently been
+             * killed or otherwise removed)? Target self. */
+            if (!target)
+            {
+                LOS_SET_TARGET(pl, who, LOS_TARGET_SELF, 0);
+                pl->update_target = 1;
+            }
+            /* target_level differs from the target's actual level? Well,
+             * recalculate and update. */
+            else if (pl->target_level != target->level)
+            {
+                LOS_SET_TARGET(pl, target, pl->target_mode, pl->target_index);
+                pl->update_target = 1;
+            }
+            /* Changed mode (ie, friend becomes enemy or vice versa)? Set
+             * pl->target_mode accordingly and update. This means, for example,
+             * that a player can keep another player targeted and he will
+             * alternate between friend and enemy as their movements carry them
+             * in and out of PvP zones so attacking is automatically and
+             * immediately corrected. However this does require extra code
+             * (chiefly a call to get_friendship() -- which I have streamlined
+             * to save 2-4 ums) which adds (very small) amounts of tme (as
+             * above). Comment out this clause to reduce the overall time to
+             * about 5 ums.
+             *
+             * -- Smacky 20150919 */
+            else
+            {
+                sint32 friendship = get_friendship(who, target);
+                uint8  mode = LOS_GET_REAL_TARGET_MODE(target, pl->target_mode, friendship);
+                
+                if (mode != pl->target_mode)
+                {
+                    LOS_SET_TARGET(pl, target, mode, pl->target_index);
+                    pl->update_target = 1;
+                }
+            }
         }
 
-        if (pl->ob->weapon_speed_left <= 0)
+        if (pl->update_target)
+        {
+            send_target_command(pl);
+            pl->update_target = 0;
+        }
+
+        if (who->weapon_speed_left <= 0)
         {
             /* tell the client the skill cooldown time has ran out, it should only transmit this once */
             pl->action_timer = 0;
@@ -242,39 +290,23 @@ void process_players2(map_t *map)
             /* now use the new target system to hit our target... Don't hit non
             * friendly objects, ourself or when we are not in combat mode.
             */
-            if(pl->ob->map
-                && pl->target_object
-                && pl->combat_mode
-                /*
-                && OBJECT_ACTIVE(pl->target_object)
-                && pl->target_object_count != pl->ob->count
-                */
-                && get_friendship(pl->ob, pl->target_object) < FRIENDSHIP_HELP)
+            if(pl->combat_mode && 
+               pl->target_mode == LOS_TARGET_ENEMY)
             {
-                    /* now we force target as enemy */
-                    pl->ob->enemy = pl->target_object;
-                    pl->ob->enemy_count = pl->target_object_count;
+                object_t *target = pl->target_ob;
 
-                    /* quick check our target is still valid: count ok? (freed...), not
-                    * removed, not a bet or object we self own (TODO: group pets!)
-                    * Note: i don't do a invisible check here... this will happen one
-                    * at end of this round... so, we have a "object turn invisible and
-                    * we do a last hit here"
-                    */
-                    if (!OBJECT_VALID(pl->ob->enemy, pl->ob->enemy_count) || pl->ob->enemy->owner == pl->ob)
-                        pl->ob->enemy = NULL;
-                    else if (is_melee_range(pl->ob, pl->ob->enemy))
-                    {
-                        /* tell our enemy we swing at him now */
-                        update_npc_knowledge(pl->ob->enemy, pl->ob, FRIENDSHIP_TRY_ATTACK, 0);
-                        pl->rest_mode = 0;
-                        skill_attack(pl->ob->enemy, pl->ob, 0, NULL);
-                    }
+                if (is_melee_range(who, target))
+                {
+                    /* tell our enemy we swing at him now */
+                    update_npc_knowledge(target, who, FRIENDSHIP_TRY_ATTACK, 0);
+                    pl->rest_mode = 0;
+                    skill_attack(target, who, 0, NULL);
+                }
             }
         }
 
-        if (pl->ob->speed_left > pl->ob->speed)
-            pl->ob->speed_left = pl->ob->speed;
+        if (who->speed_left > who->speed)
+            who->speed_left = who->speed;
     }
 }
 

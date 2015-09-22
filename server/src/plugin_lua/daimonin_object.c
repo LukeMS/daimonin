@@ -4492,7 +4492,7 @@ static int GameObject_GetTarget(lua_State *L)
     /* Only players can have targets */
     if (WHO->type == PLAYER && CONTR(WHO))
     {
-        return push_object(L, &GameObject, CONTR(WHO)->target_object);
+        return push_object(L, &GameObject, CONTR(WHO)->target_ob);
     }
     else if (WHO->type == MONSTER)
     {
@@ -4552,7 +4552,7 @@ static int GameObject_SetTarget(lua_State *L)
     /* If the parameter is a number, find *next* appropriate target. */
     if (lua_isnumber(L, 2))
     {
-        if (mode < TARGET_ENEMY || mode > TARGET_SELF)
+        if (mode < 0 || mode > 2)
             return luaL_error(L, "SetTarget() passed invalid mode (%d)!", mode);
 
         sprintf(buf, "%d", mode);
@@ -4567,16 +4567,16 @@ static int GameObject_SetTarget(lua_State *L)
     {
         int i;
 
-        for (i = TARGET_ENEMY; i <= TARGET_FRIEND; i++)
+        for (i = 0; i <= 1; i++)
         {
             object_t *original = NULL,
                    *current = NULL;
 
             sprintf(buf, "%d", i);
 
-            CONTR(WHO)->target_object = NULL; // force a new search
+            CONTR(WHO)->target_ob = NULL; // force a new search
             hooks->command_target(WHO, buf);
-            current = original = CONTR(WHO)->target_object; // the start of our loop
+            current = original = CONTR(WHO)->target_ob; // the start of our loop
 
             if (current)
             {
@@ -4586,36 +4586,29 @@ static int GameObject_SetTarget(lua_State *L)
                         break;
 
                     hooks->command_target(WHO, buf);
-                    current = CONTR(WHO)->target_object;
+                    current = CONTR(WHO)->target_ob;
                 }
                 while (current && current != original);
 
                 if (current && strcmp(current->name, name))
-                    CONTR(WHO)->target_object = NULL;
+                    CONTR(WHO)->target_ob = NULL;
             }
         }
     }
     /* If the parameter is an object, check if it's an enemy or a friend and
      * cycle through the appropriate targets until we have it or have looped
      * right round (which means it is not in range/visible so return nil). */
+    /* FIXME: I doubt if this even works. */
     else
     {
-        object_t *original = NULL,
-               *current = NULL;
+        object_t *original,
+                 *current;
 
-        /* TODO: the is it an enemy or a friend check is currently(?) very
-         * simple (see c_new.c/command_target()). But to keep the checks in
-         * sync, they a new function might be needed, ie, int isfriend() (OTOH
-         * maybe we'll move to a more complex system of relationship
-         * determination than just enemy vs friend? -- Smacky 20081214 */
-        if (hooks->get_friendship(WHO, WHAT) < FRIENDSHIP_HELP) // enemy
-            sprintf(buf, "%d", TARGET_ENEMY);
-        else // friend
-            sprintf(buf, "%d", TARGET_FRIEND);
-
-        CONTR(WHO)->target_object = NULL; // force a new search
+        CONTR(WHO)->target_index = 0; // force a new search
+        CONTR(WHO)->target_ob = NULL; // force a new search
+        sprintf(buf, "%d", (hooks->get_friendship(WHO, WHAT) <= FRIENDSHIP_ATTACK) ? 0 : 1);
         hooks->command_target(WHO, buf);
-        current = original = CONTR(WHO)->target_object; // the start of our loop
+        current = original = CONTR(WHO)->target_ob; // the start of our loop
 
         if (current)
         {
@@ -4625,16 +4618,16 @@ static int GameObject_SetTarget(lua_State *L)
                     break;
 
                 hooks->command_target(WHO, buf);
-                current = CONTR(WHO)->target_object;
+                current = CONTR(WHO)->target_ob;
             }
             while (current && current != original);
 
             if (current != WHAT)
-                CONTR(WHO)->target_object = NULL;
+                CONTR(WHO)->target_ob = NULL;
         }
     }
 
-    return push_object(L, &GameObject, CONTR(WHO)->target_object);
+    return push_object(L, &GameObject, CONTR(WHO)->target_ob);
 }
 
 /*****************************************************************************/
