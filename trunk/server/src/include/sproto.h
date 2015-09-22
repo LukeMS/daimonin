@@ -248,7 +248,6 @@ int                         command_setmaplight(object_t *op, char *params);
 int                         command_dumpmap(object_t *op, char *params);
 int                         command_dumpallmaps(object_t *op, char *params);
 #endif
-int                         command_printlos(object_t *op, char *params);
 void                        bug_report(char *reportstring);
 int                         command_listen(object_t *op, char *params);
 int                         command_statistics(object_t *pl, char *params);

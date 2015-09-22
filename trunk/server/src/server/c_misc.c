@@ -1006,14 +1006,6 @@ int command_dumpallmaps(object_t *op, char *params)
 }
 #endif
 
-int command_printlos(object_t *op, char *params)
-{
-    if (op)
-        print_los(op);
-
-    return 0;
-}
-
 void bug_report(char *reportstring)
 {
     /*

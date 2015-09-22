@@ -646,35 +646,6 @@ void update_los(player_t *pl)
 }
 
 /*
- * Debug-routine which dumps the array which specifies the visible
- * area of a player.  Triggered by the z key in DM mode.
- */
-
-void print_los(object_t *op)
-{
-    int     x, y;
-    char    buf[50], buf2[10];
-
-    strcpy(buf, "   ");
-    for (x = 0; x < CONTR(op)->socket.mapx; x++)
-    {
-        sprintf(buf2, "%2d", x);
-        strcat(buf, buf2);
-    }
-    ndi(NDI_UNIQUE, 0, op, "%s", buf);
-    for (y = 0; y < CONTR(op)->socket.mapy; y++)
-    {
-        sprintf(buf, "%2d:", y);
-        for (x = 0; x < CONTR(op)->socket.mapx; x++)
-        {
-            sprintf(buf2, " %1d", CONTR(op)->blocked_los[x][y]);
-            strcat(buf, buf2);
-        }
-        ndi(NDI_UNIQUE, 0, op, "%s", buf);
-    }
-}
-
-/*
  * make_sure_seen: The object is supposed to be visible through walls, thus
  * check if any players are nearby, and edit their LOS array.
  */
