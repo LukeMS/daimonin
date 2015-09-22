@@ -645,24 +645,6 @@ void update_los(player_t *pl)
     }
 }
 
-/*
- * make_sure_seen: The object is supposed to be visible through walls, thus
- * check if any players are nearby, and edit their LOS array.
- */
-void make_sure_seen(object_t *op)
-{
-}
-
-/*
- * make_sure_not_seen: The object which is supposed to be visible through
- * walls has just been removed from the map, so update the los of any
- * players within its range
- */
-
-void make_sure_not_seen(object_t *op)
-{
-}
-
 /** Tests if an object is in the line of sight of another object.
  * Relatively slow. Do not use for players, since they always have
  * a precalculated area of sight which can be used instead.
