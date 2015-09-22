@@ -974,19 +974,6 @@ sint16 brightness[MAX_DARKNESS + 1] =
     0, 20, 40, 80, 160, 320, 640, 1280
 };
 
-/* returns true if op carries one or more lights
- * This is a trivial function now days, but it used to
- * be a bit longer.  Probably better for callers to just
- * check the op->glow_radius instead of calling this. */
-int has_carried_lights(object_t *op)
-{
-    /* op is a light source or glowing */
-    if (op->glow_radius > 0)
-        return 1;
-
-    return 0;
-}
-
 /* we add or remove a light source to a map space.
  * we adjust the light source map counter
  * and apply the area of light it invokes around it.

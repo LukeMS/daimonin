@@ -114,7 +114,6 @@ extern void             save_object(FILE *fp, object_t *op, int flag);
 extern void             init_block(void);
 extern void             set_block(int x, int y, int bx, int by);
 extern void             update_los(player_t *pl);
-extern int              has_carried_lights(object_t *op);
 extern void             make_sure_seen(object_t *op);
 extern void             make_sure_not_seen(object_t *op);
 extern int              obj_in_line_of_sight(object_t *op, object_t *obj, rv_t *rv);
