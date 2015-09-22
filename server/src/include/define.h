@@ -982,16 +982,16 @@ enum apply_flag
 #ifndef __LOS_H
 #define __LOS_H
 
-/* BLOCKED_LOS_* are flags for the LoS array. */
-#define BLOCKED_LOS_VISIBLE      0        // visible
-#define BLOCKED_LOS_IGNORE       (1 << 0) // ignore for blocksview/visible changes!
-#define BLOCKED_LOS_OBSCURESVIEW (1 << 1) // visible but will obscure all behind
-#define BLOCKED_LOS_ALLOWSVIEW   (1 << 2) // visible/nonblocking as normal but part of a continuous wall
-#define BLOCKED_LOS_BLOCKSVIEW   (1 << 3) // visible but will block all behind
-#define BLOCKED_LOS_OBSCURED     (1 << 4) // sight is partly blocked/in shadow/indistinct
-#define BLOCKED_LOS_BLOCKED      (1 << 5) // sight is blocked
-#define BLOCKED_LOS_OUT_OF_MAP   (1 << 6) // not visible because not part of legal map
-#define BLOCKED_LOS_INTERNAL     (1 << 7) // internal use
+/* LOS_FLAG_* are flags for the LoS array. */
+#define LOS_FLAG_VISIBLE      0        // visible
+#define LOS_FLAG_IGNORE       (1 << 0) // ignore for blocksview/visible changes!
+#define LOS_FLAG_OBSCURESVIEW (1 << 1) // visible but will obscure all behind
+#define LOS_FLAG_ALLOWSVIEW   (1 << 2) // visible/nonblocking as normal but part of a continuous wall
+#define LOS_FLAG_BLOCKSVIEW   (1 << 3) // visible but will block all behind
+#define LOS_FLAG_OBSCURED     (1 << 4) // sight is partly blocked/in shadow/indistinct
+#define LOS_FLAG_BLOCKED      (1 << 5) // sight is blocked
+#define LOS_FLAG_OUT_OF_MAP   (1 << 6) // not visible because not part of legal map
+#define LOS_FLAG_INTERNAL     (1 << 7) // internal use
 
 /* LOS_TARGET_* are modes for targeting. */
 #define LOS_TARGET_SELF   0
@@ -1103,5 +1103,11 @@ enum apply_flag
         (_PL_)->ob->enemy = NULL; \
         (_PL_)->ob->enemy_count = 0; \
     }
+
+extern void init_block(void);
+extern void set_block(int x, int y, int bx, int by);
+extern void los_update(player_t *pl);
+extern int  obj_in_line_of_sight(object_t *op, object_t *obj, rv_t *rv);
+extern void los_find_target(player_t *pl, uint8 mode, sint16 start, sint16 stop, sint16 ox, sint16 oy);
 
 #endif /* ifndef __LOS_H */

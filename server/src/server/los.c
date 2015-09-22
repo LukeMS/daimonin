@@ -220,9 +220,9 @@ static void BlockVista(player_t *pl, int x, int y)
          * code wants the los to start from the 0,0
          * and not be relative to middle of los array.
          */
-        if (!(pl->blocked_los[ax][ay] & BLOCKED_LOS_OUT_OF_MAP))
+        if (!(pl->los_array[ax][ay] & LOS_FLAG_OUT_OF_MAP))
         {
-            pl->blocked_los[ax][ay] |= BLOCKED_LOS_BLOCKED; /* this tile can't be seen */
+            pl->los_array[ax][ay] |= LOS_FLAG_BLOCKED; /* this tile can't be seen */
         }
 
         BlockVista(pl, dx, dy);
@@ -251,8 +251,8 @@ static void ExpandSight(player_t *pl)
         LOG(llevInfo ,"ExpandSight x,y = %d, %d  blocksview = %d, %d\n",
             x, y, op->x-pl->socket.mapx_2+x, op->y-pl->socket.mapy_2+y);
 #endif
-            if (pl->blocked_los[x][y] <= BLOCKED_LOS_BLOCKSVIEW &&  /* if visible */
-                !(pl->blocked_los[x][y] & BLOCKED_LOS_BLOCKSVIEW))  /* and not blocksview */
+            if (pl->los_array[x][y] <= LOS_FLAG_BLOCKSVIEW &&  /* if visible */
+                !(pl->los_array[x][y] & LOS_FLAG_BLOCKSVIEW))  /* and not blocksview */
             {
                 /* mark all directions */
                 for (i = 1; i <= 8; i += 1)
@@ -268,9 +268,9 @@ static void ExpandSight(player_t *pl)
                         continue;
                     }
 
-                    if (pl->blocked_los[dx][dy] & BLOCKED_LOS_BLOCKED)
+                    if (pl->los_array[dx][dy] & LOS_FLAG_BLOCKED)
                     {
-                        pl->blocked_los[dx][dy] |= BLOCKED_LOS_INTERNAL;
+                        pl->los_array[dx][dy] |= LOS_FLAG_INTERNAL;
                     }
                 }
             }
@@ -281,9 +281,9 @@ static void ExpandSight(player_t *pl)
     {
         for (y = 0; y < pl->socket.mapy; y++)
         {
-            if (pl->blocked_los[x][y] & BLOCKED_LOS_INTERNAL)
+            if (pl->los_array[x][y] & LOS_FLAG_INTERNAL)
             {
-                pl->blocked_los[x][y] &= ~(BLOCKED_LOS_BLOCKED | BLOCKED_LOS_INTERNAL);
+                pl->los_array[x][y] &= ~(LOS_FLAG_BLOCKED | LOS_FLAG_INTERNAL);
             }
         }
     }
@@ -348,12 +348,12 @@ static sint16 Block[225][3] =
     {225,-226,-288},{0,-226,-227},{0,-227,-228},{0,-228,-229},{0,-229,-230},{0,-230,-231},{0,-231,-232},{-232,233,-234},{0,-234,-235},{0,-235,-236},{0,-236,-237},{0,-237,-238},{0,-238,-239},{0,-239,-240},{-240,241,-242},{0,-242,-243},{0,-243,-244},{0,-244,-245},{0,-245,-246},{0,-246,-247},{0,-247,-248},{-248,249,-250},{0,-250,-251},{0,-251,-252},{0,-252,-253},{0,-253,-254},{0,-254,-255},{0,-255,-256},{-256,257,-258},{0,-258,-259},{0,-259,-260},{0,-260,-261},{0,-261,-262},{0,-262,-263},{0,-263,-264},{-264,265,-266},{0,-266,-267},{0,-267,-268},{0,-268,-269},{0,-269,-270},{0,-270,-271},{0,-271,-272},{-272,273,-274},{0,-274,-275},{0,-275,-276},{0,-276,-277},{0,-277,-278},{0,-278,-279},{0,-279,-280},{-280,281,-282},{0,-282,-283},{0,-283,-284},{0,-284,-285},{0,-285,-286},{0,-286,-287},{0,-287,-288},
 };
 
-/* update_los() recalculates the array which specifies what is visible for pl.
+/* los_update() recalculates the array which specifies what is visible for pl.
  * In summary, it does this by first resetting each element to 0 so every
  * square is visible. For gmaster_wizpass, this is all so just return. For
  * others step through the array, comparing each element to the corresponding
  * msp. */
-void update_los(player_t *pl)
+void los_update(player_t *pl)
 {
     if (!pl->use_old_los)
     {
@@ -372,21 +372,21 @@ void update_los(player_t *pl)
      * skip pointless updates in view_map.c:draw_map()). */
     if (pl->gmaster_wizpass)
     {
-        (void)memset((void *)pl->blocked_los, BLOCKED_LOS_IGNORE, sizeof(pl->blocked_los));
+        (void)memset((void *)pl->los_array, LOS_FLAG_IGNORE, sizeof(pl->los_array));
         TPR_BREAK("LOS new wizpass");
         return;
     }
     /* A blind player can see nothing except the square he is on. */
     else if (QUERY_FLAG(who, FLAG_BLIND))
     {
-        (void)memset((void *)pl->blocked_los, BLOCKED_LOS_BLOCKED, sizeof(pl->blocked_los));
-        pl->blocked_los[pl->socket.mapx_2][pl->socket.mapy_2] = BLOCKED_LOS_IGNORE;
+        (void)memset((void *)pl->los_array, LOS_FLAG_BLOCKED, sizeof(pl->los_array));
+        pl->los_array[pl->socket.mapx_2][pl->socket.mapy_2] = LOS_FLAG_IGNORE;
         TPR_BREAK("LOS new blind");
         return;
     }
 
     /* Reset the array -- all msps are visible by default. */
-    (void)memset((void *)pl->blocked_los, BLOCKED_LOS_VISIBLE, sizeof(pl->blocked_los));
+    (void)memset((void *)pl->los_array, LOS_FLAG_VISIBLE, sizeof(pl->los_array));
 
     /* The central position (where the player is) must be handled specially.
      * This is because it is never considered to be blocksview so the 8 squares
@@ -395,7 +395,7 @@ void update_los(player_t *pl)
      * unhindered. */
     ax = pl->socket.mapx_2;
     ay = pl->socket.mapy_2;
-    pl->blocked_los[ax][ay] = BLOCKED_LOS_IGNORE;
+    pl->los_array[ax][ay] = LOS_FLAG_IGNORE;
 
     for (i = 1; i < MAP_CLIENT_X * MAP_CLIENT_Y; i++)
     {
@@ -410,32 +410,32 @@ void update_los(player_t *pl)
         if (!msp ||
             i >= pl->socket.mapx * pl->socket.mapy)
         {
-            pl->blocked_los[ax][ay] = BLOCKED_LOS_OUT_OF_MAP;
+            pl->los_array[ax][ay] = LOS_FLAG_OUT_OF_MAP;
             continue;
         }
 
         if ((msp->flags & MSP_FLAG_BLOCKSVIEW))
         {
-            pl->blocked_los[ax][ay] |= BLOCKED_LOS_BLOCKSVIEW;
-            pl->blocked_los[ax][ay] &= ~BLOCKED_LOS_OBSCURED;
+            pl->los_array[ax][ay] |= LOS_FLAG_BLOCKSVIEW;
+            pl->los_array[ax][ay] &= ~LOS_FLAG_OBSCURED;
         }
         else if ((msp->flags & MSP_FLAG_OBSCURESVIEW))
         {
-            pl->blocked_los[ax][ay] |= BLOCKED_LOS_OBSCURESVIEW;
+            pl->los_array[ax][ay] |= LOS_FLAG_OBSCURESVIEW;
         }
         else if ((msp->flags & MSP_FLAG_ALLOWSVIEW))
         {
-            pl->blocked_los[ax][ay] |= BLOCKED_LOS_ALLOWSVIEW;
-            pl->blocked_los[ax][ay] &= ~BLOCKED_LOS_OBSCURED;
+            pl->los_array[ax][ay] |= LOS_FLAG_ALLOWSVIEW;
+            pl->los_array[ax][ay] &= ~LOS_FLAG_OBSCURED;
         }
 
         if (i >= (pl->socket.mapx - 2) * (pl->socket.mapy - 2))
         {
-            pl->blocked_los[ax][ay] |= BLOCKED_LOS_IGNORE;
+            pl->los_array[ax][ay] |= LOS_FLAG_IGNORE;
             continue;
         }
 
-        if ((pl->blocked_los[ax][ay] & (BLOCKED_LOS_BLOCKSVIEW | BLOCKED_LOS_BLOCKED)))
+        if ((pl->los_array[ax][ay] & (LOS_FLAG_BLOCKSVIEW | LOS_FLAG_BLOCKED)))
         {
             for (j = 0; j <= 2; j++)
             {
@@ -453,15 +453,15 @@ void update_los(player_t *pl)
 
                 if (k < 0)
                 {
-                    pl->blocked_los[dx][dy] |= ((pl->blocked_los[dx][dy] & BLOCKED_LOS_OBSCURED)) ? BLOCKED_LOS_BLOCKED : BLOCKED_LOS_OBSCURED;
+                    pl->los_array[dx][dy] |= ((pl->los_array[dx][dy] & LOS_FLAG_OBSCURED)) ? LOS_FLAG_BLOCKED : LOS_FLAG_OBSCURED;
                 }
                 else if (k > 0)
                 {
-                    pl->blocked_los[dx][dy] |= BLOCKED_LOS_BLOCKED;
+                    pl->los_array[dx][dy] |= LOS_FLAG_BLOCKED;
                 }
             }
         }
-        else if ((pl->blocked_los[ax][ay] & (BLOCKED_LOS_OBSCURESVIEW | BLOCKED_LOS_OBSCURED)))
+        else if ((pl->los_array[ax][ay] & (LOS_FLAG_OBSCURESVIEW | LOS_FLAG_OBSCURED)))
         {
             for (j = 0; j <= 2; j++)
             {
@@ -476,7 +476,7 @@ void update_los(player_t *pl)
 
                 dx = pl->socket.mapx_2 + LosX[ABS(k)];
                 dy = pl->socket.mapy_2 + LosY[ABS(k)];
-                pl->blocked_los[dx][dy] |= BLOCKED_LOS_OBSCURED;
+                pl->los_array[dx][dy] |= LOS_FLAG_OBSCURED;
             }
         }
     }
@@ -486,16 +486,16 @@ void update_los(player_t *pl)
         ax = MAP_CLIENT_X / 2 + LosX[i];
         ay = MAP_CLIENT_Y / 2 + LosY[i];
 
-        if (!(pl->blocked_los[ax][ay] & (BLOCKED_LOS_BLOCKSVIEW | BLOCKED_LOS_BLOCKED | BLOCKED_LOS_OUT_OF_MAP)))
+        if (!(pl->los_array[ax][ay] & (LOS_FLAG_BLOCKSVIEW | LOS_FLAG_BLOCKED | LOS_FLAG_OUT_OF_MAP)))
         {
             for (j = 1; j <= 8; j++)
             {
                 sint16 dx = ax + LosX[j],
                        dy = ay + LosY[j];
 
-                if ((pl->blocked_los[dx][dy] & (BLOCKED_LOS_ALLOWSVIEW | BLOCKED_LOS_BLOCKSVIEW)))
+                if ((pl->los_array[dx][dy] & (LOS_FLAG_ALLOWSVIEW | LOS_FLAG_BLOCKSVIEW)))
                 {
-                    pl->blocked_los[dx][dy] &= ~BLOCKED_LOS_BLOCKED;
+                    pl->los_array[dx][dy] &= ~LOS_FLAG_BLOCKED;
                 }
             }
         }
@@ -512,7 +512,7 @@ void update_los(player_t *pl)
         {
             ax = pl->socket.mapx_2 + LosX[j],
             ay = pl->socket.mapy_2 + LosY[j];
-            pl->blocked_los[ax][ay] &= ~BLOCKED_LOS_BLOCKED;
+            pl->los_array[ax][ay] &= ~LOS_FLAG_BLOCKED;
         }
     }
 
@@ -530,7 +530,7 @@ void update_los(player_t *pl)
 #endif
 
     /* Reset the array -- all msps are visible. */
-    (void)memset((void *)pl->blocked_los, BLOCKED_LOS_VISIBLE, sizeof(pl->blocked_los));
+    (void)memset((void *)pl->los_array, LOS_FLAG_VISIBLE, sizeof(pl->los_array));
 
     /* For wizpass, that is all. */
     if (pl->gmaster_wizpass)
@@ -562,11 +562,11 @@ void update_los(player_t *pl)
                  * blockview changes to this tiles will have no effect. */
                 if (!msp)
                 {
-                    pl->blocked_los[ax][ay] = BLOCKED_LOS_OUT_OF_MAP;
+                    pl->los_array[ax][ay] = LOS_FLAG_OUT_OF_MAP;
                 }
                 else
                 {
-                    pl->blocked_los[ax][ay] |= BLOCKED_LOS_IGNORE;
+                    pl->los_array[ax][ay] |= LOS_FLAG_IGNORE;
                 }
 
                 continue;
@@ -587,17 +587,17 @@ void update_los(player_t *pl)
              * whatever has set this space to be blocked has done the work and already
              * done the dependency chain.
              * but check for out_of_map to speedup our client map draw function. */
-            if (pl->blocked_los[ax][ay] & (BLOCKED_LOS_BLOCKED | BLOCKED_LOS_OUT_OF_MAP))
+            if (pl->los_array[ax][ay] & (LOS_FLAG_BLOCKED | LOS_FLAG_OUT_OF_MAP))
             {
-                if (pl->blocked_los[ax][ay] & BLOCKED_LOS_BLOCKED)
+                if (pl->los_array[ax][ay] & LOS_FLAG_BLOCKED)
                 {
                     if (!msp)
                     {
-                        pl->blocked_los[ax][ay] = BLOCKED_LOS_OUT_OF_MAP;
+                        pl->los_array[ax][ay] = LOS_FLAG_OUT_OF_MAP;
                     }
                     else if ((msp->flags & MSP_FLAG_BLOCKSVIEW))
                     {
-                        pl->blocked_los[ax][ay] |= BLOCKED_LOS_BLOCKSVIEW;
+                        pl->los_array[ax][ay] |= LOS_FLAG_BLOCKSVIEW;
                     }
                 }
 
@@ -607,12 +607,12 @@ void update_los(player_t *pl)
             if (!msp)
             {
                 BlockVista(pl, i, j);
-                pl->blocked_los[ax][ay] = BLOCKED_LOS_OUT_OF_MAP;
+                pl->los_array[ax][ay] = LOS_FLAG_OUT_OF_MAP;
             }
             else if ((msp->flags & MSP_FLAG_BLOCKSVIEW))
             {
                 BlockVista(pl, i, j);
-                pl->blocked_los[ax][ay] |= BLOCKED_LOS_BLOCKSVIEW;
+                pl->los_array[ax][ay] |= LOS_FLAG_BLOCKSVIEW;
             }
         }
     }
@@ -633,9 +633,9 @@ void update_los(player_t *pl)
         {
             for (j = -4; j <= 4; j++)
             {
-                if (pl->blocked_los[dx + i][dy + j] & BLOCKED_LOS_BLOCKED)
+                if (pl->los_array[dx + i][dy + j] & LOS_FLAG_BLOCKED)
                 {
-                    pl->blocked_los[dx + i][dy + j] &= ~BLOCKED_LOS_BLOCKED;
+                    pl->los_array[dx + i][dy + j] &= ~LOS_FLAG_BLOCKED;
                 }
             }
         }
@@ -729,7 +729,7 @@ void los_find_target(player_t *pl, uint8 mode, sint16 start, sint16 stop, sint16
             ax >= pl->socket.mapx ||
             ay < 0 ||
             ay >= pl->socket.mapy ||
-            (pl->blocked_los[ax][ay] & (BLOCKED_LOS_BLOCKED | BLOCKED_LOS_OUT_OF_MAP)))
+            (pl->los_array[ax][ay] & (LOS_FLAG_BLOCKED | LOS_FLAG_OUT_OF_MAP)))
         {
             continue;
         }

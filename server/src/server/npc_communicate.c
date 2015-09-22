@@ -230,7 +230,7 @@ void talk_to_npc(player_t *pl, char *topic)
                     y = pl->socket.mapy_2 + rv.distance_y;
 
                 /* Is it visible to the player? */
-                if (pl->blocked_los[x][y] <= BLOCKED_LOS_BLOCKSVIEW)
+                if (pl->los_array[x][y] <= LOS_FLAG_BLOCKSVIEW)
                 {
                     if (t_obj->event_flags & EVENT_FLAG_TALK)
                     {

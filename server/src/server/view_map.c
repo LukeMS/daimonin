@@ -176,7 +176,7 @@ void draw_client_map(player_t *pl)
     /* do LOS after calls to msp_update */
     if (pl->update_los)
     {
-        update_los(pl);
+        los_update(pl);
         pl->update_los = 0;
     }
 
@@ -305,7 +305,7 @@ void draw_client_map2(player_t *pl)
 
         for (x = x_start; x >= who->x - pl->socket.mapx_2; x--, ax--)
         {
-            uint32        blos = pl->blocked_los[ax][ay];
+            uint32        blos = pl->los_array[ax][ay];
             view_msp_t   *view_msp = &pl->socket.lastmap.cells[ax][ay];
             map_t        *m;
             sint16        nx,
@@ -337,7 +337,7 @@ void draw_client_map2(player_t *pl)
             int           d;
 
             /* space is out of map OR blocked.  Update space and clear values if needed */
-            if ((blos & (BLOCKED_LOS_OUT_OF_MAP | BLOCKED_LOS_BLOCKED)))
+            if ((blos & (LOS_FLAG_OUT_OF_MAP | LOS_FLAG_BLOCKED)))
             {
                 if (view_msp->count != -1)
                 {
@@ -369,10 +369,10 @@ void draw_client_map2(player_t *pl)
                 }
 
                 /* Well now we know this msp is OOM so flag it as such.
-                 * update_los() skips OOM when in wizpass mode but knowing this
+                 * los_update() skips OOM when in wizpass mode but knowing this
                  * saves time during targeting so lets make use of this 'free'
                  * info. */
-                pl->blocked_los[ax][ay] = BLOCKED_LOS_OUT_OF_MAP;
+                pl->los_array[ax][ay] = LOS_FLAG_OUT_OF_MAP;
 
                 if (view_msp->count != -1)
                 {
@@ -389,18 +389,18 @@ void draw_client_map2(player_t *pl)
 
             /* Lets check for changed blocksview - but only msps which have an
              * impact to our LOS. */
-            if (!(blos & BLOCKED_LOS_IGNORE)) // border msp, we can ignore every LOS change
+            if (!(blos & LOS_FLAG_IGNORE)) // border msp, we can ignore every LOS change
             {
                 if ((msp->flags & MSP_FLAG_OBSCURESVIEW))
                 {
-                    if (!(blos & BLOCKED_LOS_OBSCURESVIEW))
+                    if (!(blos & LOS_FLAG_OBSCURESVIEW))
                     {
                         pl->update_los = 1;
                     }
                 }
                 else
                 {
-                    if ((blos & BLOCKED_LOS_OBSCURESVIEW))
+                    if ((blos & LOS_FLAG_OBSCURESVIEW))
                     {
                         pl->update_los = 1;
                     }
@@ -408,14 +408,14 @@ void draw_client_map2(player_t *pl)
 
                 if ((msp->flags & MSP_FLAG_BLOCKSVIEW))
                 {
-                    if (!(blos & BLOCKED_LOS_BLOCKSVIEW))
+                    if (!(blos & LOS_FLAG_BLOCKSVIEW))
                     {
                         pl->update_los = 1;
                     }
                 }
                 else
                 {
-                    if ((blos & BLOCKED_LOS_BLOCKSVIEW))
+                    if ((blos & LOS_FLAG_BLOCKSVIEW))
                     {
                         pl->update_los = 1;
                     }
@@ -453,7 +453,7 @@ void draw_client_map2(player_t *pl)
             /* when we arrived here, this tile IS visible - now lets collect the data of it
                  * and update the client when something has changed.
                  */
-            if ((blos & BLOCKED_LOS_OBSCURED))
+            if ((blos & LOS_FLAG_OBSCURED))
             {
                 d /= 4;
             }

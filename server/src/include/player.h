@@ -313,7 +313,7 @@ struct player_t
 
 
     /* for smaller map sizes, only the the first elements are used (ie, upper left) */
-    uint32              blocked_los[MAP_CLIENT_X][MAP_CLIENT_Y]; /* in fact we only need char size, but use int for faster access */
+    uint32              los_array[MAP_CLIENT_X][MAP_CLIENT_Y]; /* in fact we only need char size, but use int for faster access */
 
     char                levhp[MAXLEVEL + 1];            /* What the player gained on that level */
     char                levsp[MAXLEVEL + 1];
