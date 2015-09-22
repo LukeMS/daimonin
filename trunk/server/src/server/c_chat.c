@@ -736,8 +736,8 @@ static int basic_emote(object_t *op, char *params, int emotion)
         return 0;
 
     LOG(llevDebug, "EMOTE: %p (%s) (params: >%s<) (t: %s) %d\n", op, STRING_OBJ_NAME(op), STRING_SAFE(params),
-        (op->type == PLAYER && CONTR(op) && OBJECT_VALID(CONTR(op)->target_object, CONTR(op)->target_object_count))
-      ? STRING_OBJ_NAME(CONTR(op)->target_object)
+        (op->type == PLAYER && CONTR(op) && OBJECT_VALID(CONTR(op)->target_ob, CONTR(op)->target_tag))
+      ? STRING_OBJ_NAME(CONTR(op)->target_ob)
       : "NO CTRL!!",
         emotion);
 
@@ -757,21 +757,21 @@ static int basic_emote(object_t *op, char *params, int emotion)
     {
         /* if we are a player with legal target, use it as target for the emote */
         if (op->type == PLAYER
-         && CONTR(op)->target_object != op
-         && OBJECT_VALID(CONTR(op)->target_object, CONTR(op)->target_object_count)
-         && CONTR(op)->target_object->name)
+         && CONTR(op)->target_ob != op
+         && OBJECT_VALID(CONTR(op)->target_ob, CONTR(op)->target_tag)
+         && CONTR(op)->target_ob->name)
         {
             rv_t   rv;
-            get_rangevector(op, CONTR(op)->target_object, &rv, 0);
+            get_rangevector(op, CONTR(op)->target_ob, &rv, 0);
 
             if (rv.distance <= 4)
             {
-                emote_other(op, CONTR(op)->target_object, NULL, buf, buf2, buf3, emotion);
+                emote_other(op, CONTR(op)->target_ob, NULL, buf, buf2, buf3, emotion);
                 ndi(NDI_UNIQUE, 0, op, "%s", buf);
-                if (CONTR(op)->target_object->type == PLAYER)
+                if (CONTR(op)->target_ob->type == PLAYER)
                     ndi(NDI_EMOTE | NDI_PLAYER | NDI_UNIQUE | NDI_YELLOW,
-                                  0, CONTR(op)->target_object, "%s", buf2);
-                ndi_map(NDI_EMOTE | NDI_PLAYER | NDI_YELLOW, MSP_KNOWN(op), MAP_INFO_NORMAL, op, CONTR(op)->target_object, "%s", buf3);
+                                  0, CONTR(op)->target_ob, "%s", buf2);
+                ndi_map(NDI_EMOTE | NDI_PLAYER | NDI_YELLOW, MSP_KNOWN(op), MAP_INFO_NORMAL, op, CONTR(op)->target_ob, "%s", buf3);
                 return 0;
             }
             ndi(NDI_UNIQUE, 0, op, "The target is not in range for this emote action.");

@@ -198,21 +198,21 @@ void talk_to_npc(player_t *pl, char *topic)
 
     /* If we have no or an invalid target or a valid target which is a player
      * (talk is player-mob only), look for a new one. */
-    if (!OBJECT_VALID(pl->target_object, pl->target_object_count) ||
-        pl->target_object->type == PLAYER)
+    if (!OBJECT_VALID(pl->target_ob, pl->target_tag) ||
+        pl->target_ob->type == PLAYER)
     {
-        pl->target_object = NULL;
+        pl->target_ob = NULL;
 
         command_target(pl->ob, "3");
     }
 
     /* If we now have a valid target and it's in LOS and within it's sensing
      * range (modified if it is asleep), talk to it. */
-    if (OBJECT_VALID(pl->target_object, pl->target_object_count))
+    if (OBJECT_VALID(pl->target_ob, pl->target_tag))
     {
         rv_t rv;
 
-        t_obj = pl->target_object;
+        t_obj = pl->target_ob;
 
         /* Is the target on this mapset and not too far away? */
         if (get_rangevector(pl->ob, t_obj, &rv, 0))

@@ -66,107 +66,37 @@ static int  cs_stat_skillexp[]    =
  *
  ******************************************************************************/
 
+/* send_target_command() updates the client with the current target data. The
+ * function does not change or verify this data, just sends it. So it is the
+ * caller's responsibility to do any necessary checks first. */
 void send_target_command(player_t *pl)
 {
-    int     aim_self_flag   = FALSE;
-    char    tmp[256];
+    char buf[MEDIUM_BUF];
 
-    if (!pl->ob->map)
-        return;
+    /* First char is the combat mode (0 or 1). */
+    buf[0] = (char)pl->combat_mode;
 
-    tmp[0] = pl->combat_mode;
-    tmp[1] = 0; /* color mode */
+    /* Second char is the target colour. */
+    buf[1] = (char)pl->target_colr;
 
-    pl->ob->enemy = NULL;
-    pl->ob->enemy_count = 0;
-    /* target still legal? */
-    if (!pl->target_object || !OBJECT_ACTIVE(pl->target_object) || pl->target_object == pl->ob) /* thats we self */
-        aim_self_flag = TRUE;
+    /* Third char is the target mode (LOS_TARGET_SELF, LOS_TARGET_ENEMY, or
+     * LOS_TARGET_FRIEND). */
+    buf[2] = (char)pl->target_mode;
 
-    else if (pl->target_object_count == pl->target_object->count)
-    {
-        /* ok, a last check... i put it here to have clear code:
-         * perhaps we have legal issues why we can't aim or attack
-         * our target anymore... invisible & stuff are handled here.
-         * stuff like a out of pvp area moved player are handled different.
-         * we HOLD the target - perhaps the guy moved back.
-         * this special stuff is handled deeper in attack() functions.
-         */
-        if (QUERY_FLAG(pl->target_object, FLAG_SYS_OBJECT) ||
-            IS_GMASTER_INVIS_TO(pl->target_object, pl->ob) ||
-            IS_NORMAL_INVIS_TO(pl->target_object, pl->ob))
-        {
-            aim_self_flag = TRUE;
-        }
-        else
-        {
-            if (get_friendship(pl->ob, pl->target_object) >= FRIENDSHIP_HELP)
-                tmp[2] = 2; /* friend */
-            else
-            {
-                tmp[2] = 1; /* enemy */
-                pl->ob->enemy = pl->target_object;
-                pl->ob->enemy_count = pl->target_object_count;
-            }
-            sprintf(tmp + 3, "%s", STRING_OBJ_NAME(pl->target_object));
-        }
-    }
-    else
-        aim_self_flag = TRUE;
+    /* The rest is a string consisting of the target's name. And SA/MMs also
+     * the actual level. */
+    sprintf(buf + 3, "%s", STRING_OBJ_NAME(pl->target_ob));
 
-    /* ok... at last, target self */
-    if (aim_self_flag)
-    {
-        tmp[2] = 0; /* self */
-        strcpy(tmp + 3, pl->ob->name);
-        pl->target_object = pl->ob;
-        pl->target_object_count = 0;
-        pl->target_map_pos = 0;
-    }
-
-    /* now we have a target - lets calculate the color code.
-     * we can do it easy and send the real level to client and
-     * let calc it there but this will allow to spoil that
-     * data on client side.
-     */
-    if (pl->target_object->level < level_color[pl->ob->level].yellow) /* target is lower */
-    {
-        /* if < the green border value, the mob is grey */
-        if (pl->target_object->level < level_color[pl->ob->level].green) /* grey */
-            tmp[1] = NDI_GREY;
-        else /* calc green or blue */
-        {
-            if (pl->target_object->level < level_color[pl->ob->level].blue)
-                tmp[1] = NDI_GREEN;
-            else
-                tmp[1] = NDI_BLUE;
-        }
-    }
-    else /* target is higher or as yellow min. range */
-    {
-        if (pl->target_object->level >= level_color[pl->ob->level].purple)
-            tmp[1] = NDI_PURPLE;
-        else if (pl->target_object->level >= level_color[pl->ob->level].red)
-            tmp[1] = NDI_RED;
-        else if (pl->target_object->level >= level_color[pl->ob->level].orange)
-            tmp[1] = NDI_ORANGE;
-        else
-            tmp[1] = NDI_YELLOW;
-    }
-
-    /* some nice extra info for SA/MMs. */
 #ifdef DAI_DEVELOPMENT_CONTENT
     if ((pl->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_MM | GMASTER_MODE_MW)))
 #else
     if ((pl->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_MM)))
 #endif
     {
-        char    buf[TINY_BUF];
-        sprintf(buf, "(lvl %d)", pl->target_object->level);
-        strcat(tmp + 3, buf);
+        sprintf(strchr(buf + 3, '\0'), " (lvl %d)", pl->target_level);
     }
-    pl->target_level = pl->target_object->level;
-    Write_String_To_Socket(&pl->socket, SERVER_CMD_TARGET, tmp, strlen(tmp+3)+3);
+
+    Write_String_To_Socket(&pl->socket, SERVER_CMD_TARGET, buf, strlen(buf + 3) + 3);
 }
 
 void send_spelllist_cmd(object_t *op, char *spellname, int mode)
@@ -328,14 +258,14 @@ void esrv_update_stats(player_t *pl)
      * this simple compare will not deal in speed but we safe
      * some unneeded calculations.
      */
-    if (pl->target_object != pl->ob) /* never send our own status - client will sort this out */
+    if (pl->target_ob != pl->ob) /* never send our own status - client will sort this out */
     {
         /* we don't care about count - target function will readjust itself */
-        if (pl->target_object && pl->target_object->stats.hp != pl->target_hp) /* just for secure...*/
+        if (pl->target_ob && pl->target_ob->stats.hp != pl->target_hp) /* just for secure...*/
         {
             /* well, i would like to avoid this calc here but we won't give the player the true hp value of target */
-            char hp = (char) (((float) pl->target_object->stats.hp / (float) pl->target_object->stats.maxhp) * 100.0f);
-            pl->target_hp = pl->target_object->stats.hp;
+            char hp = (char) (((float) pl->target_ob->stats.hp / (float) pl->target_ob->stats.maxhp) * 100.0f);
+            pl->target_hp = pl->target_ob->stats.hp;
             AddIfChar(pl->target_hp_p, hp, CS_STAT_TARGET_HP);
         }
     }

@@ -2780,10 +2780,10 @@ int find_target_for_spell(object_t *op, object_t *item, object_t **target, int d
             return TRUE;
         }
 
-        tmp = CONTR(op)->target_object;
+        tmp = CONTR(op)->target_ob;
 
         /* lets check our target - we have one? friend or enemy? */
-        if (!tmp || !OBJECT_ACTIVE(tmp) || tmp == CONTR(op)->ob || CONTR(op)->target_object_count != tmp->count)
+        if (!tmp || !OBJECT_ACTIVE(tmp) || tmp == CONTR(op)->ob || CONTR(op)->target_tag != tmp->count)
         {
             /* no valid target, or we target self! */
             if (flags & SPELL_DESC_SELF) /* can we cast this on self? */

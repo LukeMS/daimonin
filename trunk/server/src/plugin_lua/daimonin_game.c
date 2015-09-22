@@ -458,10 +458,10 @@ static struct constant_decl preset_game_constants[] =
     {"GUI_NPC_MODE_RHETORICAL", GUI_NPC_MODE_RHETORICAL},
     {"GUI_NPC_MODE_QUEST",      GUI_NPC_MODE_QUEST},
 
-    /* Target modes (commands.h) */
-    {"TARGET_ENEMY",  TARGET_ENEMY},
-    {"TARGET_FRIEND", TARGET_FRIEND},
-    {"TARGET_SELF",   TARGET_SELF},
+    /* Target modes (constants not defined by server) */
+    {"TARGET_ENEMY",  0},
+    {"TARGET_FRIEND", 1},
+    {"TARGET_SELF",   2},
 
     /* Map darkness (global.h) */
     /* Bizarrely higher numbers mean brighter so really MAX_DARKNESS means

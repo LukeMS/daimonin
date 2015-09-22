@@ -704,8 +704,8 @@ void stop_missile(object_t *op)
 //    /* Gecko: disabled for now. Too much work to remove it, especially if it is accepted =) */
 //#if 0
 //    /* Experimental targetting throw hack */
-//    if(! dir && thrower->type == PLAYER && OBJECT_VALID(CONTR(op)->target_object, CONTR(op)->target_object_count)) {
-//        object_t *target = CONTR(op)->target_object;
+//    if(! dir && thrower->type == PLAYER && OBJECT_VALID(CONTR(op)->target_ob, CONTR(op)->target_tag)) {
+//        object_t *target = CONTR(op)->target_ob;
 //        get_rangevector(op, target, &target_vec, 0);
 //        dir = target_vec.direction;
 //        target_throw = 1;
