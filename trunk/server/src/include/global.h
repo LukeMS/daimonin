@@ -438,6 +438,7 @@ typedef struct attack_name_t     attack_name_t;
 typedef struct ban_t             ban_t;
 typedef struct living_t          living_t;
 typedef struct map_t             map_t;
+typedef struct mob_pathfinding_t mob_pathfinding_t;
 typedef struct moneyblock_t      moneyblock_t;
 typedef struct msp_t             msp_t;
 typedef struct object_t          object_t;

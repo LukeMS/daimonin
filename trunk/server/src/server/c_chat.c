@@ -762,7 +762,7 @@ static int basic_emote(object_t *op, char *params, int emotion)
          && CONTR(op)->target_ob->name)
         {
             rv_t   rv;
-            get_rangevector(op, CONTR(op)->target_ob, &rv, 0);
+            RV_GET_OBJ_TO_OBJ(op, CONTR(op)->target_ob, &rv, 0);
 
             if (rv.distance <= 4)
             {
@@ -1036,7 +1036,7 @@ static int basic_emote(object_t *op, char *params, int emotion)
                         !pl->privacy) // FIXME: same deal as tells
                     {
                         rv_t   rv; /* lets check range */
-                        get_rangevector(op, pl->ob, &rv, 0);
+                        RV_GET_OBJ_TO_OBJ(op, pl->ob, &rv, 0);
 
                         emote_other(op, NULL, params, buf, buf2, buf3, emotion);
 

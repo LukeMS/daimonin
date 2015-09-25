@@ -4102,19 +4102,21 @@ static int GameObject_GetAI(lua_State *L)
 /*****************************************************************************/
 static int GameObject_GetVector(lua_State *L)
 {
-    lua_object *self, *other;
-    rv_t rv;
+    lua_object *self,
+               *whatptr;
+    rv_t        rv;
 
-    get_lua_args(L, "OO", &self, &other);
+    get_lua_args(L, "OO", &self, &whatptr);
 
-    if(! hooks->get_rangevector(self->data.object, other->data.object, &rv, RV_DIAGONAL_DISTANCE))
+    if (!hooks->rv_get(WHO, MSP_KNOWN(WHO), WHAT, MSP_KNOWN(WHAT), &rv, RV_DIAGONAL_DISTANCE))
+    {
         return 0;
+    }
 
     lua_pushnumber(L, rv.distance);
     lua_pushnumber(L, rv.direction);
     lua_pushnumber(L, rv.distance_x);
     lua_pushnumber(L, rv.distance_y);
-
     return 4;
 }
 

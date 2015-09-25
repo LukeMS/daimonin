@@ -35,12 +35,23 @@
 
 #include <global.h>
 
+#define PUT(_O_, _C_, _F_) \
+    if (((_F_) & GT_ENVIRONMENT)) \
+    { \
+        (_O_)->x = (_C_)->x; \
+        (_O_)->y = (_C_)->y; \
+        (void)insert_ob_in_map((_O_), (_C_)->map, (_O_), INS_NO_WALK_ON); \
+    } \
+    else \
+    { \
+        (void)insert_ob_in_ob((_O_), (_C_)); \
+    }
+
 /* static functions */
 static treasure        *load_treasure(FILE *fp, int *t_style, int *a_chance);
 static void             change_treasure(struct _change_arch *ca, object_t *op); /* overrule default values */
 static treasurelist    *get_empty_treasurelist(void);
 static treasure        *get_empty_treasure(void);
-static void             put_treasure(object_t *op, object_t *creator, int flags);
 static inline void      set_material_real(object_t *op, struct _change_arch *change_arch);
 static void             create_money_table(void);
 static void             postparse_treasurelist(treasure *t, treasurelist *tl);
@@ -1009,7 +1020,7 @@ int create_all_treasures(treasure *t, object_t *op, int flag, int difficulty, in
                     fix_generated_item(&tmp, op, difficulty, a_chance, t_style,
                             (t->magic==T_MAGIC_UNSET)?magic:t->magic,
                             (t->magic_chance==T_MAGIC_CHANCE_UNSET)?magic_chance:t->magic_chance, flag);
-                    put_treasure(tmp, op, flag);
+                    PUT(tmp, op, flag);
                     /* if treasure is "identified", created items are too */
                     if (op->type == TREASURE && QUERY_FLAG(op, FLAG_IDENTIFIED))
                     {
@@ -1039,7 +1050,7 @@ int create_all_treasures(treasure *t, object_t *op, int flag, int difficulty, in
                             copy_object(&coins_arch[i]->clone, tmp);
                             tmp->nrof = (uint32) (value / tmp->value);
                             value -= tmp->nrof * tmp->value;
-                            put_treasure(tmp, op, flag);
+                            PUT(tmp, op, flag);
                         }
                     }
                 }
@@ -1176,7 +1187,7 @@ int create_one_treasure(treasurelist *tl, object_t *op, int flag, int difficulty
             fix_generated_item(&tmp, op, difficulty, a_chance,
                                     (t->t_style == T_STYLE_UNSET) ? t_style : t->t_style,(t->magic!=T_MAGIC_UNSET)?t->magic:magic,
                                     (t->magic_chance!=T_MAGIC_CHANCE_UNSET)?t->magic_chance:magic_chance, flag);
-            put_treasure(tmp, op, flag);
+            PUT(tmp, op, flag);
             /* if trasure is "identified", created items are too */
             if (op->type == TREASURE && QUERY_FLAG(op, FLAG_IDENTIFIED))
             {
@@ -1206,44 +1217,12 @@ int create_one_treasure(treasurelist *tl, object_t *op, int flag, int difficulty
                     copy_object(&coins_arch[i]->clone, tmp);
                     tmp->nrof = (uint32)(value / tmp->value);
                     value -= tmp->nrof * tmp->value;
-                    put_treasure(tmp, op, flag);
+                    PUT(tmp, op, flag);
                 }
             }
         }
     }
     return ret;
-}
-
-
-static void put_treasure(object_t *op, object_t *creator, int flags)
-{
-    if (flags & GT_ENVIRONMENT)
-    {
-        op->x = creator->x;
-        op->y = creator->y;
-        /* this must be handled carefully... we don't want drop items on a button
-         * which is then not triggered. MT-2004
-         */
-        /*insert_ob_in_map(op, creator->map, op, INS_NO_MERGE | INS_NO_WALK_ON);*/
-        insert_ob_in_map(op, creator->map, op, INS_NO_WALK_ON);
-    }
-    else
-    {
-        op = insert_ob_in_ob(op, creator);
-
-        if ((flags & GT_APPLY) &&
-            QUERY_FLAG(creator, FLAG_MONSTER))
-        {
-            monster_check_apply(creator, op);
-        }
-#if 0 // handled automatically by insert_ob_in_ob)_
-
-        if ((flags & GT_UPDATE_INV))
-        {
-            esrv_send_item(op);
-        }
-#endif
-    }
 }
 
 /* if there are change_xxx commands in the treasure, we include the changes

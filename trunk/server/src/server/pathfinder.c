@@ -125,7 +125,7 @@ void request_new_path(object_t *op)
 
 #ifdef DEBUG_PATHFINDING
     LOG(llevDebug, "request_new_path(): enqueing path request for >%s< -> >%s<\n", STRING_OBJ_NAME(op),
-        STRING_OBJ_NAME(MOB_PATHDATA(op)->target_obj));
+        STRING_OBJ_NAME(MOB_PATHDATA(op)->target_ob));
 #endif
 
     if (pathfinder_queue_enqueue(op))
@@ -152,7 +152,7 @@ object_t * get_next_requested_path()
 
 #ifdef DEBUG_PATHFINDING
     LOG(llevDebug, "get_next_requested_path(): dequeued '%s' -> '%s'\n", STRING_OBJ_NAME(op),
-        STRING_OBJ_NAME(MOB_PATHDATA(op)->target_obj));
+        STRING_OBJ_NAME(MOB_PATHDATA(op)->target_ob));
 #endif
 
     CLEAR_FLAG(MOB_PATHDATA(op), PATHFINDFLAG_PATH_REQUESTED);
@@ -304,14 +304,17 @@ struct path_segment * encode_path(path_node *path, struct path_segment **last_se
  *
  * Something advanced could be to use a hughes transform / or something smart with cross products
  */
-path_node * compress_path(path_node *path)
+path_node *compress_path(path_node *path)
 {
-    path_node  *tmp, *next;
-    int         last_dir;
-    rv_t   v;
-
+    path_node  *this,
+               *next;
+    msp_t      *this_msp,
+               *next_msp;
+    rv_t        rv;
+    sint8       last_dir;
 #ifdef DEBUG_PATHFINDING
-    int         removed_nodes = 0, total_nodes = 2;
+    sint32      removed_nodes = 0,
+                total_nodes = 2;
 #endif
 
     /* Rules:
@@ -321,36 +324,43 @@ path_node * compress_path(path_node *path)
      */
 
     /* Guarantee at least length 3 */
-    if (path == NULL || path->next == NULL)
+    if (!path ||
+        !path->next)
+    {
         return path;
+    }
 
     next = path->next;
+    this_msp = MSP_KNOWN(path);
+    next_msp = MSP_KNOWN(next);
+    RV_GET_MSP_TO_MSP(this_msp, next_msp, &rv, RV_MANHATTAN_DISTANCE);
+    last_dir = rv.direction;
 
-    get_rangevector_from_mapcoords(path->map, path->x, path->y, next->map, next->x, next->y, &v, RV_MANHATTAN_DISTANCE);
-    last_dir = v.direction;
-
-    for (tmp = next; tmp && tmp->next; tmp = next)
+    for (this = next; this && (next = this->next); this = next)
     {
-        next = tmp->next;
-
 #ifdef DEBUG_PATHFINDING
         total_nodes++;
 #endif
-        get_rangevector_from_mapcoords(tmp->map, tmp->x, tmp->y, next->map, next->x, next->y, &v, RV_MANHATTAN_DISTANCE);
-        if (last_dir == v.direction)
+        this_msp = MSP_KNOWN(this);
+        next_msp = MSP_KNOWN(next);
+        RV_GET_MSP_TO_MSP(this_msp, next_msp, &rv, RV_MANHATTAN_DISTANCE);
+
+        if (last_dir == rv.direction)
         {
-            remove_node(tmp, &path);
+            remove_node(this, &path);
 #ifdef DEBUG_PATHFINDING
             removed_nodes++;
 #endif
         }
         else
-            last_dir = v.direction;
+        {
+            last_dir = rv.direction;
+        }
     }
 
 #ifdef DEBUG_PATHFINDING
-    LOG(llevDebug, "compress_path(): removed %d nodes of %d (%.0f%%)\n", removed_nodes, total_nodes,
-        (float) removed_nodes * 100.0 / (float) total_nodes);
+    LOG(llevDebug, "compress_path(): removed %d nodes of %d (%.0f%%)\n",
+        removed_nodes, total_nodes, (float)removed_nodes * 100.0 / (float)total_nodes);
 #endif
 
     return path;
@@ -369,38 +379,39 @@ path_node * compress_path(path_node *path)
  *
  * If this function overestimates, we are not guaranteed an optimal path.
  *
- * get_rangevector can fail here if there is no maptile path between start and goal.
+ * rv_get() can fail here if there is no maptile path between start and goal.
  * if it does, we have to return an error value (HEURISTIC_ERROR)
  */
 float distance_heuristic(path_node *start, path_node *current, path_node *goal, object_t *op1, object_t *op2)
 {
-    rv_t   v1, v2;
-    float       h;
+    msp_t *start_msp = MSP_KNOWN(start),
+          *current_msp = MSP_KNOWN(current),
+          *goal_msp = MSP_KNOWN(goal);
+    rv_t   rv1,
+           rv2;
+    float  h;
 
     /* Diagonal distance (not manhattan distance or euclidian distance!) */
-    if (!get_rangevector_full(
-                op1, current->map, current->x, current->y,
-                op2, goal->map, goal->x, goal->y,
-                &v1, RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
+    if (!rv_get(op1, current_msp, op2, goal_msp, &rv1, RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
+    {
         return HEURISTIC_ERROR;
-    /* TODO: really need to negate distances? */
-    v1.distance_x = -v1.distance_x;
-    v1.distance_y = -v1.distance_y;
+    }
 
-    h = (float) v1.distance;
+    /* TODO: really need to negate distances? */
+    rv1.distance_x = -rv1.distance_x;
+    rv1.distance_y = -rv1.distance_y;
+    h = (float)rv1.distance;
 
     /* Add straight-line preference by calculating cross product   */
     /* (gives better performance on open areas _and_ nicer-looking paths) */
-    if (!get_rangevector_full(
-                op1, start->map, start->x, start->y,
-                op2, goal->map, goal->x, goal->y,
-                &v2, RV_RECURSIVE_SEARCH | RV_NO_DISTANCE))
+    if (!rv_get(op1, start_msp, op2, goal_msp, &rv2, RV_RECURSIVE_SEARCH | RV_NO_DISTANCE))
+    {
         return HEURISTIC_ERROR;
-    v2.distance_x = -v2.distance_x;
-    v2.distance_y = -v2.distance_y;
+    }
 
-    h += abs(v1.distance_x * v2.distance_y - v2.distance_x * v1.distance_y) * 0.001f;
-
+    rv2.distance_x = -rv2.distance_x;
+    rv2.distance_y = -rv2.distance_y;
+    h += ABS(rv1.distance_x * rv2.distance_y - rv2.distance_x * rv1.distance_y) * 0.001f;
     return h;
 }
 

@@ -43,9 +43,10 @@ typedef struct astar_node
 
 struct path_segment
 {
-    struct path_segment    *next;
-    int                     x, y;
-    const char             *map;
+    struct path_segment *next;
+    const char          *map;
+    sint16               x;
+    sint16               y;
 };
 
 extern void     return_poolchunk_array_real(void *, uint32, struct mempool *);

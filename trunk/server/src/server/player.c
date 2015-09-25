@@ -689,7 +689,7 @@ int player_can_view(object_t *pl, object_t *op)
     {
         op = op->head;
     }
-    get_rangevector(pl, op, &rv, 0x1);
+    RV_GET_OBJ_TO_OBJ(pl, op, &rv, 0x1);
 
     /* starting with the 'head' part, lets loop
      * through the object and find if it has any

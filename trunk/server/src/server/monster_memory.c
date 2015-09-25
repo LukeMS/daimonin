@@ -160,7 +160,7 @@ struct mob_known_obj *register_npc_known_obj(object_t *npc, object_t *other, int
          * on local servers where speed is not so important and we still want
          * to avoid spurious bugs.
          * -- Smacky 20101116 */
-        if (!get_rangevector(npc, other, &rv, RV_EUCLIDIAN_DISTANCE | RV_RECURSIVE_SEARCH) ||
+        if (!RV_GET_OBJ_TO_OBJ(npc, other, &rv, RV_EUCLIDIAN_DISTANCE | RV_RECURSIVE_SEARCH) ||
             !rv.part)
         {
             LOG(llevBug, "BUG: register_npc_known_obj(): '%s' can't get rv to '%s'\n", STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other));
@@ -364,7 +364,7 @@ struct mob_known_obj *update_npc_knowledge(object_t *npc, object_t *other, int d
 
 /** Get the rangevector to a known object. If an earlier calculated rangevector is
  * older than maxage then we calculate a new one (set maxage to 0 to force update).
- * Returns a pointer to the rangevector, or NULL if get_rangevector() failed.
+ * Returns a pointer to the rangevector, or NULL if rv_get() failed.
  * @param op origin mob
  * @param known_obj object we want the vector to
  * @param maxage maximum age of cached vector
@@ -385,7 +385,7 @@ rv_t * get_known_obj_rv(object_t *op, struct mob_known_obj *known_obj, int maxag
     if (ROUND_TAG - known_obj->rv_time >= (uint32) maxage || known_obj->rv_time == 0 || maxage == 0)
     {
         /* Recalculating the rv might very well fail */
-        if (! get_rangevector(op, known_obj->obj, &known_obj->rv, 0))
+        if (!RV_GET_OBJ_TO_OBJ(op, known_obj->obj, &known_obj->rv, 0))
         {
             known_obj->rv_time = 0;
             return NULL;
