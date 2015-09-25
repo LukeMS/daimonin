@@ -41,6 +41,7 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
 Object wall_stone4_w.131
 name stone wall
@@ -49,4 +50,5 @@ type 77
 layer 5
 no_pick 1
 no_pass 1
+allowsview 1
 end
