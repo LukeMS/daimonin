@@ -281,6 +281,7 @@ static player_t *get_player_struct(void)
     p->listening = 9;
     p->last_weapon_sp = -1;
     p->update_los = 1;
+    p->update_target = 1;
 
     /* Disable static socket: important setting to tell the engine the socket is not valid */
     p->socket.status = Ns_Disabled;
@@ -747,6 +748,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     LOG(llevDebug, "Send new_player(): socket %d\n", ns->fd);
     send_spelllist_cmd(op, NULL, SPLIST_MODE_ADD); /* send the known spells as list to client */
     send_skilllist_cmd(pl, -1, SPLIST_MODE_ADD);
+    LOS_SET_TARGET(pl, op, LOS_TARGET_SELF, 0);
 
     /* we do the login script BEFORE we go to the map */
 #ifdef PLUGINS
