@@ -101,7 +101,7 @@ static sint8   on_same_instance(map_t *m1, map_t *m2);
 #ifndef __RV_H
 #define __RV_H
 
-/* constants for the flags for get_rangevector_*() functions */
+/* constants for the flags for rv_get(). */
 #define RV_DIAGONAL_DISTANCE        0
 #define RV_IGNORE_MULTIPART         (1 << 0)
 #define RV_RECURSIVE_SEARCH         (1 << 1)
@@ -114,6 +114,45 @@ static sint8   on_same_instance(map_t *m1, map_t *m2);
 /* 8 => 1 level deep, 24 => 2 levels, 48 =>3 levels */
 #define MAX_SEARCH_MAP_TILES 24
 
+/* RV_GET_OBJ_TO_OBJ() is a convenience macro for calculating the rv between
+ * two objects. To keep the macro simple and embedable in conditions, it is the
+ * caller's reponsibility to ensure both objects exist and are on maps.*/
+#define RV_GET_OBJ_TO_OBJ(_O1_, _O2_, _RV_, _F_) \
+    rv_get((_O1_), MSP_KNOWN((_O1_)), (_O2_), MSP_KNOWN((_O2_)), (_RV_), (_F_))
+
+/* RV_GET_MSP_TO_MSP() is a convenience macro for calculating the rv between
+ * two msps. rv_get() will cope if either msp is NULL (out of map) but this is
+ * a guaranteed immediate failure so really the caller should check first. */
+#define RV_GET_MSP_TO_MSP(_MSP1_, _MSP2_, _RV_, _F_) \
+    rv_get(NULL, (_MSP1_), NULL, (_MSP2_), (_RV_), (_F_))
+
+/* RV_GET_OBJ_TO_MSP() is a convenience macro for calculating the rv between
+ * two objects. To keep the macro simple and embedable in conditions, it is the
+ * caller's reponsibility to ensure both objects exist and are on maps.*/
+#define RV_GET_OBJ_TO_MSP(_O_, _MSP_, _RV_, _F_) \
+    rv_get((_O_), MSP_KNOWN((_O_)), NULL, (_MSP_), (_RV_), (_F_))
+
+/* RV_GET_OBJ_TO_OBJ() is a convenience macro for calculating the rv between
+ * two objects. To keep the macro simple and embedable in conditions, it is the
+ * caller's reponsibility to ensure both objects exist and are on maps.*/
+#define RV_GET_MSP_TO_OBJ(_MSP_, _O_, _RV_, _F_) \
+    rv_get(NULL, (_MSP_), (_O_), MSP_KNOWN((_O_)), (_RV_), (_F_))
+
+#define RV_TEST_MELEE(_RV_) \
+    (ABS((_RV_).distance_x) < 2 && \
+     ABS((_RV_).distance_y) < 2)
+
+            /* exact 45 deg */
+#define RV_TEST_MISSILE_EXACT(_RV_) \
+    ((_RV_).distance_x == 0 || \
+     (_RV_).distance_y == 0 || \
+     ABS((_RV_).distance_x) - ABS((_RV_).distance_y) == 0)
+
+          /* 45 deg +- one tile */
+#define RV_TEST_MISSILE_APPROX(_RV_) \
+    (ABS((_RV_).distance_x) <= 1 || \
+     ABS((_RV_).distance_y) <= 1 || \
+     ABS(ABS((_RV_).distance_x) - ABS((_RV_).distance_y)) <= 1)
 /* This is used by get_rangevector to determine where the other
  * creature is.  get_rangevector takes into account map tiling,
  * so you just can not look the the map coordinates and get the
@@ -127,12 +166,13 @@ static sint8   on_same_instance(map_t *m1, map_t *m2);
  * Internal padding: 0/0
  * Trailing padding: 0/0
  * Cache line optimized: no
- * The four integer members could probably be uint16, uint16, uint16, uint8 (+1
+ * The four integer members could probably be uint16, sint16, sint16, sint8 (+1
  * padding for an overall saving of 8.
  *
  * -- Smacky 20140822 */
 struct rv_t
 {
+    object_t     *head;
     object_t     *part;
     unsigned int  distance;
     int           distance_x;
@@ -155,9 +195,7 @@ struct mapsearch_node
     struct mapsearch_node  *next;
 };
 
-extern int     get_rangevector(object_t *op1, object_t *op2, rv_t *retval, int flags);
-extern int     get_rangevector_from_mapcoords(map_t *map1, int x1, int y1, map_t *map2, int x2, int y2, rv_t *retval, int flags);
-extern int     get_rangevector_full(object_t *op1, map_t *map1, int x1, int y1, object_t *op2, map_t *map2, int x2, int y2, rv_t *retval, int flags);
+extern int rv_get(object_t *op1, msp_t *msp1, object_t *op2, msp_t *msp2, rv_t *retval, int flags);
 
 #endif /* ifndef __RV_H */
 

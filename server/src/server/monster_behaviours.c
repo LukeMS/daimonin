@@ -103,7 +103,7 @@ int mob_can_see_obj(object_t *op, object_t *obj, struct mob_known_obj *known_obj
     /* Get the rangevector, trying to use a cached version first */
     if (known_obj)
         rv_p = get_known_obj_rv(op, known_obj, MAX_KNOWN_OBJ_RV_AGE);
-    else if (get_rangevector(op, obj, &rv, RV_EUCLIDIAN_DISTANCE))
+    else if (RV_GET_OBJ_TO_OBJ(op, obj, &rv, RV_EUCLIDIAN_DISTANCE))
         rv_p = &rv;
 
     if (rv_p == NULL)
@@ -143,76 +143,6 @@ void npc_call_for_help(object_t *op) {
   
 }
 #endif
-
-/** Test if ob1 can hit ob2 with a melee attack */
-int can_hit_melee(object_t *ob1, object_t *ob2, rv_t *rv)
-{
-    if (QUERY_FLAG(ob1, FLAG_CONFUSED) && !(RANDOM() % 3))
-        return 0;
-    return abs(rv->distance_x) < 2 && abs(rv->distance_y) < 2;
-}
-
-/** Test if ob1 can hit ob2 with a missile weapon / distance attack.
- * @param ob1 origin mob
- * @param ob2 target mob
- * @param rv precalculated rv from ob1 to ob2
- * @param mode
- * 1 - exact 45 deg
- * 2 - 45 deg +- one tile
- * 3 - free 360 deg LOF
- *
- * @todo rename to is_in_line_of_fire
- * @todo actually perform a rough line of sight calculation
- */
-int can_hit_missile(object_t *ob1, object_t *ob2, rv_t *rv, int mode)
-{
-
-    switch (mode)
-    {
-        case 2:
-          /* 45 deg +- one tile */
-          return abs(rv->distance_x) <= 1
-              || abs(rv->distance_y) <= 1
-              || abs(abs(rv->distance_x) - abs(rv->distance_y)) <= 1;
-
-        case 3:
-          /* free 360 deg line of fire */
-          return TRUE;
-
-        case 1:
-            /* exact 45 deg */
-        default:
-            return rv->distance_x == 0 || rv->distance_y == 0 || abs(rv->distance_x) - abs(rv->distance_y) == 0;
-    }
-}
-
-/** Test if the given coordinate is in the line of fire from op1.
- * @see can_hit_missile()
- */
-int mapcoord_in_line_of_fire(object_t *op1, map_t *map, int x, int y, int mode)
-{
-    rv_t rv;
-    get_rangevector_full(op1, op1->map, op1->x, op1->y, NULL, map, x, y, &rv, RV_DIAGONAL_DISTANCE);
-    return can_hit_missile(op1, NULL, &rv, mode);
-}
-
-int mapcoord_in_line_of_missile(object_t *op, map_t *map, int x, int y)
-{
-    rv_t rv;
-    get_rangevector_full(op, op->map, op->x, op->y, NULL, map, x, y, &rv, RV_DIAGONAL_DISTANCE);
-    return can_hit_missile(op, NULL, &rv, 1) && op->direction == rv.direction;
-}
-
-/* scary function - need rework. even in crossfire its changed now */
-void monster_check_apply(object_t *mon, object_t *item)
-{
-    /* this function is simply to bad - for example will potions applied
-     * not depending on the situation... why applying a heal potion when
-     * full hp? firestorm potion when standing next to own people?
-     * IF we do some AI stuff here like using items we must FIRST
-     * add a AI - then doing the things. Think first, act later!
-     */
-}
 
 /** Callback function for successful moves toward a waypoint.
  * Updates the monster's "home" position to its current position,
@@ -741,17 +671,17 @@ int nret;
 
     base = insert_base_info_object(op);
 
-	nLimitXY = 0;
+    nLimitXY = 0;
 
-	if(params[AIPARAM_MOVE_RANDOMLY_XLIMIT].flags & AI_PARAM_PRESENT){
-		nXRange = params[AIPARAM_MOVE_RANDOMLY_XLIMIT].intvalue;
-		nLimitXY = 2;
-	}
-	
-	if(params[AIPARAM_MOVE_RANDOMLY_YLIMIT].flags & AI_PARAM_PRESENT){
-		nYRange = params[AIPARAM_MOVE_RANDOMLY_YLIMIT].intvalue;
-		nLimitXY |= 1;
-	}
+    if(params[AIPARAM_MOVE_RANDOMLY_XLIMIT].flags & AI_PARAM_PRESENT){
+        nXRange = params[AIPARAM_MOVE_RANDOMLY_XLIMIT].intvalue;
+        nLimitXY = 2;
+    }
+    
+    if(params[AIPARAM_MOVE_RANDOMLY_YLIMIT].flags & AI_PARAM_PRESENT){
+        nYRange = params[AIPARAM_MOVE_RANDOMLY_YLIMIT].intvalue;
+        nLimitXY |= 1;
+    }
 
         if (!(basemap = map_is_ready(base->slaying)))
         {
@@ -759,142 +689,143 @@ int nret;
         }
 
         if (basemap &&
-		!get_rangevector_full(NULL, basemap, base->x, base->y, op, op->map, op->x, op->y, &rv, RV_NO_DISTANCE)){ /* the mob is not a controled map */
-			aDirWeight[0] = 0;
-			aDirWeight[1] = 0;
-			aDirWeight[2] = 0;
-			aDirWeight[3] = 0;
-			aDirWeight[4] = 0;
-			aDirWeight[5] = 0;
-			aDirWeight[6] = 0;
-			aDirWeight[7] = 0;
-			aDirWeight[8] = 0;
+            !RV_GET_MSP_TO_OBJ(MSP_RAW(basemap, base->x, base->y), op, &rv, RV_NO_DISTANCE)) /* the mob is not a controled map */
+        {
+            aDirWeight[0] = 0;
+            aDirWeight[1] = 0;
+            aDirWeight[2] = 0;
+            aDirWeight[3] = 0;
+            aDirWeight[4] = 0;
+            aDirWeight[5] = 0;
+            aDirWeight[6] = 0;
+            aDirWeight[7] = 0;
+            aDirWeight[8] = 0;
 
-			switch(op->direction){
-			case 0:
-				break;
-			case 1:
-				if(	op->map->tiling.tile_map[TILING_DIRECTION_SOUTH] &&
-					((op->map->tiling.tile_map[TILING_DIRECTION_SOUTH] == basemap->tiling.tile_map[TILING_DIRECTION_NORTH]) ||
-					(op->map->tiling.tile_map[TILING_DIRECTION_SOUTH] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHEAST]) ||
-					(op->map->tiling.tile_map[TILING_DIRECTION_SOUTH] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHWEST]))){
-					aDirWeight[dir_turn(op->direction, 4)] = 1;
-					return 1;
-				}
-				break;
-			case 2:
-				if(	op->map->tiling.tile_map[TILING_DIRECTION_SOUTHWEST] &&
-					((op->map->tiling.tile_map[TILING_DIRECTION_SOUTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTH]) ||
-					(op->map->tiling.tile_map[TILING_DIRECTION_SOUTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHEAST]) ||
-					(op->map->tiling.tile_map[TILING_DIRECTION_SOUTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHWEST]) ||
-					(op->map->tiling.tile_map[TILING_DIRECTION_SOUTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_EAST]) ||
-					(op->map->tiling.tile_map[TILING_DIRECTION_SOUTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHEAST]))){
-					aDirWeight[dir_turn(op->direction, 4)] = 1;
-					return 1;
-				}
-				break;
-			case 3:
-				if(	op->map->tiling.tile_map[TILING_DIRECTION_WEST] &&
-					((op->map->tiling.tile_map[TILING_DIRECTION_WEST] == basemap->tiling.tile_map[TILING_DIRECTION_EAST]) ||
-					(op->map->tiling.tile_map[TILING_DIRECTION_WEST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHEAST]) ||
-					(op->map->tiling.tile_map[TILING_DIRECTION_WEST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHEAST]))){
-					aDirWeight[dir_turn(op->direction, 4)] = 1;
-					return 1;
-				}
-				break;
-			case 4:
-				if(	op->map->tiling.tile_map[TILING_DIRECTION_NORTHWEST] &&
-					((op->map->tiling.tile_map[TILING_DIRECTION_NORTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTH]) ||
-					(op->map->tiling.tile_map[TILING_DIRECTION_NORTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHEAST]) ||
-					(op->map->tiling.tile_map[TILING_DIRECTION_NORTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHEAST]) ||
-					(op->map->tiling.tile_map[TILING_DIRECTION_NORTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_EAST]) ||
-					(op->map->tiling.tile_map[TILING_DIRECTION_NORTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHWEST]))){
-					aDirWeight[dir_turn(op->direction, 4)] = 1;
-					return 1;
-				}
-				break;
-			case 5:
-				if(	op->map->tiling.tile_map[TILING_DIRECTION_NORTH] &&
-					((op->map->tiling.tile_map[TILING_DIRECTION_NORTH] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTH]) ||
-					(op->map->tiling.tile_map[TILING_DIRECTION_NORTH] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHEAST]) ||
-					(op->map->tiling.tile_map[TILING_DIRECTION_NORTH] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHWEST]))){
-					aDirWeight[dir_turn(op->direction, 4)] = 1;
-					return 1;
-				}
-				break;
-			case 6:
-				if(	op->map->tiling.tile_map[TILING_DIRECTION_NORTHEAST] &&
-					((op->map->tiling.tile_map[TILING_DIRECTION_NORTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTH]) ||
-					(op->map->tiling.tile_map[TILING_DIRECTION_NORTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHWEST]) ||
-					(op->map->tiling.tile_map[TILING_DIRECTION_NORTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHEAST]) ||
-					(op->map->tiling.tile_map[TILING_DIRECTION_NORTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_WEST]) ||
-					(op->map->tiling.tile_map[TILING_DIRECTION_NORTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHWEST]))){
-					aDirWeight[dir_turn(op->direction, 4)] = 1;
-					return 1;
-				}
-				break;				
-			case 7:
-				if(	op->map->tiling.tile_map[TILING_DIRECTION_EAST] &&
-					((op->map->tiling.tile_map[TILING_DIRECTION_EAST] == basemap->tiling.tile_map[TILING_DIRECTION_WEST]) ||
-					(op->map->tiling.tile_map[TILING_DIRECTION_EAST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHWEST]) ||
-					(op->map->tiling.tile_map[TILING_DIRECTION_EAST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHWEST]))){
-					aDirWeight[dir_turn(op->direction, 4)] = 1;
-					return 1;
-				}
-				break;
-			case 8:
-				if(	op->map->tiling.tile_map[TILING_DIRECTION_SOUTHEAST] &&
-					((op->map->tiling.tile_map[TILING_DIRECTION_SOUTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTH]) ||
-					(op->map->tiling.tile_map[TILING_DIRECTION_SOUTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHEAST]) ||
-					(op->map->tiling.tile_map[TILING_DIRECTION_SOUTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHWEST]) ||
-					(op->map->tiling.tile_map[TILING_DIRECTION_SOUTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_WEST]) ||
-					(op->map->tiling.tile_map[TILING_DIRECTION_SOUTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHWEST]))){
-					aDirWeight[dir_turn(op->direction, 4)] = 1;
-					return 1;
-				}
-				break;
-			}
-			nLimitXY = 0;
+            switch(op->direction){
+            case 0:
+                break;
+            case 1:
+                if(    op->map->tiling.tile_map[TILING_DIRECTION_SOUTH] &&
+                    ((op->map->tiling.tile_map[TILING_DIRECTION_SOUTH] == basemap->tiling.tile_map[TILING_DIRECTION_NORTH]) ||
+                    (op->map->tiling.tile_map[TILING_DIRECTION_SOUTH] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHEAST]) ||
+                    (op->map->tiling.tile_map[TILING_DIRECTION_SOUTH] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHWEST]))){
+                    aDirWeight[dir_turn(op->direction, 4)] = 1;
+                    return 1;
+                }
+                break;
+            case 2:
+                if(    op->map->tiling.tile_map[TILING_DIRECTION_SOUTHWEST] &&
+                    ((op->map->tiling.tile_map[TILING_DIRECTION_SOUTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTH]) ||
+                    (op->map->tiling.tile_map[TILING_DIRECTION_SOUTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHEAST]) ||
+                    (op->map->tiling.tile_map[TILING_DIRECTION_SOUTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHWEST]) ||
+                    (op->map->tiling.tile_map[TILING_DIRECTION_SOUTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_EAST]) ||
+                    (op->map->tiling.tile_map[TILING_DIRECTION_SOUTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHEAST]))){
+                    aDirWeight[dir_turn(op->direction, 4)] = 1;
+                    return 1;
+                }
+                break;
+            case 3:
+                if(    op->map->tiling.tile_map[TILING_DIRECTION_WEST] &&
+                    ((op->map->tiling.tile_map[TILING_DIRECTION_WEST] == basemap->tiling.tile_map[TILING_DIRECTION_EAST]) ||
+                    (op->map->tiling.tile_map[TILING_DIRECTION_WEST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHEAST]) ||
+                    (op->map->tiling.tile_map[TILING_DIRECTION_WEST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHEAST]))){
+                    aDirWeight[dir_turn(op->direction, 4)] = 1;
+                    return 1;
+                }
+                break;
+            case 4:
+                if(    op->map->tiling.tile_map[TILING_DIRECTION_NORTHWEST] &&
+                    ((op->map->tiling.tile_map[TILING_DIRECTION_NORTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTH]) ||
+                    (op->map->tiling.tile_map[TILING_DIRECTION_NORTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHEAST]) ||
+                    (op->map->tiling.tile_map[TILING_DIRECTION_NORTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHEAST]) ||
+                    (op->map->tiling.tile_map[TILING_DIRECTION_NORTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_EAST]) ||
+                    (op->map->tiling.tile_map[TILING_DIRECTION_NORTHWEST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHWEST]))){
+                    aDirWeight[dir_turn(op->direction, 4)] = 1;
+                    return 1;
+                }
+                break;
+            case 5:
+                if(    op->map->tiling.tile_map[TILING_DIRECTION_NORTH] &&
+                    ((op->map->tiling.tile_map[TILING_DIRECTION_NORTH] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTH]) ||
+                    (op->map->tiling.tile_map[TILING_DIRECTION_NORTH] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHEAST]) ||
+                    (op->map->tiling.tile_map[TILING_DIRECTION_NORTH] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHWEST]))){
+                    aDirWeight[dir_turn(op->direction, 4)] = 1;
+                    return 1;
+                }
+                break;
+            case 6:
+                if(    op->map->tiling.tile_map[TILING_DIRECTION_NORTHEAST] &&
+                    ((op->map->tiling.tile_map[TILING_DIRECTION_NORTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTH]) ||
+                    (op->map->tiling.tile_map[TILING_DIRECTION_NORTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHWEST]) ||
+                    (op->map->tiling.tile_map[TILING_DIRECTION_NORTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHEAST]) ||
+                    (op->map->tiling.tile_map[TILING_DIRECTION_NORTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_WEST]) ||
+                    (op->map->tiling.tile_map[TILING_DIRECTION_NORTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHWEST]))){
+                    aDirWeight[dir_turn(op->direction, 4)] = 1;
+                    return 1;
+                }
+                break;                
+            case 7:
+                if(    op->map->tiling.tile_map[TILING_DIRECTION_EAST] &&
+                    ((op->map->tiling.tile_map[TILING_DIRECTION_EAST] == basemap->tiling.tile_map[TILING_DIRECTION_WEST]) ||
+                    (op->map->tiling.tile_map[TILING_DIRECTION_EAST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHWEST]) ||
+                    (op->map->tiling.tile_map[TILING_DIRECTION_EAST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHWEST]))){
+                    aDirWeight[dir_turn(op->direction, 4)] = 1;
+                    return 1;
+                }
+                break;
+            case 8:
+                if(    op->map->tiling.tile_map[TILING_DIRECTION_SOUTHEAST] &&
+                    ((op->map->tiling.tile_map[TILING_DIRECTION_SOUTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTH]) ||
+                    (op->map->tiling.tile_map[TILING_DIRECTION_SOUTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHEAST]) ||
+                    (op->map->tiling.tile_map[TILING_DIRECTION_SOUTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_SOUTHWEST]) ||
+                    (op->map->tiling.tile_map[TILING_DIRECTION_SOUTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_WEST]) ||
+                    (op->map->tiling.tile_map[TILING_DIRECTION_SOUTHEAST] == basemap->tiling.tile_map[TILING_DIRECTION_NORTHWEST]))){
+                    aDirWeight[dir_turn(op->direction, 4)] = 1;
+                    return 1;
+                }
+                break;
+            }
+            nLimitXY = 0;
     }
 
-	aDirWeight[0] = 1;
-	aDirWeight[1] = 1;
-	aDirWeight[2] = 1;
-	aDirWeight[3] = 1;
-	aDirWeight[4] = 1;
-	aDirWeight[5] = 1;
-	aDirWeight[6] = 1;
-	aDirWeight[7] = 1;
-	aDirWeight[8] = 1;
+    aDirWeight[0] = 1;
+    aDirWeight[1] = 1;
+    aDirWeight[2] = 1;
+    aDirWeight[3] = 1;
+    aDirWeight[4] = 1;
+    aDirWeight[5] = 1;
+    aDirWeight[6] = 1;
+    aDirWeight[7] = 1;
+    aDirWeight[8] = 1;
 
-	if(nLimitXY & 2){
-		if(rv.distance_x + 1 > nXRange){
-			aDirWeight[2] = 0;
-			aDirWeight[3] = 0;
-			aDirWeight[4] = 0;
-		}
-		if(rv.distance_x - 1 < -nXRange){
-			aDirWeight[6] = 0;
-			aDirWeight[7] = 0;
-			aDirWeight[8] = 0;
-		}
-	}
+    if(nLimitXY & 2){
+        if(rv.distance_x + 1 > nXRange){
+            aDirWeight[2] = 0;
+            aDirWeight[3] = 0;
+            aDirWeight[4] = 0;
+        }
+        if(rv.distance_x - 1 < -nXRange){
+            aDirWeight[6] = 0;
+            aDirWeight[7] = 0;
+            aDirWeight[8] = 0;
+        }
+    }
 
-	if(nLimitXY & 1){
-		if(rv.distance_y + 1 > nYRange){
-			aDirWeight[4] = 0;
-			aDirWeight[5] = 0;
-			aDirWeight[6] = 0;
-		}
-		if(rv.distance_y - 1 < -nYRange){
-			aDirWeight[1] = 0;
-			aDirWeight[2] = 0;
-			aDirWeight[8] = 0;
-		}
-	}
-	nret = aDirWeight[0] + aDirWeight[1] + aDirWeight[2] + aDirWeight[3] + aDirWeight[4];
-	nret += aDirWeight[5] + aDirWeight[6] + aDirWeight[7] +	aDirWeight[8];
-	return nret;
+    if(nLimitXY & 1){
+        if(rv.distance_y + 1 > nYRange){
+            aDirWeight[4] = 0;
+            aDirWeight[5] = 0;
+            aDirWeight[6] = 0;
+        }
+        if(rv.distance_y - 1 < -nYRange){
+            aDirWeight[1] = 0;
+            aDirWeight[2] = 0;
+            aDirWeight[8] = 0;
+        }
+    }
+    nret = aDirWeight[0] + aDirWeight[1] + aDirWeight[2] + aDirWeight[3] + aDirWeight[4];
+    nret += aDirWeight[5] + aDirWeight[6] + aDirWeight[7] +    aDirWeight[8];
+    return nret;
 }
 
 /*	fill aDirWeight[9] with possible directions 
@@ -905,50 +836,49 @@ int nStandStill = 246; /* todo: get this value from params */
 int nLastDir;
 int nret;
 
-	if(!(nLastDir = op->direction)){ /* Last move is stand still */
-		if((RANDOM() % 256) <= nStandStill){ /* stand still */
-			aDirWeight[0] = 1;
-			aDirWeight[1] = 0;
-			aDirWeight[2] = 0;
-			aDirWeight[3] = 0;
-			aDirWeight[4] = 0;
-			aDirWeight[5] = 0;
-			aDirWeight[6] = 0;
-			aDirWeight[7] = 0;
-			aDirWeight[8] = 0;
-			return 1;
-		}
-		if(nret = ai_only_keep_possible_dirs(aDirWeight, op, params) - 1){ /* evaluate moves in any direction */
-			aDirWeight[0] = 0;
-			return nret;
-		}
-		/* no movement possible, so don't move */
-		return 1;
-	} else { /* the mob was moving */
-		ai_only_keep_possible_dirs(aDirWeight, op, params); /* evaluate moves in any direction */
+    if(!(nLastDir = op->direction)){ /* Last move is stand still */
+        if((RANDOM() % 256) <= nStandStill){ /* stand still */
+            aDirWeight[0] = 1;
+            aDirWeight[1] = 0;
+            aDirWeight[2] = 0;
+            aDirWeight[3] = 0;
+            aDirWeight[4] = 0;
+            aDirWeight[5] = 0;
+            aDirWeight[6] = 0;
+            aDirWeight[7] = 0;
+            aDirWeight[8] = 0;
+            return 1;
+        }
+        if(nret = ai_only_keep_possible_dirs(aDirWeight, op, params) - 1){ /* evaluate moves in any direction */
+            aDirWeight[0] = 0;
+            return nret;
+        }
+        /* no movement possible, so don't move */
+        return 1;
+    } else { /* the mob was moving */
+        ai_only_keep_possible_dirs(aDirWeight, op, params); /* evaluate moves in any direction */
 
-		nret = aDirWeight[nLastDir] *= 128; /* same direction */
+        nret = aDirWeight[nLastDir] *= 128; /* same direction */
 
-		nret += aDirWeight[dir_turn(nLastDir, 1)] *= 32;  /* turn on the right once */
+        nret += aDirWeight[dir_turn(nLastDir, 1)] *= 32;  /* turn on the right once */
 
-		nret += aDirWeight[dir_turn(nLastDir, -1)] *= 32; /* turn on the left once */
-		
-		nret += aDirWeight[dir_turn(nLastDir, 2)] *= 4; /* turn on the right twice */
+        nret += aDirWeight[dir_turn(nLastDir, -1)] *= 32; /* turn on the left once */
+        
+        nret += aDirWeight[dir_turn(nLastDir, 2)] *= 4; /* turn on the right twice */
 
-		nret += aDirWeight[dir_turn(nLastDir, -2)] *= 4; /* turn on the left twice */
+        nret += aDirWeight[dir_turn(nLastDir, -2)] *= 4; /* turn on the left twice */
 
-		nret += aDirWeight[dir_turn(nLastDir, 3)] *= 1; /* turn on the right 3 times */
+        nret += aDirWeight[dir_turn(nLastDir, 3)] *= 1; /* turn on the right 3 times */
 
-		nret += aDirWeight[dir_turn(nLastDir, -3)] *= 1; /* turn on the left 3 times */
+        nret += aDirWeight[dir_turn(nLastDir, -3)] *= 1; /* turn on the left 3 times */
 
-		nret += aDirWeight[dir_turn(nLastDir, 4)] *= 1; /* turn on the right 4 times */
+        nret += aDirWeight[dir_turn(nLastDir, 4)] *= 1; /* turn on the right 4 times */
 
-		nret += aDirWeight[0] *= 4; /* don't move */
-		
-		return nret;
-	}
+        nret += aDirWeight[0] *= 4; /* don't move */
+        
+        return nret;
+    }
 }
-
 
 void ai_move_randomly(object_t *op, struct mob_behaviour_param *params, move_response *response)
 {
@@ -1194,9 +1124,11 @@ void ai_avoid_line_of_fire(object_t *op, struct mob_behaviour_param *params, mov
     for(tmp = MOB_DATA(op)->known_objs; tmp; tmp = tmp->next)
     {
         object_t *missile,
-               *owner;
-        int i;
-        rv_t *rv;
+                 *owner;
+        int       i;
+        rv_t      rv,
+                 *rv_p;
+
         if(! QUERY_FLAG(tmp, AI_OBJFLAG_IS_MISSILE))
             continue;
 
@@ -1248,8 +1180,12 @@ void ai_avoid_line_of_fire(object_t *op, struct mob_behaviour_param *params, mov
                  * TODO: should possibly do a random throw against the mob's reaction
                  * time, intelligence or somesuch */
                 /* TODO: smart mobs should ignore weak missiles or anything it is immune against */
-                if(mapcoord_in_line_of_missile(tmp->obj, op->map, op->x, op->y))
+                if (RV_GET_OBJ_TO_OBJ(tmp->obj, op, &rv, RV_DIAGONAL_DISTANCE) &&
+                    RV_TEST_MISSILE_EXACT(rv) &&
+                    tmp->obj->direction == rv.direction)
+                {
                     response->forbidden |= (1 << 0);
+                }
 
                 /* Don't move into line of fire (note: this may fail if
                  * firing into the back of an enemy. That is a good thing :) */
@@ -1259,14 +1195,18 @@ void ai_avoid_line_of_fire(object_t *op, struct mob_behaviour_param *params, mov
                     map_t  *m = op->map;
                     sint16  x = op->x + OVERLAY_X(d),
                             y = op->y + OVERLAY_Y(d);
+                    msp_t  *msp = MSP_GET2(m, x, y);
 
                     /* Avoid moving into line of fire */
-                    if ((m = OUT_OF_MAP(m, x, y)))
+                    if (msp &&
+                        RV_GET_OBJ_TO_MSP(tmp->obj, msp, &rv, RV_DIAGONAL_DISTANCE) &&
+                        RV_TEST_MISSILE_EXACT(rv) &&
+                        tmp->obj->direction == rv.direction)
                     {
-                        if(mapcoord_in_line_of_missile(tmp->obj, m, x, y))
-                            response->forbidden |= (1 << d);
+                        response->forbidden |= (1 << d);
                     }
                 }
+
                 break;
 /* Currently there is no good way I can think of for cone dodging.
  * the way it is currently handled causes the mob to freeze if it can't
@@ -1275,9 +1215,9 @@ void ai_avoid_line_of_fire(object_t *op, struct mob_behaviour_param *params, mov
 #if 0
             /* Area-like "missiles" */
             case CONE:
-                if ((rv = get_known_obj_rv(op, tmp, 0)))
+                if ((rv_p = get_known_obj_rv(op, tmp, 0)))
                 {
-                    if(rv->distance == 0) {
+                    if(rv_p->distance == 0) {
                         response->forbidden |= (1 << 0);
                     } else {
                         /* stats.sp is the cone's direction. We check if the mob is in a
@@ -1288,11 +1228,11 @@ void ai_avoid_line_of_fire(object_t *op, struct mob_behaviour_param *params, mov
                             /* Simply try to retreat out of the way. */
                             /* TODO: add sidestepping */
                             response->forbidden |= (1 << 0);
-                            response->forbidden |= (1 << absdir(rv->direction-2));
-                            response->forbidden |= (1 << absdir(rv->direction-1));
-                            response->forbidden |= (1 << rv->direction);
-                            response->forbidden |= (1 << absdir(rv->direction+1));
-                            response->forbidden |= (1 << absdir(rv->direction+2));
+                            response->forbidden |= (1 << absdir(rv_p->direction-2));
+                            response->forbidden |= (1 << absdir(rv_p->direction-1));
+                            response->forbidden |= (1 << rv_p->direction);
+                            response->forbidden |= (1 << absdir(rv_p->direction+1));
+                            response->forbidden |= (1 << absdir(rv_p->direction+2));
                         }
                     }
                 }
@@ -1304,12 +1244,13 @@ void ai_avoid_line_of_fire(object_t *op, struct mob_behaviour_param *params, mov
             case LIGHTNING:
             case BOMB:
                 /* TODO: Really step out of the way, not only out of the area */
-                if ((rv = get_known_obj_rv(op, tmp, 0)))
+                if ((rv_p = get_known_obj_rv(op, tmp, 0)))
                 {
-                    if(rv->distance <= 1) {
-                        response->forbidden |= (1 << rv->direction);
-                        response->forbidden |= (1 << absdir(rv->direction-1));
-                        response->forbidden |= (1 << absdir(rv->direction+1));
+                    if (rv_p->distance <= 1)
+                    {
+                        response->forbidden |= (1 << rv_p->direction);
+                        response->forbidden |= (1 << absdir(rv_p->direction - 1));
+                        response->forbidden |= (1 << absdir(rv_p->direction + 1));
                         response->forbidden |= (1 << 0);
                     }
                 }
@@ -1334,37 +1275,55 @@ void ai_optimize_line_of_fire(object_t *op, struct mob_behaviour_param *params, 
         {
             int i;
             int good_directions = 0, ok_directions = 0;
+            rv_t *rv_p;
+            sint8 base_dir;
 
-            rv_t  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
+            rv_p = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
 
             /* Too close or too far to care? */
-            if(rv->distance <= 2 || rv->distance > 8)
+            if (rv_p->distance <= 2 ||
+                rv_p->distance > 8)
+            {
                 return;
+            }
 
             /* Already perfect? */
-            if(can_hit_missile(op, op->enemy, rv, 1))
+            if (RV_TEST_MISSILE_EXACT(*rv_p))
+            {
                 good_directions = (1 << 0);
+            }
             else
+            {
                 response->forbidden |= (1 << 0); /* Don't stay in a bad spot */
+            }
+
+            base_dir = rv_p->direction;
 
             /* Find a nearby good spot */
             /* TODO: can probably be calculated instead of searched for */
             /* TODO: with this algorithm there is a certain state where
              * the mob starts zipping between two "half-good" spots */
-            for(i=-2; i<=2; i++)
+            for(i = -2; i <= 2; i++)
             {
-                int     dir = absdir(rv->direction+i);
+                sint8   dir = absdir(base_dir + i);
                 map_t  *m = op->map;
                 sint16  x = op->x + OVERLAY_X(dir),
                         y = op->y + OVERLAY_Y(dir);
+                msp_t  *msp = MSP_GET2(m, x, y);
+                rv_t    rv;
 
                 /* Find a spot in or near line of fire, and forbid movements to other spots */
-                if ((m = OUT_OF_MAP(m, x, y)))
+                if (msp &&
+                    RV_GET_OBJ_TO_MSP(op, msp, &rv, RV_DIAGONAL_DISTANCE))
                 {
-                    if(mapcoord_in_line_of_fire(op->enemy, m, x, y, 1)) /* good spot? */
+                    if (RV_TEST_MISSILE_EXACT(rv))
+                    {
                         good_directions |= (1 << dir);
-                    else if(mapcoord_in_line_of_fire(op->enemy, m, x, y, 2)) /* ok spot? */
+                    }
+                    else if (RV_TEST_MISSILE_APPROX(rv))
+                    {
                         ok_directions |= (1 << dir);
+                    }
                 }
             }
 
@@ -1384,7 +1343,6 @@ void ai_optimize_line_of_fire(object_t *op, struct mob_behaviour_param *params, 
         }
     }
 }
-
 
 void ai_move_towards_enemy(object_t *op, struct mob_behaviour_param *params, move_response *response)
 {
@@ -1481,9 +1439,8 @@ void ai_move_towards_enemy_last_known_pos(object_t *op, struct mob_behaviour_par
         struct mob_known_obj   *enemy   = MOB_DATA(op)->enemy;
         map_t              *map     = map_is_ready(enemy->last_map);
 
-        if (map && get_rangevector_full(op, op->map, op->x, op->y,
-                    enemy->obj, map, enemy->last_x, enemy->last_y,
-                    &rv, RV_EUCLIDIAN_DISTANCE))
+        if (map &&
+            RV_GET_OBJ_TO_MSP(op, MSP_RAW(map, enemy->last_x, enemy->last_y), &rv, RV_EUCLIDIAN_DISTANCE))
         {
             op->anim_enemy_dir = rv.direction;
             if (rv.distance > 3)
@@ -1590,10 +1547,7 @@ void ai_move_towards_waypoint(object_t *op, struct mob_behaviour_param *params, 
             /* We know which map we want to. Can we figure out where that
              * map lies relative to current position? */
 
-            if (!get_rangevector_full(
-                        op, op->map, op->x, op->y,
-                        target, destmap, wp_x, wp_y, &rv,
-                        RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
+            if (!RV_GET_OBJ_TO_MSP(op, MSP_RAW(destmap, wp_x, wp_y), &rv, RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
             {
                 /* Problem: we couldn't find a relative direction between the
                  * maps. Usually it means that they are in different mapsets
@@ -1818,10 +1772,10 @@ void ai_stay_near_home(object_t *op, struct mob_behaviour_param *params, move_re
     } else
         distflags = RV_DIAGONAL_DISTANCE;
 
-    if(!get_rangevector_full(op, op->map, op->x, op->y,
-                NULL, map, base->x, base->y,
-                &rv, distflags))
+    if (!RV_GET_OBJ_TO_MSP(op, MSP_RAW(map, base->x, base->y), &rv, distflags))
+    {
         return;
+    }
 
     if((int)rv.distance >= maxdist) {
         response->forbidden |= (1 << absdir(rv.direction+2));
@@ -2026,10 +1980,13 @@ void ai_look_for_enemy_missiles(object_t *op, struct mob_behaviour_param *params
                         if(! known)
                         {
                             rv_t rv;
-                            if (get_rangevector(op, obj, &rv, RV_DIAGONAL_DISTANCE) &&
-                                    (int)rv.distance <= sense_range)
+
+                            if (RV_GET_OBJ_TO_OBJ(op, obj, &rv, RV_DIAGONAL_DISTANCE) &&
+                                (int)rv.distance <= sense_range)
+                            {
                                 known = register_npc_known_obj(op, obj, 0, -10, 1);
                                 /* TODO: configurable attraction value */
+                            }
                         } else
                             update_npc_known_obj(known, 0, 0);
                         if(known)
@@ -2268,9 +2225,12 @@ void ai_choose_enemy(object_t *op, struct mob_behaviour_param *params)
                 /* Ignore enemy if too far from home position */
                 if(base_map && tmp->obj->map && tmp->obj->map->in_memory == MAP_MEMORY_ACTIVE)
                 {
-                    rv_t base_rv;
+                    msp_t *tmp_msp = MSP_KNOWN(tmp->obj),
+                          *base_msp = MSP_RAW(base_map, base->x, base->y);
+                    rv_t   base_rv;
+
                     /* TODO: actually use tmp->last_map, last_x, last_y */
-                    if(get_rangevector_from_mapcoords(tmp->obj->map, tmp->obj->x, tmp->obj->y, base_map, base->x, base->y, &base_rv, RV_FAST_EUCLIDIAN_DISTANCE))
+                    if(RV_GET_MSP_TO_MSP(tmp_msp, base_msp, &base_rv, RV_FAST_EUCLIDIAN_DISTANCE))
                     {
                         if((int)base_rv.distance > antilure_dist_2)
                         {
@@ -2403,7 +2363,8 @@ int ai_melee_attack_enemy(object_t *op, struct mob_behaviour_param *params)
     /* TODO: choose another enemy if this fails */
     if (!(rv = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE)))
         return FALSE;
-    if (!can_hit_melee(rv->part, op->enemy, rv) || !mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
+    if (!RV_TEST_MELEE(*rv) ||
+        !mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
         return FALSE;
 
     //    LOG(llevDebug,"ai_melee_attack_enemy(): '%s' -> '%s'\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(op->enemy));
@@ -2447,7 +2408,7 @@ int ai_bow_attack_enemy(object_t *op, struct mob_behaviour_param *params)
     }
 
     /* TODO: also check distance and LOS */
-    if (!can_hit_missile(op, target, rv, 2) ||
+    if (!RV_TEST_MISSILE_APPROX(*rv) ||
         !mob_can_see_obj(op, target, MOB_DATA(op)->enemy))
     {
         return 0;
@@ -2663,7 +2624,8 @@ int ai_spell_attack_enemy(object_t *op, struct mob_behaviour_param *params)
         return FALSE;
     /* TODO: also check distance and LOS */
     /* TODO: should really check type of spell (area or missile) */
-    if (!can_hit_missile(op, op->enemy, rv, 2) || !mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
+    if (!RV_TEST_MISSILE_APPROX(*rv) ||
+        !mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
         return FALSE;
 
     //    LOG(llevDebug,"ai_spell_attack_enemy(): '%s' -> '%s'\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(op->enemy));

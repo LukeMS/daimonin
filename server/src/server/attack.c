@@ -236,7 +236,7 @@ int attack_ob(object_t *target, object_t *hitter, object_t *hit_obj)
     if (hitter->type == PLAYER)
     {
         rv_t   dir;
-        if(get_rangevector(hitter, target, &dir, RV_NO_DISTANCE))
+        if(RV_GET_OBJ_TO_OBJ(hitter, target, &dir, RV_NO_DISTANCE))
         {
             if (hitter->head)
             {

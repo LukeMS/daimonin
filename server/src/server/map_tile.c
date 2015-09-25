@@ -342,64 +342,15 @@ sint8 on_same_instance(map_t *m1, map_t *m2)
     return 0;
 }
 
-/*
-    Daimonin, the Massive Multiuser Online Role Playing Game
-    Server Applicatiom
+/* TODO: Move to own rv,c file. */
 
-    Copyright (C) 2001-2006 Michael Toennies
-
-    A split from Crossfire, a Multiplayer game for X-windows.
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    The author can be reached via e-mail to info@daimonin.org
-*/
-
-/* See map.c for module information. */
-
-#include "global.h"
-
-static int Fail(rv_t *rv);
 static int RelativeTilePosition(map_t *map1, map_t *map2, rv_t *rv);
 
-/** Get distance and direction between two objects.
-* TODO: this should probably be replaced with a macro or an inline function
-* Note: this function was changed from always calculating euclidian distance to
-* defaulting to calculating manhattan distance. Gecko 20050714
-* @see get_rangevector_full
-*/
-int get_rangevector(object_t *op1, object_t *op2, rv_t *rv, int flags)
-{
-    return get_rangevector_full(
-        op1, op1->map, op1->x, op1->y,
-        op2, op2->map, op2->x, op2->y,
-        rv, flags);
-}
-
-/** Get distance and direction between two coordinates.
-* Never adjusts for multipart objects (since objects are unknown)
-* TODO: this should probably be replaced with a macro or an inline function
-* @see get_rangevector_full
-*/
-int get_rangevector_from_mapcoords(
-                                   map_t *map1, int x1, int y1,
-                                   map_t *map2, int x2, int y2,
-                                   rv_t *rv, int flags)
-{
-    return get_rangevector_full(NULL, map1, x1, y1, NULL, map2, x2, y2, rv, flags);
-}
+/** Initializes a rv to sane values if no vector could be found. */
+#define FAIL(_RV_) \
+    (_RV_)->distance_x = (_RV_)->distance_y = (_RV_)->distance = UINT_MAX; \
+    (_RV_)->direction = 0; \
+    (_RV_)->part = NULL;
 
 /** Get distance and direction between two points.
 * This is the base for all get_rangevector_* functions. It can compute the
@@ -427,99 +378,135 @@ int get_rangevector_from_mapcoords(
 *  RV_DIAGONAL_DISTANCE  - diagonal (max(dx + dy)) distance (fast) (default)
 *  RV_NO_DISTANCE        - don't calculate distance (or direction) (fastest)
 *
-* @return FALSE if the function fails (because of the maps being separate), and the rangevector will not be touched. Otherwise it will return TRUE.
+* @return 0 if the function fails (because of the maps being separate), and the rangevector will not be touched. Otherwise it will return 1.
 *
 *  TODO: support multipart->multipart handling
 */
-int get_rangevector_full(
-                         object_t *op1, map_t *map1, int x1, int y1,
-                         object_t *op2, map_t *map2, int x2, int y2,
-                         rv_t *rv, int flags)
+int rv_get(object_t *op1, msp_t *msp1, object_t *op2, msp_t *msp2, rv_t *rv, int flags)
 {
+    map_t *m1,
+          *m2;
+    sint16 x1,
+           y1,
+           x2,
+           y2;
+
+    /* Sanity check. */
+    if (!msp1 ||
+        !msp2)
+    {
+        return 0;
+    }
+
+    m1 = msp1->map;
+    x1 = msp1->x;
+    y1 = msp1->y;
+    m2 = msp2->map;
+    x2 = msp2->x;
+    y2 = msp2->y;
+
     /* Common calculations for almost all cases */
     rv->distance_x = x2 - x1;
     rv->distance_y = y2 - y1;
 
-    if (map1 == map2)
+    if (m1 == m2)
     {
         /* Most common case. We are actually done */
     }
-    else if (map1->tiling.tileset_id > 0 && map2->tiling.tileset_id > 0)
+    else if (m1->tiling.tileset_id > 0 && m2->tiling.tileset_id > 0)
     {
-        if(map1->tiling.tileset_id == map2->tiling.tileset_id && on_same_instance(map1, map2))
+        if(m1->tiling.tileset_id == m2->tiling.tileset_id && on_same_instance(m1, m2))
         {
-            rv->distance_x += map2->tiling.tileset_x - map1->tiling.tileset_x;
-            rv->distance_y += map2->tiling.tileset_y - map1->tiling.tileset_y;
+            rv->distance_x += m2->tiling.tileset_x - m1->tiling.tileset_x;
+            rv->distance_y += m2->tiling.tileset_y - m1->tiling.tileset_y;
         }
         else
-            return Fail(rv);
+        {
+            FAIL(rv);
+            return 0;
+        }
     }
-    else if (map1->tiling.tile_map[TILING_DIRECTION_NORTH] == map2) /* North */
-        rv->distance_y -= map2->height;
-    else if (map1->tiling.tile_map[TILING_DIRECTION_EAST] == map2) /* East */
-        rv->distance_x += map1->width;
-    else if (map1->tiling.tile_map[TILING_DIRECTION_SOUTH] == map2) /* South */
-        rv->distance_y += map1->height;
-    else if (map1->tiling.tile_map[TILING_DIRECTION_WEST] == map2) /* West */
-        rv->distance_x -= map2->width;
-    else if (map1->tiling.tile_map[TILING_DIRECTION_NORTHEAST] == map2) /* Northeast */
+    else if (m1->tiling.tile_map[TILING_DIRECTION_NORTH] == m2) /* North */
     {
-        rv->distance_x += map1->width;
-        rv->distance_y -= map2->height;
+        rv->distance_y -= m2->height;
     }
-    else if (map1->tiling.tile_map[TILING_DIRECTION_SOUTHEAST] == map2) /* Southeast */
+    else if (m1->tiling.tile_map[TILING_DIRECTION_EAST] == m2) /* East */
     {
-        rv->distance_x += map1->width;
-        rv->distance_y += map1->height;
+        rv->distance_x += m1->width;
     }
-    else if (map1->tiling.tile_map[TILING_DIRECTION_SOUTHWEST] == map2) /* Southwest */
+    else if (m1->tiling.tile_map[TILING_DIRECTION_SOUTH] == m2) /* South */
     {
-        rv->distance_x -= map2->width;
-        rv->distance_y += map1->height;
+        rv->distance_y += m1->height;
     }
-    else if (map1->tiling.tile_map[TILING_DIRECTION_NORTHWEST] == map2) /* Northwest */
+    else if (m1->tiling.tile_map[TILING_DIRECTION_WEST] == m2) /* West */
     {
-        rv->distance_x -= map2->width;
-        rv->distance_y -= map2->height;
+        rv->distance_x -= m2->width;
+    }
+    else if (m1->tiling.tile_map[TILING_DIRECTION_NORTHEAST] == m2) /* Northeast */
+    {
+        rv->distance_x += m1->width;
+        rv->distance_y -= m2->height;
+    }
+    else if (m1->tiling.tile_map[TILING_DIRECTION_SOUTHEAST] == m2) /* Southeast */
+    {
+        rv->distance_x += m1->width;
+        rv->distance_y += m1->height;
+    }
+    else if (m1->tiling.tile_map[TILING_DIRECTION_SOUTHWEST] == m2) /* Southwest */
+    {
+        rv->distance_x -= m2->width;
+        rv->distance_y += m1->height;
+    }
+    else if (m1->tiling.tile_map[TILING_DIRECTION_NORTHWEST] == m2) /* Northwest */
+    {
+        rv->distance_x -= m2->width;
+        rv->distance_y -= m2->height;
     }
     else if (flags & RV_RECURSIVE_SEARCH) /* Search */
     {
-        if (!RelativeTilePosition(map1, map2, rv))
+        if (!RelativeTilePosition(m1, m2, rv))
         {
-            /*LOG(llevDebug,"DBUG: get_rangevector_from_mapcoords: No tileset path between maps '%s' and '%s'\n", map1->path, map2->path);*/
-            return Fail(rv);
+            FAIL(rv);
+            return 0;
         }
     }
     else
     {
-        /*LOG(llevDebug,"DBUG: get_rangevector_from_mapcoords: objects not on adjacent maps\n");*/
-        return Fail(rv);
+        FAIL(rv);
+        return 0;
     }
 
-    rv->part = op1;
+    /* FIXME? Not sure I entirely understand this. I *think* we assume op1 is a
+     * head (or singlepart). In theory this is a reasonable assumption (puts
+     * the onus on the caller).
+     *
+     * -- Smacky 20150325 */
+    rv->head = rv->part = op1;
+
     /* If this is multipart, find the closest part now */
-    if (!(flags & RV_IGNORE_MULTIPART) && op1 && op1->more)
+    if (!(flags & RV_IGNORE_MULTIPART) &&
+        op1 &&
+        op1->more)
     {
         object_t *part,
-               *next,
-               *best = NULL;
-        int best_distance = rv->distance_x*rv->distance_x + rv->distance_y*rv->distance_y;
-        int tmpi;
+                 *next,
+                 *best = NULL;
+        int       best_distance = rv->distance_x * rv->distance_x + rv->distance_y * rv->distance_y;
 
         /* we just take the offset of the piece to head to figure
-        * distance instead of doing all that work above again
-        * since the distance fields we set above are positive in the
-        * same axis as is used for multipart objects, the simply arithemetic
-        * below works.
-        */
+         * distance instead of doing all that work above again
+         * since the distance fields we set above are positive in the
+         * same axis as is used for multipart objects, the simply arithemetic
+         * below works. */
         FOREACH_PART_OF_OBJECT(part, op1->more, next)
         {
-            tmpi =
+            int part_distance =
                 (rv->distance_x - part->arch->clone.x) * (rv->distance_x - part->arch->clone.x) +
                 (rv->distance_y - part->arch->clone.y) * (rv->distance_y - part->arch->clone.y);
-            if (tmpi < best_distance)
+
+            if (part_distance < best_distance)
             {
-                best_distance = tmpi;
+                best_distance = part_distance;
                 best = part;
             }
         }
@@ -538,34 +525,31 @@ int get_rangevector_full(
     /* Calculate distance */
     switch (flags & (0x04 | 0x08 | 0x10))
     {
-    case RV_MANHATTAN_DISTANCE:
+        case RV_MANHATTAN_DISTANCE:
         rv->distance = abs(rv->distance_x) + abs(rv->distance_y);
         break;
-    case RV_EUCLIDIAN_DISTANCE:
+
+        case RV_EUCLIDIAN_DISTANCE:
         rv->distance = isqrt(rv->distance_x * rv->distance_x + rv->distance_y * rv->distance_y);
         break;
-    case RV_FAST_EUCLIDIAN_DISTANCE:
+
+        case RV_FAST_EUCLIDIAN_DISTANCE:
         rv->distance = rv->distance_x * rv->distance_x + rv->distance_y * rv->distance_y;
         break;
-    case RV_DIAGONAL_DISTANCE:
+
+        case RV_DIAGONAL_DISTANCE:
         rv->distance = MAX(abs(rv->distance_x), abs(rv->distance_y));
         break;
-    case RV_NO_DISTANCE:
+
+        case RV_NO_DISTANCE:
         rv->distance = UINT_MAX;
         break;
     }
 
-    return TRUE;
+    return 1;
 }
 
-/** Initializes a rv to sane values if no vector could be found. */
-static int Fail(rv_t *rv)
-{
-    rv->distance_x = rv->distance_y = rv->distance = UINT_MAX;
-    rv->direction = 0;
-    rv->part = NULL;
-    return FALSE;
-}
+#undef FAIL
 
 /* Find the distance between two map tiles on a tiled map.
 * Returns true if the two tiles are part of the same map.
@@ -586,14 +570,14 @@ static int RelativeTilePosition(map_t *map1, map_t *map2, rv_t *rv)
                           *last,
                           *curr,
                           *node;
-    int                    success = FALSE;
+    int                    success = 0;
     int                    searched_tiles = 0;
 
     /* Save some time in the simplest cases ( very similar to on_same_map() )*/
     if (!map1 ||
         !map2)
     {
-        return FALSE;
+        return 0;
     }
 
     /* Precalculated tileset data available? */
@@ -606,17 +590,17 @@ static int RelativeTilePosition(map_t *map1, map_t *map2, rv_t *rv)
         {
             rv->distance_x += map2->tiling.tileset_x - map1->tiling.tileset_x;
             rv->distance_y += map2->tiling.tileset_y - map1->tiling.tileset_y;
-            return TRUE;
+            return 1;
         }
         else
         {
-            return FALSE;
+            return 0;
         }
     }
 
     if (map1 == map2)
     {
-        return TRUE;
+        return 1;
     }
 
 //    LOG(llevBug, "RelativeTilePosition(): One or both of maps %s and %s lacks tileset data\n", map1->path, map2->path);
@@ -627,14 +611,14 @@ static int RelativeTilePosition(map_t *map1, map_t *map2, rv_t *rv)
     {
         rv->distance_x += map1->rv_cache.x;
         rv->distance_y += map1->rv_cache.y;
-        return TRUE;
+        return 1;
     }
 
     if (map2->rv_cache.path == map1->path)
     {
         rv->distance_x -= map2->rv_cache.x;
         rv->distance_y -= map2->rv_cache.y;
-        return TRUE;
+        return 1;
     }
 
     /* TODO: effectivize somewhat by doing bidirectional search */
@@ -738,7 +722,7 @@ static int RelativeTilePosition(map_t *map1, map_t *map2, rv_t *rv)
                     /* return result and clean up */
                     rv->distance_x += node->dx;
                     rv->distance_y += node->dy;
-                    success = TRUE;
+                    success = 1;
                     return_poolchunk(node, pool_map_bfs);
                     return_poolchunk(curr, pool_map_bfs);
                     goto out;

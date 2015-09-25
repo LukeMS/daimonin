@@ -295,9 +295,6 @@ struct plugin_hooklist
     uint32 (*get_nrof_quest_item)(const object_t *, const char *,
                                   const char *, const char *);
     void *(*get_poolchunk_array_real)(struct mempool *, uint32);
-    int (*get_rangevector)(object_t *, object_t *, rv_t *, int);
-    int (*get_rangevector_from_mapcoords)(map_t *, int, int, map_t *,
-                                          int, int, rv_t *, int);
     void (*get_tad)(timeanddate_t *, sint32);
     sint32 (*get_tad_offset_from_string)(const char *);
     void (*give_artifact_abilities)(object_t *, artifact *);
@@ -380,6 +377,7 @@ struct plugin_hooklist
     int  (*remove_item_buff)(object_t *, char *, uint32);
     void (*reset_instance_data)(player_t *pl);
     void (*return_poolchunk_array_real)(void *, uint32, struct mempool *);
+    int (*rv_get)(object_t *, msp_t *, object_t *, msp_t *, rv_t *, int);
     /* S */
     void (*set_personal_light)(player_t *, int);
     void (*set_quest_status)(object_t *, int, int);

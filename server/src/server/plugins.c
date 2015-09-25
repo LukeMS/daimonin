@@ -86,8 +86,6 @@ struct plugin_hooklist  hooklist    =
     get_money_from_string,
     get_nrof_quest_item,
     get_poolchunk_array_real,
-    get_rangevector,
-    get_rangevector_from_mapcoords,
     get_tad,
     get_tad_offset_from_string,
     give_artifact_abilities,
@@ -162,6 +160,7 @@ struct plugin_hooklist  hooklist    =
     remove_item_buff,
     reset_instance_data,
     return_poolchunk_array_real,
+    rv_get,
     /* S */
     set_personal_light,
     set_quest_status,

@@ -37,11 +37,16 @@
 
 /* Get a direction from object op to object target, using precomputed paths
  * if available, and request path finding if needed */
-static int calc_direction_towards(object_t *op, object_t *target, map_t *map, int x, int y)
+static int calc_direction_towards(object_t *op, object_t *target, msp_t *msp)
 {
-    struct mobdata_pathfinding *pf;
-    map_t                  *path_map;
-    rv_t                   target_rv, segment_rv;
+    mob_pathfinding_t *pf;
+    map_t             *path_map,
+                      *map;
+    sint16             x,
+                       y;
+    msp_t             *path_msp;
+    rv_t               target_rv,
+                       segment_rv;
 
     target_rv.direction = 1234543;
     segment_rv.direction = 1234542;
@@ -54,17 +59,8 @@ static int calc_direction_towards(object_t *op, object_t *target, map_t *map, in
         return 0;
     }
 
-    if (map == NULL)
-    {
-        LOG(llevDebug, "BUG: calc_direction_towards(): invalid destination map for '%s'\n", STRING_OBJ_NAME(op));
-        return 0;
-    }
-
     /* Get general direction and distance to target */
-    if(! get_rangevector_full(
-            op, op->map, op->x, op->y,
-            NULL, map, x, y, &target_rv,
-            RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
+    if (!RV_GET_OBJ_TO_MSP(op, msp, &target_rv, RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
     {
         LOG(llevDebug, "BUG: calc_direction_towards(): unhandled rv failure '%s'\n", STRING_OBJ_NAME(op));
         /* TODO: verify results */
@@ -89,12 +85,20 @@ static int calc_direction_towards(object_t *op, object_t *target, map_t *map, in
             STRING_OBJ_NAME(op), STRING_OBJ_NAME(target), target_rv.distance);
 #endif
 
+    map = msp->map;
+    x = msp->x;
+    y = msp->y;
+
     /* Clean up old path */
     if (pf->path)
     {
-        if (pf->target_obj != target
-         || (target && pf->target_count != target->count)
-         || (!target && (pf->target_map != map->path || pf->target_x != x || pf->target_y != y)))
+        if (pf->target_obj != target ||
+            (target &&
+             pf->target_count != target->count) ||
+            (!target &&
+             (pf->target_map != map->path ||
+              pf->target_x != x ||
+              pf->target_y != y)))
         {
             free_path(pf->path);
             pf->path = NULL;
@@ -142,13 +146,9 @@ static int calc_direction_towards(object_t *op, object_t *target, map_t *map, in
         return target_rv.direction;
     }
 
-    path_map = map_is_ready(pf->path->map);
-
-    /* Walk towards next precomputed coordinate */
-    if(path_map == NULL || ! get_rangevector_full(
-            op, op->map, op->x, op->y,
-            NULL, path_map, pf->path->x, pf->path->y,
-            &segment_rv, RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
+    if (!(path_map = map_is_ready(pf->path->map)) ||
+        !(path_msp = MSP_GET2(path_map, pf->path->x, pf->path->y)) ||
+        !RV_GET_OBJ_TO_MSP(op, path_msp, &segment_rv, RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
     {
         LOG(llevDebug, "calc_direction_towards(): segment rv failure for '%s' @(%s:%d,%d) -> (%s (%s):%d:%d)\n",
                 STRING_OBJ_NAME(op),
@@ -206,11 +206,6 @@ static int calc_direction_towards(object_t *op, object_t *target, map_t *map, in
     return segment_rv.direction;
 }
 
-static int calc_direction_towards_coord(object_t *op, map_t *map, int x, int y)
-{
-    return calc_direction_towards(op, NULL, map, x, y);
-}
-
 static int calc_direction_towards_object(object_t *op, object_t *target)
 {
     if(op->map == NULL) {
@@ -232,15 +227,19 @@ static int calc_direction_towards_object(object_t *op, object_t *target)
       || target->x != MOB_PATHDATA(op)->goal_x
       || target->y != MOB_PATHDATA(op)->goal_y))
     {
-        rv_t   rv_goal, rv_target;
-        map_t  *goal_map = map_is_ready(MOB_PATHDATA(op)->goal_map);
+        rv_t      rv_goal,
+                  rv_target;
+        map_t    *goal_m = map_is_ready(MOB_PATHDATA(op)->goal_map);
+        sint16    goal_x = MOB_PATHDATA(op)->goal_x,
+                  goal_y = MOB_PATHDATA(op)->goal_y;
+        msp_t    *goal_msp;
 
         /* TODO if we can't see the object, goto its last known position
          * (also have to separate between well-known objects that we can find
          * without seeing, and other objects that we have to search or track */
         /* TODO make sure maps are loaded (here and everywhere else) */
 
-        if (!goal_map)
+        if (!goal_m)
         {
             /* This can happen if target moves into another instance. We take it there has been a lot of movement */
             LOG(llevDebug, "calc_direction_towards_object(): goal_map == NULL (%s <->%s, op->map: %s, target map: %s)\n",
@@ -251,14 +250,9 @@ static int calc_direction_towards_object(object_t *op, object_t *target)
             free_path(MOB_PATHDATA(op)->path);
             MOB_PATHDATA(op)->path = NULL;
         }
-        else if (get_rangevector_full(
-                    target, target->map, target->x, target->y,
-                    NULL, goal_map, MOB_PATHDATA(op)->goal_x, MOB_PATHDATA(op)->goal_y,
-                    &rv_goal, RV_DIAGONAL_DISTANCE)
-                && get_rangevector_full(
-                    op, op->map, op->x, op->y,
-                    target, target->map, target->x, target->y,
-                    &rv_target, RV_DIAGONAL_DISTANCE))
+        else if ((goal_msp = MSP_GET2(goal_m, goal_x, goal_y)) &&
+                 RV_GET_OBJ_TO_MSP(target, goal_msp, &rv_goal, RV_DIAGONAL_DISTANCE) &&
+                 RV_GET_OBJ_TO_OBJ(op, target, &rv_target, RV_DIAGONAL_DISTANCE))
         {
             /* Heuristic: if dist(target, path goal) > dist(target, self)
              * then get a new path */
@@ -274,7 +268,7 @@ static int calc_direction_towards_object(object_t *op, object_t *target)
         }
     }
 
-    return calc_direction_towards(op, target, target->map, target->x, target->y);
+    return calc_direction_towards(op, target, MSP_KNOWN(target));
 }
 
 /* Get a direction towards the target stored in the waypoint object wp
@@ -288,7 +282,7 @@ static int calc_direction_towards_waypoint(object_t *op, object_t *wp)
         {
             while(beacon->env)
                 beacon = beacon->env;
-            return calc_direction_towards(op, wp, beacon->map, beacon->x, beacon->y);
+            return calc_direction_towards(op, wp, MSP_KNOWN(beacon));
         }
         else
             return 0; /* TODO: what to do? */
@@ -318,7 +312,7 @@ static int calc_direction_towards_waypoint(object_t *op, object_t *wp)
                 FREE_AND_ADD_REF_HASH(WP_MAP(wp), map->orig_path);
         } else
             map = op->map;
-        return calc_direction_towards(op, wp, map, WP_X(wp), WP_Y(wp));
+        return calc_direction_towards(op, wp, MSP_RAW(map, WP_X(wp), WP_Y(wp)));
     }
 }
 
@@ -360,8 +354,7 @@ static inline int direction_from_response(object_t *op, move_response *response)
           return calc_direction_towards_waypoint(op, response->data.target.obj);
         case MOVE_RESPONSE_COORD:
 //          LOG(llevDebug,"dir_from_response(): '%s' -> %d:%d\n", STRING_OBJ_NAME(op), response->data.coord.x, response->data.coord.y);
-          return calc_direction_towards_coord(op, response->data.coord.map, response->data.coord.x,
-                                              response->data.coord.y);
+          return calc_direction_towards(op, NULL, MSP_RAW(response->data.coord.map, response->data.coord.x, response->data.coord.y));
 
         default:
           return 0;
@@ -622,9 +615,9 @@ int move_monster(object_t *op, int mode)
     /* Set up mob data if missing */
     if (MOB_DATA(op) == NULL)
     {
-        LOG(llevDebug, "DEBUG: move_monster(): mob '%s' without AI, is this really possible?\n", STRING_OBJ_NAME(op));
-        op->custom_attrset = get_poolchunk(pool_mob_data);
-        MOB_DATA(op)->behaviours = setup_behaviours(op);
+        LOG(llevDebug, "DEBUG: move_monster(): mob '%s' without AI, is this really possible?\n",
+            STRING_OBJ_NAME(op));
+        SETUP_MOB_DATA(op);
     }
 
     old_speed_factor = MOB_DATA(op)->move_speed_factor;
@@ -777,12 +770,14 @@ jump_move_monster_action:
  */
 void object_accept_path(object_t *op)
 {
-    object_t     *goal_object = NULL;
-    map_t  *goal_map = NULL;
-    int         goal_x, goal_y;
-    path_node  *path;
-    object_t     *target;
-    rv_t v;
+    object_t  *goal_ob = NULL;
+    map_t     *goal_m = NULL;
+    sint16     goal_x,
+               goal_y;
+    msp_t     *goal_msp;
+    path_node *path;
+    object_t  *target;
+    rv_t       rv;
 
     /* make sure we have a valid target obj or map */
     if (op->type != MONSTER
@@ -802,15 +797,15 @@ void object_accept_path(object_t *op)
         goal_x = MOB_PATHDATA(op)->target_x;
         goal_y = MOB_PATHDATA(op)->target_y;
 
-        if (!(goal_map = map_is_ready(MOB_PATHDATA(op)->target_map)))
+        if (!(goal_m = map_is_ready(MOB_PATHDATA(op)->target_map)))
         {
-            goal_map = ready_inherited_map(op->map, MOB_PATHDATA(op)->target_map);
+            goal_m = ready_inherited_map(op->map, MOB_PATHDATA(op)->target_map);
         }
     }
     else if (target->type == TYPE_WAYPOINT_OBJECT)
     {
         if(WP_BEACON(target))
-            goal_object = locate_beacon(WP_BEACON(target));
+            goal_ob = locate_beacon(WP_BEACON(target));
         else
         {
             /* Default map is current map */
@@ -829,72 +824,72 @@ void object_accept_path(object_t *op)
                                                       WP_MAP(target), path));
                 }
 
-                if (!(goal_map = map_is_ready(WP_MAP(target))))
+                if (!(goal_m = map_is_ready(WP_MAP(target))))
                 {
-                    goal_map = ready_inherited_map(op->map, WP_MAP(target));
+                    goal_m = ready_inherited_map(op->map, WP_MAP(target));
                 }
 
-                if(goal_map && goal_map->orig_path != WP_MAP(target))
-                    FREE_AND_ADD_REF_HASH(WP_MAP(target), goal_map->orig_path);
+                if(goal_m && goal_m->orig_path != WP_MAP(target))
+                    FREE_AND_ADD_REF_HASH(WP_MAP(target), goal_m->orig_path);
             }
             else
-                goal_map = op->map;
+                goal_m = op->map;
 
             FREE_AND_CLEAR_HASH(MOB_PATHDATA(op)->goal_map);
         }
     }
     else
     {
-        goal_object = target;
+        goal_ob = target;
     }
 
-    if(goal_object)
+    if(goal_ob)
     {
-        if (goal_object->type == TYPE_BASE_INFO)
+        if (goal_ob->type == TYPE_BASE_INFO)
         {
-            if (!(goal_map = map_is_ready(goal_object->slaying)))
+            if (!(goal_m = map_is_ready(goal_ob->slaying)))
             {
-                goal_map = ready_inherited_map(op->map, goal_object->slaying);
+                goal_m = ready_inherited_map(op->map, goal_ob->slaying);
             }
 
 /*            LOG(llevDebug, "source: %s, map %s (%p), target %s map %s (%p)\n",
                     STRING_OBJ_NAME(op), STRING_MAP_PATH(op->map), op->map,
-                    STRING_OBJ_NAME(target), STRING_MAP_PATH(goal_map), goal_map);*/
+                    STRING_OBJ_NAME(target), STRING_MAP_PATH(goal_m), goal_m);*/
         }
         else
         {
-            while(goal_object->env)
-                goal_object = goal_object->env;
-            goal_map = goal_object->map;
+            while(goal_ob->env)
+                goal_ob = goal_ob->env;
+            goal_m = goal_ob->map;
         }
-        goal_x = goal_object->x;
-        goal_y = goal_object->y;
+        goal_x = goal_ob->x;
+        goal_y = goal_ob->y;
 
-        if(goal_map)
+        if(goal_m)
         {
             /* Keep track of targets that may move */
-            FREE_AND_ADD_REF_HASH(MOB_PATHDATA(op)->goal_map, goal_map->orig_path);
+            FREE_AND_ADD_REF_HASH(MOB_PATHDATA(op)->goal_map, goal_m->orig_path);
             MOB_PATHDATA(op)->goal_x = goal_x;
             MOB_PATHDATA(op)->goal_y = goal_y;
         }
     }
 
-    if(goal_map == NULL)
+    if(!goal_m)
     {
         LOG(llevDebug, "object_accept_path(): NULL goal map. op=%s, map %s, target=%s\n",
                 STRING_OBJ_NAME(op), STRING_MAP_PATH(op->map), STRING_OBJ_NAME(target));
         return;
     }
-
     /* Early exit if we are already close enough */
-    if(get_rangevector_full(op, op->map, op->x, op->y,
-                NULL, goal_map, goal_x, goal_y,
-                &v, RV_DIAGONAL_DISTANCE) && 
-            v.distance <= 1)
+    else if ((goal_msp = MSP_GET2(goal_m, goal_x, goal_y)) &&
+             RV_GET_OBJ_TO_MSP(op, goal_msp, &rv, RV_DIAGONAL_DISTANCE) && 
+             rv.distance <= 1)
+    {
         return;
+    }
 
     /* 2) Do the actual pathfinding: find a path and compress it */
-    path = compress_path(find_path(op, op->map, op->x, op->y, goal_map, goal_x, goal_y));
+    path = compress_path(find_path(op, op->map, op->x, op->y, goal_m, goal_x, goal_y));
 
     if (path && path->next)
     {
@@ -950,7 +945,7 @@ void dump_abilities(void)
         const char *ch, *gen_name = "";
         archetype_t  *gen;
 
-        if (!QUERY_FLAG(&at->clone, FLAG_MONSTER))
+        if (at->clone.type != MONSTER)
             continue;
 
         /* Get rid of e.g. multiple black puddings */
@@ -991,7 +986,7 @@ void print_monsters(void)
     for (at = first_archetype; at != NULL; at = at->next)
     {
         op = arch_to_object(at);
-        if (QUERY_FLAG(op, FLAG_MONSTER))
+        if (op->type == MONSTER)
         {
             LOG(llevInfo, "%-15s|%5d|%3d|%4d|%4d|", op->arch->name, op->stats.maxhp, op->stats.dam, op->stats.ac,
                 op->stats.wc);

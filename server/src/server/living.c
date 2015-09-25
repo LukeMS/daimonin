@@ -2479,10 +2479,9 @@ void fix_monster(object_t *op)
 
     }
     /* Set up AI in op->custom_attrset */
-    if(! MOB_DATA(op))
+    if (!MOB_DATA(op))
     {
-        op->custom_attrset = get_poolchunk(pool_mob_data);
-        MOB_DATA(op)->behaviours = setup_behaviours(op);
+        SETUP_MOB_DATA(op);
     }
 
     /* insert a quick jump in the MOB_DATA(() to its spawn info

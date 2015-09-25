@@ -215,7 +215,7 @@ void talk_to_npc(player_t *pl, char *topic)
         t_obj = pl->target_ob;
 
         /* Is the target on this mapset and not too far away? */
-        if (get_rangevector(pl->ob, t_obj, &rv, 0))
+        if (RV_GET_OBJ_TO_OBJ(pl->ob, t_obj, &rv, 0))
         {
             unsigned int range = MAX(1, t_obj->stats.Wis);
 

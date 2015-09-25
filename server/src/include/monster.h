@@ -42,7 +42,7 @@
 #define NROF_PATHFIND_FLAGS         2
 
 /** Struct for pathfinding related data. Each mob has one of these */
-struct mobdata_pathfinding
+struct mob_pathfinding_t
 {
     /** either an obj on map or a waypoint
      * (or a mob base info object) (or NULL)
@@ -54,7 +54,8 @@ struct mobdata_pathfinding
     /** target is those coords if target_obj is NULL
      * @{ */
     const char             *target_map;
-    int                     target_x, target_y;
+    sint16                  target_x;
+    sint16                  target_y;
     /** @} */
 
     /** Original goal. Used to keep track of moving objects
@@ -163,7 +164,8 @@ struct mob_behaviourset
 /** The mob "mind". This contains everything the mob knows and understands */
 struct mobdata
 {
-    struct mobdata_pathfinding  pathfinding;   /**< Pathfinding data */
+    object_t            *ob;
+    mob_pathfinding_t    pathfinding;   /**< Pathfinding data */
 
     struct mob_known_obj       *known_mobs;    /**< List of recently detected mobs */
     struct mob_known_obj       *known_objs;    /**< List of recently detected objects */
@@ -190,6 +192,10 @@ struct mobdata
 
 #define MOB_DATA(ob) ((struct mobdata *)((ob)->custom_attrset))
 #define MOB_PATHDATA(ob) (&(((struct mobdata *)((ob)->custom_attrset))->pathfinding))
+#define SETUP_MOB_DATA(_O_) \
+    (_O_)->custom_attrset = get_poolchunk(pool_mob_data); \
+    MOB_DATA((_O_))->ob = (_O_); \
+    MOB_DATA((_O_))->behaviours = setup_behaviours((_O_));
 
 /** A few friendship delta values
  * @{ */
