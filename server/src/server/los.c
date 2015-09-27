@@ -481,10 +481,32 @@ void los_update(player_t *pl)
         }
     }
 
-    for (i = 1; i < (pl->socket.mapx - 2) * (pl->socket.mapy - 2); i++)
+    /* FIXME: This seems to work with no bounds checking on dx/dy
+     * (0<=d?<=MAP_CLIENT_?) but perhaps...
+     *
+     * -- Smacky 20150927 */
+    for (i = 9; i < pl->socket.mapx * pl->socket.mapy; i++)
     {
         ax = MAP_CLIENT_X / 2 + LosX[i];
         ay = MAP_CLIENT_Y / 2 + LosY[i];
+
+        if (!(pl->los_array[ax][ay] & (LOS_FLAG_BLOCKED | LOS_FLAG_OUT_OF_MAP)))
+        {
+            for (j = 1; j <= 7; j += 2)
+            {
+                sint16 dx = ax + LosX[j],
+                       dy = ay + LosY[j];
+
+                if (!(pl->los_array[dx][dy] & (LOS_FLAG_BLOCKED | LOS_FLAG_OUT_OF_MAP)))
+                {
+                    break;
+                }
+                else if (j == 7)
+                {
+                    pl->los_array[ax][ay] |= LOS_FLAG_BLOCKED;
+                }
+            }
+        }
 
         if (!(pl->los_array[ax][ay] & (LOS_FLAG_BLOCKSVIEW | LOS_FLAG_BLOCKED | LOS_FLAG_OUT_OF_MAP)))
         {
