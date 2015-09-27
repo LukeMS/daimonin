@@ -689,7 +689,7 @@ int nret;
         }
 
         if (basemap &&
-            !RV_GET_MSP_TO_OBJ(MSP_RAW(basemap, base->x, base->y), op, &rv, RV_NO_DISTANCE)) /* the mob is not a controled map */
+            !RV_GET_MSP_TO_OBJ(MSP_GET2(basemap, base->x, base->y), op, &rv, RV_NO_DISTANCE)) /* the mob is not a controled map */
         {
             aDirWeight[0] = 0;
             aDirWeight[1] = 0;
@@ -1440,7 +1440,7 @@ void ai_move_towards_enemy_last_known_pos(object_t *op, struct mob_behaviour_par
         map_t              *map     = map_is_ready(enemy->last_map);
 
         if (map &&
-            RV_GET_OBJ_TO_MSP(op, MSP_RAW(map, enemy->last_x, enemy->last_y), &rv, RV_EUCLIDIAN_DISTANCE))
+            RV_GET_OBJ_TO_MSP(op, MSP_GET2(map, enemy->last_x, enemy->last_y), &rv, RV_EUCLIDIAN_DISTANCE))
         {
             op->anim_enemy_dir = rv.direction;
             if (rv.distance > 3)
@@ -1547,7 +1547,7 @@ void ai_move_towards_waypoint(object_t *op, struct mob_behaviour_param *params, 
             /* We know which map we want to. Can we figure out where that
              * map lies relative to current position? */
 
-            if (!RV_GET_OBJ_TO_MSP(op, MSP_RAW(destmap, wp_x, wp_y), &rv, RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
+            if (!RV_GET_OBJ_TO_MSP(op, MSP_GET2(destmap, wp_x, wp_y), &rv, RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
             {
                 /* Problem: we couldn't find a relative direction between the
                  * maps. Usually it means that they are in different mapsets
@@ -1772,7 +1772,7 @@ void ai_stay_near_home(object_t *op, struct mob_behaviour_param *params, move_re
     } else
         distflags = RV_DIAGONAL_DISTANCE;
 
-    if (!RV_GET_OBJ_TO_MSP(op, MSP_RAW(map, base->x, base->y), &rv, distflags))
+    if (!RV_GET_OBJ_TO_MSP(op, MSP_GET2(map, base->x, base->y), &rv, distflags))
     {
         return;
     }
@@ -2226,7 +2226,7 @@ void ai_choose_enemy(object_t *op, struct mob_behaviour_param *params)
                 if(base_map && tmp->obj->map && tmp->obj->map->in_memory == MAP_MEMORY_ACTIVE)
                 {
                     msp_t *tmp_msp = MSP_KNOWN(tmp->obj),
-                          *base_msp = MSP_RAW(base_map, base->x, base->y);
+                          *base_msp = MSP_GET2(base_map, base->x, base->y);
                     rv_t   base_rv;
 
                     /* TODO: actually use tmp->last_map, last_x, last_y */
