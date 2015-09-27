@@ -1487,7 +1487,8 @@ void ai_move_towards_waypoint(object_t *op, struct mob_behaviour_param *params, 
     if (wp)
     {
         map_t  *destmap = NULL;
-        int wp_x, wp_y;
+        sint16  wp_x,
+                wp_y;
 
         if(WP_BEACON(wp))
         {

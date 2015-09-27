@@ -99,7 +99,8 @@ struct mob_known_obj
     /** Last known position.
      * @{ */
     const char             *last_map;
-    int                     last_x, last_y;
+    sint16                  last_x;
+    sint16                  last_y;
     /** @} */
 
     /** this stored rv saves some CPU at the cost of some memory, is it really worth it? */
