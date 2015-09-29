@@ -397,6 +397,12 @@ void los_update(player_t *pl)
     ay = pl->socket.mapy_2;
     pl->los_array[ax][ay] = LOS_FLAG_IGNORE;
 
+    /* Loop through every other array position. We do the max array size
+     * regardless of the player's actual viewport. This is because each
+     * position corresponds to an msp which may cause maps to be loaded into
+     * memory -- indeed this is the primary map-loading routine. So this
+     * ensures all players have the same size 'footprint' as far as the server
+     * concerned, whatever their client map/screen size. */
     for (i = 1; i < MAP_CLIENT_X * MAP_CLIENT_Y; i++)
     {
         map_t  *m = who->map;
@@ -407,6 +413,8 @@ void los_update(player_t *pl)
         ax = MAP_CLIENT_X / 2 + LosX[i];
         ay = MAP_CLIENT_Y / 2 + LosY[i];
 
+        /* If this msp is really OOM or the position is just beyond this
+         * client's view, mark the array position as OOM. */
         if (!msp ||
             i >= pl->socket.mapx * pl->socket.mapy)
         {
@@ -414,6 +422,10 @@ void los_update(player_t *pl)
             continue;
         }
 
+        /* If the msp blocks, obscures, or allows sight beyond it, mark the
+         * array position accordingly. Also, for blocks and allows view msps,
+         * unobscure the position (this is so walls are only darkened according
+         * to the actual real lighting conditions). */
         if ((msp->flags & MSP_FLAG_BLOCKSVIEW))
         {
             pl->los_array[ax][ay] |= LOS_FLAG_BLOCKSVIEW;
@@ -429,13 +441,15 @@ void los_update(player_t *pl)
             pl->los_array[ax][ay] &= ~LOS_FLAG_OBSCURED;
         }
 
+        /* When i is at the edge of the viewable area, mark the position as
+         * ignore. */
         if (i >= (pl->socket.mapx - 2) * (pl->socket.mapy - 2))
         {
             pl->los_array[ax][ay] |= LOS_FLAG_IGNORE;
-            continue;
         }
-
-        if ((pl->los_array[ax][ay] & (LOS_FLAG_BLOCKSVIEW | LOS_FLAG_BLOCKED)))
+        /* When this position is blocksview or blocked, mark the up to 3
+         * positions on the next outer ring as obscured or blocked. */
+        else if ((pl->los_array[ax][ay] & (LOS_FLAG_BLOCKSVIEW | LOS_FLAG_BLOCKED)))
         {
             for (j = 0; j <= 2; j++)
             {
@@ -461,6 +475,8 @@ void los_update(player_t *pl)
                 }
             }
         }
+        /* When this position is obscuresview or obscured, mark the up to 3
+         * positions on the next outer ring as obscured. */
         else if ((pl->los_array[ax][ay] & (LOS_FLAG_OBSCURESVIEW | LOS_FLAG_OBSCURED)))
         {
             for (j = 0; j <= 2; j++)
@@ -481,8 +497,14 @@ void los_update(player_t *pl)
         }
     }
 
+    /* Now the array is technically complete but go back over it to make a few
+     * tweaks so it looks visually good.
+     *
+     * Note that the central 9 positions are guaranteed correct and we only
+     * need go to the client's map size. So smaller displays are our friend
+     * here. */
     /* FIXME: This seems to work with no bounds checking on dx/dy
-     * (0<=d?<=MAP_CLIENT_?) but perhaps...
+     * (0<=d?<MAP_CLIENT_?) but perhaps...
      *
      * -- Smacky 20150927 */
     for (i = 9; i < pl->socket.mapx * pl->socket.mapy; i++)
@@ -490,6 +512,9 @@ void los_update(player_t *pl)
         ax = MAP_CLIENT_X / 2 + LosX[i];
         ay = MAP_CLIENT_Y / 2 + LosY[i];
 
+        /* So long as this array position is in some way visible, check the
+         * adjacent positions in the cardinal directions. If none of them are
+         * visible, mark this position as blocked. */
         if (!(pl->los_array[ax][ay] & (LOS_FLAG_BLOCKED | LOS_FLAG_OUT_OF_MAP)))
         {
             for (j = 1; j <= 7; j += 2)
@@ -508,6 +533,11 @@ void los_update(player_t *pl)
             }
         }
 
+        /* So long as this array position is in some way visible and not
+         * blocksview, check the 8 adjacent positions. For each one, if it is
+         * allowsview or blocksview, remove any blocked flag. */
+        /* TODO: Hm, is this already taken care of in the first pass? Hope so,
+         * removing it would save around 100-200 ums. */
         if (!(pl->los_array[ax][ay] & (LOS_FLAG_BLOCKSVIEW | LOS_FLAG_BLOCKED | LOS_FLAG_OUT_OF_MAP)))
         {
             for (j = 1; j <= 8; j++)
@@ -523,7 +553,7 @@ void los_update(player_t *pl)
         }
     }
 
-    /* If the player has xray vision, unblock nearby blocked squares. */
+    /* If the player has xray vision, unblock nearby blocked positions. */
     /* TODO: Currently this is a fixed 2 square radius. Why not make it
      * variable so that we can have greater and lesser demon eyes?
      *
