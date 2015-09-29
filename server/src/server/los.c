@@ -514,7 +514,11 @@ void los_update(player_t *pl)
 
         /* So long as this array position is in some way visible, check the
          * adjacent positions in the cardinal directions. If none of them are
-         * visible, mark this position as blocked. */
+         * visible, mark this position as blocked.
+         *
+         * From certain oblique angles the view through a single-square gap in
+         * a wall (eg, window) is a diagonal string of squares. This does not
+         * look good. This blocks such views. */
         if (!(pl->los_array[ax][ay] & (LOS_FLAG_BLOCKED | LOS_FLAG_OUT_OF_MAP)))
         {
             for (j = 1; j <= 7; j += 2)
@@ -535,9 +539,10 @@ void los_update(player_t *pl)
 
         /* So long as this array position is in some way visible and not
          * blocksview, check the 8 adjacent positions. For each one, if it is
-         * allowsview or blocksview, remove any blocked flag. */
-        /* TODO: Hm, is this already taken care of in the first pass? Hope so,
-         * removing it would save around 100-200 ums. */
+         * allowsview or blocksview, remove any blocked flag.
+         *
+         * This prevents unsightly and nonsensical black spots in LoS. */
+        /* TODO: Might be better/faster to handle this in the first pass. */
         if (!(pl->los_array[ax][ay] & (LOS_FLAG_BLOCKSVIEW | LOS_FLAG_BLOCKED | LOS_FLAG_OUT_OF_MAP)))
         {
             for (j = 1; j <= 8; j++)
