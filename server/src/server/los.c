@@ -464,15 +464,8 @@ void los_update(player_t *pl)
 
                 dx = pl->socket.mapx_2 + LosX[ABS(k)];
                 dy = pl->socket.mapy_2 + LosY[ABS(k)];
-
-                if (k < 0)
-                {
-                    pl->los_array[dx][dy] |= ((pl->los_array[dx][dy] & LOS_FLAG_OBSCURED)) ? LOS_FLAG_BLOCKED : LOS_FLAG_OBSCURED;
-                }
-                else if (k > 0)
-                {
-                    pl->los_array[dx][dy] |= LOS_FLAG_BLOCKED;
-                }
+                pl->los_array[dx][dy] |= (k < 0 && !(pl->los_array[dx][dy] & LOS_FLAG_OBSCURED)) ?
+                    LOS_FLAG_OBSCURED : LOS_FLAG_BLOCKED;
             }
         }
         /* When this position is obscuresview or obscured, mark the up to 3
@@ -543,7 +536,7 @@ void los_update(player_t *pl)
          *
          * This prevents unsightly and nonsensical black spots in LoS. */
         /* TODO: Might be better/faster to handle this in the first pass. */
-        if (!(pl->los_array[ax][ay] & (LOS_FLAG_BLOCKSVIEW | LOS_FLAG_BLOCKED | LOS_FLAG_OUT_OF_MAP)))
+        if (!(pl->los_array[ax][ay] & (LOS_FLAG_ALLOWSVIEW | LOS_FLAG_BLOCKSVIEW | LOS_FLAG_BLOCKED | LOS_FLAG_OUT_OF_MAP)))
         {
             for (j = 1; j <= 8; j++)
             {
