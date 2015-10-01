@@ -422,22 +422,32 @@ void los_update(player_t *pl)
             continue;
         }
 
-        /* If the msp blocks, obscures, or allows sight beyond it, mark the
-         * array position accordingly. Also, for blocks and allows view msps,
-         * unobscure the position (this is so walls are only darkened according
-         * to the actual real lighting conditions). */
+        /* If the msp blocks, allows, or obscures sight beyond it, mark the
+         * array position accordingly. Note that blocks and allows are
+         * exclusive to each other, in that order of precedence, while either
+         * may also have obscures. */
         if ((msp->flags & MSP_FLAG_BLOCKSVIEW))
         {
             pl->los_array[ax][ay] |= LOS_FLAG_BLOCKSVIEW;
-            pl->los_array[ax][ay] &= ~LOS_FLAG_OBSCURED;
-        }
-        else if ((msp->flags & MSP_FLAG_OBSCURESVIEW))
-        {
-            pl->los_array[ax][ay] |= LOS_FLAG_OBSCURESVIEW;
         }
         else if ((msp->flags & MSP_FLAG_ALLOWSVIEW))
         {
             pl->los_array[ax][ay] |= LOS_FLAG_ALLOWSVIEW;
+        }
+
+        if ((msp->flags & MSP_FLAG_OBSCURESVIEW))
+        {
+            pl->los_array[ax][ay] |= LOS_FLAG_OBSCURESVIEW;
+        }
+
+        /* When the position is blocks or allows and is not obscures, unobscure
+         * the position (this is so walls are only darkened according
+         * to the actual real lighting conditions but for example single
+         * blocks/obscures trees in a forest of obscures trees will not be
+         * relatively lit up like a beacon). */
+        if ((pl->los_array[ax][ay] & (LOS_FLAG_ALLOWSVIEW | LOS_FLAG_BLOCKSVIEW)) &&
+            !(pl->los_array[ax][ay] & LOS_FLAG_OBSCURESVIEW))
+        {
             pl->los_array[ax][ay] &= ~LOS_FLAG_OBSCURED;
         }
 
