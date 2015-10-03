@@ -1,6 +1,6 @@
-Object rock2
+Object rock1
 name rocks
-face rock2.101
+face rock1.101
 type 79
 material 64
 layer 5
