@@ -4,7 +4,7 @@ layer 5
 blocksview 1
 type 79
 mpart_id 3
-face rock_wall3_exit.151
+face rock_wall3b_exit.151
 no_pick 1
 end
 More
