@@ -43,3 +43,5 @@ mpart_nr 3
 x 1
 y 1
 no_pass 1
+no_pick 1
+end
