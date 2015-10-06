@@ -82,6 +82,7 @@ layer 5
 mpart_nr 7
 type 79
 no_pass 1
+obscuresview 1
 end
 More
 Object waterfall_huge_h
