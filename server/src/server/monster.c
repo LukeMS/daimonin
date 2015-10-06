@@ -312,7 +312,7 @@ static int calc_direction_towards_waypoint(object_t *op, object_t *wp)
                 FREE_AND_ADD_REF_HASH(WP_MAP(wp), map->orig_path);
         } else
             map = op->map;
-        return calc_direction_towards(op, wp, MSP_RAW(map, WP_X(wp), WP_Y(wp)));
+        return calc_direction_towards(op, wp, MSP_GET2(map, WP_X(wp), WP_Y(wp)));
     }
 }
 
@@ -354,7 +354,7 @@ static inline int direction_from_response(object_t *op, move_response *response)
           return calc_direction_towards_waypoint(op, response->data.target.obj);
         case MOVE_RESPONSE_COORD:
 //          LOG(llevDebug,"dir_from_response(): '%s' -> %d:%d\n", STRING_OBJ_NAME(op), response->data.coord.x, response->data.coord.y);
-          return calc_direction_towards(op, NULL, MSP_RAW(response->data.coord.map, response->data.coord.x, response->data.coord.y));
+          return calc_direction_towards(op, NULL, MSP_GET2(response->data.coord.map, response->data.coord.x, response->data.coord.y));
 
         default:
           return 0;
