@@ -8,6 +8,7 @@ no_pass 1
 no_pick 1
 weight 500
 obscuresview 1
+blocksview 1
 end
 More
 Object lo_tree6_a
@@ -20,6 +21,7 @@ x 1
 no_pass 1
 no_pick 1
 obscuresview 1
+blocksview 1
 end
 More
 Object lo_tree6_b
@@ -32,6 +34,7 @@ y 1
 no_pass 1
 no_pick 1
 obscuresview 1
+blocksview 1
 end
 More
 Object lo_tree6_c
@@ -45,4 +48,5 @@ y 1
 no_pass 1
 no_pick 1
 obscuresview 1
+blocksview 1
 end

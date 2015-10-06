@@ -7,6 +7,7 @@ face lo_tree7.101
 no_pick 1
 weight 500
 obscuresview 1
+blocksview 1
 end
 More
 Object lo_tree7_a
@@ -18,6 +19,7 @@ mpart_nr 1
 x 1
 no_pick 1
 obscuresview 1
+blocksview 1
 end
 More
 Object lo_tree7_b
@@ -29,6 +31,7 @@ mpart_nr 2
 x 2
 no_pick 1
 obscuresview 1
+blocksview 1
 end
 More
 Object lo_tree7_c
@@ -40,6 +43,7 @@ mpart_nr 3
 x 3
 no_pick 1
 obscuresview 1
+blocksview 1
 end
 More
 Object lo_tree7_d
@@ -51,6 +55,7 @@ mpart_nr 4
 y 1
 no_pick 1
 obscuresview 1
+blocksview 1
 end
 More
 Object lo_tree7_e
@@ -64,6 +69,7 @@ y 1
 no_pass 1
 no_pick 1
 obscuresview 1
+blocksview 1
 end
 More
 Object lo_tree7_f
@@ -77,6 +83,7 @@ y 1
 no_pass 1
 no_pick 1
 obscuresview 1
+blocksview 1
 end
 More
 Object lo_tree7_g
@@ -90,6 +97,7 @@ y 1
 no_pass 1   
 no_pick 1
 obscuresview 1
+blocksview 1
 end
 More
 Object lo_tree7_h
@@ -101,6 +109,7 @@ mpart_nr 8
 y 2
 no_pick 1
 obscuresview 1
+blocksview 1
 end
 More
 Object lo_tree7_i
@@ -114,6 +123,7 @@ y 2
 no_pass 1
 no_pick 1
 obscuresview 1
+blocksview 1
 end
 More
 Object lo_tree7_j
@@ -127,6 +137,7 @@ y 2
 no_pass 1
 no_pick 1
 obscuresview 1
+blocksview 1
 end
 More
 Object lo_tree7_k
@@ -140,6 +151,7 @@ y 2
 no_pass 1
 no_pick 1
 obscuresview 1
+blocksview 1
 end
 More
 Object lo_tree7_l
@@ -151,6 +163,7 @@ mpart_nr 12
 y 3
 no_pick 1
 obscuresview 1
+blocksview 1
 end
 More
 Object lo_tree7_m
@@ -164,6 +177,7 @@ y 3
 no_pass 1
 no_pick 1
 obscuresview 1
+blocksview 1
 end
 More
 Object lo_tree7_n
@@ -177,6 +191,7 @@ y 3
 no_pass 1
 no_pick 1
 obscuresview 1
+blocksview 1
 end
 More
 Object lo_tree7_o
@@ -189,4 +204,5 @@ x 3
 y 3
 no_pick 1
 obscuresview 1
+blocksview 1
 end
