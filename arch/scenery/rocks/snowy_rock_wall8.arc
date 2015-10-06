@@ -4,7 +4,10 @@ layer 5
 type 79
 blocksview 1
 mpart_id 3
-face snowy_rock_wall8.101
+face snowy_rock_wall8.151
+direction 5
+is_turnable 1
+animation snowy_rock_wall8
 no_pass 1
 no_pick 1
 end
@@ -42,6 +45,5 @@ mpart_id 3
 mpart_nr 3
 x 1
 y 1
-no_pass 1
 no_pick 1
 end
