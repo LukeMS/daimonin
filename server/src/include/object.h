@@ -499,21 +499,6 @@ struct object_t
 #define INS_TAIL_MARKER    (1 << 2)
 
 /* Waypoint macros */
-#define WP_FLAG_ACTIVE      FLAG_CURSED
-#define WP_FLAG_BESTEFFORT  FLAG_NO_ATTACK
-#define WP_FLAG_RANDOM_NEXT FLAG_RANDOM_MOVE
-
-#define WP_MAP(wp) (wp)->slaying
-#define WP_X(wp) (wp)->stats.hp
-#define WP_Y(wp) (wp)->stats.sp
-#define WP_ACCEPTDIST(wp) (wp)->stats.grace
-#define WP_DELAYTIME(wp) (wp)->stats.wc
-#define WP_NEXTWP(wp) (wp)->title
-#define WP_BEACON(wp) (wp)->race
-
-#define STRING_WP_MAP(wp) STRING_OBJ_SLAYING(wp)
-#define STRING_WP_NEXTWP(wp) STRING_OBJ_RACE(wp)
-
 #define WP_MOVE_TRIES 4 /* number of retries to get closer to (local) target before giving up */
 
 /*find_next_object modes */

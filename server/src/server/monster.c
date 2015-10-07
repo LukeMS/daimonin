@@ -275,44 +275,60 @@ static int calc_direction_towards_object(object_t *op, object_t *target)
  * tries to use precomputed path if available or request path finding if needed */
 static int calc_direction_towards_waypoint(object_t *op, object_t *wp)
 {
-    if(WP_BEACON(wp))
+    if (wp->race)
     {
-        object_t *beacon = locate_beacon(WP_BEACON(wp));
+        object_t *beacon = locate_beacon(wp->race);
+
         if(beacon)
         {
             while(beacon->env)
+            {
                 beacon = beacon->env;
+            }
+
             return calc_direction_towards(op, wp, MSP_KNOWN(beacon));
         }
         else
+        {
             return 0; /* TODO: what to do? */
-    } else
+        }
+    }
+    else
     {
-        map_t *map;
+        map_t  *m;
+        sint16  x,
+                y;
 
-        if(WP_MAP(wp) && *WP_MAP(wp) != '\0')
+        if (wp->slaying)
         {
             char path[MAXPATHLEN];
 
             /* map_is_ready() bugs if not fed an absolute path, so
              * make one if necessary. */
-            if (*WP_MAP(wp) != '/')
+            if (*wp->slaying != '/')
             {
-                FREE_AND_COPY_HASH(WP_MAP(wp),
-                                   normalize_path(op->map->path,
-                                                  WP_MAP(wp), path));
+                FREE_AND_COPY_HASH(wp->slaying, normalize_path(op->map->path, wp->slaying, path));
             }
 
-            if (!(map = map_is_ready(WP_MAP(wp))))
+            if (!(m = map_is_ready(wp->slaying)))
             {
-                map = ready_inherited_map(op->map, WP_MAP(wp));
+                m = ready_inherited_map(op->map, wp->slaying);
             }
 
-            if(map && map->orig_path != WP_MAP(wp))
-                FREE_AND_ADD_REF_HASH(WP_MAP(wp), map->orig_path);
-        } else
-            map = op->map;
-        return calc_direction_towards(op, wp, MSP_GET2(map, WP_X(wp), WP_Y(wp)));
+            if (m &&
+                m->orig_path != wp->slaying)
+            {
+                FREE_AND_ADD_REF_HASH(wp->slaying, m->orig_path);
+            }
+        }
+        else
+        {
+            m = op->map;
+        }
+
+        x = wp->stats.hp;
+        y = wp->stats.sp;
+        return calc_direction_towards(op, wp, MSP_GET2(m, x, y));
     }
 }
 
@@ -472,7 +488,7 @@ object_t *get_active_waypoint(object_t *op)
     FOREACH_OBJECT_IN_OBJECT(wp, op, next)
     {
         if (wp->type == TYPE_WAYPOINT_OBJECT &&
-            QUERY_FLAG(wp, WP_FLAG_ACTIVE))
+            QUERY_FLAG(wp, FLAG_CURSED))
         {
             return wp;
         }
@@ -560,14 +576,18 @@ object_t *get_random_waypoint(object_t *op, object_t *ignore)
 }
 
 /** Select the successor to the waypoint wp for the mob op */
-object_t * get_next_waypoint(object_t *op, object_t *wp)
+object_t *get_next_waypoint(object_t *op, object_t *wp)
 {
-    if (QUERY_FLAG(wp, WP_FLAG_RANDOM_NEXT))
+    if (QUERY_FLAG(wp, FLAG_RANDOM_MOVE))
+    {
         return get_random_waypoint(op, wp);
-    else if(WP_NEXTWP(wp))
-        return find_waypoint(op, WP_NEXTWP(wp));
-    else
-        return NULL;
+    }
+    else if (wp->title)
+    {
+        return find_waypoint(op, wp->title);
+    }
+
+    return NULL;
 }
 
 /*
@@ -804,36 +824,42 @@ void object_accept_path(object_t *op)
     }
     else if (target->type == TYPE_WAYPOINT_OBJECT)
     {
-        if(WP_BEACON(target))
-            goal_ob = locate_beacon(WP_BEACON(target));
+        if (target->race)
+        {
+            goal_ob = locate_beacon(target->race);
+        }
         else
         {
             /* Default map is current map */
-            goal_x = WP_X(target);
-            goal_y = WP_Y(target);
-            if(WP_MAP(target) && *WP_MAP(target) != '\0')
+            goal_x = target->stats.hp;
+            goal_y = target->stats.sp;
+
+            if (target->slaying)
             {
                 char path[MAXPATHLEN];
 
                 /* map_is_ready() bugs if not fed an absolute path, so
                  * make one if necessary. */
-                if (*WP_MAP(target) != '/')
+                if (*target->slaying != '/')
                 {
-                    FREE_AND_COPY_HASH(WP_MAP(target),
-                                       normalize_path(op->map->path,
-                                                      WP_MAP(target), path));
+                    FREE_AND_COPY_HASH(target->slaying, normalize_path(op->map->path, target->slaying, path));
                 }
 
-                if (!(goal_m = map_is_ready(WP_MAP(target))))
+                if (!(goal_m = map_is_ready(target->slaying)))
                 {
-                    goal_m = ready_inherited_map(op->map, WP_MAP(target));
+                    goal_m = ready_inherited_map(op->map, target->slaying);
                 }
 
-                if(goal_m && goal_m->orig_path != WP_MAP(target))
-                    FREE_AND_ADD_REF_HASH(WP_MAP(target), goal_m->orig_path);
+                if (goal_m &&
+                    goal_m->orig_path != target->slaying)
+                {
+                    FREE_AND_ADD_REF_HASH(target->slaying, goal_m->orig_path);
+                }
             }
             else
+            {
                 goal_m = op->map;
+            }
 
             FREE_AND_CLEAR_HASH(MOB_PATHDATA(op)->goal_map);
         }

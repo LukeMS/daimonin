@@ -1490,9 +1490,9 @@ void ai_move_towards_waypoint(object_t *op, struct mob_behaviour_param *params, 
         sint16  wp_x,
                 wp_y;
 
-        if(WP_BEACON(wp))
+        if(wp->race)
         {
-            target = locate_beacon(WP_BEACON(wp));
+            target = locate_beacon(wp->race);
             if(target)
             {
                 while(target->env)
@@ -1504,36 +1504,37 @@ void ai_move_towards_waypoint(object_t *op, struct mob_behaviour_param *params, 
             else
             {
                 LOG(llevMapbug, "MAPBUG:: Couldn't find beacon %s for waypoint %s of %s[%s %d %d]!\n",
-                    WP_BEACON(wp), STRING_OBJ_NAME(wp), STRING_OBJ_NAME(op),
+                    wp->race, STRING_OBJ_NAME(wp), STRING_OBJ_NAME(op),
                     STRING_MAP_PATH(op->map), op->x, op->y);
-                CLEAR_FLAG(wp, WP_FLAG_ACTIVE); /* disable this waypoint */
+                CLEAR_FLAG(wp, FLAG_CURSED); /* disable this waypoint */
                 try_next_wp = 1;
             }
         }
         else
         {
-            wp_x = WP_X(wp);
-            wp_y = WP_Y(wp);
-            if(WP_MAP(wp) && *WP_MAP(wp) != '\0')
+            wp_x = wp->stats.hp;
+            wp_y = wp->stats.sp;
+
+            if(wp->slaying)
             {
                 char path[MAXPATHLEN];
 
                 /* map_is_ready() bugs if not fed an absolute path, so
                  * make one if necessary. */
-                if (*WP_MAP(wp) != '/')
+                if (*wp->slaying != '/')
                 {
-                    FREE_AND_COPY_HASH(WP_MAP(wp),
+                    FREE_AND_COPY_HASH(wp->slaying,
                                        normalize_path(op->map->path,
-                                                      WP_MAP(wp), path));
+                                                      wp->slaying, path));
                 }
 
-                if (!(destmap = map_is_ready(WP_MAP(wp))))
+                if (!(destmap = map_is_ready(wp->slaying)))
                 {
-                    destmap = ready_inherited_map(op->map, WP_MAP(wp));
+                    destmap = ready_inherited_map(op->map, wp->slaying);
                 }
 
-                if(destmap && destmap->orig_path != WP_MAP(wp))
-                    FREE_AND_ADD_REF_HASH(WP_MAP(wp), destmap->orig_path);
+                if(destmap && destmap->orig_path != wp->slaying)
+                    FREE_AND_ADD_REF_HASH(wp->slaying, destmap->orig_path);
             }
             else
                 destmap = op->map;
@@ -1555,7 +1556,7 @@ void ai_move_towards_waypoint(object_t *op, struct mob_behaviour_param *params, 
                  * or too far away from each other. */
                 LOG(llevMapbug, "MAPBUG:: No connection between maps: '%s' and '%s'!\n",
                     STRING_MAP_PATH(destmap), STRING_MAP_PATH(op->map));
-                CLEAR_FLAG(wp, WP_FLAG_ACTIVE); /* disable this waypoint */
+                CLEAR_FLAG(wp, FLAG_CURSED); /* disable this waypoint */
                 try_next_wp = 1;
             }
             else
@@ -1572,7 +1573,7 @@ void ai_move_towards_waypoint(object_t *op, struct mob_behaviour_param *params, 
                                 NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
 
                     /* Should we wait a little while? */
-                    if (MOB_PATHDATA(op)->goal_delay_counter < WP_DELAYTIME(wp))
+                    if (MOB_PATHDATA(op)->goal_delay_counter < wp->stats.wc)
                     {
                         MOB_PATHDATA(op)->goal_delay_counter++;
                     }
@@ -1586,7 +1587,7 @@ void ai_move_towards_waypoint(object_t *op, struct mob_behaviour_param *params, 
                         MOB_PATHDATA(op)->best_distance = -1;
                         MOB_PATHDATA(op)->last_best_distance = -1;
                         MOB_PATHDATA(op)->tried_steps = 0;
-                        CLEAR_FLAG(wp, WP_FLAG_ACTIVE);
+                        CLEAR_FLAG(wp, FLAG_CURSED);
                         try_next_wp = 1;
                     }
                 }
@@ -1595,9 +1596,9 @@ void ai_move_towards_waypoint(object_t *op, struct mob_behaviour_param *params, 
         else
         {
             LOG(llevMapbug, "MAPBUG:: Couldn't find map '%s' for waypoint %s of %s[%s %d %d]!\n",
-                STRING_WP_MAP(wp), STRING_OBJ_NAME(wp), STRING_OBJ_NAME(op),
+                STRING_OBJ_SLAYING(wp), STRING_OBJ_NAME(wp), STRING_OBJ_NAME(op),
                 STRING_MAP_PATH(op->map), op->x, op->y);
-            CLEAR_FLAG(wp, WP_FLAG_ACTIVE);
+            CLEAR_FLAG(wp, FLAG_CURSED);
             try_next_wp = 1;
         }
     }
@@ -1610,7 +1611,7 @@ void ai_move_towards_waypoint(object_t *op, struct mob_behaviour_param *params, 
 #ifdef DEBUG_AI_WAYPOINT
             LOG(llevDebug, "ai_move_towards_waypoint(): '%s' next WP: '%s'\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(wp));
 #endif
-            SET_FLAG(wp, WP_FLAG_ACTIVE); /* activate new waypoint */
+            SET_FLAG(wp, FLAG_CURSED); /* activate new waypoint */
             MOB_PATHDATA(op)->best_distance = -1;
             MOB_PATHDATA(op)->last_best_distance = -1;
             MOB_PATHDATA(op)->tried_steps = 0;
