@@ -245,8 +245,9 @@ typedef struct behaviour_move_response
         /** Move to a target coordinate */
         struct
         {
-            int         x, y;
             map_t  *map;
+            sint16  x;
+            sint16  y;
         } coord;
 
         /** Move towards a target object_t */
