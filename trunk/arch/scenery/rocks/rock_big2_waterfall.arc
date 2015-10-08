@@ -7,8 +7,8 @@ direction 5
 material 64
 weight 1500000
 no_pass 1
-blocksview 1
 no_pick 1
+obscuresview 1
 animation rock_big2_waterfall
 is_turnable 1
 is_animated 1

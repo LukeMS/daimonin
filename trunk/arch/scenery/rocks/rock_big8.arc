@@ -7,6 +7,7 @@ type 79
 no_pass 1
 no_pick 1
 blocksview 1
+obscuresview 1
 end
 More
 Object rock_big8b
@@ -19,6 +20,7 @@ mpart_nr 1
 no_pass 1
 no_pick 1
 blocksview 1
+obscuresview 1
 end
 More
 Object rock_big8c
@@ -31,6 +33,7 @@ mpart_nr 2
 no_pass 1
 no_pick 1
 blocksview 1
+obscuresview 1
 end
 More
 Object rock_big8d
@@ -44,6 +47,7 @@ mpart_nr 3
 no_pass 1
 no_pick 1
 blocksview 1
+obscuresview 1
 end
 More
 Object rock_big8e
@@ -56,6 +60,7 @@ type 79
 no_pass 1
 no_pick 1
 blocksview 1
+obscuresview 1
 end
 More
 Object rock_big8f
@@ -69,4 +74,5 @@ mpart_nr 5
 no_pass 1
 no_pick 1
 blocksview 1
+obscuresview 1
 end

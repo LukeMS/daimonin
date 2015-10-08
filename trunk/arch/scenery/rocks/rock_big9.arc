@@ -7,6 +7,7 @@ mpart_id 5
 no_pass 1
 no_pick 1
 blocksview 1
+obscuresview 1
 end
 More
 Object rock_big9b
@@ -19,6 +20,7 @@ mpart_nr 1
 no_pass 1
 no_pick 1
 blocksview 1
+obscuresview 1
 end
 More
 Object rock_big9c
@@ -31,6 +33,7 @@ mpart_nr 2
 no_pass 1
 no_pick 1
 blocksview 1
+obscuresview 1
 end
 More
 Object rock_big9d
@@ -43,6 +46,7 @@ mpart_nr 3
 no_pass 1
 no_pick 1
 blocksview 1
+obscuresview 1
 end
 More
 Object rock_big9e
@@ -56,6 +60,7 @@ mpart_nr 4
 no_pass 1
 no_pick 1
 blocksview 1
+obscuresview 1
 end
 More
 Object rock_big9f
@@ -69,4 +74,5 @@ mpart_nr 5
 no_pass 1
 no_pick 1
 blocksview 1
+obscuresview 1
 end
