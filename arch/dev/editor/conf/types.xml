@@ -236,8 +236,22 @@
     If set, the object cannot be passed by players nor monsters.
   </attribute>
   <attribute arch="blocksview" editor="block view" type="bool">
-    If an item is set to block view, players (and monsters) cannot
-    see beyond it unless they cross it or manage to stand on top.
+    If enabled, players (and monsters) cannot see beyond the square.
+
+    By default, such squares will not be obscured by others. But if this object
+    (or another object on the same square) is also set to obscure view, it will
+    be.
+  </attribute>
+  <attribute arch="obscuresview" editor="obscure view" type="bool">
+    If enabled, players (and monsters) can see beyond the square but the view
+    is obscured.
+  </attribute>
+  <attribute arch="allowsview" editor="allow view" type="bool">
+    If enabled, players (and monsters) can see beyond the square as if nothing
+    was there.
+
+    This flag is for windows, etc in walls -- the square will not be obscured,
+    like the rest of the wall.
   </attribute>
   <attribute arch="pass_ethereal" editor="etheral can pass" type="bool">
     If no_pass (blocking passage) is set, no one can pass. If this
