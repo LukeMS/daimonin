@@ -11,6 +11,7 @@ speed 1
 no_pick 1
 no_pass 1
 blocksview 1
+obscuresview 1
 end
 More
 Object waterfall_huge_a
@@ -22,6 +23,7 @@ mpart_nr 1
 type 79
 no_pass 1
 blocksview 1
+obscuresview 1
 end
 More
 Object waterfall_huge_b
@@ -33,6 +35,7 @@ mpart_nr 2
 type 79
 no_pass 1
 blocksview 1
+obscuresview 1
 end
 More
 Object waterfall_huge_c
