@@ -373,7 +373,8 @@ static void NotifyClients(_server_client_cmd cmd, uint16 flags, object_t *op)
             }
         };
     }
-    else if (op->map)
+    else if (OBJECT_ACTIVE(op) &&
+        op->map)
     {
         msp_t *msp = MSP_KNOWN(op);
         object_t   *next;
