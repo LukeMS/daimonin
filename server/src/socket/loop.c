@@ -645,7 +645,7 @@ void doeric_server(int update, struct timeval *timeout)
     FD_ZERO(&tmp_read);
     FD_ZERO(&tmp_write);
     FD_ZERO(&tmp_exceptions);
-
+ 
     for (i = 0; i < socket_info.allocated_sockets; i++)
     {
         if (init_sockets[i].status == Ns_Dead)
@@ -671,14 +671,7 @@ void doeric_server(int update, struct timeval *timeout)
 
             FD_SET((uint32) init_sockets[i].fd, &tmp_read);
             FD_SET((uint32) init_sockets[i].fd, &tmp_exceptions);
-
-            /* Only check for writing if we actually want to write */
-            if (init_sockets[i].sockbuf_start ||
-                (init_sockets[i].sockbuf &&
-                 init_sockets[i].sockbuf->len))
-            {
-                FD_SET((uint32) init_sockets[i].fd, &tmp_write);
-            }
+            FD_SET((uint32) init_sockets[i].fd, &tmp_write);
         }
     }
 
@@ -724,25 +717,18 @@ void doeric_server(int update, struct timeval *timeout)
 
         FD_SET((uint32) pl->socket.fd, &tmp_read);
         FD_SET((uint32) pl->socket.fd, &tmp_exceptions);
-
-        /* Only check for writing if we actually want to write */
-        if (pl->socket.sockbuf_start ||
-            (pl->socket.sockbuf &&
-             pl->socket.sockbuf->len))
-        {
-            FD_SET((uint32) pl->socket.fd, &tmp_write);
-        }
+        FD_SET((uint32) pl->socket.fd, &tmp_write);
     }
 
     /* our one and only select() - after this call, every player socket has signaled us
      * in the tmp_xxxx objects the signal status: FD_ISSET will check socket for socket
      * for thats signal and trigger read, write or exception (error on socket).
      */
-    pollret = select(socket_info.max_filedescriptor, &tmp_read, &tmp_write, &tmp_exceptions, timeout);
+    pollret = select(FD_SETSIZE, &tmp_read, &tmp_write, &tmp_exceptions, timeout);
 
     if (pollret == -1)
     {
-        LOG(llevBug, "BUG: doeric_server(): error on select\n");
+        LOG(llevBug, "BUG: select failed: %s [%d][%d]\n", strerror(errno),errno,socket_info.max_filedescriptor);
         return;
     }
 
