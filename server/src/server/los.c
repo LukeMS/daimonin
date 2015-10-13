@@ -506,10 +506,6 @@ void los_update(player_t *pl)
      * Note that the central 9 positions are guaranteed correct and we only
      * need go to the client's map size. So smaller displays are our friend
      * here. */
-    /* FIXME: This seems to work with no bounds checking on dx/dy
-     * (0<=d?<MAP_CLIENT_?) but perhaps...
-     *
-     * -- Smacky 20150927 */
     for (i = 9; i < pl->socket.mapx * pl->socket.mapy; i++)
     {
         ax = MAP_CLIENT_X / 2 + LosX[i];
@@ -529,7 +525,11 @@ void los_update(player_t *pl)
                 sint16 dx = ax + LosX[j],
                        dy = ay + LosY[j];
 
-                if (!(pl->los_array[dx][dy] & (LOS_FLAG_BLOCKED | LOS_FLAG_OUT_OF_MAP)))
+                if (dx >= 0 &&
+                    dx < MAP_CLIENT_X &&
+                    dy >= 0 &&
+                    dy < MAP_CLIENT_Y &&
+                    !(pl->los_array[dx][dy] & (LOS_FLAG_BLOCKED | LOS_FLAG_OUT_OF_MAP)))
                 {
                     break;
                 }
@@ -545,8 +545,7 @@ void los_update(player_t *pl)
          * allowsview or blocksview, remove any blocked flag.
          *
          * This prevents unsightly and nonsensical black spots in LoS. */
-        /* TODO: Might be better/faster to handle this in the first pass. */
-        if (!(pl->los_array[ax][ay] & (LOS_FLAG_ALLOWSVIEW | LOS_FLAG_BLOCKSVIEW | LOS_FLAG_BLOCKED | LOS_FLAG_OUT_OF_MAP)))
+        if (!(pl->los_array[ax][ay] & (LOS_FLAG_IGNORE | LOS_FLAG_ALLOWSVIEW | LOS_FLAG_BLOCKSVIEW | LOS_FLAG_BLOCKED | LOS_FLAG_OUT_OF_MAP)))
         {
             for (j = 1; j <= 8; j++)
             {
