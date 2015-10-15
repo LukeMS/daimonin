@@ -662,44 +662,46 @@ extern void    map_transfer_apartment_items(map_t *map_old, map_t *map_new, sint
 #define MSP_FLAG_UPDATE        (1 << 30) // update the flags by looping the map objects
 #define MSP_FLAG_NO_ERROR      (1 << 31) // msp_update (does not complain if the flags are different)
 
-/* Values of msp_slayer_t are used by the server to number object layers (that
- * is primarily msp_t.slayer object_t.layer). */
+/* Slayers, or server layers, are used by the server to number object layers
+ * (that is primarily msp_t.slayer and object_t.layer). */
 enum msp_slayer_t
 {
-    MSP_SLAYER_SYSTEM,
-    MSP_SLAYER_FLOOR,
-    MSP_SLAYER_FMASK,
-    MSP_SLAYER_ITEMA,
-    MSP_SLAYER_ITEMB,
-    MSP_SLAYER_FEATURE,
+    MSP_SLAYER_SYSTEM,  // system object
+    MSP_SLAYER_FLOOR,   // floor
+    MSP_SLAYER_FMASK,   // floor mask
+    MSP_SLAYER_ITEMA,   // pickable item
+    MSP_SLAYER_ITEMB,   // non-pickable item/scenery
+    MSP_SLAYER_FEATURE, // non-pickable, applyable map feature/scenery
 #ifdef USE_SLAYER_MONSTER
-    MSP_SLAYER_MONSTER,
+    MSP_SLAYER_MONSTER, // monster
 #endif
-    MSP_SLAYER_PLAYER,
-    MSP_SLAYER_EFFECT,
+    MSP_SLAYER_PLAYER,  // player
+    MSP_SLAYER_EFFECT,  // visual effect (eg, liquid, gas, magic, etc)
     MSP_SLAYER_NROF
 };
 
-#define MSP_SLAYER_UNSLICED MSP_SLAYER_FMASK
-
+/* Clayers, or client layers, are used to number the object 'layers' when
+ * sending a MAP2 sc cmd. */
 enum msp_clayer_t
 {
-    MSP_CLAYER_FLOOR,
-    MSP_CLAYER_FMASK,
-    MSP_CLAYER_UNDER,
-    MSP_CLAYER_OVER,
+    MSP_CLAYER_FLOOR, // floor
+    MSP_CLAYER_FMASK, // floor mask
+    MSP_CLAYER_UNDER, // 2nd-highest slayer object
+    MSP_CLAYER_OVER,  // highest slayer object
     MSP_CLAYER_NROF
 };
 
-#define MSP_CLAYER_UNSLICED MSP_CLAYER_FMASK
-
+/* Each msp maintains MSP_SLICE_NROF lists of objects on it, or slices. */
 enum msp_slice_t
 {
-    MSP_SLICE_VISIBLE,
-    MSP_SLICE_INVISIBLE,
-    MSP_SLICE_GMASTER,
+    MSP_SLICE_VISIBLE,   // objects in the visible spectrum (ie, nearly all)
+    MSP_SLICE_INVISIBLE, // also objects in the magical invisible spectrum
+    MSP_SLICE_GMASTER,   // also invisible GM/SAs (ie, everything)
     MSP_SLICE_NROF
 };
+
+#define MSP_SLAYER_UNSLICED MSP_SLAYER_FMASK
+#define MSP_CLAYER_UNSLICED MSP_CLAYER_FMASK
 
 /* Unaligned: 196/356
  * Internal padding: 0/4
