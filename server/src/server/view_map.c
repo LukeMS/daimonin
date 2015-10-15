@@ -523,10 +523,15 @@ void draw_client_map2(player_t *pl)
 #ifdef USE_SLAYER_MONSTER
                 /* If the msp holds an ITEMA/ITEMB and a FEATURE (and no other
                  * MSP_SLAYERs) these will be assigned to under and over
-                 * respectively. Here we swap them round. This means the item
-                 * is drawn over the feature. */
+                 * respectively (higher slayer goes over lower). If under is no
+                 * pick then it is probably a permanent, map-added  piece of
+                 * decoration. So assume the mapper knows best and leave things
+                 * alone. But if it is not no pick assume it has been dropped
+                 * there during play -- so here  swap the two objects around;
+                 * this means the item is drawn over the feature. */
                 if (clayer_under && // implies clayer_over is non-NULL
-                    clayer_over->layer == MSP_SLAYER_FEATURE) // implie clayer_under->layer is ITEMA/ITEMB
+                    clayer_over->layer == MSP_SLAYER_FEATURE && // implies clayer_under->layer is ITEMA/ITEMB
+                    !QUERY_FLAG(clayer_under, FLAG_NO_PICK))
                 {
                     object_t *o = clayer_under;
 
