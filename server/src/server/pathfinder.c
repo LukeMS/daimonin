@@ -569,11 +569,7 @@ static int FindNeighbours(path_node *node, path_node **open_list,
         map_t *m = node->map;
         sint16     x = node->x + OVERLAY_X(i),
                    y = node->y + OVERLAY_Y(i);
-#if 0
-        msp_t  *msp = MSP_GET(m, x, y);
-#else
         msp_t  *msp = MSP_GET2(m, x, y);
-#endif
 
         if (!msp)
         {

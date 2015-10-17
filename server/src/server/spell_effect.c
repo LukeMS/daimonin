@@ -1210,7 +1210,7 @@ void move_fired_arch(object_t *op)
     map_t *m = op->map;
     sint16     x = op->x + OVERLAY_X(op->direction),
                y = op->y + OVERLAY_Y(op->direction);
-    msp_t  *msp = MSP_GET(m, x, y);
+    msp_t  *msp = MSP_GET2(m, x, y);
     tag_t      op_tag  = op->count;
 
     /* peterm:  added to make comet leave a trail of burnouts

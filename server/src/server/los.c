@@ -743,7 +743,7 @@ int obj_in_line_of_sight(object_t *op, object_t *obj, rv_t *rv)
             return TRUE;
         }
 
-        msp = MSP_GET(m, x, y);
+        msp = MSP_GET2(m, x, y);
 
         // Can't see if view blocked, unless mob has x-ray vision
         // and object (player) is in range.

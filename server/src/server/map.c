@@ -3745,7 +3745,7 @@ void msp_update(map_t *m, msp_t *mspace, sint16 x, sint16 y)
     }
     else
     {
-        msp = MSP_GET(m, x, y);
+        msp = MSP_GET2(m, x, y);
         flags = 0;
         oldflags = msp->flags;
 
@@ -3929,11 +3929,11 @@ uint32 msp_blocked(object_t *what, map_t *m, sint16 x, sint16 y)
                     m2 = what->map;
                     x2 = part->x + x;
                     y2 = part->y + y;
-                    msp = MSP_GET(m2, x2, y2);
+                    msp = MSP_GET2(m2, x2, y2);
                 }
                 else
                 {
-                    msp = MSP_GET(m, x, y);
+                    msp = MSP_GET2(m, x, y);
                 }
 
                 block |= IsBlocked(msp, what);
@@ -3976,7 +3976,7 @@ uint32 msp_blocked(object_t *what, map_t *m, sint16 x, sint16 y)
             y = what->y + y;
         }
 
-        msp = MSP_GET(m, x, y);
+        msp = MSP_GET2(m, x, y);
         block = IsBlocked(msp, what);
 
         /* If all that's blocking this part is a closed door and what
@@ -4302,7 +4302,7 @@ sint8 overlay_find_free(msp_t *msp, object_t *what, sint8 start, sint8 stop, uin
         map_t *m2 = msp->map;
         sint16     x2 = msp->x + OVERLAY_X(i),
                    y2 = msp->y + OVERLAY_Y(i);
-        msp_t  *msp2 = MSP_GET(m2, x2, y2);
+        msp_t  *msp2 = MSP_GET2(m2, x2, y2);
 
         /* If the map will not accommodate at, move on to the next msp. This
          * works when what is NULL, or a singlepart, or for the had of a
@@ -4456,7 +4456,7 @@ sint8 overlay_find_dir(msp_t *msp, object_t *exclude)
         map_t *m2 = msp->map;
         sint16     x2 = msp->x + OVERLAY_X(i),
                    y2 = msp->y + OVERLAY_Y(i);
-        msp_t  *msp2 = MSP_GET(m2, x2, y2);
+        msp_t  *msp2 = MSP_GET2(m2, x2, y2);
         object_t    *this,
                   *next;
 
@@ -4500,7 +4500,7 @@ uint32 overlay_is_back_blocked(sint8 index, msp_t *msp, uint32 flags)
         m2 = msp->map;
         x2 = msp->x + OVERLAY_X(i);
         y2 = msp->y + OVERLAY_Y(i);
-        msp2 = MSP_GET(m2, x2, y2);
+        msp2 = MSP_GET2(m2, x2, y2);
 
         if (!msp2)
         {
@@ -4515,7 +4515,7 @@ uint32 overlay_is_back_blocked(sint8 index, msp_t *msp, uint32 flags)
     m2 = msp->map;
     x2 = msp->x + OVERLAY_X(Back[index][1]);
     y2 = msp->y + OVERLAY_Y(Back[index][1]);
-    msp2 = MSP_GET(m2, x2, y2);
+    msp2 = MSP_GET2(m2, x2, y2);
 
     if (!msp2)
     {

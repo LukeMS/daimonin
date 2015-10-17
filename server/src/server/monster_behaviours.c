@@ -1859,7 +1859,7 @@ void ai_look_for_objects(object_t *op, struct mob_behaviour_param *params)
             m = op->map;
             x = op->x + dx;
             y = op->y + dy;
-            msp = MSP_GET(m, x, y);
+            msp = MSP_GET2(m, x, y);
 
             if (!msp)
             {

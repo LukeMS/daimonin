@@ -51,7 +51,7 @@ static void free_container_monster(object_t *monster, object_t *op)
     m = op->map;
     x = monster->x = container->x;
     y = monster->y = container->y;
-    msp = MSP_GET(m, x, y);
+    msp = MSP_GET2(m, x, y);
     i = overlay_find_free(msp, monster, 0, OVERLAY_3X3, 0);
 
     if (i != -1)

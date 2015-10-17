@@ -110,7 +110,7 @@ int skill_attack(object_t *tmp, object_t *pl, int dir, char *string)
         map_t *m = pl->map;
         sint16     x = pl->x + OVERLAY_X(dir),
                    y = pl->y + OVERLAY_Y(dir);
-        msp_t  *msp = MSP_GET(m, x, y);
+        msp_t  *msp = MSP_GET2(m, x, y);
         object_t    *this,
                   *next;
 
@@ -289,7 +289,7 @@ int find_traps(object_t *op, int level)
         map_t  *m = op->map;
         sint16      x = op->x + OVERLAY_X(i),
                     y = op->y + OVERLAY_Y(i);
-        msp_t   *msp = MSP_GET(m, x, y);
+        msp_t   *msp = MSP_GET2(m, x, y);
         object_t     *next,
                    *this;
 
@@ -370,7 +370,7 @@ int remove_trap(object_t *op, int dir, int level)
         map_t *m = op->map;
         sint16     x = op->x + OVERLAY_X(i),
                    y = op->y + OVERLAY_Y(i);
-        msp_t  *msp = MSP_GET(m, x, y);
+        msp_t  *msp = MSP_GET2(m, x, y);
         object_t    *this,
                   *next;
 
