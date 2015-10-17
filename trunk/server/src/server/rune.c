@@ -76,7 +76,7 @@ int write_rune(object_t *op, int dir, int inspell, int level, char *runename)
         return 0;
     }
 
-    msp = MSP_GET(m, x, y);
+    msp = MSP_GET2(m, x, y);
 
     FOREACH_OBJECT_IN_MSP(this, msp, next)
     {
@@ -340,7 +340,7 @@ int dispel_rune(object_t *op, int dir, int risk)
     map_t *m = op->map;
     sint16     x = op->x + OVERLAY_X(dir),
                y = op->y + OVERLAY_Y(dir);
-    msp_t  *msp = MSP_GET(m, x, y);
+    msp_t  *msp = MSP_GET2(m, x, y);
     object_t    *this,
               *next;
 

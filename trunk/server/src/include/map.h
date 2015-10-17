@@ -477,8 +477,9 @@ extern void    map_transfer_apartment_items(map_t *map_old, map_t *map_new, sint
     (((_M_) && \
       OUT_OF_MAP((_M_), (_X_), (_Y_))) ? MSP_RAW((_M_), (_X_), (_Y_)) : NULL)
 
-/* MSP_GET2() is similar to MSP_GET() but uses OUT_OF_MAP2(). It's only really
- * intended for things like managing light masks. You should use MSP_GET(). */
+/* MSP_GET2() is similar to MSP_GET() but uses OUT_OF_MAP2() so does not load
+ * nearby surrounding maps into memory. If the appropriate map is not already in
+ * memory the return is NULL. */
 #define MSP_GET2(_M_, _X_, _Y_) \
     (((_M_) && \
       OUT_OF_MAP2((_M_), (_X_), (_Y_))) ? MSP_RAW((_M_), (_X_), (_Y_)) : NULL)

@@ -34,7 +34,7 @@ float do_throw(object_t *op, int dir)
     map_t *m = op->map;
     sint16 x = op->x + OVERLAY_X(dir),
            y = op->y + OVERLAY_Y(dir);
-    msp_t *msp = MSP_GET(m, x, y);
+    msp_t *msp = MSP_GET2(m, x, y);
 
     /* 2 things here prevent a throw:
     * you aimed at your feet, or you threw at a wall */
@@ -83,7 +83,7 @@ float fire_bow(object_t *op, int dir)
     map_t *m = op->map;
     sint16 x = op->x + OVERLAY_X(dir),
            y = op->y + OVERLAY_Y(dir);
-    msp_t *msp = MSP_GET(m, x, y);
+    msp_t *msp = MSP_GET2(m, x, y);
 
     /* 2 things here prevent a throw:
     * you aimed at your feet, or you threw at a wall */
@@ -346,7 +346,7 @@ void move_missile(object_t *op)
         y = op->y + OVERLAY_Y(op->direction);
     }
 
-    msp = MSP_GET(m, x, y);
+    msp = MSP_GET2(m, x, y);
 
     if (!msp)
     {
@@ -434,11 +434,11 @@ void move_missile(object_t *op)
                 m = op->map;
                 x = op->x + OVERLAY_X(absdir(op->direction - 1));
                 y = op->y + OVERLAY_Y(absdir(op->direction - 1));
-                msp_l = MSP_GET(m, x, y);
+                msp_l = MSP_GET2(m, x, y);
                 m = op->map;
                 x = op->x + OVERLAY_X(absdir(op->direction + 1));
                 y = op->y + OVERLAY_Y(absdir(op->direction + 1));
-                msp_r = MSP_GET(m, x, y);
+                msp_r = MSP_GET2(m, x, y);
 
                 if (MSP_IS_RESTRICTED(msp_l) &&
                     MSP_IS_RESTRICTED(msp_r))
@@ -453,7 +453,7 @@ void move_missile(object_t *op)
             m = op->map;
             x = op->x + OVERLAY_X(absdir(op->direction));
             y = op->y + OVERLAY_Y(absdir(op->direction));
-            msp = MSP_GET(m, x, y);
+            msp = MSP_GET2(m, x, y);
 
             if (msp &&
                 MSP_IS_RESTRICTED(msp))
@@ -461,11 +461,11 @@ void move_missile(object_t *op)
                 m = op->map;
                 x = op->x + OVERLAY_X(absdir(op->direction - 1));
                 y = op->y + OVERLAY_Y(absdir(op->direction - 1));
-                msp_l = MSP_GET(m, x, y);
+                msp_l = MSP_GET2(m, x, y);
                 m = op->map;
                 x = op->x + OVERLAY_X(absdir(op->direction + 1));
                 y = op->y + OVERLAY_Y(absdir(op->direction + 1));
-                msp_r = MSP_GET(m, x, y);
+                msp_r = MSP_GET2(m, x, y);
 
                 if (!MSP_IS_RESTRICTED(msp_l))
                     op->direction = absdir(op->direction - 1);

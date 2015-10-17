@@ -1162,7 +1162,7 @@ void move_player_mover(object_t *op)
             mt = m;
             xt = x + OVERLAY_X(dir);
             yt = y + OVERLAY_Y(dir);
-            mspt = MSP_GET(mt, xt, yt);
+            mspt = MSP_GET2(mt, xt, yt);
 
             if (!mspt)
             {

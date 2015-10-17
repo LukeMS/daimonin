@@ -107,7 +107,7 @@ void communicate(object_t *op, char *txt)
         map_t *m = op->map;
         sint16     x = op->x + OVERLAY_X(i),
                    y = op->y + OVERLAY_Y(i);
-        msp_t  *msp = MSP_GET(m, x, y);
+        msp_t  *msp = MSP_GET2(m, x, y);
 
         if (!msp)
         {

@@ -113,7 +113,7 @@ sint8 move_ob(object_t *who, sint8 dir, object_t *originator)
                         map_t *m = who->map;
                         sint16     x = part->x + ox,
                                    y = part->y + oy;
-                        msp_t  *msp = MSP_GET(m, x, y);
+                        msp_t  *msp = MSP_GET2(m, x, y);
 
                         (void)open_door(who, msp, 1);
                     }
@@ -125,7 +125,7 @@ sint8 move_ob(object_t *who, sint8 dir, object_t *originator)
                 map_t *m = who->map;
                 sint16     x = wx + ox,
                            y = wy + oy;
-                msp_t  *msp = MSP_GET(m, x, y);
+                msp_t  *msp = MSP_GET2(m, x, y);
 
                 (void)open_door(who, msp, 1);
             }
@@ -258,7 +258,7 @@ int push_roll_object(object_t * const op, int dir, const int flag)
     mt = op->map;
     xt = op->x + OVERLAY_X(dir);
     yt = op->y + OVERLAY_Y(dir);
-    msp = MSP_GET(mt, xt, yt);
+    msp = MSP_GET2(mt, xt, yt);
 
     if (!msp)
     {

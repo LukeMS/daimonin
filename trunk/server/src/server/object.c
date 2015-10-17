@@ -3023,7 +3023,7 @@ int check_walk_off(object_t *op, object_t *originator, int flags)
         map_t    *m = op->map;
         sint16    x = part->x,
                   y = part->y;
-        msp_t    *msp = MSP_GET(m, x, y);
+        msp_t    *msp = MSP_GET2(m, x, y);
         object_t *tmp,
                  *next;
 
@@ -3100,7 +3100,7 @@ int check_walk_off(object_t *op, object_t *originator, int flags)
  * The first matching object is returned, or NULL if none. */
 object_t *present_arch(archetype_t *at, map_t *m, sint16 x, sint16 y)
 {
-    msp_t *msp = MSP_GET(m, x, y);
+    msp_t *msp = MSP_GET2(m, x, y);
     object_t   *this,
              *next;
 
@@ -3126,7 +3126,7 @@ object_t *present_arch(archetype_t *at, map_t *m, sint16 x, sint16 y)
  * The first matching object is returned, or NULL if none. */
 object_t *present(unsigned char type, map_t *m, sint16 x, sint16 y)
 {
-    msp_t *msp = MSP_GET(m, x, y);
+    msp_t *msp = MSP_GET2(m, x, y);
     object_t   *this,
              *next;
 

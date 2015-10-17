@@ -263,7 +263,7 @@ int check_infection(object_t *disease)
         for (y = outbreak->y - range; y < outbreak->y + range; y++)
         {
             map_t *m = outbreak->map;
-            msp_t  *msp = MSP_GET(m, x, y);
+            msp_t  *msp = MSP_GET2(m, x, y);
             object_t    *this,
                       *next;
 

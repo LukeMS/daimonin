@@ -1810,7 +1810,7 @@ int fire_bolt(object_t *op, object_t *caster, int dir, int type, int magic)
     map_t *m = op->map;
     sint16     x = op->x + OVERLAY_X(dir),
                y = op->y + OVERLAY_Y(dir);
-    msp_t  *msp = MSP_GET(m, x, y);
+    msp_t  *msp = MSP_GET2(m, x, y);
     object_t *tmp;
     float    tmp_dam;
 
@@ -1955,7 +1955,7 @@ int cast_cone(object_t *op, object_t *caster, int dir, int strength, int spell_t
         map_t *m = op->map;
         sint16     x = op->x + OVERLAY_X(absdir(dir + i)),
                    y = op->y + OVERLAY_Y(absdir(dir + i));
-        msp_t  *msp = MSP_GET(m, x, y);
+        msp_t  *msp = MSP_GET2(m, x, y);
 
         if (!msp ||
             MSP_IS_RESTRICTED(msp))
@@ -2142,7 +2142,7 @@ void move_cone(object_t *op)
         map_t *m = op->map;
         sint16     x = op->x + OVERLAY_X(absdir(op->stats.sp + i)),
                    y = op->y + OVERLAY_Y(absdir(op->stats.sp + i));
-        msp_t  *msp = MSP_GET(m, x, y);
+        msp_t  *msp = MSP_GET2(m, x, y);
 
         if (!msp ||
             MSP_IS_RESTRICTED(msp))
@@ -2229,7 +2229,7 @@ void forklightning(object_t *op, object_t *tmp)
     m = tmp->map;
     x = tmp->x + OVERLAY_X(t_dir);
     y = tmp->y + OVERLAY_Y(t_dir);
-    msp = MSP_GET(m, x, y);
+    msp = MSP_GET2(m, x, y);
 
     if (!msp ||
         MSP_IS_RESTRICTED(msp))
@@ -2315,7 +2315,7 @@ void move_bolt(object_t *op)
         map_t *m = op->map;
         sint16     x = op->x + OVERLAY_X(op->direction),
                    y = op->y + OVERLAY_Y(op->direction);
-        msp_t  *msp = MSP_GET(m, x, y);
+        msp_t  *msp = MSP_GET2(m, x, y);
 
         op->stats.sp = 1;
 
@@ -2352,11 +2352,11 @@ void move_bolt(object_t *op)
                 m = op->map;
                 x = op->x + OVERLAY_X(absdir(op->direction - 1));
                 y = op->y + OVERLAY_Y(absdir(op->direction - 1));
-                msp_l = MSP_GET(m, x, y);
+                msp_l = MSP_GET2(m, x, y);
                 m = op->map;
                 x = op->x + OVERLAY_X(absdir(op->direction + 1));
                 y = op->y + OVERLAY_Y(absdir(op->direction + 1));
-                msp_r = MSP_GET(m, x, y);
+                msp_r = MSP_GET2(m, x, y);
 
                 if (MSP_IS_RESTRICTED(msp_l) &&
                     MSP_IS_RESTRICTED(msp_r))
@@ -2473,7 +2473,7 @@ void move_golem(object_t *op)
         map_t *m = op->map;
         sint16     x = part->x + OVERLAY_X(op->direction),
                    y = part->y + OVERLAY_Y(op->direction);
-        msp_t  *msp = MSP_GET(m, x, y);
+        msp_t  *msp = MSP_GET2(m, x, y);
         object_t    *this,
                   *next;
 
@@ -2560,7 +2560,7 @@ void move_magic_missile(object_t *op)
     m = op->map;
     x = op->x + OVERLAY_X(op->direction);
     y = op->y + OVERLAY_Y(op->direction);
-    msp = MSP_GET(m, x, y);
+    msp = MSP_GET2(m, x, y);
 
     if (!msp)
     {
@@ -2949,7 +2949,7 @@ int can_see_monsterP(map_t *m, int x, int y, int dir)
 
     dx = x + OVERLAY_X(dir);
     dy = y + OVERLAY_Y(dir);
-    msp = MSP_GET(m, dx, dy);
+    msp = MSP_GET2(m, dx, dy);
 
     if (!msp ||
         MSP_IS_RESTRICTED(msp))

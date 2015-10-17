@@ -636,7 +636,7 @@ int stand_near_hostile(object_t *who)
         map_t *m = who->map;
         sint16     x = who->x + OVERLAY_X(i),
                    y = who->y + OVERLAY_Y(i);
-        msp_t  *msp = MSP_GET(m, x, y);
+        msp_t  *msp = MSP_GET2(m, x, y);
         object_t    *this,
                   *next;
 

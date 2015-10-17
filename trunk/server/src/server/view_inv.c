@@ -91,7 +91,7 @@ void esrv_send_below(player_t *pl)
         sb = ACTIVE_SOCKBUF(ns);
     }
 
-    msp = MSP_GET(m, who->x, who->y);
+    msp = MSP_GET2(m, who->x, who->y);
     sendme = AddInventory(sb, cmd, 0, 0, msp->last);
     sb = ACTIVE_SOCKBUF(ns);
 

@@ -1954,7 +1954,7 @@ int is_melee_range(object_t *hitter, object_t *enemy)
         map_t *m = hitter->map;
         sint16     x = hitter->x + OVERLAY_X(i),
                    y = hitter->y + OVERLAY_Y(i);
-        msp_t  *msp = MSP_GET(m, x, y);
+        msp_t  *msp = MSP_GET2(m, x, y);
         object_t    *this;
 
         if (!msp)
