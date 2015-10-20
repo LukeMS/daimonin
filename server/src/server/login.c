@@ -664,24 +664,6 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
 
     link_player_skills(pl); /* link all exp group & skill objects to the player */
 
-     /*
-    if (is_dragon_pl(op) && op->inv != NULL)
-    {
-        object_t *tmp, *abil = NULL, *skin = NULL;
-        FOREACH_OBJECT_IN_OBJECT(tmp, op)
-        {
-            if (tmp->type == FORCE)
-            {
-                if (tmp->arch->name == shstr_cons.dragon_ability_force)
-                    abil = tmp;
-                else if (tmp->arch->name == shstr_cons.dragon_skin_force)
-                    skin = tmp;
-            }
-        }
-        set_dragon_name(op, abil, skin);
-    }
-    */
-
     /* A little hack to remove guild forces from players which were created before new
      * guild system, which may cause bugs with backwards-incompatibility. This
      * code and pl->guild_updated should be removed when we have another player wipe.

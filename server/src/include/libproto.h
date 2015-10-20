@@ -68,7 +68,6 @@ extern int              calc_skill_exp(object_t *who, object_t *op, float mod, i
 extern void             remove_food_force(object_t *op);
 extern void             food_force_reg(object_t *op);
 extern void             create_food_buf_force(object_t *who, object_t *food, object_t *force);
-extern int              dragon_eat_flesh(object_t *op, object_t *meal);
 /* guild.c */
 extern object_t          *guild_get(player_t *pl, char *name);
 extern void             guild_remove_restricted_items(player_t *pl);
@@ -264,7 +263,6 @@ extern int              get_magic(int diff);
 extern int              fix_generated_item(object_t **op, object_t *creator, int difficulty, int a_chance, int t_style,
                                            int max_magic, int chance_magic, int flags);
 extern void             dump_monster_treasure_rec(const char *name, treasure *t, int depth);
-extern void             fix_flesh_item(object_t *item, object_t *donor);
 extern void             free_treasurestruct(treasure *t);
 extern void             free_all_treasures(void);
 extern void             dump_monster_treasure(const char *name);

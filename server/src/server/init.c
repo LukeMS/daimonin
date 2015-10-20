@@ -109,10 +109,6 @@ static void init_strings()
     shstr_cons.quarterstaff = add_string("quarterstaff");
 
     shstr_cons.clawing = add_string("clawing");
-    shstr_cons.dragon_skin_force = add_string("dragon_skin_force");
-    shstr_cons.dragon_ability_force = add_string("dragon_ability_force");
-    shstr_cons.dragon = add_string("dragon");
-
     shstr_cons.town_portal_destination = add_string("Town portal destination");
     shstr_cons.existing_town_portal = add_string("Existing town portal");
 

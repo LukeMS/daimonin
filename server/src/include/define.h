@@ -151,7 +151,7 @@
 #define SHOP_MAT                69
 #define RING                    70
 #define FLOOR                   71 /* this is a floor tile -> native layer 0 */
-#define FLESH                   72  /* animal 'body parts' -b.t. */
+/* 72 is free. */
 #define INORGANIC               73  /* metals and minerals */
 #define TYPE_LIGHT_APPLY        74  /* new light source for player */
 #define LIGHTER                 75

@@ -48,7 +48,7 @@ char * describe_resistance(const object_t *const op, int newline)
 
     for (tmpvar = 0; tmpvar < NROFATTACKS; tmpvar++)
     {
-        if (op->resist[tmpvar] && (op->type != FLESH || atnr_is_dragon_enabled(tmpvar) == 1))
+        if (op->resist[tmpvar])
         {
             if (flag)
             {
@@ -437,15 +437,9 @@ char * describe_item(const object_t *const op)
               break;
 
             case FOOD:
-            case FLESH:
             case DRINK:
               if (id_true)
               {
-                  if (op->type == FLESH && op->last_eat > 0 && atnr_is_dragon_enabled(op->last_eat))
-                  {
-                      sprintf(strchr(retbuf, '\0'), "(%s metabolism)", attack_name[op->last_eat].name);
-                  }
-
                   if (op->stats.thac0)
                   {
                       sprintf(strchr(retbuf, '\0'), "(hit%+d)", op->stats.thac0);
@@ -559,20 +553,7 @@ char * describe_item(const object_t *const op)
             strcat(retbuf, ")");
         }
 
-        /* for dragon players display the attacks from clawing skill */
-        /* must convert this for AV dragons later... */
-        /*
-            if (is_dragon_pl(op)) {
-            object_t *tmp;
-                for (tmp=op->inv; tmp!=NULL && !(tmp->type == TYPE_SKILL &&
-                strcmp(tmp->name, "clawing")==0); tmp=tmp->below);
-            */
-
         strcat(retbuf, describe_attack(op, 0));
-
-        /* resistance on flesh is only visible for quetzals */
-        if (op->type != FLESH || QUERY_FLAG(op, FLAG_SEE_INVISIBLE))
-            strcat(retbuf, describe_resistance(op, 0));
         DESCRIBE_PATH(retbuf, op->path_attuned, "Attuned");
         DESCRIBE_PATH(retbuf, op->path_repelled, "Repelled");
         DESCRIBE_PATH(retbuf, op->path_denied, "Denied");
@@ -624,7 +605,6 @@ int need_identify(const object_t *const op)
         case GIRDLE:
         case CONTAINER:
         case DRINK:
-        case FLESH:
         case INORGANIC:
         case CLOSE_CON:
         case CLOAK:
