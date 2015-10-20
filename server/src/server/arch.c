@@ -143,9 +143,11 @@ void init_archetypes()
     SET_GLOBAL_ARCHETYPE(confusion);
     SET_GLOBAL_ARCHETYPE(blindness);
     SET_GLOBAL_ARCHETYPE(paralyze);
+    SET_GLOBAL_ARCHETYPE(potion_effect);
     SET_GLOBAL_ARCHETYPE(corpse_default);
     SET_GLOBAL_ARCHETYPE(loot_container);
     SET_GLOBAL_ARCHETYPE(pvp_stat_force);
+    SET_GLOBAL_ARCHETYPE(meffect);
 }
 
 #undef SET_GLOBAL_ARCHETYPE

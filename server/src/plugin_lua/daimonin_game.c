@@ -318,7 +318,7 @@ static struct constant_decl preset_game_constants[] =
     {"TYPE_DIRECTOR",         DIRECTOR},
     {"TYPE_GIRDLE",           GIRDLE},
     {"TYPE_FORCE",            FORCE},
-    {"TYPE_POTION_EFFECT",    POTION_EFFECT},
+    {"TYPE_SPARKLY",          TYPE_SPARKLY},
     {"TYPE_JEWEL",            TYPE_JEWEL},
     {"TYPE_NUGGET",           TYPE_NUGGET},
     {"TYPE_EVENT_OBJECT",     TYPE_EVENT_OBJECT},

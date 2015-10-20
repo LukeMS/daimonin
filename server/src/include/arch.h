@@ -89,9 +89,11 @@ typedef struct _archetype_global
     archetype_t *_confusion;
     archetype_t *_blindness;
     archetype_t *_paralyze;
+    archetype_t *_potion_effect;
     archetype_t *_corpse_default;
     archetype_t *_loot_container;
     archetype_t *_pvp_stat_force;
+    archetype_t *_meffect;
 }
 _archetype_global;
 

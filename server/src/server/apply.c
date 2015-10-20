@@ -141,6 +141,8 @@ static void ApplyPotion(object_t *op, object_t *tmp)
 
     if (op->type == PLAYER)
     {
+        object_t *sparkly;
+
         /* set chosen_skill to "magic device" - thats used when we "use" a potion */
         if (!change_skill(op, SK_MAGIC_DEVICES))
             return; /* no skill, no potion use (dust & balm too!) */
@@ -151,15 +153,8 @@ static void ApplyPotion(object_t *op, object_t *tmp)
         /* special potions. Only players get this */
         if (tmp->last_eat == -1) /* create a force and copy the effects in */
         {
-            object_t *force   = get_archetype("force");
+            object_t *force = arch_to_object(archetype_global._potion_effect);
 
-            if (!force)
-            {
-                LOG(llevBug, "ApplyPotion: can't create force object!?\n");
-                return;
-            }
-
-            force->type = POTION_EFFECT;
             SET_FLAG(force, FLAG_IS_USED_UP); /* or it will auto destroyed with first tick */
             force->stats.food += tmp->stats.food; /* how long this force will stay */
             if (force->stats.food <= 0)
@@ -204,8 +199,9 @@ static void ApplyPotion(object_t *op, object_t *tmp)
                         force->attack[i] += tmp_a;
                 }
 
-                insert_spell_effect("meffect_purple", op->map, op->x, op->y);
-                play_sound_map(MSP_KNOWN(op), SOUND_DRINK_POISON, SOUND_NORMAL);
+                sparkly = sparkly_create(archetype_global._meffect, op, -1, SOUND_DRINK_POISON, SOUND_NORMAL);
+                i = find_animation("meffect_purple");
+                sparkly->animation_id = i;                
             }
             else /* all positive (when not on default negative) */
             {
@@ -214,8 +210,9 @@ static void ApplyPotion(object_t *op, object_t *tmp)
                          */
                 memcpy(force->resist, tmp->resist, sizeof(tmp->resist));
                 memcpy(force->attack, tmp->attack, sizeof(tmp->attack));
-                insert_spell_effect("meffect_green", op->map, op->x, op->y);
-                play_sound_map(MSP_KNOWN(op), SOUND_MAGIC_DEFAULT, SOUND_SPELL);
+                sparkly = sparkly_create(archetype_global._meffect, op, -1, SOUND_MAGIC_DEFAULT, SOUND_SPELL);
+                i = find_animation("meffect_purple");
+                sparkly->animation_id = i;                
             }
 
             /* now copy stats values */
@@ -262,8 +259,9 @@ static void ApplyPotion(object_t *op, object_t *tmp)
                 }
                 FIX_PLAYER(op ,"ApplyPotion - minor restoration - damned");
                 decrease_ob_nr(tmp, 1);
-                insert_spell_effect("meffect_purple", op->map, op->x, op->y);
-                play_sound_map(MSP_KNOWN(op), SOUND_DRINK_POISON, SOUND_NORMAL);
+                sparkly = sparkly_create(archetype_global._meffect, op, -1, SOUND_DRINK_POISON, SOUND_NORMAL);
+                i = find_animation("meffect_purple");
+                sparkly->animation_id = i;                
                 return;
             }
             if ((at = find_archetype("drain")) == NULL)
@@ -285,10 +283,14 @@ static void ApplyPotion(object_t *op, object_t *tmp)
                 FIX_PLAYER(op ,"ApplyPotion - minor restoration");
             }
             else
+            {
                 ndi(NDI_UNIQUE, 0, op, "You feel a great loss...");
+            }
+
             decrease_ob_nr(tmp, 1);
-            insert_spell_effect("meffect_green", op->map, op->x, op->y);
-            play_sound_map(MSP_KNOWN(op), SOUND_MAGIC_DEFAULT, SOUND_SPELL);
+            sparkly = sparkly_create(archetype_global._meffect, op, -1, SOUND_MAGIC_DEFAULT, SOUND_SPELL);
+            i = find_animation("meffect_yellow");
+            sparkly->animation_id = i;                
             return;
         }
         else if (tmp->last_eat == 2)    /* improvement potion */
@@ -407,21 +409,24 @@ static void ApplyPotion(object_t *op, object_t *tmp)
             else if (success_flag == 1)
             {
                 FIX_PLAYER(op ,"ApplyPotion - improvement");
-                insert_spell_effect("meffect_yellow", op->map, op->x, op->y);
-                play_sound_map(MSP_KNOWN(op), SOUND_MAGIC_DEFAULT, SOUND_SPELL);
+                sparkly = sparkly_create(archetype_global._meffect, op, -1, SOUND_MAGIC_DEFAULT, SOUND_SPELL);
+                i = find_animation("meffect_green");
+                sparkly->animation_id = i;                
                 ndi(NDI_UNIQUE, 0, op, "You feel a little more perfect!");
             }
             else if (success_flag == 2)
             {
                 FIX_PLAYER(op ,"ApplyPotion - improvement - cursed");
-                insert_spell_effect("meffect_purple", op->map, op->x, op->y);
-                play_sound_map(MSP_KNOWN(op), SOUND_DRINK_POISON, SOUND_NORMAL);
+                sparkly = sparkly_create(archetype_global._meffect, op, -1, SOUND_DRINK_POISON, SOUND_NORMAL);
+                i = find_animation("meffect_purple");
+                sparkly->animation_id = i;                
                 ndi(NDI_UNIQUE, 0, op, "The foul potion burns like fire in you!");
             }
             else /* bad potion but all values of this player are 1! poor poor guy.... */
             {
-                insert_spell_effect("meffect_purple", op->map, op->x, op->y);
-                play_sound_map(MSP_KNOWN(op), SOUND_DRINK_POISON, SOUND_NORMAL);
+                sparkly = sparkly_create(archetype_global._meffect, op, -1, SOUND_DRINK_POISON, SOUND_NORMAL);
+                i = find_animation("meffect_pink");
+                sparkly->animation_id = i;                
                 ndi(NDI_UNIQUE, 0, op, "The potion was foul but had no effect on your tortured body.");
             }
             decrease_ob_nr(tmp, 1);

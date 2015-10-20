@@ -30,14 +30,15 @@
 
 #include "global.h"
 
-#define FILTER(_PL_, _OP_) \
-    ((_OP_) != (_PL_)->ob &&                          /* never see self but otherwise */ \
-     (((_PL_)->gmaster_mode & GMASTER_MODE_SA) ||      /* SAs see all but others */ \
-      (!QUERY_FLAG((_OP_), FLAG_SYS_OBJECT) &&          /* can't see sys objects */ \
-       !IS_GMASTER_INVIS((_OP_)) &&                     /* can't see gmaster invis */ \
-       (!QUERY_FLAG((_OP_), FLAG_IS_INVISIBLE) ||       /* can't see invisible objects unless */ \
-        QUERY_FLAG((_PL_)->ob, FLAG_SEE_INVISIBLE) ||    /* player has the ability to do so or */ \
-        (_OP_)->env == (_PL_)->ob))))                    /* they're in his inventory (simulates feel) */
+#define FILTER(_PL_, _O_) \
+    (!QUERY_FLAG((_O_), FLAG_NO_SEND) &&              /* some objects are only map effects */ \
+     ((_O_) != (_PL_)->ob &&                           /* never see self but otherwise */ \
+      (((_PL_)->gmaster_mode & GMASTER_MODE_SA) ||       /* SAs see all but others */ \
+       (!QUERY_FLAG((_O_), FLAG_SYS_OBJECT) &&           /* can't see sys objects */ \
+        !IS_GMASTER_INVIS((_O_)) &&                      /* can't see gmaster invis */ \
+        (!QUERY_FLAG((_O_), FLAG_IS_INVISIBLE) ||        /* can't see invisible objects unless */ \
+         QUERY_FLAG((_PL_)->ob, FLAG_SEE_INVISIBLE) ||     /* player has the ability to do so or */ \
+         (_O_)->env == (_PL_)->ob)))))                    /* they're in his inventory (simulates feel) */
 
 static void            SendInventory(player_t *pl, object_t *op);
 static uint8           AddInventory(sockbuf_struct *sb, _server_client_cmd cmd,

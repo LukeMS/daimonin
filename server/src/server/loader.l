@@ -595,6 +595,7 @@ op->oz= op->z;
 ^feared{S}			SET_OR_CLEAR_FLAG(op, FLAG_FEARED, IVAL);
 ^rooted{S}			SET_OR_CLEAR_FLAG(op, FLAG_ROOTED, IVAL);
 ^slowed{S}			SET_OR_CLEAR_FLAG(op, FLAG_SLOWED, IVAL);
+^no_send{S}		SET_OR_CLEAR_FLAG(op, FLAG_NO_SEND, IVAL);
 ^stealth{S}			SET_OR_CLEAR_FLAG(op, FLAG_STEALTH, IVAL);
 ^connected{S}	    add_button_links(op, op->map, yval());
 ^cursed{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CURSED, IVAL);

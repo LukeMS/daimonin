@@ -93,7 +93,7 @@
 #define SPECIAL_KEY             21
 #define MAP                     22
 #define DOOR                    23
-/*#define KEY                     24*/
+#define TYPE_SPARKLY            24
 #define MMISSILE                25
 #define TIMED_GATE              26
 #define TRIGGER                 27 /* triggered when applied, resets after interval */
@@ -205,7 +205,7 @@
 #define DIRECTOR                112
 #define GIRDLE                  113
 #define FORCE                   114
-#define POTION_EFFECT           115    /* a force, holding the effect of a potion */
+/* 115 is free (POTION_EFFECT in 0.10.6). */
 #define TYPE_JEWEL              116    /* to make it different from GEM - thats needed to have a better */
 #define TYPE_NUGGET             117    /* use from the artifacts file */
 #define TYPE_EVENT_OBJECT       118    /* event/script object_t */
@@ -410,6 +410,7 @@
 #define ST1_FORCE_BLIND     8
 #define ST1_FORCE_POISON    9
 #define ST1_FORCE_DEATHSICK 10
+#define ST1_FORCE_POTION    11
 
 /* END SUB TYPE 1 DEFINE */
 
@@ -678,7 +679,7 @@
 #define FLAG_STAND_STILL    67 /* NPC will not (ever) move */
 #define FLAG_RANDOM_MOVE    68 /* NPC will move randomly */
 #define FLAG_ONLY_ATTACK    69 /* NPC will evaporate if there is no enemy */
-#define FLAG_NO_SEND        70 // do not send normal ITEMX/Y or DELITEM cmds about this object to clients
+#define FLAG_NO_SEND        70 // do not send data about this object to clients
 #define FLAG_STEALTH        71 /* Will wake monsters with less range */
 #define FLAG_IS_GIVING      72 /* Monster is giving items from their inv */
 #define FLAG_IS_LINKED      73 /* The object is linked with other objects */
