@@ -83,7 +83,6 @@ name   CDATA #REQUIRED>
 <type number="69" name="SHOP_MAT"/>
 <type number="70" name="RING"/>
 <type number="71" name="FLOOR"/>
-<type number="72" name="FLESH"/>
 <type number="73" name="INORGANIC"/> 
 <type number="74" name="TYPE_LIGHT_APPLY"/>
 <type number="75" name="LIGHTER"/>

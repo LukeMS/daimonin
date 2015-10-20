@@ -2175,29 +2175,6 @@
 </type>
 
 <!--####################################################################-->
-<type number="72" name="Flesh">
-  <import_type name="resist_values" />
-  <description><![CDATA[
-    By eating/drinking food-objects, the player can fill his
-    stomach and gain a little health. ]]>
-  </description>
-  <attribute arch="food" editor="foodpoints" type="int">
-    The player's stomach will get filled with this amount of foodpoints.
-    The player's health will increase by &lt;foodpoints&gt;/50 hp.
-  </attribute>
-  <attribute arch="level" editor="flesh level" type="int">
-    The &lt;flesh level&gt; is not visible to the players and it affects only
-    dragon players. Normally this value reflects the level of the monster
-    from which the flesh item originates.
-    Dragon players always search for flesh of highest level possible,
-    because it bears the best chance to gain high resistances.
-  </attribute>
-  <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
-    This text may describe the item.
-  </attribute>
-</type>
-
-<!--####################################################################-->
 <type number="71" name="Floor">
   <import_type name="default_flags" />
   <ignore>
