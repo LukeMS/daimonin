@@ -1150,9 +1150,6 @@ EXTERN struct shstr_constants
     shstr_t *NONE;
     shstr_t *quarterstaff;
     shstr_t *clawing;
-    shstr_t *dragon_skin_force;
-    shstr_t *dragon_ability_force;
-    shstr_t *dragon;
     shstr_t *town_portal_destination;
     shstr_t *existing_town_portal;
     shstr_t *player;

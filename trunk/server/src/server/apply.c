@@ -25,9 +25,6 @@
 
 #include <global.h>
 
-/* need math lib for double-precision and pow() in dragon_eat_flesh() */
-#include <math.h>
-
 #if defined(vax) || defined(ibm032)
 size_t  strftime(char *, size_t, const char *, const struct tm *);
 time_t  mktime(struct tm *);
@@ -1997,96 +1994,66 @@ static void ApplyTreasure(object_t *op, object_t *tmp)
 #endif
 }
 
-/* NOTE: For B4 we removed the old food system. Foods are now a regeneration force over time,
- * like you quaff a potion or cast a spell and the healing/reg effects comes in ticks for x seconds.
- * There is the old "dragon player code" still here. I like the idea very much and hopefully we can
- * add it later again to daimonin.
- * For that i removed FLESH from the eatable things for player. Only FOOD and DRINK will work like
- * a force here (honestly... we need drink as own type? ATM is just exactly the same as food)
- * MT-20.01.2007 */
+/* NOTE: For B4 we removed the old food system. Foods are now a regeneration
+ * force over time, like you quaff a potion or cast a spell and the healing/reg
+ * effects comes in ticks for x seconds. */
 static void ApplyFood(object_t *op, object_t *tmp)
 {
     object_t *force;
 
-    if (op->type != PLAYER)
+    if (trigger_object_plugin_event(EVENT_APPLY, tmp, op, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
     {
-        /* food applied by non players... lets handle it later when we have a good idea */
-        /*
-        if(trigger_object_plugin_event(
-                    EVENT_APPLY, tmp, op, NULL,
-                    NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
-                    return;
-        */
+        return;
     }
-    else
+
+    /* new food code for beta 4... food will now always work as force.
+     * We want 2 things:
+     * first, a regeneration every x ticks of hp and/or sp/grace.
+     * second, AFTER the food is eaten we will perhaps install the food
+     * as a buf force.
+     * For that we copy the arch and do a type transmission to create
+     * a force from sub type food. We search the player inventory,
+     * removing every old food force and kick this new one in.
+     * If the food is also a buf force, then we insert the food in the force
+     * inventory and when the reg force is done, the buf is invoked.
+     * This is a kind "after we have eaten the food complete, we get a STR+5
+     * for 5 min".
+     */
+
+    force   = get_archetype("force");
+    if (!force)
     {
-        /* check if this is a dragon (player), eating some flesh */
-        if (tmp->type == FLESH && is_dragon_pl(op) && dragon_eat_flesh(op, tmp))
-        {
-        }
-        else
-        {
-            if (tmp->type == FLESH)
-            {
-                ndi(NDI_UNIQUE, 0, op, "You can't consume that!");
-                return;
-            }
-
-            if(trigger_object_plugin_event(
-                        EVENT_APPLY, tmp, op, NULL,
-                        NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
-                return;
-        }
-
-        /* new food code for beta 4... food will now always work as force.
-         * We want 2 things:
-         * first, a regeneration every x ticks of hp and/or sp/grace.
-         * second, AFTER the food is eaten we will perhaps install the food
-         * as a buf force.
-         * For that we copy the arch and do a type transmission to create
-         * a force from sub type food. We search the player inventory,
-         * removing every old food force and kick this new one in.
-         * If the food is also a buf force, then we insert the food in the force
-         * inventory and when the reg force is done, the buf is invoked.
-         * This is a kind "after we have eaten the food complete, we get a STR+5
-         * for 5 min".
-         */
-
-        force   = get_archetype("force");
-        if (!force)
-        {
-            LOG(llevBug, "ApplyFood: can't create force object!?\n");
-            return;
-        }
-
-        force->type = TYPE_FOOD_FORCE;
-        SET_FLAG(force, FLAG_IS_USED_UP); /* or it will auto destroyed with first tick */
-        SET_FLAG(force, FLAG_NO_SAVE);
-        force->stats.food += tmp->last_eat + 1; /* how long this force will stay */
-        force->last_eat = tmp->last_eat + 1;    /* we need that to know the base time */
-        if (force->stats.food <= 0)
-            force->stats.food = 1;
-        force->stats.hp = tmp->stats.hp;
-        force->stats.sp = tmp->stats.sp;
-        force->stats.grace = tmp->stats.grace;
-        force->speed = 0.125f;
-
-        /* applying the food will put as in "rest mode" - but instead of rest regeneration we
-         * will just eat... But eat will get interrupted when hit and such like normal rest too!
-         * So, no eating in combat... perhaps a single tick will come in but on the price of a wasted food
-         */
-
-        CONTR(op)->food_status = -1000;
-        CONTR(op)->rest_mode = 1;
-
-        SET_FLAG(force, FLAG_APPLIED);
-        SET_FLAG(op, FLAG_EATING);
-        force = insert_ob_in_ob(force, op);
-
-        ndi(NDI_UNIQUE| NDI_NAVY, 0, op, "You start consuming %s",
-            QUERY_SHORT_NAME(tmp, op));
-
+        LOG(llevBug, "ApplyFood: can't create force object!?\n");
+        return;
     }
+
+    force->type = TYPE_FOOD_FORCE;
+    SET_FLAG(force, FLAG_IS_USED_UP); /* or it will auto destroyed with first tick */
+    SET_FLAG(force, FLAG_NO_SAVE);
+    force->stats.food += tmp->last_eat + 1; /* how long this force will stay */
+    force->last_eat = tmp->last_eat + 1;    /* we need that to know the base time */
+    if (force->stats.food <= 0)
+        force->stats.food = 1;
+    force->stats.hp = tmp->stats.hp;
+    force->stats.sp = tmp->stats.sp;
+    force->stats.grace = tmp->stats.grace;
+    force->speed = 0.125f;
+
+    /* applying the food will put as in "rest mode" - but instead of rest regeneration we
+     * will just eat... But eat will get interrupted when hit and such like normal rest too!
+     * So, no eating in combat... perhaps a single tick will come in but on the price of a wasted food
+     */
+
+    CONTR(op)->food_status = -1000;
+    CONTR(op)->rest_mode = 1;
+
+    SET_FLAG(force, FLAG_APPLIED);
+    SET_FLAG(op, FLAG_EATING);
+    force = insert_ob_in_ob(force, op);
+
+    ndi(NDI_UNIQUE| NDI_NAVY, 0, op, "You start consuming %s",
+        QUERY_SHORT_NAME(tmp, op));
+
     decrease_ob_nr(tmp, 1);
 }
 
@@ -2446,7 +2413,6 @@ int manual_apply(object_t *who, object_t *what, int aflag)
 
         case DRINK:
         case FOOD:
-        case FLESH:
         ApplyFood(who, what);
         r = (1+8);
         break;

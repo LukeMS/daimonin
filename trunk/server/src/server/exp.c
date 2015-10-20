@@ -579,10 +579,6 @@ static void AdjustLevel(object_t *who, object_t *op, int flag_msg)
             (void)sparkly_create(archetype_global._level_up, who, -1, SOUND_LEVEL_UP, SOUND_NORMAL);
         }
 
-        if (op == who && op->stats.exp > 1 && is_dragon_pl(who))
-            dragon_level_gain(who);
-
-
         if (op->type != TYPE_SKILLGROUP && op->type != TYPE_SKILL && who->level > 1)
         {
             if (who->level + drain_level > 4)

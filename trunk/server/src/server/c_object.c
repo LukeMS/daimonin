@@ -358,11 +358,6 @@ char *examine(object_t *op, object_t *tmp, int flag)
         }
     }
 
-    /* Only quetzals can see the resistances on flesh. To realize
-    this, we temporarily flag the flesh with SEE_INVISIBLE */
-    if (op && op->type == PLAYER && tmp->type == FLESH && is_dragon_pl(op))
-        SET_FLAG(tmp, FLAG_SEE_INVISIBLE);
-
     *buf='\0';
     if(flag)
     {
@@ -370,9 +365,6 @@ char *examine(object_t *op, object_t *tmp, int flag)
             (tmp->nrof > 1) ? "Those are" : "That is",
             query_name(tmp, op, tmp->nrof, 1));
     }
-
-    if (op && op->type == PLAYER && tmp->type == FLESH)
-        CLEAR_FLAG(tmp, FLAG_SEE_INVISIBLE);
 
     /* only add this for usable items, not for objects like walls or floors for example */
     if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED) &&

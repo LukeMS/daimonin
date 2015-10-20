@@ -1840,14 +1840,6 @@ static int get_random_spell(int level, int flags)
  * op->type. Right now, which stuff the creator passes on is object type
  * dependant. I know this is a spagetti manuever, but is there a cleaner
  * way to do this? b.t. */
-/*
- * ! (flags & GT_ENVIRONMENT):
- *     Automatically calls fix_flesh_item().
- *
- * flags & GT_NO_DROP:
- *     Sets FLAG_NO_DROP on item if appropriate, or clears the item's
- *     value.
- */
 int fix_generated_item(object_t **op_ptr, object_t *creator, int difficulty, int a_chance, int t_style, int max_magic,
                        int chance_magic, int flags)
 {
@@ -2161,8 +2153,6 @@ int fix_generated_item(object_t **op_ptr, object_t *creator, int difficulty, int
         if (is_cursed_or_damned(op))
             SET_FLAG(op, FLAG_KNOWN_CURSED);
     }
-    if (!(flags & GT_ENVIRONMENT))
-        fix_flesh_item(op, creator);
 
     return retval;
 }
@@ -2194,10 +2184,7 @@ void dump_monster_treasure_rec(const char *name, treasure *t, int depth)
         {
             for (i = 0; i < depth; i++)
                 LOG(llevInfo, "  ");
-            if (t->item->clone.type == FLESH)
-                LOG(llevInfo, "%s's %s\n", name, t->item->clone.name);
-            else
-                LOG(llevInfo, "%s\n", t->item->clone.name);
+            LOG(llevInfo, "%s\n", t->item->clone.name);
         }
         if (t->next_yes != NULL)
         {
@@ -2214,49 +2201,6 @@ void dump_monster_treasure_rec(const char *name, treasure *t, int depth)
             dump_monster_treasure_rec(name, t->next_no, depth + 1);
         }
         t = t->next;
-    }
-}
-
-/* fix_flesh_item() - objects of type FLESH are similar to type
- * FOOD, except they inherit properties (name, food value, etc).
- * based on the original owner (or 'donor' if you like). -b.t.
- */
-
-void fix_flesh_item(object_t *item, object_t *donor)
-{
-    char    tmpbuf[MEDIUM_BUF];
-    int     i;
-
-    if (item->type == FLESH && donor)
-    {
-        /* change the name */
-        sprintf(tmpbuf, "%s's %s", donor->name, item->name);
-        FREE_AND_COPY_HASH(item->name, tmpbuf);
-        /* weight is FLESH weight/100 * donor */
-        if ((item->weight = (signed long) (((double) item->weight / (double) 100.0) * (double) donor->weight)) == 0)
-            item->weight = 1;
-
-        /* value is multiplied by level of donor */
-        item->value *= isqrt(donor->level * 2);
-
-        /* food value */
-        item->stats.food += (donor->stats.hp / 100) + donor->stats.Con;
-
-        /* flesh items inherit some abilities of donor, but not
-         * full effect.
-         */
-        for (i = 0; i < NROFATTACKS; i++)
-            item->resist[i] = donor->resist[i] / 2;
-
-        /* item inherits donor's level (important for quezals) */
-        item->level = donor->level;
-
-        /* if donor has some attacktypes, the flesh is poisonous */
-        if (donor->attack[ATNR_POISON])
-            item->type = POISON;
-        if (donor->attack[ATNR_ACID])
-            item->stats.hp = -1 * item->stats.food;
-        SET_FLAG(item, FLAG_NO_STEAL);
     }
 }
 

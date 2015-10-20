@@ -4163,7 +4163,6 @@ char *query_name(object_t *what, object_t *who, uint32 article, uint8 status)
         case CLOAK:
         case FOOD:
         case DRINK:
-        case FLESH:
         case CONTAINER:
         if (!what->title)
         {

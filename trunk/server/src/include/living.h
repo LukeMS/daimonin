@@ -108,8 +108,6 @@ extern void         fix_player(object_t *op, char *msg);
 #else
 extern void         fix_player(object_t *op);
 #endif
-extern void         set_dragon_name(object_t *pl, object_t *abil, object_t *skin);
-extern void         dragon_level_gain(object_t *who);
 extern void         fix_monster(object_t *op);
 extern object_t    *insert_base_info_object(object_t *op);
 extern object_t    *find_base_info_object(object_t *op);
