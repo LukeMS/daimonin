@@ -1426,31 +1426,6 @@ void fix_player(object_t *op)
 
                   /* more exotic stuff! */
 
-                case POTION_EFFECT:
-                  /* no protection from potion effect -resist only! */
-                  for (i = 0; i < STAT_NROF; i++)
-                      set_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
-                  /* collect highest boni & malus - only highest one count,
-                             * no adding potion effects of same resist!
-                             */
-                  thac0 += tmp->stats.thac0;
-                  thacm += tmp->stats.thacm;
-                  for (i = 0; i < NROFATTACKS; i++)
-                  {
-                      /* collect highest/lowest resistance */
-                      if (tmp->resist[i] > potion_resist_boni[i])
-                          potion_resist_boni[i] = tmp->resist[i];
-                      else if (tmp->resist[i] < potion_resist_mali[i])
-                          potion_resist_mali[i] = tmp->resist[i];
-
-                      /* collect highest attack!
-                                     * Remember: no attack mali - this is a unsigned value
-                                     */
-                      if (tmp->attack[i] > potion_attack[i])
-                          potion_attack[i] = tmp->attack[i];
-                  }
-                  break;
-
                   /* now calc resistance and stuff for all the rest applyable objects! */
                   /* i am not 100% sure this is safe for *all* objects - i have used for that
                          * reason not default here.
@@ -1499,6 +1474,32 @@ void fix_player(object_t *op)
                     {
                         for (i = 0; i < STAT_NROF; i++)
                             set_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
+                    }
+                    else if(tmp->sub_type1 == ST1_FORCE_POTION) /* applied potion  */
+                    {
+                        /* no protection from potion effect -resist only! */
+                        for (i = 0; i < STAT_NROF; i++)
+                            set_stat_value(&(op->stats), i, get_stat_value(&(tmp->stats), i));
+                        /* collect highest boni & malus - only highest one count,
+                                   * no adding potion effects of same resist!
+                                   */
+                        thac0 += tmp->stats.thac0;
+                        thacm += tmp->stats.thacm;
+                        for (i = 0; i < NROFATTACKS; i++)
+                        {
+                            /* collect highest/lowest resistance */
+                            if (tmp->resist[i] > potion_resist_boni[i])
+                                potion_resist_boni[i] = tmp->resist[i];
+                            else if (tmp->resist[i] < potion_resist_mali[i])
+                                potion_resist_mali[i] = tmp->resist[i];
+
+                            /* collect highest attack!
+                                           * Remember: no attack mali - this is a unsigned value
+                                           */
+                            if (tmp->attack[i] > potion_attack[i])
+                                potion_attack[i] = tmp->attack[i];
+                        }
+                        break;
                     }
                     else
                     {

@@ -576,25 +576,7 @@ static void AdjustLevel(object_t *who, object_t *op, int flag_msg)
         /* show the player some effects... */
         if (op->type == TYPE_SKILL && who && who->map)
         {
-            object_t *effect_ob;
-
-            play_sound_player_only(CONTR(who), SOUND_LEVEL_UP, SOUND_NORMAL, 0, 0);
-
-            if (archetype_global._level_up)
-            {
-                /* prepare effect */
-                effect_ob = arch_to_object(archetype_global._level_up);
-                effect_ob->map = who->map;
-                effect_ob->x = who->x;
-                effect_ob->y = who->y;
-
-                if (!insert_ob_in_map(effect_ob, effect_ob->map, NULL, INS_NO_MERGE | INS_NO_WALK_ON))
-                {
-                    /* something is wrong - kill object_t */
-                    if (!QUERY_FLAG(effect_ob, FLAG_REMOVED))
-                        remove_ob(effect_ob); /* check off not needed */
-                }
-            }
+            (void)sparkly_create(archetype_global._level_up, who, -1, SOUND_LEVEL_UP, SOUND_NORMAL);
         }
 
         if (op == who && op->stats.exp > 1 && is_dragon_pl(who))

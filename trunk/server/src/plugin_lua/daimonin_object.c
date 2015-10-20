@@ -398,7 +398,7 @@ static const char *GameObject_flags[NUM_FLAGS + 1 + 1] =
     /*  67 */ "f_stand_still",
     /*  68 */ "f_random_move",
     /*  69 */ "f_only_attack",
-    /*  70 */ "f?_no_send",
+    /*  70 */ "?f_no_send",
     /*  71 */ "f_stealth",
     /*  72 */ "?is_giving",
     /*  73 */ "?f_is_linked",

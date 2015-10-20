@@ -114,9 +114,6 @@
 //int                         cast_cause_disease(object *op, object *caster, int dir, archetype *disease_arch, int type);
 //void                        move_aura(object *aura);
 //void                        move_peacemaker(object *op);
-///* swamp.c */
-//void                        walk_on_deep_swamp(object *op, object *victim);
-//void                        move_deep_swamp(object *op);
 ///* time.c */
 //void                        move_firechest(object *op);
 #endif
@@ -692,6 +689,9 @@ int                         get_path_next(const char *buf, sint16 *off, const ch
 path_node                  *compress_path(path_node *path);
 float                       distance_heuristic(path_node *start, path_node *current, path_node *goal, object_t *op1, object_t *op2);
 path_node                  *find_path(object_t *op, map_t *map1, int x1, int y1, map_t *map2, int x2, int y2);
+/* swamp.c */
+extern object_t *sparkly_create(archetype_t *at, object_t *who, sint16 t, sint16 nr, uint8 stype);
+extern void      sparkly_move(object_t *effect);
 
 int command_level(object_t *op, char *params);
 

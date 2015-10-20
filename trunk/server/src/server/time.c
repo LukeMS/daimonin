@@ -1730,56 +1730,67 @@ int process_object(object_t *op)
         return 1;
     }
 
-    if (QUERY_FLAG(op, FLAG_IS_USED_UP) && --op->stats.food <= 0)
+    if (QUERY_FLAG(op, FLAG_IS_USED_UP) &&
+         --op->stats.food <= 0)
     {
-        if (op->type == TYPE_FOOD_FORCE && op->env && op->env->type == PLAYER && CONTR(op->env))
+        if (op->type == TYPE_SPARKLY)
         {
-            CLEAR_FLAG(op->env, FLAG_EATING);
-            CONTR(op->env)->food_status = 0;
-            ndi(NDI_UNIQUE| NDI_NAVY, 0, op->env, "You finish digesting your meal.");
+            remove_ob(op);
+            check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+            return 0;
         }
-
-        if (QUERY_FLAG(op, FLAG_APPLIED) && op->type != CONTAINER)
+        else if (op->type == CONTAINER &&
+                 (op->sub_type1 & 1) == ST1_CONTAINER_CORPSE)
         {
+            if (op->attacked_by) /* this means someone access the corpse */
+            {
+                /* then stop decaying! - we don't want delete this under the hand of the guy! */
+                op->stats.food += 3; /* give him a bit time back */
+                return 0;
+            }
+
+            /* now we do something funny: WHEN the corpse is a (personal) bounty,
+             * we delete the bounty marker (->slaying) and reseting the counter.
+             * Now other people can access the corpse for stuff which are leaved
+             * here perhaps. */
+            if (op->slaying)
+            {
+                FREE_AND_CLEAR_HASH2(op->slaying);
+                op->stats.food = op->arch->clone.stats.food;
+                remove_ob(op);                       /* another lame way to update view of players... */
+                insert_ob_in_map(op, op->map, NULL, INS_NO_WALK_ON);
+            }
+            else
+            {
+                remove_ob(op);
+                check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+            }
+
+            return 1;
+        }
+        /* TODO: Ought to ensure this is a force. */
+        else if (QUERY_FLAG(op, FLAG_APPLIED) &&
+                 op->type != CONTAINER)
+        {
+            if (op->type == TYPE_FOOD_FORCE &&
+                op->env &&
+                op->env->type == PLAYER &&
+                CONTR(op->env))
+            {
+                CLEAR_FLAG(op->env, FLAG_EATING);
+                CONTR(op->env)->food_status = 0;
+                ndi(NDI_UNIQUE| NDI_NAVY, 0, op->env, "You finish digesting your meal.");
+            }
+
             remove_force(op);
+            return 1;
         }
         else
         {
-            /* we have a decying container on the floor (asuming its only possible here) ! */
-            if (op->type == CONTAINER && (op->sub_type1 & 1) == ST1_CONTAINER_CORPSE)
-            {
-                if (op->attacked_by) /* this means someone access the corpse */
-                {
-                    /* then stop decaying! - we don't want delete this under the hand of the guy! */
-                    op->stats.food += 3; /* give him a bit time back */
-                    goto process_object_dirty_jump; /* go on */
-                }
-
-                /* now we do something funny: WHEN the corpse is a (personal) bounty,
-                 * we delete the bounty marker (->slaying) and reseting the counter.
-                 * Now other people can access the corpse for stuff which are leaved
-                 * here perhaps.
-                 */
-                if (op->slaying)
-                {
-                    FREE_AND_CLEAR_HASH2(op->slaying);
-                    op->stats.food = op->arch->clone.stats.food;
-                    remove_ob(op);                       /* another lame way to update view of players... */
-                    insert_ob_in_map(op, op->map, NULL, INS_NO_WALK_ON);
-                    return 1;
-                }
-
-                remove_ob(op);
-                check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
-                return 1;
-            }
-
             (void)kill_object(op, NULL, NULL, NULL);
+            return 1;
         }
-        return 1;
     }
-
-    process_object_dirty_jump:
 
     /* I don't like this script object here ..  this is *the* core loop.  */
     /* The redundant flag test avoids a function call in the common case */
@@ -1800,10 +1811,9 @@ int process_object(object_t *op)
           else if (op->sub_type1 == ST1_FORCE_POISON)
               poison_more(op);
           return 1;
-        case POTION_EFFECT:
-          if (!QUERY_FLAG(op, FLAG_IS_USED_UP))
-              remove_force(op);
-          return 1;
+        case TYPE_SPARKLY:
+          sparkly_move(op);
+          return 0;
         case SPAWN_POINT:
           spawn_point(op);
           return 0;

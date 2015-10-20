@@ -1050,22 +1050,6 @@ void cs_cmd_moveobj(char *buf, int len, NewSocket *ns)
         return;
     }
 
-    /* This is not as straightforward as I thought, so for now it's disabled.
-     *
-     * -- Smacky 20130228 */
-#if 0
-    /* If we're moving the entire stack we'll just send an UPD_LOCATION to the
-     * client(s) at the end of this function, so disable normal item send/del
-     * cmds (see object.c). But when we split a stack this means the split (and
-     * moved) portion is actually an entirely new object, so do the normal
-     * cmds. */
-    if (!nrof ||
-        nrof >= what->nrof)
-    {
-        SET_FLAG(what, FLAG_NO_SEND);
-    }
-#endif
-
     /* Drop to floor. */
     if (!loc &&
         (!pl->container ||
@@ -1090,14 +1074,6 @@ void cs_cmd_moveobj(char *buf, int len, NewSocket *ns)
         {
             what = pick_up(who, what, where, nrof);
         }
-    }
-
-    /* what has moved so send an UPD_LOCATION to clients. */
-    if (what &&
-        QUERY_FLAG(what, FLAG_NO_SEND))
-    {
-        CLEAR_FLAG(what, FLAG_NO_SEND);
-        esrv_update_item(UPD_LOCATION, what);
     }
 }
 

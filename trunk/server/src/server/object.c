@@ -499,7 +499,6 @@ object_t * merge_ob(object_t *op, object_t *tmp)
                 STRING_OBJ_NAME(op), TAG(op), op->nrof);
 #endif
             op->nrof = op->nrof + tmp->nrof;
-            CLEAR_FLAG(tmp, FLAG_NO_SEND);
             remove_ob(tmp);
 
             if (op->env &&
