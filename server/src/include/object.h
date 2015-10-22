@@ -521,6 +521,13 @@ struct object_t
 #define MODE_INVENTORY    0
 #define MODE_NO_INVENTORY 1
 
+/* OBJECT_FULLY_IDENTIFY() sets the object's IDENTIFIED flag and sets or clears
+ * the KNOWN_* flags as appropriate to fully identify it. */
+#define OBJECT_FULLY_IDENTIFY(_O_) \
+    SET_FLAG((_O_), FLAG_IDENTIFIED); \
+    SET_OR_CLEAR_FLAG((_O_), FLAG_KNOWN_MAGICAL, (QUERY_FLAG((_O_), FLAG_IS_MAGICAL))); \
+    SET_OR_CLEAR_FLAG((_O_), FLAG_KNOWN_CURSED, (QUERY_FLAG((_O_), FLAG_CURSED) || QUERY_FLAG((_O_), FLAG_DAMNED)));
+
 #endif /* ifndef __OBJECT_H */
 
 #ifndef __PETS_H

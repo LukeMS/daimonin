@@ -171,19 +171,6 @@ WS	[ \t]*{NL}?
 	                tmp->item_condition = tmp->item_quality;
 				}
 
-#if 0
-				/* Buggers up merging. These are 3 distinct flags and should be tested for
-				 * separately. As such, IDENTIFIED should not set the other two in any case.
-				 * -- Smacky 20090312 */
-				if (QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-				{
-					if (is_magical(tmp))
-						SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
-
-					if (is_cursed_or_damned(tmp))
-						SET_FLAG(tmp, FLAG_KNOWN_CURSED);
-				}
-#endif
 				/* artificate the item */
 				if(amask_art)
 					give_artifact_abilities(tmp, amask_art);
@@ -826,19 +813,6 @@ int load_object(void *fp, object_t *op, void *mybuffer, int bufstate, int mapfla
 		copy_object_data(singularity,op); /* yep, this is right - op is a reference from outside */
 	}
 
-#if 0
-	/* Buggers up merging. These are 3 distinct flags and should be tested for
-	 * separately. As such, IDENTIFIED should not set the other two in any case.
-	 * -- Smacky 20090312 */
-	if (QUERY_FLAG(op, FLAG_IDENTIFIED))
-	{
-		if (is_magical(op))
-			SET_FLAG(op, FLAG_KNOWN_MAGICAL);
-
-		if (is_cursed_or_damned(op))
-			SET_FLAG(op, FLAG_KNOWN_CURSED);
-	}
-#endif
   /* we set here the material real values.
    * we do: If item_quality == 0 AND material defines a base
    * material, then use material_real to set quality & condition.

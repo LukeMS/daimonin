@@ -804,10 +804,6 @@ typedef enum
 #define SCRIPT_FIX_ALL           1
 #define SCRIPT_FIX_NOTHING       0
 
-#define special_potion(__op_sp) (__op_sp)->last_eat
-#define is_magical(__op_) QUERY_FLAG(__op_,FLAG_IS_MAGICAL)
-#define is_cursed_or_damned(__op_) (QUERY_FLAG(__op_, FLAG_CURSED) || QUERY_FLAG(__op_, FLAG_DAMNED))
-
 #define NUM_COLORS          13
 
 /** number of darkness levels. 0 means total darkness. */

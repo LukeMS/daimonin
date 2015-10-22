@@ -700,7 +700,7 @@ static uint32 ClientFlags(object_t *op)
     }
 
     if (QUERY_FLAG(op, FLAG_KNOWN_MAGICAL) &&
-        is_magical(op))
+        QUERY_FLAG(op, FLAG_IS_MAGICAL))
     {
         flags |= F_MAGIC;
     }

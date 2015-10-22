@@ -562,7 +562,7 @@
 //    {
 //        if (QUERY_FLAG(tmp, FLAG_DAMNED) && !remove_damnation)
 //            continue;
-//        if (is_cursed_or_damned(tmp))
+//        if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
 //        {
 //            success = 1;
 //            CLEAR_FLAG(tmp, FLAG_DAMNED);

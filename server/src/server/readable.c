@@ -1225,14 +1225,7 @@ char * artifact_msg(int level, int booksize)
             give_artifact_abilities(tmp, art);
         }
 
-        SET_FLAG(tmp, FLAG_IDENTIFIED);
-
-        if (is_magical(tmp))
-            SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
-
-        if (is_cursed_or_damned(tmp))
-            SET_FLAG(tmp, FLAG_KNOWN_CURSED);
-
+        OBJECT_FULLY_IDENTIFY(tmp);
         sprintf(buf,"<t t=\"%s %s\">\n", tmp->name, tmp->title?tmp->title:"");
         strcat(retbuf,buf);
         /* chance of finding */

@@ -107,9 +107,7 @@ static inline object_t *add_quest_item(object_t *target, object_t *obj)
 
     q_tmp = get_object();
     copy_object(obj, q_tmp);
-    SET_FLAG(q_tmp, FLAG_KNOWN_CURSED);
-    SET_FLAG(q_tmp, FLAG_KNOWN_MAGICAL);
-    SET_FLAG(q_tmp, FLAG_IDENTIFIED);
+    OBJECT_FULLY_IDENTIFY(q_tmp);
     q_tmp = insert_ob_in_ob(q_tmp, target); /* real object to player */
 
     return q_tmp;
@@ -139,15 +137,11 @@ static inline object_t *add_one_drop_quest_item(object_t *target, object_t *obj)
         qt->speed = 0.0f;
         CLEAR_FLAG(qt, FLAG_ANIMATE);
         CLEAR_FLAG(qt, FLAG_ALIVE);
-        SET_FLAG(qt, FLAG_KNOWN_CURSED);
-        SET_FLAG(qt, FLAG_KNOWN_MAGICAL);
-        SET_FLAG(qt, FLAG_IDENTIFIED);
+        OBJECT_FULLY_IDENTIFY(qt);
         /* we are storing the arch name of quest dummy items in race */
         FREE_AND_COPY_HASH(qt->race, obj->arch->name);
         insert_ob_in_ob(qt, qc); /* dummy copy in quest container */
-        SET_FLAG(obj, FLAG_KNOWN_CURSED);
-        SET_FLAG(obj, FLAG_KNOWN_MAGICAL);
-        SET_FLAG(obj, FLAG_IDENTIFIED);
+        OBJECT_FULLY_IDENTIFY(obj);
     }
 
     qt = add_quest_item(target, obj);
