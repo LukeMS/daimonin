@@ -995,22 +995,6 @@ static void Copy(object_t *from, object_t *to)
         SET_FLAG(to, FLAG_REMOVED);
     }
 
-#if 0
-/* Buggers up merging. These are 3 distinct flags and should be tested for
- * separately. As such, IDENTIFIED should not set the other two in any case.
- * Especially, in a function whose purpose is to copy an object, we should not
- * then modify the copy so it is no longer identical to the original.
- * -- Smacky 20090312 */
-    if (QUERY_FLAG(to, FLAG_IDENTIFIED))
-    {
-        if (is_magical(to))
-            SET_FLAG(to, FLAG_KNOWN_MAGICAL);
-
-        if (is_cursed_or_damned(to))
-            SET_FLAG(to, FLAG_KNOWN_CURSED);
-    }
-#endif
-
     /* perhaps we have a custom treasurelist. Then we need to
      * increase the refcount here. */
     if (to->randomitems &&
@@ -2258,17 +2242,7 @@ static void KillMonster(object_t *victim, object_t *killer, object_t *killer_own
                        this->type != RING &&
                        this->type != AMULET)
                     {
-                        SET_FLAG(this, FLAG_IDENTIFIED);
-
-                        if (is_magical(this))
-                        {
-                            SET_FLAG(this, FLAG_KNOWN_MAGICAL);
-                        }
-
-                        if (is_cursed_or_damned(this))
-                        {
-                            SET_FLAG(this, FLAG_KNOWN_CURSED);
-                        }
+                        OBJECT_FULLY_IDENTIFY(this);
                     }
 
                     /* if we have a corpse put the item in it */
@@ -3271,7 +3245,7 @@ int auto_apply(object_t *op)
               if (tmp == NULL)
                   return 0;
 
-              if (is_cursed_or_damned(tmp))
+              if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
               {
                   tmp = NULL;
               }

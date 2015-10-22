@@ -1024,13 +1024,7 @@ int create_all_treasures(treasure *t, object_t *op, int flag, int difficulty, in
                     /* if treasure is "identified", created items are too */
                     if (op->type == TREASURE && QUERY_FLAG(op, FLAG_IDENTIFIED))
                     {
-                        SET_FLAG(tmp, FLAG_IDENTIFIED);
-
-                        if (is_magical(tmp))
-                            SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
-
-                        if (is_cursed_or_damned(tmp))
-                            SET_FLAG(tmp, FLAG_KNOWN_CURSED);
+                        OBJECT_FULLY_IDENTIFY(tmp);
                     }
                 }
                 else /* we have a wealth object - expand it to real money */
@@ -1191,13 +1185,7 @@ int create_one_treasure(treasurelist *tl, object_t *op, int flag, int difficulty
             /* if trasure is "identified", created items are too */
             if (op->type == TREASURE && QUERY_FLAG(op, FLAG_IDENTIFIED))
             {
-                SET_FLAG(tmp, FLAG_IDENTIFIED);
-
-                if (is_magical(tmp))
-                    SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
-
-                if (is_cursed_or_damned(tmp))
-                    SET_FLAG(tmp, FLAG_KNOWN_CURSED);
+                OBJECT_FULLY_IDENTIFY(tmp);
             }
         }
         else /* we have a wealth object - expand it to real money */
@@ -1937,7 +1925,7 @@ int fix_generated_item(object_t **op_ptr, object_t *creator, int difficulty, int
                   }
                   else
                   {
-                      while (!(is_special = special_potion(op)) && op->stats.sp == SP_NO_SPELL)
+                      while (!(is_special = op->last_eat) && op->stats.sp == SP_NO_SPELL)
                       {
                           generate_artifact(op, difficulty, t_style, 100);
                           if (too_many_tries++ > 3)
@@ -2145,13 +2133,7 @@ int fix_generated_item(object_t **op_ptr, object_t *creator, int difficulty, int
 
     if (flags & GT_IDENTIFIED)
     {
-        SET_FLAG(op, FLAG_IDENTIFIED);
-
-        if (is_magical(op))
-            SET_FLAG(op, FLAG_KNOWN_MAGICAL);
-
-        if (is_cursed_or_damned(op))
-            SET_FLAG(op, FLAG_KNOWN_CURSED);
+        OBJECT_FULLY_IDENTIFY(op);
     }
 
     return retval;

@@ -331,7 +331,7 @@ int get_npc_object_attraction(object_t *op, object_t *other)
         for(tmp = &attractions[AIPARAM_ATTRACTION_CURSED]; tmp != NULL;
                 tmp = tmp->next)
         {
-            if(is_cursed_or_damned(other))
+            if(QUERY_FLAG(other, FLAG_CURSED) || QUERY_FLAG(other, FLAG_DAMNED))
                 attraction += tmp->intvalue;
         }
     }
@@ -342,7 +342,8 @@ int get_npc_object_attraction(object_t *op, object_t *other)
         for(tmp = &attractions[AIPARAM_ATTRACTION_CURSEDTYPE]; tmp != NULL;
                 tmp = tmp->next)
         {
-            if(other->type == atoi(tmp->stringvalue) && is_cursed_or_damned(other))
+            if(other->type == atoi(tmp->stringvalue) &&
+               (QUERY_FLAG(other, FLAG_CURSED) || QUERY_FLAG(other, FLAG_DAMNED)))
                 attraction += tmp->intvalue;
         }
     }

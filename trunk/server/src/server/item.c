@@ -635,19 +635,8 @@ void identify(object_t *op)
         return;
     }
 
-    SET_FLAG(op, FLAG_IDENTIFIED);
-    CLEAR_FLAG(op, FLAG_KNOWN_CURSED);
-    CLEAR_FLAG(op, FLAG_KNOWN_MAGICAL);
+    OBJECT_FULLY_IDENTIFY(op);
     CLEAR_FLAG(op, FLAG_NO_SKILL_IDENT);
-
-    /*
-     * We want autojoining of equal objects:
-     */
-    if (is_cursed_or_damned(op))
-        SET_FLAG(op, FLAG_KNOWN_CURSED);
-
-    if (is_magical(op))
-        SET_FLAG(op, FLAG_KNOWN_MAGICAL);
 
     if (op->type == POTION &&
         op->arch)

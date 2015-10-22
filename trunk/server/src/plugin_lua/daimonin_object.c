@@ -3447,13 +3447,7 @@ static object_t *CreateObjectInside_body(lua_State *L, object_t *where, char *ar
         myob->value = value;
     if (id)
     {
-        SET_FLAG(myob, FLAG_IDENTIFIED);
-
-        if (is_magical(myob))
-            SET_FLAG(myob, FLAG_KNOWN_MAGICAL);
-
-        if (is_cursed_or_damned(myob))
-            SET_FLAG(myob, FLAG_KNOWN_CURSED);
+        OBJECT_FULLY_IDENTIFY(myob);
     }
     if (nrof > 1)
         myob->nrof = nrof;

@@ -46,7 +46,7 @@ sint64 query_cost(object_t *tmp, object_t *who, int flag)
     /* handle identified items */
     if (QUERY_FLAG(tmp, FLAG_IDENTIFIED) || !need_identify(tmp))
     {
-        if (is_cursed_or_damned(tmp))
+        if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
             return 0;
         else
         {

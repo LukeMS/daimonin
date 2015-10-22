@@ -1094,7 +1094,7 @@ static int Detection(int type, object_t *this)
 
     if (type == SP_DETECT_MAGIC &&
         !QUERY_FLAG(this, FLAG_KNOWN_MAGICAL) &&
-        is_magical(this))
+        QUERY_FLAG(this, FLAG_IS_MAGICAL))
     {
         SET_FLAG(this, FLAG_KNOWN_MAGICAL);
         esrv_update_item(UPD_FLAGS, this);
