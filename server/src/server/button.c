@@ -487,13 +487,6 @@ void update_buttons(map_t *m)
     ignore_trigger_events = 0;
 }
 
-static void use_trigger(object_t *op, object_t *user)
-{
-    /* Toggle value */
-    op->weight_limit = !op->weight_limit;
-    signal_connection(op, user, user, op->map);
-}
-
 #define ARCH_SACRIFICE(xyz) ((xyz)->slaying)
 #define NROF_SACRIFICE(xyz) ((xyz)->stats.food)
 
@@ -579,19 +572,20 @@ int operate_altar(object_t *altar, object_t **sacrifice)
 void trigger_move(object_t *op, int state, object_t *originator) /* 1 down and 0 up */
 {
     op->stats.wc = state;
+    op->weight_limit = !op->weight_limit;
+    signal_connection(op, originator, originator, op->map);
+
     if (state)
     {
         float reset = (op->stats.exp) ? (float)op->stats.exp : 30.0f;
 
-        use_trigger(op, originator);
         op->speed = 1.0f / reset;
         update_ob_speed(op);
-        op->speed_left = -1;
+        op->speed_left = -1.0f;
     }
     else
     {
-        use_trigger(op, originator);
-        op->speed = 0;
+        op->speed = 0.0f;
         update_ob_speed(op);
     }
 }
@@ -1108,10 +1102,15 @@ void check_inv(object_t *op, object_t *trig)
     {
         if (trig->last_heal)
             decrease_ob_nr(match, 1);
-        use_trigger(trig, op);
+
+        trig->weight_limit = !trig->weight_limit;
+        signal_connection(trig, op, op, trig->map);
     }
     else if (!match && !trig->last_sp)
-        use_trigger(trig, op);
+    {
+        trig->weight_limit = !trig->weight_limit;
+        signal_connection(trig, op, op, trig->map);
+    }
 }
 
 
