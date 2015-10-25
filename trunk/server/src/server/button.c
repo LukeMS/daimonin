@@ -215,7 +215,9 @@ void signal_connection(object_t *op, object_t *activator, object_t *originator, 
                   {
                       if ((tmp->direction += tmp->stats.maxsp) > 8)
                           tmp->direction = (tmp->direction % 8) + 1;
-                      animate_turning(tmp);
+
+                      SET_ANIMATION(tmp, ((NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * tmp->direction) + tmp->state);
+                      update_object(tmp, UP_OBJ_FACE);
                   }
               }
               break;
@@ -228,7 +230,9 @@ void signal_connection(object_t *op, object_t *activator, object_t *originator, 
               {
                   if ((tmp->direction += tmp->stats.maxsp) > 8)
                       tmp->direction = (tmp->direction % 8) + 1;
-                  animate_turning(tmp);
+
+                      SET_ANIMATION(tmp, ((NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * tmp->direction) + tmp->state);
+                      update_object(tmp, UP_OBJ_FACE);
               }
               break;
 
@@ -488,30 +492,6 @@ static void use_trigger(object_t *op, object_t *user)
     /* Toggle value */
     op->weight_limit = !op->weight_limit;
     signal_connection(op, user, user, op->map);
-}
-
-/* We changed this function to fit in the anim system. This is used from
- * DIRECTORS and FIREWALLS but not from all is_turning objects (even not in crossfire,
- * throwing weapons use different system). This is of course confusing - directors
- * used is_throwing with 8 animations, throwing weapons with 9.
- * In Daimonin, i change it for use with facings 9 and facings 25 ext anim system.
- * To do it, we must change 2 things: All is_throwing using objects must have a facings 9
- * or facings 25 animation. All must use ->direction to set the animation.
- * In the old version, the object here sets animation by using ->sp. We must change this,
- * that this technical value (sp menas for directors the direction of reflection and
- * for firewalls the fire direction) map to the right animation value - this is simple
- * the right setting. And then all problems are gone - if we setup the animation right,
- * we can do all the things our animation can do - means also in frame animation of
- * our turning objects and so on. MT 2003.
- */
-void animate_turning(object_t *op) /* only one part objects */
-{
-    /* here we move through or frames - we animate the animation */
-    /* state animation should be done from our animation handler now -
-     * if is_animated 0 set, we don't want animate here too.
-    */
-    SET_ANIMATION(op, ((NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction) + op->state);
-    update_object(op, UP_OBJ_FACE);
 }
 
 #define ARCH_SACRIFICE(xyz) ((xyz)->slaying)

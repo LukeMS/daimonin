@@ -46,7 +46,6 @@ extern int              legal_artifact_combination(object_t *op, artifact *art);
 extern void             signal_connection(object_t *op, object_t *activator, object_t *originator, map_t *m);
 extern void             update_button(object_t *op, object_t *activator, object_t *originator);
 extern void             update_buttons(map_t *m);
-extern void             animate_turning(object_t *op);
 extern int              check_altar_sacrifice(object_t *altar, object_t *sacrifice);
 extern int              operate_altar(object_t *altar, object_t **sacrifice);
 extern void             trigger_move(object_t *op, int state, object_t *trigger);
