@@ -2463,12 +2463,14 @@ static void LoadObjects(map_t *m, FILE *fp, int mapflags)
             /* now some tricky stuff again:
             * to speed up some core functions like moving or remove_ob()/insert_ob
             * and because there are some "arch depending and not object depending"
-            * flags, we init the tails with some of the head settings.
-            * NOTE / TODO : is it not possible and easier to copy simply the WHOLE
+            * flags, we init the tails with some of the head settings. */
+           /* NOTE / TODO : is it not possible and easier to copy simply the WHOLE
             * flag block from head to tail? in theorie, the tail can safely have
             * all the flags too... Perhaps we must change one or two code parts
-            * for it but it should work MT-10.2005
-            */
+            * for it but it should work MT-10.2005 */
+           /* Unfortunately no because some flags (eg, blocks/allows/obscures
+            * view, no_pass, walk/fly on/off, etc) may be 1/0 for different
+            * parts of the same arch. -- Smacky 20151026 */
             if (QUERY_FLAG(op, FLAG_SYS_OBJECT))
                 SET_MULTI_FLAG(op->more, FLAG_SYS_OBJECT)
             else
