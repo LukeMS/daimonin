@@ -596,7 +596,11 @@ static void RegrowBurdenTree(object_t *op, sint32 nrof, sint8 mode)
             where->carrying += weight;
         }
 
+#ifndef USE_OLD_UPDATE
+        OBJECT_UPDATE_UPD(where, UPD_WEIGHT);
+#else
         esrv_update_item(UPD_WEIGHT, where);
+#endif
     }
     while ((where = where->env));
 }
@@ -1033,7 +1037,11 @@ void update_turn_face(object_t *op)
     if (!QUERY_FLAG(op, FLAG_IS_TURNABLE) || op->arch == NULL)
         return;
     SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction);
+#ifndef USE_OLD_UPDATE
+    OBJECT_UPDATE_UPD(op, UPD_ANIM);
+#else
     update_object(op, UP_OBJ_FACE);
+#endif
 }
 
 /*
@@ -1068,6 +1076,8 @@ void update_ob_speed(object_t *op)
         activelist_remove_inline(op);
 }
 
+#ifndef USE_OLD_UPDATE
+#else
 /* OLD NOTES
  * update_object() updates the array which represents the map.
  * It takes into account invisible objects (and represent squares covered
@@ -1268,6 +1278,7 @@ void update_object(object_t *op, int action)
         update_object(op->more, action);
     }
 }
+#endif
 
 /** Frees all data belonging to an object, but doesn't
  * care about the object itself. This can be used for
@@ -1504,6 +1515,7 @@ void remove_ob(object_t *op)
     if (op->env)
     {
         RemoveFromEnv(op);
+        op->map = NULL;
     }
     else if (op->map)
     {
@@ -1513,7 +1525,19 @@ void remove_ob(object_t *op)
     {
         LOG(llevBug, "BUG:: %s:remove_ob(): object %s[%d] has neither map nor env!\n",
             __FILE__, STRING_OBJ_NAME(op), TAG(op));
+        return;
     }
+
+    op->above = op->below = op->env = NULL;
+
+#ifndef USE_OLD_UPDATE
+    OBJECT_UPDATE_REM(op);
+#else
+    if (!QUERY_FLAG(op, FLAG_NO_SEND))
+    {
+        esrv_del_item(op);
+    }
+#endif
 }
 
 static void RemoveFromEnv(object_t *op)
@@ -1525,12 +1549,6 @@ static void RemoveFromEnv(object_t *op)
         op->attacked_by)
     {
         container_unlink(NULL, op);
-    }
-
-    /* Notify clients. */
-    if (!QUERY_FLAG(op, FLAG_NO_SEND))
-    {
-        esrv_del_item(op);
     }
 
     /* Recalc the chain of weights. Remember that the above is client info
@@ -1559,9 +1577,6 @@ static void RemoveFromEnv(object_t *op)
     op->ox = op->x;
     op->oy = op->y;
 #endif
-
-    op->above = op->below = op->env = NULL;
-    op->map = NULL;
 
     if (env->type == PLAYER &&
         !QUERY_FLAG(env, FLAG_NO_FIX_PLAYER))
@@ -1592,9 +1607,6 @@ static void RemoveFromMap(object_t *op)
     {
         msp->first = op->above;
     }
-
-    op->above = NULL;
-    op->below = NULL;
 
     /* When a map is swapped out and the objects on it get removed too. */
     if (op->map->in_memory == MAP_MEMORY_SAVING)
@@ -1638,8 +1650,45 @@ static void RemoveFromMap(object_t *op)
         msp_rebuild_slices_without(msp, op);
     }
 
+//    TPR_START();
+#ifndef USE_OLD_UPDATE
+    /* we don't handle floor tile light/darkness setting here -
+     * we assume we don't remove a floor tile ever before dropping
+     * the map. */
+    if (op->glow_radius)
+    {
+        adjust_light_source(msp, -(op->glow_radius));
+    }
+
+    /* we must rebuild the flags when one of this flags is touched from our object_t */
+    if (op->type == CHECK_INV ||
+        op->type == MAGIC_EAR ||
+        op->type == GRAVESTONE ||
+        QUERY_FLAG(op, FLAG_ALIVE) ||
+        QUERY_FLAG(op, FLAG_IS_PLAYER) ||
+        QUERY_FLAG(op, FLAG_OBSCURESVIEW) ||
+        QUERY_FLAG(op, FLAG_ALLOWSVIEW) ||
+        QUERY_FLAG(op, FLAG_BLOCKSVIEW) ||
+        QUERY_FLAG(op, FLAG_DOOR_CLOSED) ||
+        QUERY_FLAG(op, FLAG_PASS_THRU) ||
+        QUERY_FLAG(op, FLAG_PASS_ETHEREAL) ||
+        QUERY_FLAG(op, FLAG_NO_PASS) ||
+        QUERY_FLAG(op, FLAG_NO_SPELLS) ||
+        QUERY_FLAG(op, FLAG_NO_PRAYERS) ||
+        QUERY_FLAG(op, FLAG_WALK_ON) ||
+        QUERY_FLAG(op, FLAG_FLY_ON) ||
+        QUERY_FLAG(op, FLAG_WALK_OFF) ||
+        QUERY_FLAG(op, FLAG_FLY_OFF) ||
+        QUERY_FLAG(op, FLAG_REFL_CASTABLE) ||
+        QUERY_FLAG(op, FLAG_REFL_MISSILE))
+    {
+        msp->flags |= (MSP_FLAG_NO_ERROR | MSP_FLAG_UPDATE);
+        msp_update(msp->map, NULL, msp->x, msp->y);
+    }
+#else
     update_object(op, UP_OBJ_REMOVE);
-    op->env = NULL;
+#endif
+//    TPR_STOP(op->name);
 }
 
 /* Recursively remove the inventory of op. */
@@ -2496,9 +2545,36 @@ object_t *insert_ob_in_map(object_t *const op, map_t *m, object_t *const origina
         msp_rebuild_slices_with(msp, op);
     }
 
-    if(!(op->map->flags & MAP_FLAG_NO_UPDATE))
+    if (!(op->map->flags & MAP_FLAG_NO_UPDATE))
     {
+//        TPR_START();
+#ifndef USE_OLD_UPDATE
+        if (op->glow_radius)
+        {
+            adjust_light_source(msp, op->glow_radius);
+        }
+
+        /* this is handled a bit more complex, we must always loop the flags! */
+        if (QUERY_FLAG(op, FLAG_NO_PASS) ||
+            QUERY_FLAG(op, FLAG_PASS_THRU) ||
+            QUERY_FLAG(op, FLAG_PASS_ETHEREAL))
+        {
+            msp->flags |= (MSP_FLAG_NO_ERROR | MSP_FLAG_UPDATE);
+            msp_update(msp->map, NULL, msp->x, msp->y);
+        }
+        else /* ok, we don't must use flag loop - we can set it by hand! */
+        {
+            uint32 flags = 0;
+
+            MSP_SET_FLAGS_BY_OBJECT(flags, op);
+            msp->flags |= flags;
+        }
+
+        OBJECT_UPDATE_INS(op);
+#else
         update_object(op, UP_OBJ_INSERT);
+#endif
+//        TPR_STOP(op->name);
     }
 
     /* See if op moved between maps */
@@ -2694,14 +2770,21 @@ object_t * decrease_ob_nr(object_t *op, uint32 i)
                     flags |= UPD_WEIGHT;
                 }
 
+#ifndef USE_OLD_UPDATE
+                OBJECT_UPDATE_UPD(op, flags);
+#else
                 esrv_update_item(flags, op);
+#endif
             }
             /* We removed all! */
             else
             {
                 remove_ob(op);
                 op->nrof = 0; // after remove_ob() so RegrowBurdenTree() works
+#ifndef USE_OLD_UPDATE
+#else
                 esrv_del_item(op);
+#endif
             }
         }
         else // if (op->map)
@@ -2842,10 +2925,14 @@ object_t *insert_ob_in_ob(object_t *op, object_t *where)
 
     update_ob_speed(op);
 
+#ifndef USE_OLD_UPDATE
+    OBJECT_UPDATE_INS(op);
+#else
     if (!QUERY_FLAG(op, FLAG_NO_SEND))
     {
         esrv_send_item(op);
     }
+#endif
 
     if (op->env->type == PLAYER &&
         !QUERY_FLAG(op->env, FLAG_NO_FIX_PLAYER))

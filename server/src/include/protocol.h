@@ -310,17 +310,18 @@ enum
 #define CS_STAT_RES_START           130
 #define CS_STAT_RES_END             (130+NROFATTACKS-1)
 
-#define UPD_LOCATION        0x01
-#define UPD_FLAGS           0x02
-#define UPD_WEIGHT          0x04
-#define UPD_FACE            0x08
-#define UPD_NAME            0x10
-#define UPD_ANIM            0x20
-#define UPD_ANIMSPEED       0x40
-#define UPD_NROF            0x80
-#define UPD_DIRECTION       0x100
-#define UPD_QUALITY         0x200
-#define UPD_ALL             0xffff
+#define UPD_LOCATION    (1 << 0)
+#define UPD_FLAGS       (1 << 1)
+#define UPD_WEIGHT      (1 << 2)
+#define UPD_FACE        (1 << 3)
+#define UPD_NAME        (1 << 4)
+#define UPD_ANIM        (1 << 5)
+#define UPD_ANIMSPEED   (1 << 6)
+#define UPD_NROF        (1 << 7)
+#define UPD_DIRECTION   (1 << 8) 
+#define UPD_QUALITY     (1 << 9)
+#define UPD_SERVERFLAGS (1 << 15)
+//#define UPD_ALL         0xffff
 
 /* Item apply values -- only set if F_APPLIED */
 #define A_READIED 1

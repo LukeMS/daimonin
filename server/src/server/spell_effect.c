@@ -234,7 +234,11 @@ int cast_invisible(object_t *op, object_t *caster, int spell_type)
           break;
     }
     ndi(NDI_UNIQUE, 0, op, "You can't see your hands!");
+#ifndef USE_OLD_UPDATE
+    OBJECT_UPDATE_UPD(op, UPD_FACE);
+#else
     update_object(op, UP_OBJ_FACE);
+#endif
 
     /* Gecko: removed entirely. This is instead handled in mob AI core */
     /* Gecko: fixed to only go through active objects. Nasty loop anyway... */
@@ -868,7 +872,11 @@ int remove_curse(object_t *op, object_t *target, int type, SpellTypeFrom src)
                 CLEAR_FLAG(tmp, FLAG_CURSED);
                 if (!QUERY_FLAG(tmp, FLAG_PERM_CURSED))
                     CLEAR_FLAG(tmp, FLAG_KNOWN_CURSED);
+#ifndef USE_OLD_UPDATE
+                OBJECT_UPDATE_UPD(tmp, UPD_FLAGS);
+#else
                 esrv_update_item(UPD_FLAGS, tmp);
+#endif
             }
             else /* level of the items is to high for this remove curse */
             {
@@ -1013,6 +1021,9 @@ int cast_identify(object_t *op, int level, object_t *single_ob, int mode)
                         tmp->msg);
                 }
 
+#ifndef USE_OLD_UPDATE
+                OBJECT_UPDATE_REM(tmp);
+#else
                 esrv_send_item(tmp);
             }
         }
@@ -1097,7 +1108,11 @@ static int Detection(int type, object_t *this)
         QUERY_FLAG(this, FLAG_IS_MAGICAL))
     {
         SET_FLAG(this, FLAG_KNOWN_MAGICAL);
+#ifndef USE_OLD_UPDATE
+        OBJECT_UPDATE_UPD(this, UPD_FLAGS);
+#else
         esrv_update_item(UPD_FLAGS, this);
+#endif
         return 1;
     }
     else if (type == SP_DETECT_CURSE &&
@@ -1106,7 +1121,11 @@ static int Detection(int type, object_t *this)
               QUERY_FLAG(this, FLAG_DAMNED)))
     {
         SET_FLAG(this, FLAG_KNOWN_CURSED);
+#ifndef USE_OLD_UPDATE
+        OBJECT_UPDATE_UPD(this, UPD_FLAGS);
+#else
         esrv_update_item(UPD_FLAGS, this);
+#endif
         return 1;
     }
 

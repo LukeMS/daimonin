@@ -2527,9 +2527,14 @@ void move_golem(object_t *op)
         }
     }
 
+    /* TODO: Why? */
     if (made_attack)
     {
+#ifndef USE_OLD_UPDATE
+        OBJECT_UPDATE_UPD(op, UPD_FACE);
+#else
         update_object(op, UP_OBJ_FACE);
+#endif
     }
 }
 

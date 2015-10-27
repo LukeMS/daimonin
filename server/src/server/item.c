@@ -660,6 +660,9 @@ void identify(object_t *op)
         }
     }
 
+#ifndef USE_OLD_UPDATE
+    OBJECT_UPDATE_UPD(op, UPD_FLAGS | UPD_NAME);
+#else
     if (op->map) /* The shop identifies items before they hit the ground */
         /* I don't think identification will change anything but face */
         update_object(op, UP_OBJ_FACE);
@@ -667,13 +670,9 @@ void identify(object_t *op)
     {
         /* A lot of the values can change from an update - might as well send
          * it all. */
-        /* Seems very cavalier with BW -- looks to me like an
-         * esrv_update_item() with one or more of UPD_FLAGS | UPD_FACE |
-         * UPD_NAME would do it.
-         *
-         * -- Smacky 20130131 */
         esrv_send_item(op);
     }
+#endif
 }
 
 /* check a object marked with
@@ -712,12 +711,16 @@ void set_traped_flag(object_t *op)
         return;
 
     set_traped_view:
+#ifndef USE_OLD_UPDATE
+    OBJECT_UPDATE_UPD(op, UPD_FLAGS);
+#else
     if (!op->env) /* env object is on map */
         update_object(op, UP_OBJ_FACE);
     else /* somewhere else - if visible, update */
     {
         esrv_update_item(UPD_FLAGS, op);
     }
+#endif
 }
 
 /* We don't want allow to put a magical container inside another

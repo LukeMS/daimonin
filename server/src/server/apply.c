@@ -1047,16 +1047,24 @@ static void ApplyContainer(object_t *op, object_t *sack)
                     CLEAR_FLAG(tmp, FLAG_APPLIED);
                     ndi(NDI_UNIQUE, 0, op, "You unreadied %s.",
                         query_name(tmp, op, ARTICLE_DEFINITE, 0));
+#ifndef USE_OLD_UPDATE
+                    OBJECT_UPDATE_UPD(tmp, UPD_FLAGS);
+#else
                     update_object(tmp, UP_OBJ_FACE);
                     esrv_update_item(UPD_FLAGS, tmp);
+#endif
                 }
             }
 
             ndi(NDI_UNIQUE, 0, op, "You readied %s.",
                 query_name(sack, op, ARTICLE_DEFINITE, 0));
             SET_FLAG(sack, FLAG_APPLIED);
+#ifndef USE_OLD_UPDATE
+            OBJECT_UPDATE_UPD(sack, UPD_FLAGS);
+#else
             update_object(sack, UP_OBJ_FACE);
             esrv_update_item(UPD_FLAGS, sack);
+#endif
             container_trap(op, sack);   /* search & explode a rune in the container */
         }
     }
@@ -1457,7 +1465,11 @@ void move_apply(object_t *const trap_obj, object_t *const victim, object_t *cons
                   if (!(trap->weight_limit = (tot > trap->weight) ? 1 : 0))
                       goto leave;
                   SET_ANIMATION(trap, (NUM_ANIMATIONS(trap) / NUM_FACINGS(trap)) * trap->direction + trap->weight_limit);
+#ifndef USE_OLD_UPDATE
+                  OBJECT_UPDATE_UPD(trap, UPD_ANIM);
+#else
                   update_object(trap, UP_OBJ_FACE);
+#endif
               }
               for (ab = trap->above, max = 100, sound_was_played = 0;
                    --max && ab && !IS_AIRBORNE(ab);
@@ -2256,7 +2268,11 @@ int manual_apply(object_t *who, object_t *what, int aflag)
         play_sound_map(MSP_KNOWN(who), SOUND_TURN_HANDLE, SOUND_NORMAL);
         what->weight_limit = what->weight_limit ? 0 : 1;
         SET_ANIMATION(what, ((NUM_ANIMATIONS(what) / NUM_FACINGS(what)) * what->direction) + what->weight_limit);
+#ifndef USE_OLD_UPDATE
+        OBJECT_UPDATE_UPD(what, UPD_ANIM);
+#else
         update_object(what, UP_OBJ_FACE);
+#endif
         signal_connection(what, who, who, what->map);
         r = 4;
         break;
@@ -2715,8 +2731,11 @@ int apply_equipment(object_t *who, object_t *what, int aflags)
             flags |= UPD_NROF | UPD_WEIGHT;
         }
 
+#ifndef USE_OLD_UPDATE
+        OBJECT_UPDATE_UPD(what, flags);
+#else
         esrv_update_item(flags, what);
-
+#endif
         return 0;
     }
     if (basic_flag == AP_UNAPPLY)
@@ -3037,7 +3056,11 @@ int apply_equipment(object_t *who, object_t *what, int aflags)
         }
     }
 
+#ifndef USE_OLD_UPDATE
+    OBJECT_UPDATE_UPD(what, UPD_FLAGS);
+#else
     esrv_update_item(UPD_FLAGS, what);
+#endif
 
     return 0;
 }
@@ -3149,10 +3172,14 @@ void turn_on_light(object_t *op)
         copy_object(op, one);
         op->nrof -= 1;
         one->nrof = 1;
+#ifndef USE_OLD_UPDATE
+        OBJECT_UPDATE_UPD(op, UPD_NROF);
+#else
         if (op->env)
             esrv_update_item(UPD_NROF, op);
         else
             update_object(op, UP_OBJ_FACE);
+#endif
 
         tricky_flag = TRUE;
         op = one;
@@ -3211,11 +3238,18 @@ void turn_on_light(object_t *op)
         {
             adjust_light_source(msp, op->glow_radius);
         }
+#ifndef USE_OLD_UPDATE
+#else
 
         update_object(op, UP_OBJ_FACE);
+#endif
     }
 
+#ifndef USE_OLD_UPDATE
+    OBJECT_UPDATE_UPD(op, UPD_FACE | UPD_ANIM);
+#else
     esrv_update_item(UPD_FACE | UPD_ANIM, op);
+#endif
 }
 
 void turn_off_light(object_t *op)
@@ -3251,9 +3285,13 @@ void turn_off_light(object_t *op)
     /* CLEAR_FLAG(op,FLAG_ANIMATE);
        op->face = op->arch->clone.face;
      */
-    update_object(op, UP_OBJ_FACE);
     op->glow_radius = 0;
+#ifndef USE_OLD_UPDATE
+    OBJECT_UPDATE_UPD(op, UPD_FLAGS | UPD_FACE | UPD_ANIM);
+#else
+    update_object(op, UP_OBJ_FACE);
     esrv_update_item(UPD_FLAGS | UPD_FACE | UPD_ANIM, op);
+#endif
 }
 
 /* Note that op->msg is used for both non-applyable applyable lights (ie, to
@@ -3296,9 +3334,13 @@ void apply_light(object_t *who, object_t *op)
         if (QUERY_FLAG(op, FLAG_PERM_DAMNED))
             SET_FLAG(op, FLAG_DAMNED);
 
-        if(trigger_object_plugin_event(EVENT_APPLY, op, who, NULL,
-                    NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+        if (trigger_object_plugin_event(EVENT_APPLY, op, who, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+        {
+#ifndef USE_OLD_UPDATE
+            OBJECT_UPDATE_UPD(who, UPD_FLAGS);
+#endif
             return;
+        }
 
         if (op->msg)
             ndi(NDI_UNIQUE, 0, who, "%s", op->msg);
@@ -3307,8 +3349,10 @@ void apply_light(object_t *who, object_t *op)
                 query_name(op, who, ARTICLE_DEFINITE, 0));
 
         turn_off_light(op);
-
+#ifndef USE_OLD_UPDATE
+#else
         update_object(who, UP_OBJ_FACE);
+#endif
         FIX_PLAYER(who ,"apply light - extinguish");
     }
     else
@@ -3396,9 +3440,13 @@ void apply_light(object_t *who, object_t *op)
                         if (QUERY_FLAG(tmp, FLAG_PERM_DAMNED))
                             SET_FLAG(tmp, FLAG_DAMNED);
 
-                        if(trigger_object_plugin_event(EVENT_APPLY, op, who, NULL,
-                                    NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+                        if (trigger_object_plugin_event(EVENT_APPLY, op, who, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+                        {
+#ifndef USE_OLD_UPDATE
+                            OBJECT_UPDATE_UPD(who, UPD_FLAGS);
+#endif
                             return;
+                        }
 
                         if (tmp->msg)
                             ndi(NDI_UNIQUE, 0, who, "%s", tmp->msg);
@@ -3408,7 +3456,10 @@ void apply_light(object_t *who, object_t *op)
 
                         CLEAR_FLAG(tmp, FLAG_APPLIED);
                         turn_off_light(tmp);
+#ifndef USE_OLD_UPDATE
+#else
                         esrv_update_item(UPD_FLAGS | UPD_FACE, tmp);
+#endif
                     }
                 }
 
@@ -3419,9 +3470,14 @@ void apply_light(object_t *who, object_t *op)
                         query_name(op, who, ARTICLE_DEFINITE, 0));
 
                 SET_FLAG(op, FLAG_APPLIED);
-                esrv_update_item(UPD_FLAGS, op);
                 FIX_PLAYER(who ," apply light - apply light");
+#ifndef USE_OLD_UPDATE
+                OBJECT_UPDATE_UPD(op, UPD_FLAGS);
+                OBJECT_UPDATE_UPD(who, UPD_FACE);
+#else
+                esrv_update_item(UPD_FLAGS, op);
                 update_object(who, UP_OBJ_FACE);
+#endif
             }
             else /* not part of player inv - turn light off ! */
             {
@@ -3430,9 +3486,13 @@ void apply_light(object_t *who, object_t *op)
                 if (QUERY_FLAG(op, FLAG_PERM_DAMNED))
                     SET_FLAG(op, FLAG_DAMNED);
 
-                if(trigger_object_plugin_event(EVENT_APPLY, op, who, NULL,
-                            NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+                if (trigger_object_plugin_event(EVENT_APPLY, op, who, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+                {
+#ifndef USE_OLD_UPDATE
+                    OBJECT_UPDATE_UPD(who, UPD_FLAGS);
+#endif
                     return;
+                }
 
                 if (op->msg)
                     ndi(NDI_UNIQUE, 0, who, "%s", op->msg);
@@ -3593,5 +3653,9 @@ static void ApplyPowerCrystal(object_t *op, object_t *crystal)
     crystal->stats.sp += power_grab;
     crystal->speed = (float) crystal->stats.sp / (float) crystal->stats.maxsp;
     update_ob_speed(crystal);
+#ifndef USE_OLD_UPDATE
+    OBJECT_UPDATE_UPD(crystal, UPD_ANIMSPEED);
+#else
     esrv_update_item(UPD_ANIMSPEED, crystal);
+#endif
 }

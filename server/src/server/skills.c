@@ -77,7 +77,11 @@ int attack_hth(object_t *pl, int dir, char *string)
             CLEAR_FLAG(pl, FLAG_READY_WEAPON);
             FIX_PLAYER(pl ,"attack hth");
             ndi(NDI_UNIQUE, 0, pl, "You unwield your weapon in order to attack.");
+#ifndef USE_OLD_UPDATE
+            OBJECT_UPDATE_UPD(weapon, UPD_FLAGS);
+#else
             esrv_update_item(UPD_FLAGS, weapon);
+#endif
             break;
         }
     }

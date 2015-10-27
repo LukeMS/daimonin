@@ -159,7 +159,10 @@ extern void             update_turn_face(object_t *op);
 extern void             activelist_insert(object_t *op);
 extern void             activelist_remove(object_t *op);
 extern void             update_ob_speed(object_t *op);
+#ifndef USE_OLD_UPDATE
+#else
 extern void             update_object(object_t *op, int action);
+#endif
 extern void             destroy_object(object_t *ob);
 extern void             free_object_data(object_t *ob, int free_static_data);
 extern int              count_free(void);

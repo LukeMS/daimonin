@@ -532,6 +532,10 @@ static int GameObject_setFlag(lua_State *L, lua_object *obj, uint32 flagno, int 
     int value = lua_toboolean(L, -1);
     object_t *op = obj->data.object;
 
+#ifndef USE_OLD_UPDATE
+    op = (op->head) ? op->head : op;
+#endif
+
     if (before)
     {
         if (op->type == TYPE_SKILLGROUP ||
@@ -543,19 +547,47 @@ static int GameObject_setFlag(lua_State *L, lua_object *obj, uint32 flagno, int 
         if (flagno == FLAG_IS_INVISIBLE &&
             op->map)
         {
+#ifndef USE_OLD_UPDATE
+            object_t *part,
+                     *next;
+
+            FOREACH_PART_OF_OBJECT(part, op, next)
+            {
+                msp_t *msp = MSP_KNOWN(part);
+
+                hooks->msp_rebuild_slices_without(msp, part);
+                SET_OR_CLEAR_FLAG(part, flagno, value);
+                hooks->msp_rebuild_slices_with(msp, part);
+                OBJECT_UPDATE_VIS(part);
+            }
+#else
             msp_t *msp = MSP_KNOWN(op);
 
             hooks->msp_rebuild_slices_without(msp, op);
             SET_OR_CLEAR_FLAG(op, flagno, value);
             hooks->msp_rebuild_slices_with(msp, op);
             hooks->update_object(op, UP_OBJ_SLICE);
+#endif
             return 1;
         }
     }
     else
     {
+#ifndef USE_OLD_UPDATE
+        object_t *part,
+                 *next;
+
+        /* Set/clear the flag for all parts of a multipart and always update
+         * clients and each msp. Not efficient but shouldn't cause problems. */
+        FOREACH_PART_OF_OBJECT(part, op, next)
+        {
+            SET_OR_CLEAR_FLAG(part, flagno, value);
+            OBJECT_UPDATE_UPD(part, UPD_FLAGS | UPD_SERVERFLAGS);
+        }
+#else
         SET_OR_CLEAR_FLAG(op, flagno, value);
         hooks->update_object(op, UP_OBJ_SLICE);
+#endif
 
         /* TODO: if gender changed:
         if()
@@ -568,7 +600,12 @@ static int GameObject_setFlag(lua_State *L, lua_object *obj, uint32 flagno, int 
 /* pushes flag on top of stack */
 static int GameObject_getFlag(lua_State *L, lua_object *obj, uint32 flagno)
 {
-    lua_pushboolean(L, QUERY_FLAG(obj->data.object, flagno));
+    object_t *op = obj->data.object;
+
+#ifndef USE_OLD_UPDATE
+    op = (op->head) ? op->head : op;
+#endif
+    lua_pushboolean(L, QUERY_FLAG(op, flagno));
     return 1;
 }
 
@@ -1081,7 +1118,11 @@ static int GameObject_Repair(lua_State *L)
 
     get_lua_args(L, "O|i", &self, &skill);
     hooks->material_repair_item(WHO, skill);
+#ifndef USE_OLD_UPDATE
+    OBJECT_UPDATE_UPD(WHO, UPD_QUALITY | UPD_NAME);
+#else
     hooks->esrv_update_item(UPD_QUALITY, WHO);
+#endif
 
     if((tmp = hooks->is_player_inv(WHO)))
     {
@@ -4203,7 +4244,13 @@ static int GameObject_SetAnimation(lua_State *L)
         luaL_error(L, "no such animation exists: %s", animation);
 
     WHO->animation_id = id;
-
+#ifndef USE_OLD_UPDATE
+    /* I believe we should send client updates here. Currently this seems to
+     * happen anyway but my guess is this is because anims are handled by the
+     * server so the data is pumped through every tick. -- Smacky 20151027 */
+    OBJECT_UPDATE_UPD(WHO, UPD_ANIM);
+#else
+#endif
     return 0;
 }
 
@@ -4229,7 +4276,13 @@ static int GameObject_SetInvAnimation(lua_State *L)
         luaL_error(L, "no such animation exists: %s", animation);
 
     WHO->inv_animation_id = id;
-
+#ifndef USE_OLD_UPDATE
+    /* I believe we should send client updates here. Currently this seems to
+     * happen anyway but my guess is this is because anims are handled by the
+     * server so the data is pumped through every tick. -- Smacky 20151027 */
+    OBJECT_UPDATE_UPD(WHO, UPD_ANIM);
+#else
+#endif
     return 0;
 }
 
@@ -4254,8 +4307,11 @@ static int GameObject_SetFace(lua_State *L)
         luaL_error(L, "no such face exists: %s", STRING_SAFE(face));
 
     WHO->face = &(*hooks->new_faces)[id];
+#ifndef USE_OLD_UPDATE
+    OBJECT_UPDATE_UPD(WHO, UPD_FACE);
+#else
     hooks->update_object(WHO, UP_OBJ_FACE);
-
+#endif
     return 0;
 }
 
@@ -4281,8 +4337,11 @@ static int GameObject_SetInvFace(lua_State *L)
         luaL_error(L, "no such face exists: %s", STRING_SAFE(face));
 
     WHO->inv_face = &(*hooks->new_faces)[id];
+#ifndef USE_OLD_UPDATE
+    OBJECT_UPDATE_UPD(WHO, UPD_FACE);
+#else
     hooks->update_object(WHO, UPD_FACE);
-
+#endif
     return 0;
 }
 
@@ -4852,8 +4911,11 @@ static int GameObject_AdjustLightSource(lua_State *L)
     relative = -(WHO->glow_radius - value);
     WHO->glow_radius = value;
     hooks->adjust_light_source(MSP_KNOWN(WHO), relative);
+#ifndef USE_OLD_UPDATE
+    OBJECT_UPDATE_UPD(WHO, UPD_FACE);
+#else
     hooks->update_object(WHO, UP_OBJ_FACE);
-
+#endif
     return 0;
 }
 

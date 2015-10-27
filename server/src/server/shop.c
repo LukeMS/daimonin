@@ -397,7 +397,11 @@ uint8 shop_checkout(object_t *op, object_t *this)
                           cost_string_from_value(price, COSTSTRING_SHORT),
                           QUERY_SHORT_NAME(this, op));
             (void)merge_ob(this, NULL);
+#ifndef USE_OLD_UPDATE
+            OBJECT_UPDATE_UPD(this, UPD_WEIGHT | UPD_NROF | UPD_FLAGS);
+#else
             esrv_update_item(UPD_WEIGHT | UPD_NROF | UPD_FLAGS, this);
+#endif
         }
     }
     else

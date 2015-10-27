@@ -173,6 +173,8 @@
 
 /*#define DEBUG_IPCOMPARE*/
 
+//#define USE_OLD_UPDATE
+
 #endif /* ifdef DAI_DEVELOPMENT_CODE */
 
 #ifdef DEBUG_FIX_PLAYER

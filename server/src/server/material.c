@@ -983,7 +983,11 @@ void material_attack_damage(object_t *op, int num, int chance, int base)
 
         ndi(NDI_UNIQUE, 0, op, "%s is damaged.",
             QUERY_SHORT_NAME(item, op));
+#ifndef USE_OLD_UPDATE
+        OBJECT_UPDATE_UPD(item, UPD_QUALITY);
+#else
         esrv_update_item(UPD_QUALITY, item);
+#endif
         /* broken - unapply it - even its cursed */
         if(!item->item_condition)
             apply_equipment(op, item, AP_UNAPPLY | AP_IGNORE_CURSE);

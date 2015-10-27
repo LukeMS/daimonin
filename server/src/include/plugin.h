@@ -348,6 +348,7 @@ struct plugin_hooklist
     sint8 (*move_ob)(object_t *, sint8, object_t *);
     void (*msp_rebuild_slices_with)(msp_t *, object_t *);
     void (*msp_rebuild_slices_without)(msp_t *, object_t *);
+    void (*msp_update)(map_t *, msp_t *, sint16, sint16);
     /* N */
     void (*ndi)(const int, const int, const object_t *const, const char *const, ...) DAI_GNUC_PRINTF(4, 5);
     void (*ndi_map)(const int, msp_t *, const int, const object_t *const, const object_t *const, const char *const, ...) DAI_GNUC_PRINTF(6, 7);
@@ -393,7 +394,10 @@ struct plugin_hooklist
     struct mob_known_obj *(*update_npc_knowledge)(object_t *, object_t *, int,
                                                   int);
     int (*update_quest)(object_t *, uint8, object_t *, char *, char *);
+#ifndef USE_OLD_UPDATE
+#else
     void (*update_object)(object_t *, int);
+#endif
     /* V */
     /* W */
     /* X */
