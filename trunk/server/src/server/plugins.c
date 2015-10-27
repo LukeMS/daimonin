@@ -131,6 +131,7 @@ struct plugin_hooklist  hooklist    =
     move_ob,
     msp_rebuild_slices_with,
     msp_rebuild_slices_without,
+    msp_update,
     /* N */
     ndi,
     ndi_map,
@@ -175,7 +176,10 @@ struct plugin_hooklist  hooklist    =
     /* U */
     update_npc_knowledge,
     update_quest,
+#ifndef USE_OLD_UPDATE
+#else
     update_object,
+#endif
     /* V */
     /* W */
     /* X */

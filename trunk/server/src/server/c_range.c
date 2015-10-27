@@ -56,10 +56,15 @@ float fire_magic_tool(object_t *op, object_t *weap, int dir)
                     {
                         CLEAR_FLAG(weap, FLAG_ANIMATE);
                         weap->face = weap->arch->clone.face;
-                        weap->speed = 0;
+                        weap->speed = 0.0f;
                         update_ob_speed(weap);
                     }
+
+#ifndef USE_OLD_UPDATE
+                    OBJECT_UPDATE_UPD(weap, UPD_ANIM);
+#else
                     esrv_update_item(UPD_ANIM, weap);
+#endif
                 }
             }
         }

@@ -562,7 +562,11 @@ static inline object_t * fix_stopped_missile(object_t *op)
 
     op->face = op->arch->clone.face;
     op->owner = NULL; /* So that stopped arrows will be saved */
+#ifndef USE_OLD_UPDATE
+    OBJECT_UPDATE_UPD(op, UPD_FACE);
+#else
     update_object(op, UP_OBJ_FACE);
+#endif
     return op;
 }
 

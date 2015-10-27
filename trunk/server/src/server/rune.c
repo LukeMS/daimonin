@@ -440,12 +440,16 @@ int trap_show(object_t *trap, object_t *where)
     if (env && env->type != PLAYER && env->type != MONSTER && env->type != LOCKED_DOOR && !QUERY_FLAG(env, FLAG_NO_PASS))
     {
         SET_FLAG(env, FLAG_IS_TRAPED);
+#ifndef USE_OLD_UPDATE
+        OBJECT_UPDATE_UPD(env, UPD_FLAGS);
+#else
         if (!env->env) /* env object is on map */
             update_object(env, UP_OBJ_FACE);
         else /* somewhere else - if visible, update */
         {
             esrv_update_item(UPD_FLAGS, env);
         }
+#endif
 
         insert_ob_in_ob(trap, env);
 //        esrv_update_item(UPD_LOCATION, env, trap);

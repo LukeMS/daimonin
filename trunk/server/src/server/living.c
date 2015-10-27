@@ -770,7 +770,11 @@ static inline int set_player_equipment(player_t *pl, object_t *optr, int num)
     if(pl->equipment[num])
     {
         CLEAR_FLAG(optr, FLAG_APPLIED);
+#ifndef USE_OLD_UPDATE
+        OBJECT_UPDATE_UPD(optr, UPD_FLAGS);
+#else
         esrv_update_item(UPD_FLAGS, optr);
+#endif
         LOG(llevDebug,"FIX_PLAYER BUG: Item %s for player %s on place %d is already set!\n", STRING_OBJ_NAME(optr), STRING_OBJ_NAME(pl->ob), num);
         return FALSE;
     }
@@ -1572,7 +1576,11 @@ void fix_player(object_t *op)
                 default:
                   LOG(llevDebug, "DEBUG: fix_player(): unexpected applied object %s (%d)(clear flag now!)\n", STRING_OBJ_NAME(tmp), tmp->type);
                   CLEAR_FLAG(tmp, FLAG_APPLIED);
+#ifndef USE_OLD_UPDATE
+                  OBJECT_UPDATE_UPD(tmp, UPD_FLAGS);
+#else
                   esrv_update_item(UPD_FLAGS, tmp);
+#endif
                   continue;
             }/*switch*/
 
@@ -1622,8 +1630,11 @@ void fix_player(object_t *op)
         {
             if (tmp->flags[i] != tmpflags[i])
             {
+#ifndef USE_OLD_UPDATE
+                OBJECT_UPDATE_UPD(tmp, UPD_FLAGS);
+#else
                 esrv_update_item(UPD_FLAGS, tmp);
-
+#endif
                 break;
             }
         }
@@ -1637,7 +1648,11 @@ void fix_player(object_t *op)
         {
             /* wrong amunition - unapply it on the fly */
             CLEAR_FLAG(pl->equipment[PLAYER_EQUIP_AMUN], FLAG_APPLIED);
+#ifndef USE_OLD_UPDATE
+            OBJECT_UPDATE_UPD(pl->equipment[PLAYER_EQUIP_AMUN], UPD_FLAGS);
+#else
             esrv_update_item(UPD_FLAGS, pl->equipment[PLAYER_EQUIP_AMUN]);
+#endif
             pl->equipment[PLAYER_EQUIP_AMUN] = NULL;
         }
 
@@ -2102,7 +2117,11 @@ void fix_player(object_t *op)
         msp_rebuild_slices_without(msp, op);
         SET_FLAG(op, FLAG_IS_INVISIBLE);
         msp_rebuild_slices_with(msp, op);
+#ifndef USE_OLD_UPDATE
+        OBJECT_UPDATE_VIS(op);
+#else
         update_object(op, UP_OBJ_SLICE);
+#endif
     }
     else if (inv_flag &&
              !QUERY_FLAG(op, FLAG_IS_INVISIBLE))
@@ -2111,7 +2130,11 @@ void fix_player(object_t *op)
         msp_rebuild_slices_without(msp, op);
         CLEAR_FLAG(op, FLAG_IS_INVISIBLE);
         msp_rebuild_slices_with(msp, op);
+#ifndef USE_OLD_UPDATE
+        OBJECT_UPDATE_VIS(op);
+#else
         update_object(op, UP_OBJ_SLICE);
+#endif
     }
 
     /* If op couldn't see invisible and now can, or could and now can't, send a
@@ -2131,8 +2154,11 @@ void fix_player(object_t *op)
     {
         if (op->flags[i] != opflags[i])
         {
+#ifndef USE_OLD_UPDATE
+            OBJECT_UPDATE_UPD(op, UPD_FLAGS);
+#else
             esrv_update_item(UPD_FLAGS, op);
-
+#endif
             break;
         }
     }

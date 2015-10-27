@@ -707,7 +707,11 @@ void move_gate(object_t *op)
 
     op->state = (uint8)op->stats.wc;
     SET_ANIMATION(op, n * op->direction + op->state);
+#ifndef USE_OLD_UPDATE
+    OBJECT_UPDATE_UPD(op, UPD_FLAGS | UPD_FACE | UPD_ANIM | UPD_SERVERFLAGS);
+#else
     update_object(op, update);
+#endif
 }
 
 /* Attributes are the same as for normal gates plus the following:
@@ -819,7 +823,11 @@ void animate_trigger(object_t *op)
     {
         op->state = (uint8) op->stats.wc;
         SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + op->state);
+#ifndef USE_OLD_UPDATE
+        OBJECT_UPDATE_UPD(op, UPD_FACE);
+#else
         update_object(op, UP_OBJ_FACE);
+#endif
     }
 }
 
@@ -848,7 +856,11 @@ void move_pit(object_t *op)
         }
         op->state = (uint8) op->stats.wc;
         SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + op->state);
+#ifndef USE_OLD_UPDATE
+        OBJECT_UPDATE_UPD(op, UPD_FACE);
+#else
         update_object(op, UP_OBJ_FACE);
+#endif
         return;
     }
     /* We're closing */
@@ -858,7 +870,12 @@ void move_pit(object_t *op)
         op->stats.wc = NUM_ANIMATIONS(op) / NUM_FACINGS(op) - 1;
     op->state = (uint8) op->stats.wc;
     SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + op->state);
+#ifndef USE_OLD_UPDATE
+    OBJECT_UPDATE_UPD(op, UPD_FACE);
+#else
     update_object(op, UP_OBJ_FACE);
+#endif
+
     if ((unsigned char) op->stats.wc == (NUM_ANIMATIONS(op) / NUM_FACINGS(op) - 1))
     {
         op->speed = 0;
@@ -925,7 +942,11 @@ void change_object(object_t *op)
                             op->glow_radius = 0;
                         }
 
+#ifndef USE_OLD_UPDATE
+                        OBJECT_UPDATE_UPD(op, flags);
+#else
                         esrv_update_item(flags, op);
+#endif
                     }
                     else /* object is on map */
                     {
@@ -933,7 +954,11 @@ void change_object(object_t *op)
 
                         /* remove light mask from map */
                         adjust_light_source(msp, -(op->glow_radius));
+#ifndef USE_OLD_UPDATE
+                        OBJECT_UPDATE_UPD(op, UPD_FACE);
+#else
                         update_object(op, UP_OBJ_FACE); /* tell map update we have something changed */
+#endif
                         op->glow_radius = 0;
                     }
                     return;
@@ -987,7 +1012,11 @@ void change_object(object_t *op)
                 {
                     /* remove light mask from map */
                     adjust_light_source(msp, -(tmp->glow_radius));
+#ifndef USE_OLD_UPDATE
+                    OBJECT_UPDATE_UPD(op, UPD_FACE);
+#else
                     update_object(op, UP_OBJ_FACE); /* tell map update we have something changed */
+#endif
                     op->glow_radius = 0;
                 }
                 tmp->x = op->x + OVERLAY_X(j),tmp->y = op->y + OVERLAY_Y(j);

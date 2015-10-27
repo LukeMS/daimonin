@@ -2606,7 +2606,11 @@ int command_invisibility(object_t *op, char *params)
     msp_rebuild_slices_without(MSP_KNOWN(op), op);
     pl->gmaster_invis = !pl->gmaster_invis;
     msp_rebuild_slices_with(MSP_KNOWN(op), op);
+#ifndef USE_OLD_UPDATE
+    OBJECT_UPDATE_VIS(op);
+#else
     update_object(op, UP_OBJ_SLICE);
+#endif
     ndi(NDI_UNIQUE, 0, op, "Toggled gmaster_invis to %u",
         pl->gmaster_invis);
     return COMMANDS_RTN_VAL_OK_SILENT;

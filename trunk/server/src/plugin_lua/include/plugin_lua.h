@@ -183,6 +183,28 @@ struct plugin_hooklist *hooks;
     hooks->query_name((_WHAT_), (_WHO_), \
         ((_WHAT_)->nrof > 1 || IS_LIVE((_WHAT_))) ? ARTICLE_DEFINITE : ARTICLE_INDEFINITE, 0)
 
+#ifndef USE_OLD_UPDATE
+#undef OBJECT_UPDATE_VIS
+#define OBJECT_UPDATE_VIS(_O_) \
+    if (!QUERY_FLAG((_O_), FLAG_NO_SEND)) \
+    { \
+        hooks->esrv_send_or_del_item((_O_)); \
+    }
+
+#undef OBJECT_UPDATE_UPD
+#define OBJECT_UPDATE_UPD(_O_, _F_) \
+    if ((_O_)->map && \
+        ((_F_) & UPD_SERVERFLAGS)) \
+    { \
+        MSP_KNOWN((_O_))->flags |= (MSP_FLAG_NO_ERROR | MSP_FLAG_UPDATE); \
+        hooks->msp_update((_O_)->map, NULL, (_O_)->x, (_O_)->y); \
+    } \
+    if (!QUERY_FLAG((_O_), FLAG_NO_SEND)) \
+    { \
+        hooks->esrv_update_item(((_F_) & ~UPD_SERVERFLAGS), (_O_)); \
+    }
+#endif
+
 extern tag_t lua_context_tag_counter;
 
 struct lua_context

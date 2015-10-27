@@ -133,7 +133,11 @@ void signal_connection(object_t *op, object_t *activator, object_t *originator, 
               SET_ANIMATION(tmp,
                             ((NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * tmp->direction)
                           + (tmp->weight_limit = tmp->stats.maxsp ? !op->weight_limit : op->weight_limit));
+#ifndef USE_OLD_UPDATE
+              OBJECT_UPDATE_UPD(tmp, UPD_ANIM);
+#else
               update_object(tmp, UP_OBJ_FACE);
+#endif
               break;
 
             case SIGN:
@@ -171,14 +175,22 @@ void signal_connection(object_t *op, object_t *activator, object_t *originator, 
             case ALTAR:
               tmp->weight_limit = 1;
               SET_ANIMATION(tmp, ((NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * tmp->direction) + tmp->weight_limit);
+#ifndef USE_OLD_UPDATE
+              OBJECT_UPDATE_UPD(tmp, UPD_ANIM);
+#else
               update_object(tmp, UP_OBJ_FACE);
+#endif
               break;
 
             case BUTTON:
             case PEDESTAL:
               tmp->weight_limit = op->weight_limit;
               SET_ANIMATION(tmp, ((NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * tmp->direction) + tmp->weight_limit);
+#ifndef USE_OLD_UPDATE
+              OBJECT_UPDATE_UPD(tmp, UPD_ANIM);
+#else
               update_object(tmp, UP_OBJ_FACE);
+#endif
               break;
 
             case MOOD_FLOOR:
@@ -217,7 +229,11 @@ void signal_connection(object_t *op, object_t *activator, object_t *originator, 
                           tmp->direction = (tmp->direction % 8) + 1;
 
                       SET_ANIMATION(tmp, ((NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * tmp->direction) + tmp->state);
+#ifndef USE_OLD_UPDATE
+                      OBJECT_UPDATE_UPD(tmp, UPD_ANIM);
+#else
                       update_object(tmp, UP_OBJ_FACE);
+#endif
                   }
               }
               break;
@@ -232,7 +248,11 @@ void signal_connection(object_t *op, object_t *activator, object_t *originator, 
                       tmp->direction = (tmp->direction % 8) + 1;
 
                       SET_ANIMATION(tmp, ((NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * tmp->direction) + tmp->state);
+#ifndef USE_OLD_UPDATE
+                      OBJECT_UPDATE_UPD(tmp, UPD_ANIM);
+#else
                       update_object(tmp, UP_OBJ_FACE);
+#endif
               }
               break;
 
@@ -399,7 +419,11 @@ void update_button(object_t *op, object_t *activator, object_t *originator)
     if (op->weight_limit != old_value)
     {
         SET_ANIMATION(op, ((NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction) + op->weight_limit);
+#ifndef USE_OLD_UPDATE
+        OBJECT_UPDATE_UPD(op, UPD_ANIM);
+#else
         update_object(op, UP_OBJ_FACE);
+#endif
         signal_connection(op, activator, originator, op->map); /* Make all other buttons the same */
     }
 }
@@ -644,7 +668,11 @@ int check_trigger(object_t *op, object_t *cause, object_t *originator)
 
                   op->stats.ac = push;
                   SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + push);
+#ifndef USE_OLD_UPDATE
+                  OBJECT_UPDATE_UPD(op, UPD_ANIM);
+#else
                   update_object(op, UP_OBJ_FACE);
+#endif
 
                   if (in_movement ||
                       !push)
@@ -690,7 +718,11 @@ int check_trigger(object_t *op, object_t *cause, object_t *originator)
 
               op->stats.ac = push;
               SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + push);
+#ifndef USE_OLD_UPDATE
+              OBJECT_UPDATE_UPD(op, UPD_ANIM);
+#else
               update_object(op, UP_OBJ_FACE);
+#endif
 
               if (in_movement ||
                   !push)
@@ -711,7 +743,11 @@ int check_trigger(object_t *op, object_t *cause, object_t *originator)
               if (operate_altar(op, &cause))
               {
                   SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + 1);
+#ifndef USE_OLD_UPDATE
+                  OBJECT_UPDATE_UPD(op, UPD_ANIM);
+#else
                   update_object(op, UP_OBJ_FACE);
+#endif
 
                   if (op->last_sp >= 0)
                   {
@@ -738,7 +774,11 @@ int check_trigger(object_t *op, object_t *cause, object_t *originator)
           else
           {
               SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction);
+#ifndef USE_OLD_UPDATE
+              OBJECT_UPDATE_UPD(op, UPD_ANIM);
+#else
               update_object(op, UP_OBJ_FACE);
+#endif
 
               /* If trigger_altar has "last_sp > 0" set on the map,
                  it will push the connected value only once per sacrifice.
@@ -764,7 +804,11 @@ int check_trigger(object_t *op, object_t *cause, object_t *originator)
               push = 1;
           }
           SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + push);
+#ifndef USE_OLD_UPDATE
+          OBJECT_UPDATE_UPD(op, UPD_ANIM);
+#else
           update_object(op, UP_OBJ_FACE);
+#endif
           trigger_move(op, push, originator);
           return 1;
 

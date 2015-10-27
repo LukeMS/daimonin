@@ -528,6 +528,63 @@ struct object_t
     SET_OR_CLEAR_FLAG((_O_), FLAG_KNOWN_MAGICAL, (QUERY_FLAG((_O_), FLAG_IS_MAGICAL))); \
     SET_OR_CLEAR_FLAG((_O_), FLAG_KNOWN_CURSED, (QUERY_FLAG((_O_), FLAG_CURSED) || QUERY_FLAG((_O_), FLAG_DAMNED)));
 
+#ifndef USE_OLD_UPDATE
+/* The OBJECT_UPDATE_*() macros are intended to make the process of updating
+ * the server and/or relevant clients as simple, foolproof, and fast as
+ * possible.
+ *
+ * These macros operate on single objects only. So for a multipart it is the
+ * caller's responsibility to work over the head and body as necessary by, for
+ * example, embedding the macro in a FOREACH_PART_OF_OBJECT() loop. Remember
+ * that multiparts in envs are decapitated anyway and see the UPD comment
+ * below. */
+/* OBJECT_UPDATE_INS() is used only when an object is (re)inserted into a map
+ * or env as by insert_ob_in_map() and insert_ob_in_ob(). As such only the
+ * choice to send client data is handled in the macro. */
+#define OBJECT_UPDATE_INS(_O_) \
+    if (!QUERY_FLAG((_O_), FLAG_NO_SEND)) \
+    { \
+        esrv_send_item((_O_)); \
+    }
+
+/* OBJECT_UPDATE_REM() is used only when an object is removed from a map or env
+ * as by remove_ob(). As such only the choice to delete client data is handled
+ * in the macro. */
+#define OBJECT_UPDATE_REM(_O_) \
+    if (!QUERY_FLAG((_O_), FLAG_NO_SEND)) \
+    { \
+        esrv_del_item((_O_)); \
+    }
+
+/* OBJECT_UPDATE_VIS() is used when an object changes some form of visibility.
+ * The server handling, while not complicated, is a bit trick to pin down to
+ * consistent code. As such only the choice to send client data is handled in
+ * the macro. */
+#define OBJECT_UPDATE_VIS(_O_) \
+    if (!QUERY_FLAG((_O_), FLAG_NO_SEND)) \
+    { \
+        esrv_send_or_del_item((_O_)); \
+    }
+
+/* OBJECT_UPDATE_UPD() is used when an object changes in some way (other than
+ * visibility). _F_ is some combination of the UPD_* flags. These manage which
+ * data is updated to the client. Also, if _O_->map and _F_ & UPD_SERVERFLAGS,
+ * the msp has its flags rebuilt.
+ *
+ * In at least MOST cases only the head of multiparts needs updating */
+#define OBJECT_UPDATE_UPD(_O_, _F_) \
+    if ((_O_)->map && \
+        ((_F_) & UPD_SERVERFLAGS)) \
+    { \
+        MSP_KNOWN((_O_))->flags |= (MSP_FLAG_NO_ERROR | MSP_FLAG_UPDATE); \
+        msp_update((_O_)->map, NULL, (_O_)->x, (_O_)->y); \
+    } \
+    if (!QUERY_FLAG((_O_), FLAG_NO_SEND)) \
+    { \
+        esrv_update_item(((_F_) & ~UPD_SERVERFLAGS), (_O_)); \
+    }
+#endif
+
 #endif /* ifndef __OBJECT_H */
 
 #ifndef __PETS_H

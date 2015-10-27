@@ -469,7 +469,11 @@ void remove_gmaster_mode(player_t *pl)
             msp_rebuild_slices_without(MSP_KNOWN(who), who);
             pl->gmaster_invis = 0;
             msp_rebuild_slices_with(MSP_KNOWN(who), who);
+#ifndef USE_OLD_UPDATE
+            OBJECT_UPDATE_VIS(who);
+#else
             update_object(who, UP_OBJ_SLICE);
+#endif
         }
 
         pl->gmaster_wizpass = pl->gmaster_matrix = pl->gmaster_stealth = 0;

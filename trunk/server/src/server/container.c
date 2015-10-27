@@ -117,16 +117,32 @@ int container_link(player_t *const pl, object_t *const sack)
         CONTR(sack->attacked_by)->container_below = pl->ob;
     else /* we are the first one opening this container */
     {
+#ifndef USE_OLD_UPDATE
+        uint16 flags = 0;
+#endif
+
         SET_FLAG(sack, FLAG_APPLIED);
+
         if (sack->other_arch) /* faking open container face */
         {
             sack->face = sack->other_arch->clone.face;
             sack->animation_id = sack->other_arch->clone.animation_id;
+
             if (sack->animation_id)
                 SET_ANIMATION(sack, (NUM_ANIMATIONS(sack) / NUM_FACINGS(sack)) * sack->direction);
+
+#ifndef USE_OLD_UPDATE
+            flags = UPD_FACE | UPD_ANIM;
+#else
             update_object(sack, UP_OBJ_FACE);
+#endif
         }
+
+#ifndef USE_OLD_UPDATE
+        OBJECT_UPDATE_UPD(sack, flags | UPD_FLAGS);
+#else
         esrv_update_item(UPD_FLAGS | UPD_FACE, sack);
+#endif
         container_trap(pl->ob, sack);   /* search & explode a rune in the container */
         ret = 1;
     }
@@ -167,7 +183,11 @@ int container_unlink(player_t *const pl, object_t *sack)
         }
 
         sack = pl->container;
+#ifndef USE_OLD_UPDATE
+        OBJECT_UPDATE_UPD(sack, UPD_FACE);
+#else
         update_object(sack, UP_OBJ_FACE);
+#endif
         esrv_close_container(pl);
         /* ok, there is a valid container - unlink the player now */
         if (!pl->container_below && !pl->container_above) /* we are only applier */
@@ -189,11 +209,18 @@ int container_unlink(player_t *const pl, object_t *sack)
                 sack->animation_id = sack->arch->clone.animation_id;
                 if (sack->animation_id)
                     SET_ANIMATION(sack, (NUM_ANIMATIONS(sack) / NUM_FACINGS(sack)) * sack->direction);
+#ifndef USE_OLD_UPDATE
+#else
                 update_object(sack, UP_OBJ_FACE);
+#endif
             }
             sack->attacked_by = NULL;
             sack->attacked_by_count = 0;
+#ifndef USE_OLD_UPDATE
+            OBJECT_UPDATE_UPD(sack, UPD_FLAGS | UPD_FACE);
+#else
             esrv_update_item(UPD_FLAGS | UPD_FACE, sack);
+#endif
             return 1;
         }
 
@@ -231,9 +258,17 @@ int container_unlink(player_t *const pl, object_t *sack)
         sack->animation_id = sack->arch->clone.animation_id;
         if (sack->animation_id)
             SET_ANIMATION(sack, (NUM_ANIMATIONS(sack) / NUM_FACINGS(sack)) * sack->direction);
+#ifndef USE_OLD_UPDATE
+#else
         update_object(sack, UP_OBJ_FACE);
+#endif
     }
+
+#ifndef USE_OLD_UPDATE
+    OBJECT_UPDATE_UPD(sack, UPD_FLAGS | UPD_FACE);
+#else
     esrv_update_item(UPD_FLAGS | UPD_FACE, sack);
+#endif
     tmp = sack->attacked_by;
     sack->attacked_by = NULL;
     sack->attacked_by_count = 0;
