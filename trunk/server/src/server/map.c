@@ -62,7 +62,10 @@ static int    LoadMapHeader(FILE *fp, map_t *m, uint32 flags);
 static void   FreeMap(map_t *m);
 static char  *PathToName(shstr_t *path_sh);
 static void   LoadObjects(map_t *m, FILE *fp, int mapflags);
+#ifndef USE_OLD_UPDATE
+#else
 static void   UpdateMapTiles(map_t *m);
+#endif
 static void   SaveObjects(map_t *m, FILE *fp);
 #ifdef RECYCLE_TMP_MAPS
 static void   WriteMapLog(void);
@@ -2224,15 +2227,19 @@ static void LoadObjects(map_t *m, FILE *fp, int mapflags)
                *prev = NULL,
                *last_more = NULL,
                *tmp;
+    msp_t      *msp;
 
     op = get_object();
     op->map = m; /* To handle buttons correctly */
+#ifndef USE_OLD_UPDATE
+#else
     m->flags |= MAP_FLAG_NO_UPDATE; /* be sure to avoid tile updating in the loop below */
+#endif
     mybuffer = create_loader_buffer(fp);
 
     while ((i = load_object(fp, op, mybuffer, LO_REPEAT, mapflags)))
     {
-        msp_t *msp = MSP_KNOWN(op);
+        msp = MSP_KNOWN(op);
 
         /* atm, we don't need and handle multi arches saved with tails! */
         if (i == LL_MORE)
@@ -2537,8 +2544,29 @@ next:
     * will add a light source to the caller and then the caller itself
     * here again...
     */
+//    TPR_START();
+#ifndef USE_OLD_UPDATE
+    for (i = 0, msp = &m->spaces[0]; i < m->width * m->height; i++, msp++)
+    {
+        object_t *this,
+                 *next;
+
+        msp->flags = msp->floor_flags;
+        msp->move_flags = msp->floor_terrain;
+
+        FOREACH_OBJECT_IN_MSP(this, msp, next)
+        {
+            if (OBJECT_REQUIRES_MSP_UPDATE(this))
+            {
+                MSP_UPDATE(msp, this);
+            }
+        }
+    }
+#else
     UpdateMapTiles(m);
     m->flags &= ~MAP_FLAG_NO_UPDATE; /* turn tile updating on again */
+#endif
+//    TPR_STOP("Load map");
     m->in_memory = MAP_MEMORY_ACTIVE;
 
     /* this is the only place we can insert this because the
@@ -2547,6 +2575,8 @@ next:
     check_light_source_list(m);
 }
 
+#ifndef USE_OLD_UPDATE
+#else
 /* helper func for LoadObjects()
  * This help function will loop through the map and set the nodes. */
 static void UpdateMapTiles(map_t *m)
@@ -2565,6 +2595,7 @@ static void UpdateMapTiles(map_t *m)
         }
     }
 }
+#endif
 
 #define REMOVE_OBJECT(_O_, _C_) \
     activelist_remove((_O_)); \
@@ -3729,6 +3760,8 @@ void msp_rebuild_slices_with(msp_t *msp, object_t *op)
     msp->slices_synced &= ~(1 << MSP_SLICE_GMASTER);
 }
 
+#ifndef USE_OLD_UPDATE
+#else
 /* This function updates various attributes about a specific space
  * on the map (what it looks like, whether it blocks magic,
  * has a living creatures, prevents people from passing
@@ -3811,6 +3844,7 @@ void msp_update(map_t *m, msp_t *mspace, sint16 x, sint16 y)
         msp->flags = flags;
     } /* end flag update */
 }
+#endif
 
 /* msp_blocked() returns non-zero (some combination of MSP_FLAG_FOO flags) if the
  * specified location is blocked in some way, or zero if it is not.

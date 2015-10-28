@@ -576,13 +576,42 @@ struct object_t
     if ((_O_)->map && \
         ((_F_) & UPD_SERVERFLAGS)) \
     { \
-        MSP_KNOWN((_O_))->flags |= (MSP_FLAG_NO_ERROR | MSP_FLAG_UPDATE); \
-        msp_update((_O_)->map, NULL, (_O_)->x, (_O_)->y); \
+        MSP_UPDATE(MSP_KNOWN((_O_)), (_O_)) \
     } \
     if (!QUERY_FLAG((_O_), FLAG_NO_SEND)) \
     { \
         esrv_update_item(((_F_) & ~UPD_SERVERFLAGS), (_O_)); \
     }
+
+/* OBJECT_REQUIRES_MSP_UPDATE() queries whether _O_ is of a type or has certain
+ * flags which will necessitate an msp update. Note that this is only used in 3
+ * cases: when a map is freshly loaded into memory (in this case updating is
+ * deferred until all map objects have been inserted and then at the end each
+ * msp is updated once for each object on it which necessitates an update); by
+ * insert_ob_on_map() (which causes a single update based on _O_only; and by
+ * remove_ob() (which causes a complete rebuilding of the msp's flags based on
+ * all remaining objects on the msp. */
+#define OBJECT_REQUIRES_MSP_UPDATE(_O_) \
+    (((_O_)->type == CHECK_INV || \
+      (_O_)->type == MAGIC_EAR || \
+      (_O_)->type == GRAVESTONE || \
+      QUERY_FLAG((_O_), FLAG_ALIVE) || \
+      QUERY_FLAG((_O_), FLAG_IS_PLAYER) || \
+      QUERY_FLAG((_O_), FLAG_OBSCURESVIEW) || \
+      QUERY_FLAG((_O_), FLAG_ALLOWSVIEW) || \
+      QUERY_FLAG((_O_), FLAG_BLOCKSVIEW) || \
+      QUERY_FLAG((_O_), FLAG_DOOR_CLOSED) || \
+      QUERY_FLAG((_O_), FLAG_PASS_THRU) || \
+      QUERY_FLAG((_O_), FLAG_PASS_ETHEREAL) || \
+      QUERY_FLAG((_O_), FLAG_NO_PASS) || \
+      QUERY_FLAG((_O_), FLAG_NO_SPELLS) || \
+      QUERY_FLAG((_O_), FLAG_NO_PRAYERS) || \
+      QUERY_FLAG((_O_), FLAG_WALK_ON) || \
+      QUERY_FLAG((_O_), FLAG_FLY_ON) || \
+      QUERY_FLAG((_O_), FLAG_WALK_OFF) || \
+      QUERY_FLAG((_O_), FLAG_FLY_OFF) || \
+      QUERY_FLAG((_O_), FLAG_REFL_CASTABLE) || \
+      QUERY_FLAG((_O_), FLAG_REFL_MISSILE)) ? 1 : 0)
 #endif
 
 #endif /* ifndef __OBJECT_H */

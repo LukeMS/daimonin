@@ -131,7 +131,6 @@ struct plugin_hooklist  hooklist    =
     move_ob,
     msp_rebuild_slices_with,
     msp_rebuild_slices_without,
-    msp_update,
     /* N */
     ndi,
     ndi_map,
