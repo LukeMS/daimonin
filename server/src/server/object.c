@@ -1660,30 +1660,18 @@ static void RemoveFromMap(object_t *op)
         adjust_light_source(msp, -(op->glow_radius));
     }
 
-    /* we must rebuild the flags when one of this flags is touched from our object_t */
-    if (op->type == CHECK_INV ||
-        op->type == MAGIC_EAR ||
-        op->type == GRAVESTONE ||
-        QUERY_FLAG(op, FLAG_ALIVE) ||
-        QUERY_FLAG(op, FLAG_IS_PLAYER) ||
-        QUERY_FLAG(op, FLAG_OBSCURESVIEW) ||
-        QUERY_FLAG(op, FLAG_ALLOWSVIEW) ||
-        QUERY_FLAG(op, FLAG_BLOCKSVIEW) ||
-        QUERY_FLAG(op, FLAG_DOOR_CLOSED) ||
-        QUERY_FLAG(op, FLAG_PASS_THRU) ||
-        QUERY_FLAG(op, FLAG_PASS_ETHEREAL) ||
-        QUERY_FLAG(op, FLAG_NO_PASS) ||
-        QUERY_FLAG(op, FLAG_NO_SPELLS) ||
-        QUERY_FLAG(op, FLAG_NO_PRAYERS) ||
-        QUERY_FLAG(op, FLAG_WALK_ON) ||
-        QUERY_FLAG(op, FLAG_FLY_ON) ||
-        QUERY_FLAG(op, FLAG_WALK_OFF) ||
-        QUERY_FLAG(op, FLAG_FLY_OFF) ||
-        QUERY_FLAG(op, FLAG_REFL_CASTABLE) ||
-        QUERY_FLAG(op, FLAG_REFL_MISSILE))
+    if (OBJECT_REQUIRES_MSP_UPDATE(op))
     {
-        msp->flags |= (MSP_FLAG_NO_ERROR | MSP_FLAG_UPDATE);
-        msp_update(msp->map, NULL, msp->x, msp->y);
+        object_t *this,
+                 *next;
+
+        msp->flags = msp->floor_flags;
+        msp->move_flags = msp->floor_terrain;
+
+        FOREACH_OBJECT_IN_MSP(this, msp, next)
+        {
+            MSP_UPDATE(msp, this);
+        }
     }
 #else
     update_object(op, UP_OBJ_REMOVE);
@@ -2545,37 +2533,31 @@ object_t *insert_ob_in_map(object_t *const op, map_t *m, object_t *const origina
         msp_rebuild_slices_with(msp, op);
     }
 
-    if (!(op->map->flags & MAP_FLAG_NO_UPDATE))
+#ifndef USE_OLD_UPDATE
+    if (op->map->in_memory != MAP_MEMORY_LOADING)
     {
 //        TPR_START();
-#ifndef USE_OLD_UPDATE
         if (op->glow_radius)
         {
             adjust_light_source(msp, op->glow_radius);
         }
 
-        /* this is handled a bit more complex, we must always loop the flags! */
-        if (QUERY_FLAG(op, FLAG_NO_PASS) ||
-            QUERY_FLAG(op, FLAG_PASS_THRU) ||
-            QUERY_FLAG(op, FLAG_PASS_ETHEREAL))
+        if (OBJECT_REQUIRES_MSP_UPDATE(op))
         {
-            msp->flags |= (MSP_FLAG_NO_ERROR | MSP_FLAG_UPDATE);
-            msp_update(msp->map, NULL, msp->x, msp->y);
-        }
-        else /* ok, we don't must use flag loop - we can set it by hand! */
-        {
-            uint32 flags = 0;
-
-            MSP_SET_FLAGS_BY_OBJECT(flags, op);
-            msp->flags |= flags;
+            MSP_UPDATE(msp, op);
         }
 
         OBJECT_UPDATE_INS(op);
-#else
-        update_object(op, UP_OBJ_INSERT);
-#endif
 //        TPR_STOP(op->name);
     }
+#else
+    if (!(op->map->flags & MAP_FLAG_NO_UPDATE))
+    {
+//        TPR_START();
+        update_object(op, UP_OBJ_INSERT);
+//        TPR_STOP(op->name);
+    }
+#endif
 
     /* See if op moved between maps */
     if(op->speed)

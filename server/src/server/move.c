@@ -72,7 +72,7 @@ sint8 move_ob(object_t *who, sint8 dir, object_t *originator)
     oy = OVERLAY_Y(dir);
 
     /* Nothing can move out of map, obviously. */
-    if ((block = msp_blocked(who, NULL, ox, oy)) == MSP_FLAG_OUT_OF_MAP)
+    if ((block = msp_blocked(who, NULL, ox, oy)) == (uint32)MSP_FLAG_OUT_OF_MAP)
     {
         return MOVE_RESULT_INSERTION_FAILED;
     }

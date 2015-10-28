@@ -196,8 +196,7 @@ struct plugin_hooklist *hooks;
     if ((_O_)->map && \
         ((_F_) & UPD_SERVERFLAGS)) \
     { \
-        MSP_KNOWN((_O_))->flags |= (MSP_FLAG_NO_ERROR | MSP_FLAG_UPDATE); \
-        hooks->msp_update((_O_)->map, NULL, (_O_)->x, (_O_)->y); \
+        MSP_UPDATE(MSP_KNOWN((_O_)), (_O_)) \
     } \
     if (!QUERY_FLAG((_O_), FLAG_NO_SEND)) \
     { \

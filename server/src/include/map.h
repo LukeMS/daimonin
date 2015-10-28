@@ -263,9 +263,12 @@ enum map_memory_t
 #define MAP_FLAG_ULTIMATEDEATH (1 << 10) // ultimate death map
 #define MAP_FLAG_PVP           (1 << 11) // PvP is possible on this map
 
+#ifndef USE_OLD_UPDATE
+#else
 /* These are special flags used internally by certain functions to manage the
  * use of the other map flags. */
 #define MAP_FLAG_NO_UPDATE     (1 << 31) // ?
+#endif
 
 /* Macros to access the map_t.
  *
@@ -542,6 +545,112 @@ extern void    map_transfer_apartment_items(map_t *map_old, map_t *map_new, sint
         } \
     }
 
+#ifndef USE_OLD_UPDATE
+#define MSP_UPDATE(_MSP_, _O_) \
+    if (QUERY_FLAG((_O_), FLAG_NO_PASS)) \
+    { \
+        if ((_MSP_)->flags & MSP_FLAG_NO_PASS) \
+        { \
+            if (!QUERY_FLAG((_O_), FLAG_PASS_THRU)) \
+            { \
+                (_MSP_)->flags &= ~MSP_FLAG_PASS_THRU; \
+            } \
+            if (!QUERY_FLAG((_O_), FLAG_PASS_ETHEREAL)) \
+            { \
+                (_MSP_)->flags &= ~MSP_FLAG_PASS_ETHEREAL; \
+            } \
+        } \
+        else \
+        { \
+            (_MSP_)->flags |= MSP_FLAG_NO_PASS; \
+            if (QUERY_FLAG((_O_), FLAG_PASS_THRU)) \
+            { \
+                (_MSP_)->flags |= MSP_FLAG_PASS_THRU; \
+            } \
+            if (QUERY_FLAG((_O_), FLAG_PASS_ETHEREAL)) \
+            { \
+                (_MSP_)->flags |= MSP_FLAG_PASS_ETHEREAL; \
+            } \
+        } \
+    } \
+    if ((_O_)->type == CHECK_INV) \
+    { \
+        (_MSP_)->flags |= MSP_FLAG_CHECK_INV; \
+    } \
+    else if ((_O_)->type == GRAVESTONE) \
+    { \
+        (_MSP_)->flags |= MSP_FLAG_PLAYER_GRAVE; \
+    } \
+    else if ((_O_)->type == MAGIC_EAR) \
+    { \
+        (_MSP_)->flags |= MSP_FLAG_MAGIC_EAR; \
+    } \
+    else \
+    { \
+        if (QUERY_FLAG((_O_), FLAG_IS_PLAYER)) \
+        { \
+            (_MSP_)->flags |= MSP_FLAG_PLAYER; \
+        } \
+        if (QUERY_FLAG((_O_), FLAG_DOOR_CLOSED)) \
+        { \
+            (_MSP_)->flags |= MSP_FLAG_DOOR_CLOSED; \
+        } \
+        if (QUERY_FLAG((_O_), FLAG_NO_SPELLS)) \
+        { \
+            (_MSP_)->flags |= MSP_FLAG_NO_SPELLS; \
+        } \
+        if (QUERY_FLAG((_O_), FLAG_NO_PRAYERS)) \
+        { \
+            (_MSP_)->flags |= MSP_FLAG_NO_PRAYERS; \
+        } \
+        if (QUERY_FLAG((_O_), FLAG_OBSCURESVIEW)) \
+        { \
+            (_MSP_)->flags |= MSP_FLAG_OBSCURESVIEW; \
+        } \
+        if (QUERY_FLAG((_O_), FLAG_ALLOWSVIEW)) \
+        { \
+            (_MSP_)->flags |= MSP_FLAG_ALLOWSVIEW; \
+        } \
+        if (QUERY_FLAG((_O_), FLAG_BLOCKSVIEW)) \
+        { \
+            (_MSP_)->flags |= MSP_FLAG_BLOCKSVIEW; \
+        } \
+        if (QUERY_FLAG((_O_), FLAG_REFL_CASTABLE)) \
+        { \
+            (_MSP_)->flags |= MSP_FLAG_REFL_CASTABLE; \
+        } \
+        if (QUERY_FLAG((_O_), FLAG_REFL_MISSILE)) \
+        { \
+            (_MSP_)->flags |= MSP_FLAG_REFL_MISSILE; \
+        } \
+        if (QUERY_FLAG((_O_), FLAG_WALK_ON)) \
+        { \
+            (_MSP_)->flags |= MSP_FLAG_WALK_ON; \
+        } \
+        if (QUERY_FLAG((_O_), FLAG_WALK_OFF)) \
+        { \
+            (_MSP_)->flags |= MSP_FLAG_WALK_OFF; \
+        } \
+        if (QUERY_FLAG((_O_), FLAG_FLY_ON)) \
+        { \
+            (_MSP_)->flags |= MSP_FLAG_FLY_ON; \
+        } \
+        if (QUERY_FLAG((_O_), FLAG_FLY_OFF)) \
+        { \
+            (_MSP_)->flags |= MSP_FLAG_FLY_OFF; \
+        } \
+        if (QUERY_FLAG((_O_), FLAG_ALIVE)) \
+        { \
+            (_MSP_)->flags |= MSP_FLAG_ALIVE; \
+            if((_O_)->type==MONSTER && \
+               OBJECT_VALID((_O_)->owner, (_O_)->owner_count) && \
+               (_O_)->owner->type == PLAYER) \
+            { \
+                (_MSP_)->flags |= MSP_FLAG_PLAYER_PET; \
+            } \
+        } \
+    }
+#else
 #define MSP_SET_FLAGS_BY_OBJECT(_F_, _O_) \
     if ((_O_)->type == CHECK_INV) \
     { \
@@ -620,6 +729,7 @@ extern void    map_transfer_apartment_items(map_t *map_old, map_t *map_new, sint
             } \
         } \
     }
+#endif
 
 /* used in blocked() when we only want know about blocked by something */
 #define TERRAIN_ALL     0xffff
@@ -657,11 +767,17 @@ extern void    map_transfer_apartment_items(map_t *map_old, map_t *map_new, sint
 /* (1 << 26) is free */
 /* (1 << 27) is free */
 /* (1 << 28) is free */
+#ifndef USE_OLD_UPDATE
+/* (1 << 29) is free */
+/* (1 << 30) is free */
+#define MSP_FLAG_OUT_OF_MAP    (1 << 31)
+#else
 /* These are special flags used internally by certain functions to manage the
  * use of the other MSP_FLAGs. */
 #define MSP_FLAG_OUT_OF_MAP    (1 << 29)
 #define MSP_FLAG_UPDATE        (1 << 30) // update the flags by looping the map objects
 #define MSP_FLAG_NO_ERROR      (1 << 31) // msp_update (does not complain if the flags are different)
+#endif
 
 /* Slayers, or server layers, are used by the server to number object layers
  * (that is primarily msp_t.slayer and object_t.layer). */
@@ -742,7 +858,10 @@ struct msp_t
 
 extern void    msp_rebuild_slices_without(msp_t *msp, object_t *op);
 extern void    msp_rebuild_slices_with(msp_t *msp, object_t *op);
+#ifndef USE_OLD_UPDATE
+#else
 extern void    msp_update(map_t *m, msp_t *mspace, sint16 x, sint16 y);
+#endif
 extern uint32  msp_blocked(object_t *op, map_t *map, sint16 x, sint16 y);
 
 #endif /* ifndef __MSP_H */
