@@ -713,7 +713,6 @@ void Game_free()
 /* Lua    : game:UpgradeApartment(map_old, map_new, x, y)                    */
 /* Info   : Transfer all items with "no_pick 0" setting from map_old         */
 /*          to position x,y on map new.                                      */
-/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_UpgradeApartment(lua_State *L)
 {
@@ -742,7 +741,6 @@ static int Game_UpgradeApartment(lua_State *L)
 /*****************************************************************************/
 /* Name   : Game_LoadObject                                                  */
 /* Lua    : game:LoadObject(string)                                          */
-/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_LoadObject(lua_State *L)
 {
@@ -766,7 +764,6 @@ static int Game_LoadObject(lua_State *L)
 /* Info   : Case insensitive string comparision. Returns 1 if the two        */
 /*          strings are the same, or 0 if they differ.                       */
 /*          secondstring can contain regular expressions.                    */
-/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_MatchString(lua_State *L)
 {
@@ -796,7 +793,6 @@ static int Game_MatchString(lua_State *L)
 /*            game.MAP_NEW - if the map is already in memory, force an       */
 /*                           immediate reset; then (re)load it.              */
 /* Return : map pointer to map, or nil                                       */
-/* Status : Untested/Stable                                                  */
 /*****************************************************************************/
 static int Game_ReadyMap(lua_State *L)
 {
@@ -846,7 +842,6 @@ static int Game_ReadyMap(lua_State *L)
 /*****************************************************************************/
 /* Name   : Game_FindPlayer                                                  */
 /* Lua    : game:FindPlayer(name)                                            */
-/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_FindPlayer(lua_State *L)
 {
@@ -876,7 +871,6 @@ static int Game_FindPlayer(lua_State *L)
 /*          Returns spell number and spell type (one of the game.SPELL_TYPE_**/
 /*          constants (or -1 and game.SPELL_TYPE_NONE if no such spell       */
 /*          exists.                                                          */
-/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_GetSpellNr(lua_State *L)
 {
@@ -898,7 +892,6 @@ static int Game_GetSpellNr(lua_State *L)
 /* Name   : Game_GetSkillNr                                                  */
 /* Lua    : game:GetSkillNr(name)                                            */
 /* Info   : Gets the number of the named skill. -1 if no such skill exists   */
-/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_GetSkillNr(lua_State *L)
 {
@@ -918,7 +911,6 @@ static int Game_GetSkillNr(lua_State *L)
 /*          (Useful for datastore and coroutine usage).                      */
 /*          This is the only lua function that doesn't generate an error if  */
 /*          given an invalid object.                                         */
-/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_IsValid(lua_State *L)
 {
@@ -950,7 +942,6 @@ static int Game_IsValid(lua_State *L)
 /* Info   : Locates the named beacon if it is in memory. Returns nil         */
 /*          otherwise                                                        */
 /*          Beacons are very useful for locating objects or locations on maps*/
-/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_LocateBeacon(lua_State *L)
 {
@@ -1000,7 +991,6 @@ static int Game_LocateBeacon(lua_State *L)
 /*            day_name - day name as string                                  */
 /*            intraholiday_name - intraholiday name as string                */
 /*            extraholiday_name - extraholiday name as string                */
-/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_GetTimeAndDate(lua_State *L)
 {
@@ -1125,7 +1115,6 @@ static int Game_GetTimeAndDate(lua_State *L)
 /* Info   : Writes a message to every online player.                         */
 /*          color should be one of the game.COLOR_xxx constants.             */
 /*          default color is red.                                            */
-/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_GlobalMessage(lua_State *L)
 {
@@ -1161,7 +1150,6 @@ static int Game_GlobalMessage(lua_State *L)
 /*          security reasons (both might terminate the server).              */
 /*          The lua "print()" function is redirected to LOG_INFO             */
 /* Version: Introduced in beta 4 pre3                                        */
-/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_Log(lua_State *L)
 {
@@ -1186,7 +1174,6 @@ static int Game_Log(lua_State *L)
 /*          gold, mithril. This means you can passthis method call directly  */
 /*          as the argument to other methods which take c, s, g, m as four   */
 /*          arguments, such as: object:AddMoney(game:EnumerateCoins(value)). */
-/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_EnumerateCoins(lua_State *L)
 {
@@ -1224,7 +1211,6 @@ static int Game_EnumerateCoins(lua_State *L)
 /*          represents, or a string which is parsed to arrive at a similar   */
 /*          result (eg, "11 parweeks, 2 days, and 17 hours").                */
 /* Return : string.                                                          */
-/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Game_PrintTimeAndDate(lua_State *L)
 {
@@ -1259,7 +1245,6 @@ static int Game_PrintTimeAndDate(lua_State *L)
 /*****************************************************************************/
 /* Name   : Game_RegisterCommand                                             */
 /* Lua    : game.RegisterCommand(cmdname, scriptname, speed)                 */
-/* Status : Untested                                                         */
 /*****************************************************************************/
 /* pretty untested... */
 static int Game_RegisterCommand(lua_State *L)

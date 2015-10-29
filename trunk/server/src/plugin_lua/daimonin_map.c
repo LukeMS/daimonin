@@ -217,7 +217,6 @@ int Map_init(lua_State *s)
 /*            game.MAP_NEW - if the map is already in memory, force an       */
 /*                           immediate reset; then (re)load it.              */
 /* Return : map pointer to map, or nil                                       */
-/* Status : Untested/Unstable                                                */
 /*****************************************************************************/
 static int Map_ReadyInheritedMap(lua_State *L)
 {
@@ -319,7 +318,6 @@ static int Map_ReadyInheritedMap(lua_State *L)
 /*          reload is an optional boolean. True causes the map to instantly  */
 /*          reload when it resets (and players will not go to their respawn).*/
 /* Return : nil                                                              */
-/* Status : Untested/Stable                                                  */
 /*****************************************************************************/
 static int Map_Delete(lua_State *L)
 {
@@ -360,7 +358,6 @@ static int Map_Delete(lua_State *L)
 /* Name   : Map_GetFirstObjectOnSquare                                       */
 /* Lua    : map:GetFirstObjectOnSquare(x, y)                                 */
 /* Info   : Gets the bottom object on the tile. Use obj.above to browse objs */
-/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Map_GetFirstObjectOnSquare(lua_State *L)
 {
@@ -397,7 +394,6 @@ static int Map_GetFirstObjectOnSquare(lua_State *L)
 /*          between 0-1280 (compare with map.light_level.) Since this scale  */
 /*          is uncapped, it is possible to sense a light source in full      */
 /*          daylight (map.darkness=7) with mode==1                           */
-/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Map_GetBrightnessOnSquare(lua_State *L)
 {
@@ -450,7 +446,6 @@ static int Map_GetBrightnessOnSquare(lua_State *L)
 /* Name   : Map_IsWallOnSquare                                               */
 /* Lua    : map:IsWallOnSquare(x, y)                                         */
 /* Info   : returns true if the square at x,y is a wall                      */
-/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Map_IsWallOnSquare(lua_State *L)
 {
@@ -478,7 +473,6 @@ static int Map_IsWallOnSquare(lua_State *L)
 /*          Tiling is optional. If true we also check the upto eight         */
 /*          surrounding maps.                                                */
 /*          Returns true if any player is found, false otherwise.            */
-/* Status : Tested/Stable                                                    */
 /*                                                                           */
 /* A looping script, or a script triggered repeatedly by a timer, will stop  */
 /* the map from being saved, even if all players have left the map. This     */
@@ -517,7 +511,6 @@ static int Map_IsAnyPlayerOnMap(lua_State *L)
 /*****************************************************************************/
 /* Name   : Map_MapTileAt                                                    */
 /* Lua    : map:MapTileAt(x, y)                                              */
-/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Map_MapTileAt(lua_State *L)
 {
@@ -543,7 +536,6 @@ static int Map_MapTileAt(lua_State *L)
 /* Lua    : map:Save()                                                       */
 /* Info   : Save the map.                                                    */
 /* Return : nil                                                              */
-/* Status : Untested/Stable                                                  */
 /*****************************************************************************/
 static int Map_Save(lua_State *L)
 {
@@ -570,7 +562,6 @@ static int Map_Save(lua_State *L)
 /*          soundnumber should be one of the game.SOUND_xxx constants        */
 /*          If soundtype is game.SOUNDTYPE_SPELL, then the sound number      */
 /*          should be a spell number, to play the sound of that spell        */
-/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Map_PlaySound(lua_State *L)
 {
@@ -594,7 +585,6 @@ static int Map_PlaySound(lua_State *L)
 /*          Starting point x,y for all players in distance                   */
 /*          color should be one of the game.COLOR_xxx constants.             */
 /*          default color is game.COLOR_BLUE | game.COLOR_UNIQUE             */
-/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 
 static int Map_Message(lua_State *L)
@@ -630,7 +620,6 @@ static int Map_Message(lua_State *L)
 /* Name   : Map_CreateObject                                                 */
 /* Lua    : map:CreateObject(arch_name, x, y)                                */
 /* Info   :                                                                  */
-/* Status : Tested/Stable                                                    */
 /*****************************************************************************/
 static int Map_CreateObject(lua_State *L)
 {
@@ -659,7 +648,6 @@ static int Map_CreateObject(lua_State *L)
 /* Name   : Map_PlayersOnMap                                                 */
 /* Lua    : map:PlayersOnMap()                                               */
 /* Info   : Returns a table of all the players on map, or nil.               */
-/* Status : Untested/Stable                                                  */
 /*****************************************************************************/
 static int Map_PlayersOnMap(lua_State *L)
 {
@@ -702,7 +690,6 @@ static int Map_PlayersOnMap(lua_State *L)
 /*                                    true darkness.                         */
 /*            game.MAP_DARKNESS_MAX : the brightest map darkness (full       */
 /*                                    daylight).                             */
-/* Status : Untested/Stable                                                  */
 /* TODO   : This needs an overhaul. Probably it should be Mi|ii: where 2 args*/
 /*          sets the map's ambient light levels (as now) and 4 args sets the */
 /*          msp's floor light levels.                                        */
@@ -741,7 +728,6 @@ static int Map_SetDarkness(lua_State *L)
 /*          is assumed that that has already been done (ie, by a player).    */
 /*          Instead, this method merely passes on the fact that connected has*/
 /*          been triggered to the connection network on another map.         */
-/* Status : Untested/Stable                                                  */
 /*****************************************************************************/
 static int Map_ActivateConnection(lua_State *L)
 {
@@ -792,7 +778,6 @@ static int Map_ActivateConnection(lua_State *L)
 /* Info   : Checks if map has connection.                                    */
 /*          If it does, a numerical table of the connected objects is        */
 /*          If it doesn't, the return is nil.                                */
-/* Status : Untested/Stable                                                  */
 /*****************************************************************************/
 static int Map_HasConnection(lua_State *L)
 {
