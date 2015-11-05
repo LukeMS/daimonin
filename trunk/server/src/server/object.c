@@ -1528,8 +1528,6 @@ void remove_ob(object_t *op)
         return;
     }
 
-    op->above = op->below = op->env = NULL;
-
 #ifndef USE_OLD_UPDATE
     OBJECT_UPDATE_REM(op);
 #else
@@ -1538,6 +1536,10 @@ void remove_ob(object_t *op)
         esrv_del_item(op);
     }
 #endif
+
+    /* Always ensure these are NULL after a removal but first esrv_del_item()
+     * needs either ->map or ->env or the client won't update. */
+    op->above = op->below = op->env = NULL;
 }
 
 static void RemoveFromEnv(object_t *op)
