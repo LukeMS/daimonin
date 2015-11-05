@@ -465,10 +465,7 @@ object_t * merge_ob(object_t *op, object_t *tmp)
         }
         else if (op->env)
         {
-            for (tmp = op->env->inv; tmp && tmp->below; tmp = tmp->below)
-            {
-                ;
-            }
+            tmp = op->env->inv;
         }
         else
         {
@@ -480,7 +477,7 @@ object_t * merge_ob(object_t *op, object_t *tmp)
     }
 
     /* Ascend through tmps sibling, looking for a match with op. */
-    for (; tmp; tmp = tmp->above)
+    for (; tmp; tmp = tmp->below)
     {
         /* Don't merge with yourself! */
         if (tmp == op)
