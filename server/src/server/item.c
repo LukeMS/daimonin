@@ -1685,7 +1685,7 @@ static object_t *CanDiscard(object_t *who, object_t *what)
      * can't be discarded. */
     if (QUERY_FLAG(what, FLAG_APPLIED))
     {
-        int cantunapply = apply_equipment(who, what, AP_UNAPPLY | AP_NO_MERGE);
+        int cantunapply = apply_equipment(who, what, AP_UNAPPLY);
 
         if (cantunapply)
         {

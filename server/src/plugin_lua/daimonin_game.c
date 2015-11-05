@@ -95,7 +95,6 @@ static struct constant_decl preset_game_constants[] =
     {"APPLY_TOGGLE",         AP_NULL},
     {"APPLY_ALWAYS",         AP_APPLY},
     {"UNAPPLY_ALWAYS",       AP_UNAPPLY},
-    {"UNAPPLY_NO_MERGE",     AP_NO_MERGE},
     {"UNAPPLY_IGNORE_CURSE", AP_IGNORE_CURSE},
 
     /* genders (constants not defined by server) */

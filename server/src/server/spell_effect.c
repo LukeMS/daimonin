@@ -4081,7 +4081,7 @@ void move_fired_arch(object_t *op)
 //    /* ok, tailor the golem's characteristics based on the weapon */
 //    if (spellnum == SP_STAFF_TO_SNAKE || spellnum == SP_ANIMATE_WEAPON)
 //    {
-//        if (apply_special(op, weapon, AP_UNAPPLY | AP_IGNORE_CURSE | AP_NO_MERGE))
+//        if (apply_special(op, weapon, AP_UNAPPLY | AP_IGNORE_CURSE))
 //        {
 //            LOG(llevBug, "BUG: animate_weapon(): can't unapply weapon (%s - %s)!\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(caster));
 //            return 0;

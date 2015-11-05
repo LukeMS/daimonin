@@ -2538,7 +2538,6 @@ int manual_apply(object_t *who, object_t *what, int aflag)
  * AP_UNAPPLY=always unapply).
  *
  * Optional flags:
- *   AP_NO_MERGE: don't merge an unapplied object with other objects
  *   AP_IGNORE_CURSE: unapply cursed items
  *
  * Usage example:  apply_equipment (who, what, AP_UNAPPLY | AP_IGNORE_CURSE)
@@ -2726,7 +2725,7 @@ int apply_equipment(object_t *who, object_t *what, int aflags)
                 fix_monster(who);
         }
 
-        if ((tmp = (!(aflags & AP_NO_MERGE)) ? merge_ob(what, NULL) : NULL))
+        if (merge_ob(what, NULL))
         {
             flags |= UPD_NROF | UPD_WEIGHT;
         }
