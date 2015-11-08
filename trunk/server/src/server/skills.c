@@ -196,7 +196,7 @@ int do_skill_attack(object_t *tmp, object_t *op, char *string)
         {
             if (CONTR(op)->skill_weapon)
             {
-                if (change_skill_to_skill(op, CONTR(op)->skill_weapon))
+                if (!change_skill(op, CONTR(op)->skill_weapon->stats.sp))
                 {
                     LOG(llevBug, "BUG: do_skill_attack() could'nt give new hth skill to %s\n", STRING_OBJ_NAME(op));
                     return 0;
