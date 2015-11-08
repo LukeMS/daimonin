@@ -2416,7 +2416,6 @@ int manual_apply(object_t *who, object_t *what, int aflag)
         case HORN:
         case BOW:
         case ARROW:
-        case TYPE_SKILL:
         if (what->env != who)
         {
             r = 2;
@@ -2424,6 +2423,39 @@ int manual_apply(object_t *who, object_t *what, int aflag)
         }
 
         apply_equipment(who, what, aflag);
+        r = 1;
+        break;
+
+        case TYPE_SKILL:
+        if (what->env != who)
+        {
+            r = 2;
+            break;
+        }
+
+        if (QUERY_FLAG(what, FLAG_APPLIED))
+        {
+            CLEAR_FLAG(what, FLAG_APPLIED);
+            who->chosen_skill = NULL;
+        }
+        else 
+        {
+            SET_FLAG(what, FLAG_APPLIED);
+            who->chosen_skill = what;
+
+            /* At least one of these lines is unnecessary: confirmation or
+             * just spam? I vote to get rid of the ndi() -- srs() uses less
+             * resources and allows the client more control. */
+            ndi(NDI_UNIQUE, 0, who, "You ready the skill ~%s~.",
+                STRING_OBJ_NAME(what));
+            send_ready_skill(pl, what->name);
+        }
+
+#ifndef USE_OLD_UPDATE
+        OBJECT_UPDATE_UPD(what, UPD_FLAGS);
+#else
+        esrv_update_item(UPD_FLAGS, what);
+#endif
         r = 1;
         break;
 
@@ -2702,10 +2734,6 @@ int apply_equipment(object_t *who, object_t *what, int aflags)
                     }
                 }
                 break;
-            case TYPE_SKILL:
-                who->chosen_skill = NULL;
-                buf[0] = '\0';
-                break;
 
             default:
                 if (!(aflags & AP_QUIET))
@@ -2886,15 +2914,6 @@ int apply_equipment(object_t *who, object_t *what, int aflags)
                 return 1;
             }
             break;
-
-            /* this part is needed for skill-tools */
-        case TYPE_SKILL:
-            if (who->chosen_skill)
-            {
-                LOG(llevBug, "BUG: apply_equipment(): can't apply two skills\n");
-                return 1;
-            }
-            break;
     }
 
     /* Now we should be done with 99% of all tests. Generate the event
@@ -3000,27 +3019,6 @@ int apply_equipment(object_t *who, object_t *what, int aflags)
             {
                 SET_FLAG(who, FLAG_READY_BOW); break;
             }
-            break;
-
-        case TYPE_SKILL:
-            if (pl)
-            {
-                /* At least one of these lines is unnecessary: confirmation or
-                 * just spam? I vote to get rid of the ndi() -- srs() uses less
-                 * resources and allows the client more control. */
-                if (!(aflags & AP_QUIET))
-                {
-                    ndi(NDI_UNIQUE, 0, who, "You ready the skill ~%s~.",
-                        STRING_OBJ_NAME(what));
-                }
-
-                send_ready_skill(pl, what->name);
-            }
-
-            SET_FLAG(what, FLAG_APPLIED);
-            /* change_abil(who, what); */
-            /*LOG(llevDebug, "APPLY SKILL: %s change %s to %s\n", STRING_OBJ_NAME(who), STRING_OBJ_NAME(who->chosen_skill), STRING_OBJ_NAME(what) );*/
-            who->chosen_skill = what;
             break;
 
         default:

@@ -767,54 +767,99 @@ int use_skill(object_t *op, char *string)
     return 0;
 }
 
-
-/* change_skill() - returns true if we are able to change to the requested
- * skill. Ignore the 'pl' designation, this code is useful for players and
- * monsters.  -bt. thomas@astro.psu.edu
+/* change_skill() attempts to change who's skill to nr. On success, return 1;
+ * on failure, return 0.
  *
- * sk_index == -1 means that old skill should be unapplied, and no new skill
- * applied.
- */
-/* please note that change skill change set_skill_weapon && set_skill_bow are ONLY
- * set in fix_players() */
-int change_skill(object_t *who, int sk_index)
+ * Success means did who end up with nr as chosen skill? So if who's chosen
+ * skill is already nr the function changes nothing but still returns 1. OTOH
+ * if who does not possess skill nr the function sttill changes nothing but
+ * returns 0.
+ *
+ * If nr is NO_SKILL_READY, any old skill is unapplied, but no new skill is
+ * applied. The return is 0. */
+/* TODO: As the function is only relevant to players, the parameter should be
+ * player_t, not object_t. */
+sint8 change_skill(object_t *who, sint16 nr)
 {
-    object_t *tmp;
+    object_t *old,
+             *new = NULL;
+    sint8    success;
 
-    if (who->chosen_skill && who->chosen_skill->stats.sp == sk_index)
-        return 1;
-
-    LOG(llevDebug, "APPLYcs: %s change %s to %s.\n", STRING_OBJ_NAME(who), STRING_OBJ_NAME(who->chosen_skill),
-                                                                sk_index>=0?skills[sk_index]->clone.name:"INVALID");
-
-    if (sk_index >= 0 && sk_index < NROFSKILLS && (tmp = find_skill(who, sk_index)) != NULL)
+    /* Sanity checks. */
+    if (!who ||
+        who->type != PLAYER ||
+        nr < NO_SKILL_READY ||
+        nr >= NROFSKILLS)
     {
-        if (apply_equipment(who, tmp, AP_APPLY))
+        return 0;
+    }
+
+    /* Check if a skill is already in use. If so, is it the one we want? If it
+     * is, nothing more to do. Huzzah! */
+    if ((old = who->chosen_skill))
+    {
+        if (old->stats.sp == nr)
         {
-            /*LOG(llevDebug, "BUG: change_skill(): can't apply new skill (%s - %d)\n", who->name, sk_index);*/
-            return 0;
+            return 1;
         }
-        return 1;
-    }
-    if(sk_index)
-    {
-    if (who->chosen_skill)
-    {
-        if (apply_equipment(who, who->chosen_skill, AP_UNAPPLY))
-            LOG(llevBug, "BUG: change_skill(): can't unapply old skill (%s - %d)\n", who->name, sk_index);
-        FIX_PLAYER(who, "change_skill AP_UNAPPLY");
-    }
-    else if (sk_index >= 0)
-        ndi(NDI_UNIQUE, 0, who, "You have no knowledge of %s.", skills[sk_index]->clone.name);
-    return 0;
     }
 
-    /* I *think* 0 means failure and 1 means success so the above block
-     * checks for failures and if none are found it must be a success. I have
-     * no idea why thiis function is written in such a spawling manner though
-     * (IOW I think the two top-level if blocks could be merged together.
-     * -- Smacky 20111122 */
-    return 1;
+    /* Try to apply the specified skill nr. */
+    if (nr != NO_SKILL_READY)
+    {
+        /* Do not change chosen skill at all. */
+        if (!(new = CONTR(who)->skill_ptr[nr]))
+        {
+            ndi(NDI_UNIQUE, 0, who, "You have no knowledge of ~%s~.",
+                skills[nr]->clone.name);
+            success = 0;
+        }
+        /* Ready new as chosen skill and apply the object. */
+        else
+        {
+#ifdef DEBUG_SKILL_UTIL
+            LOG(llevDebug, "DEBUG:: change_skill(): %s[%d] %s to %s!\n",
+                STRING_OBJ_NAME(who), TAG(who),
+                (old) ? STRING_OBJ_NAME(old) : "NONE", STRING_OBJ_NAME(new));
+#endif
+
+            /* At least one of these lines is unnecessary: confirmation or
+             * just spam? I vote to get rid of the ndi() -- srs() uses less
+             * resources and allows the client more control. */
+            ndi(NDI_UNIQUE, 0, who, "You ready the skill ~%s~.",
+                STRING_OBJ_NAME(new));
+            send_ready_skill(CONTR(who), new->name);
+            who->chosen_skill = new;
+            SET_FLAG(new, FLAG_APPLIED);
+#ifndef USE_OLD_UPDATE
+            OBJECT_UPDATE_UPD(new, UPD_FLAGS);
+#else
+            esrv_update_item(UPD_FLAGS, new);
+#endif
+            success = 1;
+        }
+    }
+    /* Clear chosen skill. */
+    else
+    {
+        who->chosen_skill = NULL;
+        success = 0;
+    }
+
+    /* Unapply old object. */
+    if (old &&
+        (nr == NO_SKILL_READY ||
+         new))
+    {
+        CLEAR_FLAG(old, FLAG_APPLIED);
+#ifndef USE_OLD_UPDATE
+        OBJECT_UPDATE_UPD(old, UPD_FLAGS);
+#else
+        esrv_update_item(UPD_FLAGS, old);
+#endif
+    }
+
+    return success;
 }
 
 /* sets the action timer for skills like throwing, archery, casting... */

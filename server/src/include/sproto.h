@@ -588,7 +588,7 @@ int                         lookup_skill_by_name(char *name);
 int                         check_skill_to_apply(object_t *who, object_t *item);
 int                         learn_skill(object_t *pl, int skillnr);
 int                         use_skill(object_t *op, char *string);
-int                         change_skill(object_t *who, int sk_index);
+sint8                       change_skill(object_t *who, sint16 nr);
 void                        set_action_time(object_t *op, float ticks);
 int                         check_skill_action_time(object_t *op, object_t *skill);
 int                         get_skill_stat1(object_t *op);
