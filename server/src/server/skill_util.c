@@ -817,37 +817,6 @@ int change_skill(object_t *who, int sk_index)
     return 1;
 }
 
-/* This is like change_skill above, but it is given that
- * skill is already in who's inventory - this saves us
- * time if the caller has already done the work for us.
- * return 0 on success, 1 on failure.
- */
-
-int change_skill_to_skill(object_t *who, object_t *skl)
-{
-    if (!skl)
-        return 1;       /* Quick sanity check */
-
-
-    if (who->chosen_skill == skl)
-        return 0;
-
-    /*LOG(llevDebug, "APPLYcsts: %s change %s to %s.\n", STRING_OBJ_NAME(who), STRING_OBJ_NAME(who->chosen_skill), STRING_OBJ_NAME(skl));*/
-
-    if (skl->env != who)
-    {
-        /*LOG(llevDebug, "BUG: change_skill_to_skill: skill is not in players inventory (%s - %s)\n", STRING_OBJ_NAME(who), STRING_OBJ_NAME(skl));*/
-        return 1;
-    }
-
-    if (apply_equipment(who, skl, AP_APPLY))
-    {
-        LOG(llevBug, "BUG: change_skill(): can't apply new skill (%s - %s)\n", STRING_OBJ_NAME(who), STRING_OBJ_NAME(skl));
-        return 1;
-    }
-    return 0;
-}
-
 /* sets the action timer for skills like throwing, archery, casting... */
 void set_action_time(object_t *op, float t)
 {
