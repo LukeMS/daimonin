@@ -67,7 +67,7 @@
         <title xml:lang="fr">Trésors</title>
         <title xml:lang="sv">Skatter</title>
         <And>
-            <TypeNrs numbers="4 5 36 60 85 111 123 124 130" />
+            <TypeNrs numbers="4 5 36 60 85 111 130" />
             <Or>
                 <Attrib name="no_pick" value="" />
                 <Attrib name="no_pick" value="0" />

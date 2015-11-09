@@ -118,15 +118,6 @@
 //void                        move_firechest(object *op);
 #endif
 /* apply.c */
-int                         check_item(object_t *op, const char *item);
-void                        eat_item(object_t *op, const char *item);
-int                         check_weapon_power(object_t *who, int improvs);
-int                         improve_weapon_stat(object_t *op, object_t *improver, object_t *weapon, signed char *stat,
-                                                int sacrifice_count, char *statname);
-int                         prepare_weapon(object_t *op, object_t *improver, object_t *weapon);
-int                         improve_weapon(object_t *op, object_t *improver, object_t *weapon);
-int                         check_improve_weapon(object_t *op, object_t *tmp);
-int                         improve_armour(object_t *op, object_t *improver, object_t *armour);
 int                         convert_item(object_t *item, object_t *converter, object_t *originator);
 void                        move_apply(object_t *const trap, object_t *const victim, object_t *const originator, const int flags);
 void                        do_learn_spell(object_t *op, int spell, int special_prayer);
