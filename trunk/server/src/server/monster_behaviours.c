@@ -2430,10 +2430,10 @@ int ai_bow_attack_enemy(object_t *op, struct mob_behaviour_param *params)
             /* Select suitable arrows */
             arrow = (bow->sub_type1 == 128) ? bow->inv : find_arrow(op, bow->race);
 
-            if(!arrow)
+            /* Out of arrows, unapply bow (ignore curse). */
+            if (!arrow)
             {
-                /* Out of arrows , unapply bow */
-                manual_apply(op, bow, 0);
+                (void)apply_equipment(op, bow, AP_UNAPPLY | AP_IGNORE_CURSE);
                 bow = NULL;
             }
 

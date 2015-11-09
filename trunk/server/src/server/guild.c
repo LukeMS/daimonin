@@ -71,19 +71,19 @@ void guild_remove_restricted_items(player_t *pl)
     {
         if (item->sub_type1 >= WEAP_POLE_IMPACT && (guild->weight_limit & GUILD_NO_POLEARM))
         {
-            (void)manual_apply(pl->ob, item, AP_QUIET | AP_UNAPPLY);
+            (void)apply_equipment(pl->ob, item, AP_QUIET | AP_UNAPPLY);
         }
         if (item->sub_type1 >= WEAP_2H_IMPACT && item->sub_type1 <= WEAP_2H_CLEAVE &&
              (guild->weight_limit & GUILD_NO_2H))
         {
-            (void)manual_apply(pl->ob, item, AP_QUIET | AP_UNAPPLY);
+            (void)apply_equipment(pl->ob, item, AP_QUIET | AP_UNAPPLY);
         }
     }
     if ((item = pl->equipment[PLAYER_EQUIP_BOW]))
     {
         if (guild->weight_limit & GUILD_NO_ARCHERY)
         {
-            (void)manual_apply(pl->ob, item, AP_QUIET | AP_UNAPPLY);
+            (void)apply_equipment(pl->ob, item, AP_QUIET | AP_UNAPPLY);
         }
     }
 
