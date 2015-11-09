@@ -974,23 +974,50 @@ void material_attack_damage(object_t *op, int num, int chance, int base)
             continue; /* no missing immunity found - item has resisted */
         }
         mnaterial_dmg_jmp:
-        /* we have an item, we can damage it - do it */
-
-        /*ndi(NDI_UNIQUE, 0, op, "DAMAGE ITEM:: %s (%d)", STRING_OBJ_NAME(item), item->item_condition);*/
-        /* sanity check */
-        if(item->item_condition > 0)
+        if (item->item_condition > 0)
+        {
+            /* TODO: Variable damage. Several ideas occur to me but this needs
+             * specific thought.
+             *
+             * -- Smacky 20151109 */
             item->item_condition--;
+        }
 
-        ndi(NDI_UNIQUE, 0, op, "%s is damaged.",
-            QUERY_SHORT_NAME(item, op));
+        if (!item->item_condition)
+        {
+            /* If the player is daft enough to let an item get broken in this way,
+             * it falls off -- but this is not an easy way to beat a curse! */
+            if (!QUERY_FLAG(item, FLAG_CURSED) &&
+                !QUERY_FLAG(item, FLAG_DAMNED))
+            {
+                ndi(NDI_UNIQUE, 0, op, "%s %s is broken and falls to the floor!",
+                    query_name(item, op, ARTICLE_DEFINITE, 0),
+                    (item->nrof > 1) ? "are" : "is");
+                (void)drop_to_floor(op, item, item->nrof);
+            }
+            else
+            {
+                ndi(NDI_UNIQUE, 0, op, "%s %s is broken but the curse holds!",
+                    query_name(item, op, ARTICLE_DEFINITE, 0),
+                    (item->nrof > 1) ? "are" : "is");
 #ifndef USE_OLD_UPDATE
-        OBJECT_UPDATE_UPD(item, UPD_QUALITY);
+                OBJECT_UPDATE_UPD(item, UPD_QUALITY);
 #else
-        esrv_update_item(UPD_QUALITY, item);
+                esrv_update_item(UPD_QUALITY, item);
 #endif
-        /* broken - unapply it - even its cursed */
-        if(!item->item_condition)
-            apply_equipment(op, item, AP_UNAPPLY | AP_IGNORE_CURSE);
+            }
+        }
+        else
+        {
+            ndi(NDI_UNIQUE, 0, op, "%s %s is damaged!",
+                query_name(item, op, ARTICLE_DEFINITE, 0),
+                (item->nrof > 1) ? "are" : "is");
+#ifndef USE_OLD_UPDATE
+            OBJECT_UPDATE_UPD(item, UPD_QUALITY);
+#else
+            esrv_update_item(UPD_QUALITY, item);
+#endif
+        }
 
         flag_fix = TRUE;
     }

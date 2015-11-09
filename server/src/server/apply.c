@@ -2635,7 +2635,7 @@ int apply_equipment(object_t *who, object_t *what, int aflags)
         /* always apply, so no reason to unapply */
         if (basic_flag == AP_APPLY)
             return 0;
-        if (what->item_condition && !(aflags & AP_IGNORE_CURSE) && (QUERY_FLAG(what, FLAG_CURSED) || QUERY_FLAG(what, FLAG_DAMNED)))
+        if (!(aflags & AP_IGNORE_CURSE) && (QUERY_FLAG(what, FLAG_CURSED) || QUERY_FLAG(what, FLAG_DAMNED)))
         {
             if (!(aflags & AP_QUIET))
             {
