@@ -324,8 +324,6 @@ static struct constant_decl preset_game_constants[] =
     {"TYPE_QUEST_CONTAINER",  TYPE_QUEST_CONTAINER},
     {"TYPE_CLOSE_CON",        CLOSE_CON},
     {"TYPE_CONTAINER",        CONTAINER},
-    {"TYPE_ARMOUR_IMPROVER",  ARMOUR_IMPROVER},
-    {"TYPE_WEAPON_IMPROVER",  WEAPON_IMPROVER},
     {"TYPE_WEALTH",           TYPE_WEALTH},
     {"TYPE_AI",               TYPE_AI},
     {"TYPE_AGGRO_HISTORY",    TYPE_AGGRO_HISTORY},

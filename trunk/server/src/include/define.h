@@ -213,8 +213,8 @@
 #define TYPE_QUEST_CONTAINER    120    /* used to store quest infos in players */
 #define CLOSE_CON               121    /* Eneq(@csd.uu.se): Id for close_container archetype. */
 #define CONTAINER               122
-#define ARMOUR_IMPROVER         123
-#define WEAPON_IMPROVER         124
+/* 123 is free. */
+/* 124 is free. */
 #define TYPE_WEALTH             125     /* this is a "raw" (abstract) wealth object. When generated
                                          * its tranformed in real money depending on the enviroment
                                          * where its generated. (most times by treasure list and
