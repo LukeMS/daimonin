@@ -462,89 +462,6 @@ static void ApplyPotion(object_t *op, object_t *tmp)
     decrease_ob_nr(tmp, 1);
 }
 
-/*
- * convert_item() returns 1 if anything was converted, otherwise 0
- */
-#define CONV_FROM(xyz)  (xyz->slaying)
-#define CONV_TO(xyz)    (xyz->other_arch)
-#define CONV_NR(xyz)    ((unsigned long) xyz->stats.sp)      /* receive number */
-#define CONV_NEED(xyz)  ((unsigned long) xyz->stats.food)    /* cost number */
-
-int convert_item(object_t *item, object_t *converter, object_t *originator)
-{
-    int       nr = 0;
-    msp_t *msp;
-    object_t   *tmp;
-
-    /* We make some assumptions - we assume if it takes money as it type,
-     * it wants some amount.  We don't make change (ie, if something costs
-     * 3 gp and player drops a platinum, tough luck)
-     */
-    if (CONV_FROM(converter) == shstr_cons.money)
-    {
-        sint64 cost;
-        nr = (int) (((sint64)item->nrof * item->value) / (sint64)CONV_NEED(converter));
-        if (!nr)
-            return 0;
-
-        if(trigger_object_plugin_event(EVENT_TRIGGER,
-                converter, item, originator,
-                NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
-            return 0;
-
-        cost = nr * CONV_NEED(converter) / item->value;
-        /* take into account rounding errors */
-        if (nr * CONV_NEED(converter) % item->value)
-            cost++;
-
-        /* this is outdated code too... we have here a overflow problem */
-        if(cost >(1<<31))
-            cost = (1<<31);
-        decrease_ob_nr(item, (int)cost);
-    }
-    else
-    {
-        if (item->type == PLAYER
-         || CONV_FROM(converter) != item->arch->name
-         || (CONV_NEED(converter) && CONV_NEED(converter) > item->nrof))
-            return 0;
-
-        if(trigger_object_plugin_event(EVENT_TRIGGER,
-                converter, item, originator,
-                NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
-            return 0;
-
-        if (CONV_NEED(converter))
-        {
-            nr = item->nrof / CONV_NEED(converter);
-            decrease_ob_nr(item, nr * CONV_NEED(converter));
-        }
-        else
-        {
-            remove_ob(item);
-            check_walk_off(item, NULL, MOVE_APPLY_VANISHED);
-        }
-    }
-    item = arch_to_object(converter->other_arch);
-    if (CONV_NR(converter))
-        item->nrof = CONV_NR(converter);
-    if (nr)
-        item->nrof *= nr;
-
-    msp = MSP_KNOWN(converter);
-    MSP_GET_SYS_OBJ(msp, SHOP_FLOOR, tmp);
-
-    if (tmp)
-    {
-        SET_FLAG(item, FLAG_UNPAID);
-    }
-
-    item->x = converter->x;
-    item->y = converter->y;
-    insert_ob_in_map(item, converter->map, converter, 0);
-    return 1;
-}
-
 /* Eneq(@csd.uu.se): Handle apply on containers.
  * op is the player, sack is the container the player is opening or closing.
  * return 1 if an object is apllied somehow or another, 0 if error/no apply
@@ -988,11 +905,6 @@ void move_apply(object_t *const trap_obj, object_t *const victim, object_t *cons
         case ALTAR:
           /* sacrifice victim on trap */
           ApplyAltar(trap, victim, originator);
-          goto leave;
-
-        case CONVERTER:
-          if (!(flags & MOVE_APPLY_VANISHED))
-              convert_item(victim, trap, originator);
           goto leave;
 
         case PLAYERMOVER:
