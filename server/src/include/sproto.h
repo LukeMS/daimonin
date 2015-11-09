@@ -118,7 +118,6 @@
 //void                        move_firechest(object *op);
 #endif
 /* apply.c */
-int                         convert_item(object_t *item, object_t *converter, object_t *originator);
 void                        move_apply(object_t *const trap, object_t *const victim, object_t *const originator, const int flags);
 void                        do_learn_spell(object_t *op, int spell, int special_prayer);
 void                        do_forget_spell(object_t *op, int spell);

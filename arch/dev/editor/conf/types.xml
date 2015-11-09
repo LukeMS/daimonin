@@ -1694,53 +1694,6 @@
 </type>
 
 <!--####################################################################-->
-<type number="103" name="Converter">
-  <import_type name="default_flags" />
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
-  <description><![CDATA[
-    Converters are like "exchange tables". When the player drops a
-    specific type of items, they get converted into other items, at a
-    predefined exchange-ratio. ]]>
-  </description>
-  <use><![CDATA[
-    Converters are better than shopping with doormats, because the
-    converters never get sold out. For some items like food or jewels
-    those "exchange tables" are really nice, while for the more important
-    stuff like potions converters should not exist.
-    <br><br>
-    VERY IMPORTANT: Be careful with the exchange-ratio! When you drop
-    items on a converter, the stuff you get must be of equal or lesser
-    value than before! (Except if you are using "rare" items like
-    dragonscales for payment). The code will not check if your ratio is
-    sane, so the player could gain infinite wealth by using your converter. ]]>
-  </use>
-  <attribute arch="no_pick" value="1" type="fixed" />
-  <attribute arch="slaying" editor="cost arch" type="string">
-    &lt;cost arch&gt; is the name of the archetype the player has to
-    put on the converter, as payment.
-  </attribute>
-  <attribute arch="food" editor="cost number" type="int">
-    The player has to put &lt;cost number&gt; items of &lt;cost arch&gt;
-    on the converter, in order to get &lt;receive number&gt; items
-    of &lt;receive arch&gt;.
-  </attribute>
-  <attribute arch="other_arch" editor="receive arch" type="string">
-    &lt;receive arch&gt; is the name of the archetype to convert into.
-  </attribute>
-  <attribute arch="sp" editor="receive number" type="int">
-    The player has to put &lt;cost number&gt; items of &lt;cost arch&gt;
-    on the converter, in order to get &lt;receive number&gt; items
-    of &lt;receive arch&gt;.
-  </attribute>
-  <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
-    This text may contain a description of the converter.
-  </attribute>
-</type>
-
-<!--####################################################################-->
 <type number="42" name="Creator">
   <import_type name="default_flags" />
   <ignore>

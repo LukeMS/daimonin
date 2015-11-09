@@ -193,7 +193,7 @@
 #define TYPE_RANDOM_DROP        102 /* only true for spawn points atm: if found, there is a random check against
                                      * carrying. If greater as carrying - all ->inv is droped.
                                      */
-#define CONVERTER               103
+/* 103 is free. */
 #define BRACERS                 104
 /* 105 is free. */
 #define SAVEBED                 106
