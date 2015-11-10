@@ -1728,7 +1728,6 @@ int manual_apply(object_t *who, object_t *what, int aflag)
             what->type == TREASURE ||
             what->type == SAVEBED ||
             what->type == CLOCK ||
-            what->type == MENU ||
             what->type == LIGHTER ||
             QUERY_FLAG(what, FLAG_PLAYER_ONLY) ||
             QUERY_FLAG(what, FLAG_UNPAID) ||
@@ -1992,16 +1991,6 @@ int manual_apply(object_t *who, object_t *what, int aflag)
         }
 
         (void)command_time(who, "showtime");
-        r = 4;
-        break;
-
-        case MENU:
-        if (trigger_object_plugin_event(EVENT_APPLY, what, who, NULL, NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
-        {
-            r = 1;
-            break;
-        }
-
         r = 4;
         break;
 
