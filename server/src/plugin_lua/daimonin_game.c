@@ -338,7 +338,6 @@ static struct constant_decl preset_game_constants[] =
     {"TYPE_LEGS",             LEGS},
     {"TYPE_FOOD_FORCE",       TYPE_FOOD_FORCE},
     {"TYPE_FOOD_BUFF_FORCE",  TYPE_FOOD_BUFF_FORCE},
-    {"TYPE_MENU",             MENU},
     {"TYPE_BALL_LIGHTNING",   BALL_LIGHTNING},
     {"TYPE_SWARM_SPELL",      SWARM_SPELL},
     {"TYPE_RUNE",             RUNE},

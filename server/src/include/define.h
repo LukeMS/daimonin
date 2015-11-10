@@ -246,7 +246,7 @@
 #define TYPE_QUEST_UPDATE       146
 #define TYPE_SHOP_CONTAINER     147
 /* More free type values here =) */
-#define MENU                    150 /* Mark Wedel (mark@pyramid.com) Shop inventories */
+/* 150 is free. */
 #define BALL_LIGHTNING          151 /* peterm:  ball lightning and color spray */
 #define SWARM_SPELL             153
 #define RUNE                    154

@@ -6077,7 +6077,6 @@ that food.]]>
 <type available="no" number="141" name="CANCELLATION"/>
 <type available="no" number="146" name="TYPE_QUEST_UPDATE"/>
 <type available="no" number="147" name="TYPE_SHOP_CONTAINER"/>
-<type available="no" number="150" name="MENU"/>
 <type available="no" number="151" name="BALL_LIGHTNING"/>
 <type available="no" number="153" name="SWARM_SPELL"/>
 <type available="no" number="157" name="CORPSE"/>
