@@ -78,7 +78,7 @@
 #define FOOD                    6
 #define POISON                  7
 #define BOOK                    8
-#define CLOCK                   9  /* Shows the time of day when applied */
+/* 9 is free. */
 #define FBULLET                 10
 #define FBALL                   11
 #define LIGHTNING               12

@@ -212,7 +212,6 @@ static struct constant_decl preset_game_constants[] =
     {"TYPE_FOOD",             FOOD},
     {"TYPE_POISON",           POISON},
     {"TYPE_BOOK",             BOOK},
-    {"TYPE_CLOCK",            CLOCK},
     {"TYPE_FBULLET",          FBULLET},
     {"TYPE_FBALL",            FBALL},
     {"TYPE_LIGHTNING",        LIGHTNING},

@@ -1573,17 +1573,6 @@
 </type>
 
 <!--####################################################################-->
-<type number="9" name="Clock">
-  <import_type name="default_flags" />
-  <description><![CDATA[
-    Applying a clock, the time is displayed to the player. ]]>
-  </description>
-  <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
-    This text may describe the item
-  </attribute>
-</type>
-
-<!--####################################################################-->
 <type number="122" name="Container">
   <import_type name="default_flags" />
   <ignore>
