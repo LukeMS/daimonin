@@ -493,7 +493,6 @@ int                         is_true_undead(object_t *op);
 int                         hideability(object_t *ob);
 void                        do_hidden_move(object_t *op);
 int                         stand_near_hostile(object_t *who);
-int                         player_can_view(object_t *pl, object_t *op);
 int                         action_makes_visible(object_t *op);
 void                        reset_instance_data(player_t *pl);
 void                        kick_player(player_t *pl);
