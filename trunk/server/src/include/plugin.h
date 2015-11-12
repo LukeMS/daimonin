@@ -301,7 +301,6 @@ struct plugin_hooklist
     object_t *(*guild_get)(player_t *, char *);
     object_t *(*guild_join)(player_t *, char *, int, int, int, int, int, int);
     void (*guild_leave)(player_t *);
-    void (*guild_remove_restricted_items)(player_t *);
     void (*gui_npc)(object_t *, uint8, const char *);
     /* H */
     void (*hashtable_clear)(hashtable *);
