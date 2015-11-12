@@ -574,9 +574,8 @@ function module_guildsLeave(guild, player)
         return false
     end
     _RemoveGuildStats(_guilds[nr].name, player)
-    player:LeaveGuild() --_guilds[nr].name)
     player:Write("You leave the " .. _guilds[nr].name .. " Guild!")
-    -- player:RemoveGuildRestrictedItems()
+    player:LeaveGuild() --_guilds[nr].name)
     player:Fix()
     return true
 end
@@ -622,14 +621,52 @@ function module_guildsJoin(guild, player)
     if CurGuild ~= nil then
         module_guildsLeave(CurGuild, player)
     end
+    player:Write("You join the " .. _guilds[nr].name .. " Guild!")
     player:JoinGuild(_guilds[nr].name,
                      _guilds[nr].primary.group, _guilds[nr].primary.value,
                      _guilds[nr].secondary.group, _guilds[nr].secondary.value,
                      _guilds[nr].tertiary.group, _guilds[nr].tertiary.value)
-    player:Write("You join the " .. _guilds[nr].name .. " Guild!")
-    
+    -- Player should be aware just how restrictive the guild is. Then unapply
+    -- any offending equipment. Does not break curses though!
+    local flags = _guilds[nr].flags
+    if flags ~= nil then
+        if flags:Check(F_NO_MAGIC) then
+            player:Write("Guild restrictions prevent casting spells!")
+        end
+        if flags:Check(F_NO_PRAYER) then
+            player:Write("Guild restrictions prevent invoking prayers!")
+        end
+        if flags:Check(F_NO_2H) then
+            player:Write("Guild restrictions prevent use of two-handed weapons!")
+        end
+        if flags:Check(F_NO_POLEARM) then
+            player:Write("Guild restrictions prevent use of polearm weapons!")
+        end
+        if flags:Check(F_NO_ARCHERY) then
+            player:Write("Guild restrictions prevent use of archery weapons!")
+        end
+        local weapon = player:GetEquipment(game.EQUIP_WEAPON1)
+        if weapon then
+            if weapon.sub_type_1 >= 4 and
+                weapon.sub_type_1 <= 7 then
+                if flags:Check(F_NO_2H) then
+                    player:Apply(weapon, game.UNAPPLY_ALWAYS)
+                end
+            elseif weapon.sub_type_1 >= 8 and
+                weapon.sub_type_1 <= 12 then
+                if flags:Check(F_NO_POLEARM) then
+                    player:Apply(weapon, game.UNAPPLY_ALWAYS)
+                end
+            end
+        end
+        local bow = player:GetEquipment(game.EQUIP_BOW)
+        if bow then
+            if flags:Check(F_NO_ARCHERY) then
+                player:Apply(bow, game.UNAPPLY_ALWAYS)
+            end
+        end
+    end
     _AddGuildStats(_guilds[nr].name, player)
-    -- player:RemoveGuildRestrictedItems()
     player:Fix()
 
     return true
