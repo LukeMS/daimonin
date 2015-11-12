@@ -69,7 +69,6 @@ extern void             food_force_reg(object_t *op);
 extern void             create_food_buf_force(object_t *who, object_t *food, object_t *force);
 /* guild.c */
 extern object_t          *guild_get(player_t *pl, char *name);
-extern void             guild_remove_restricted_items(player_t *pl);
 extern object_t          *guild_join(player_t *pl, char *name, int s1_group, int s1_value, int s2_group, int s2_value, int s3_group, int s3_value);
 extern void             guild_leave(player_t *pl);
 /* holy.c */

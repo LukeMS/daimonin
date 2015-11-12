@@ -116,7 +116,6 @@ static struct method_decl GameObject_methods[] =
     {"ReadyUniqueMap",         (lua_CFunction) GameObject_ReadyUniqueMap},
     {"Remove",                 (lua_CFunction) GameObject_Remove},
     {"RemoveBuff",             (lua_CFunction) GameObject_RemoveBuff},
-    {"RemoveGuildRestrictedItems",(lua_CFunction) GameObject_RemoveGuildRestrictedItems},
     {"RemoveQuestItem",        (lua_CFunction) GameObject_RemoveQuestItem},
     {"Repair",                 (lua_CFunction) GameObject_Repair},
     {"Save",                   (lua_CFunction) GameObject_Save},
@@ -2482,30 +2481,6 @@ static int GameObject_LeaveGuild(lua_State *L)
 
     SET_FLAG(WHO, FLAG_FIX_PLAYER);
     hooks->guild_leave(pl);
-
-    return 0;
-}
-
-/*****************************************************************************/
-/* Name   : GameObject_RemoveGuildRestrictedItems                            */
-/* Lua    : object:RemoveGuildRestrictedItems()                              */
-/* Info   : Checks the player for items which should not be used by members  */
-/*          of their current guild, and quietly unapplies them if found.     */
-/*****************************************************************************/
-static int GameObject_RemoveGuildRestrictedItems(lua_State *L)
-{
-    lua_object *self;
-    player_t     *pl;
-
-    get_lua_args(L, "O", &self);
-
-    if (WHO->type != PLAYER ||
-        !(pl = CONTR(WHO)))
-    {
-        return luaL_error(L, "object:RemoveGuildRestrictedItems() can only be called on a player!");
-    }
-
-    hooks->guild_remove_restricted_items(pl);
 
     return 0;
 }

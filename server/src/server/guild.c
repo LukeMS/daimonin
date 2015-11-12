@@ -52,44 +52,6 @@ object_t *guild_get(player_t *pl, char *name)
     return NULL;
 }
 
-void guild_remove_restricted_items(player_t *pl)
-{
-    object_t *guild = NULL;
-    object_t *item = NULL;
-
-    if(!pl->ob || !pl->guild_force)
-    {
-        return;
-    }
-
-    guild = pl->guild_force;
-
-    // Don't call FIX_PLAYER because we'll just call it later anyway.
-    SET_FLAG(pl->ob, FLAG_NO_FIX_PLAYER);
-
-    if ((item = pl->equipment[PLAYER_EQUIP_WEAPON1]))
-    {
-        if (item->sub_type1 >= WEAP_POLE_IMPACT && (guild->weight_limit & GUILD_NO_POLEARM))
-        {
-            (void)apply_equipment(pl->ob, item, AP_QUIET | AP_UNAPPLY);
-        }
-        if (item->sub_type1 >= WEAP_2H_IMPACT && item->sub_type1 <= WEAP_2H_CLEAVE &&
-             (guild->weight_limit & GUILD_NO_2H))
-        {
-            (void)apply_equipment(pl->ob, item, AP_QUIET | AP_UNAPPLY);
-        }
-    }
-    if ((item = pl->equipment[PLAYER_EQUIP_BOW]))
-    {
-        if (guild->weight_limit & GUILD_NO_ARCHERY)
-        {
-            (void)apply_equipment(pl->ob, item, AP_QUIET | AP_UNAPPLY);
-        }
-    }
-
-    CLEAR_FLAG(pl->ob, FLAG_NO_FIX_PLAYER);
-}
-
 /* join a guild and return the new and/or updated guild object_t */
 object_t *guild_join(player_t *pl, char *name, int s1_group, int s1_value, int s2_group, int s2_value, int s3_group, int s3_value)
 {
