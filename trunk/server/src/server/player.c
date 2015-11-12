@@ -658,66 +658,6 @@ int stand_near_hostile(object_t *who)
     return 0;
 }
 
-/* check the player los field for viewability of the
- * object op. This function works fine for monsters,
- * but we dont worry if the object isnt the top one in
- * a pile (say a coin under a table would return "viewable"
- * by this routine). Another question, should we be
- * concerned with the direction the player is looking
- * in? Realistically, most of use cant see stuff behind
- * our backs...on the other hand, does the "facing" direction
- * imply the way your head, or body is facing? Its possible
- * for them to differ. Sigh, this fctn could get a bit more complex.
- * -b.t.
- * This function is now map tiling safe.
- */
-
-int player_can_view(object_t *pl, object_t *op)
-{
-    rv_t   rv;
-    int         dx, dy;
-
-    if (pl->type != PLAYER)
-    {
-        LOG(llevBug, "BUG: player_can_view() called for non-player object\n");
-        return -1;
-    }
-    if (!pl || !op)
-        return 0;
-
-    if (op->head)
-    {
-        op = op->head;
-    }
-    RV_GET_OBJ_TO_OBJ(pl, op, &rv, 0x1);
-
-    /* starting with the 'head' part, lets loop
-     * through the object and find if it has any
-     * part that is in the los array but isnt on
-     * a blocked los square.
-     * we use the archetype to figure out offsets.
-     */
-    while (op)
-    {
-        dx = rv.distance_x + op->arch->clone.x;
-        dy = rv.distance_y + op->arch->clone.y;
-
-        /* only the viewable area the player sees is updated by LOS
-         * code, so we need to restrict ourselves to that range of values
-         * for any meaningful values.
-         */
-        if (FABS(dx)
-         <= (CONTR(pl)->socket.mapx_2)
-         && FABS(dy)
-         <= (CONTR(pl)->socket.mapy_2)
-         && CONTR(pl)->los_array[dx + (CONTR(pl)->socket.mapx_2)][dy + (CONTR(pl)->socket.mapy_2)]
-         <= LOS_FLAG_BLOCKSVIEW)
-            return 1;
-        op = op->more;
-    }
-    return 0;
-}
-
 /* routine for both players and monsters. We call this when
  * there is a possibility for our action distrubing our hiding
  * place or invisiblity spell. Artefact invisiblity is not

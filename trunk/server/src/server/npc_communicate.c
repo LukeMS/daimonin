@@ -226,11 +226,11 @@ void talk_to_npc(player_t *pl, char *topic)
 
             if (rv.distance <= range)
             {
-                int x = pl->socket.mapx_2 + rv.distance_x,
-                    y = pl->socket.mapy_2 + rv.distance_y;
+                sint16 x = pl->socket.mapx_2 + rv.distance_x,
+                       y = pl->socket.mapy_2 + rv.distance_y;
 
                 /* Is it visible to the player? */
-                if (pl->los_array[x][y] <= LOS_FLAG_BLOCKSVIEW)
+                if (!(pl->los_array[x][y] & (LOS_FLAG_BLOCKED | LOS_FLAG_OUT_OF_MAP)))
                 {
                     if (t_obj->event_flags & EVENT_FLAG_TALK)
                     {
