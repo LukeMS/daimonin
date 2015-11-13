@@ -575,6 +575,25 @@ function module_guildsLeave(guild, player)
     end
     _RemoveGuildStats(_guilds[nr].name, player)
     player:Write("You leave the " .. _guilds[nr].name .. " Guild!")
+    -- Player is told about any guild restrictions which no longer apply/
+    local flags = _guilds[nr].flags
+    if flags ~= nil then
+        if flags:Check(F_NO_MAGIC) then
+            player:Write("You are no longer prevented from casting spells!", game.COLOR_GREEN)
+        end
+        if flags:Check(F_NO_PRAYER) then
+            player:Write("You are no longer prevented from invoking prayers!", game.COLOR_GREEN)
+        end
+        if flags:Check(F_NO_2H) then
+            player:Write("You are no longer prevented from using two-handed weapons!", game.COLOR_GREEN)
+        end
+        if flags:Check(F_NO_POLEARM) then
+            player:Write("You are no longer prevented from using polearm weapons!", game.COLOR_GREEN)
+        end
+        if flags:Check(F_NO_ARCHERY) then
+            player:Write("You are no longer prevented from using archery weapons!", game.COLOR_GREEN)
+        end
+    end
     player:LeaveGuild() --_guilds[nr].name)
     player:Fix()
     return true
@@ -631,19 +650,19 @@ function module_guildsJoin(guild, player)
     local flags = _guilds[nr].flags
     if flags ~= nil then
         if flags:Check(F_NO_MAGIC) then
-            player:Write("Guild restrictions prevent casting spells!")
+            player:Write("Guild restrictions prevent casting spells!", game.COLOR_RED)
         end
         if flags:Check(F_NO_PRAYER) then
-            player:Write("Guild restrictions prevent invoking prayers!")
+            player:Write("Guild restrictions prevent invoking prayers!", game.COLOR_RED)
         end
         if flags:Check(F_NO_2H) then
-            player:Write("Guild restrictions prevent use of two-handed weapons!")
+            player:Write("Guild restrictions prevent use of two-handed weapons!", game.COLOR_RED)
         end
         if flags:Check(F_NO_POLEARM) then
-            player:Write("Guild restrictions prevent use of polearm weapons!")
+            player:Write("Guild restrictions prevent use of polearm weapons!", game.COLOR_RED)
         end
         if flags:Check(F_NO_ARCHERY) then
-            player:Write("Guild restrictions prevent use of archery weapons!")
+            player:Write("Guild restrictions prevent use of archery weapons!", game.COLOR_RED)
         end
         local weapon = player:GetEquipment(game.EQUIP_WEAPON1)
         if weapon then
@@ -668,6 +687,5 @@ function module_guildsJoin(guild, player)
     end
     _AddGuildStats(_guilds[nr].name, player)
     player:Fix()
-
     return true
 end
