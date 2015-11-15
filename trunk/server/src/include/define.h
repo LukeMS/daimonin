@@ -236,7 +236,7 @@
 #define TYPE_QUEST_INFO         136
 #define TYPE_BEACON             137     /* Beacons are used mostly to locate objects by scripts */
 #define DEEP_SWAMP              138
-#define IDENTIFY_ALTAR          139
+/* 139 is free. */
 #define TYPE_GUILD_FORCE        140
 #define CANCELLATION            141
 #define SHOULDER                142     /* armour... */
@@ -245,7 +245,8 @@
 #define TYPE_FOOD_BUFF_FORCE    145
 #define TYPE_QUEST_UPDATE       146
 #define TYPE_SHOP_CONTAINER     147
-/* More free type values here =) */
+/* 148 is free. */
+/* 149 is free. */
 /* 150 is free. */
 #define BALL_LIGHTNING          151 /* peterm:  ball lightning and color spray */
 #define SWARM_SPELL             153

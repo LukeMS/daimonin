@@ -31,7 +31,6 @@ time_t  mktime(struct tm *);
 #endif
 
 static void ApplySavebed(player_t *pl, object_t *bed);
-static void ApplyIdAltar(object_t *money, object_t *altar, object_t *pl);
 static void ApplyPotion(object_t *op, object_t *tmp);
 static void ApplyContainer(object_t *op, object_t *sack);
 static void ApplyAltar(object_t *altar, object_t *sacrifice, object_t *originator);
@@ -46,79 +45,6 @@ static void ApplyPoison(object_t *op, object_t *tmp);
 static void ApplyLightRefill(object_t *who, object_t *op);
 static void ApplyLighter(object_t *who, object_t *lighter);
 static void ApplyPowerCrystal(object_t *op, object_t *crystal);
-
-static void ApplyIdAltar(object_t *money, object_t *altar, object_t *pl)
-{
-    object_t *id,
-           *next,
-           *marked;
-    int     success = 0;
-
-    if (pl == NULL || pl->type != PLAYER)
-        return;
-
-    /* Check for MONEY type is a special hack - it prevents 'nothing needs
-     * identifying' from being printed out more than it needs to be.
-     */
-    if (!check_altar_sacrifice(altar, money) || money->type != MONEY)
-        return;
-
-    /* Event trigger and quick exit */
-    if(trigger_object_plugin_event(EVENT_TRIGGER,
-                altar, pl, money,
-                NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
-        return;
-
-    marked = find_marked_object(pl);
-    /* if the player has a marked item, identify that if it needs to be
-     * identified.  IF it doesn't, then go through the player inventory.
-     */
-    if (marked && !QUERY_FLAG(marked, FLAG_IDENTIFIED) && need_identify(marked))
-    {
-        if (operate_altar(altar, &money))
-        {
-            identify(marked);
-            ndi(NDI_UNIQUE, 0, pl, "You have %s.",
-                QUERY_SHORT_NAME(marked, pl));
-            if (marked->msg)
-            {
-                ndi(NDI_UNIQUE, 0, pl, "The item has a story:\n%s", marked->msg);
-            }
-            return;
-        }
-    }
-
-    FOREACH_OBJECT_IN_OBJECT(id, pl, next)
-    {
-        if (!QUERY_FLAG(id, FLAG_IDENTIFIED) &&
-            !QUERY_FLAG(id, FLAG_SYS_OBJECT) &&
-            !IS_NORMAL_INVIS_TO(id, pl) &&
-            need_identify(id))
-        {
-            if (operate_altar(altar, &money))
-            {
-                identify(id);
-                ndi(NDI_UNIQUE, 0, pl, "You have %s.",
-                    QUERY_SHORT_NAME(id, pl));
-                if (id->msg)
-                {
-                    ndi(NDI_UNIQUE, 0, pl, "The item has a story:\n%s", id->msg);
-                }
-                success = 1;
-                /* If no more money, might as well quit now */
-                if (money == NULL || !check_altar_sacrifice(altar, money))
-                    break;
-            }
-            else
-            {
-                LOG(llevBug, "check_id_altar:  Couldn't do sacrifice when we should have been able to\n");
-                break;
-            }
-        }
-    }
-    if (!success)
-        ndi(NDI_UNIQUE, 0, pl, "You have nothing that needs identifying");
-}
 
 static void ApplyPotion(object_t *op, object_t *tmp)
 {
@@ -1056,12 +982,6 @@ void move_apply(object_t *const trap_obj, object_t *const victim, object_t *cons
         case SHOP_MAT:
           if (!(flags & MOVE_APPLY_VANISHED))
               ApplyShopMat(trap, victim);
-          goto leave;
-
-          /* Drop a certain amount of gold, and have one item identified */
-        case IDENTIFY_ALTAR:
-          if (!(flags & MOVE_APPLY_VANISHED))
-              ApplyIdAltar(victim, trap, originator);
           goto leave;
 
         case SIGN:
