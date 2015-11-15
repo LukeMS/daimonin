@@ -43,7 +43,6 @@ static void ApplyTreasure(object_t *op, object_t *tmp);
 static void ApplyFood(object_t *op, object_t *tmp);
 static void ApplyPoison(object_t *op, object_t *tmp);
 static void ApplyLightRefill(object_t *who, object_t *op);
-static void ApplyLighter(object_t *who, object_t *lighter);
 static void ApplyPowerCrystal(object_t *op, object_t *crystal);
 
 static void ApplyPotion(object_t *op, object_t *tmp)
@@ -1647,7 +1646,6 @@ int apply_object(object_t *who, object_t *what, int aflag)
             what->type == CONTAINER ||
             what->type == TREASURE ||
             what->type == SAVEBED ||
-            what->type == LIGHTER ||
             QUERY_FLAG(what, FLAG_PLAYER_ONLY) ||
             QUERY_FLAG(what, FLAG_UNPAID) ||
             check_ego_item(who, what) == EGO_ITEM_BOUND_PLAYER ||
@@ -1905,12 +1903,6 @@ int apply_object(object_t *who, object_t *what, int aflag)
         case POWER_CRYSTAL:
         /* TODO: plugin events */
         ApplyPowerCrystal(who, what);  /*  see egoitem.c */
-        r = 1;
-        break;
-
-        case LIGHTER:
-        /* TODO: plugin events */
-        ApplyLighter(who, what);
         r = 1;
         break;
 
@@ -2889,82 +2881,6 @@ void apply_light(object_t *who, object_t *op)
             }
         }
     }
-}
-
-/* ApplyLighter() - designed primarily to light torches/lanterns/etc.
- * Also burns up burnable material too. First object in the inventory is
- * the selected object to "burn". -b.t.
- */
-/* i have this item type not include in daimonin atm - MT-2004 */
-/* Currently doesn not generate APPLY events - Gecko 2005-05-15 */
-static void ApplyLighter(object_t *who, object_t *lighter)
-{
-    object_t *item;
-    tag_t   count;
-    uint32  nrof;
-    int     is_player_env   = 0;
-    char    item_name[MEDIUM_BUF];
-
-    item = find_marked_object(who);
-    if (item)
-    {
-        if (lighter->last_eat && lighter->stats.food)
-        {
-            /* lighter gets used up */
-            /* Split multiple lighters if they're being used up.  Otherwise    *
-             * one charge from each would be used up.  --DAMN        */
-            if (lighter->nrof > 1)
-            {
-                object_t *oneLighter  = get_object();
-                copy_object(lighter, oneLighter);
-                lighter->nrof -= 1;
-                oneLighter->nrof = 1;
-                oneLighter->stats.food--;
-                oneLighter = insert_ob_in_ob(oneLighter, who);
-            }
-            else
-            {
-                lighter->stats.food--;
-            }
-        }
-        else if (lighter->last_eat)
-        {
-            /* no charges left in lighter */
-            ndi(NDI_UNIQUE, 0, who, "You attempt to light the %s with a used up %s.", item->name,
-                                 lighter->name);
-            return;
-        }
-        /* Perhaps we should split what we are trying to light on fire?
-         * I can't see many times when you would want to light multiple
-         * objects at once.
-         */
-        nrof = item->nrof;
-        count = item->count;
-        /* If the item is destroyed, we don't have a valid pointer to the
-         * name object, so make a copy so the message we print out makes
-         * some sense.
-         */
-        strcpy(item_name, item->name);
-        if (who == is_player_inv(item))
-            is_player_env = 1;
-
-        /* Change to check count and not freed, since the object pointer
-         * may have gotten recycled
-         */
-        if ((nrof != item->nrof) || (count != item->count))
-        {
-            ndi(NDI_UNIQUE, 0, who, "You light the %s with the %s.", item_name, lighter->name);
-            if (is_player_env)
-                FIX_PLAYER(who ,"apply lighter ");
-        }
-        else
-        {
-            ndi(NDI_UNIQUE, 0, who, "You attempt to light the %s with the %s and fail.", item->name,
-                                 lighter->name);
-        }
-    }
-    else /* nothing to light */
-        ndi(NDI_UNIQUE, 0, who, "You need to mark a lightable object.");
 }
 
 /* scroll_failure()- hacked directly from spell_failure */

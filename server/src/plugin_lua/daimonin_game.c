@@ -276,7 +276,6 @@ static struct constant_decl preset_game_constants[] =
     {"TYPE_FLOOR",            FLOOR},
     {"TYPE_INORGANIC",        INORGANIC},
     {"TYPE_LIGHT_APPLY",      TYPE_LIGHT_APPLY },
-    {"TYPE_LIGHTER",          LIGHTER},
     {"TYPE_TRAP_PART",        TRAP_PART},
     {"TYPE_WALL",             WALL},
     {"TYPE_LIGHT_SOURCE",     LIGHT_SOURCE},
