@@ -6061,7 +6061,6 @@ that food.]]>
 <type available="no" number="136" name="TYPE_QUEST_INFO"/>
 <type available="no" number="137" name="BEACON"/>
 <type available="no" number="138" name="DEEP_SWAMP"/>
-<type available="no" number="139" name="IDENTIFY_ALTAR"/>
 <type available="no" number="140" name="TYPE_GUILD_FORCE"/>
 <type available="no" number="141" name="CANCELLATION"/>
 <type available="no" number="146" name="TYPE_QUEST_UPDATE"/>

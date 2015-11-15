@@ -331,7 +331,6 @@ static struct constant_decl preset_game_constants[] =
     {"TYPE_CONN_SENSOR",      TYPE_CONN_SENSOR},
     {"TYPE_PEARL",            TYPE_PEARL},
     {"TYPE_DEEP_SWAMP",       DEEP_SWAMP},
-    {"TYPE_IDENTIFY_ALTAR",   IDENTIFY_ALTAR},
     {"TYPE_CANCELLATION",     CANCELLATION},
     {"TYPE_SHOULDER",         SHOULDER},
     {"TYPE_LEGS",             LEGS},
