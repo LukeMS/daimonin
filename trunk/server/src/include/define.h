@@ -154,7 +154,7 @@
 /* 72 is free. */
 #define INORGANIC               73  /* metals and minerals */
 #define TYPE_LIGHT_APPLY        74  /* new light source for player */
-#define LIGHTER                 75
+/* 75 is free. */
 #define TRAP_PART               76  /* Needed by set traps skill -b.t. */
 #define WALL                    77 /* this is a wall. put it always in layer 1 if not set is_floor */
 #define LIGHT_SOURCE            78 /* thats now light sources on the map (invisible lights) */

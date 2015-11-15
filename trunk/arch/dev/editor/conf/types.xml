@@ -6033,7 +6033,6 @@ that food.]]>
 <type available="no" number="61" name="FIRECHEST"/>
 <type available="no" number="63" name="ANVIL"/>
 <type available="no" number="67" name="TYPE_AGE_FORCE"/>
-<type available="no" number="75" name="LIGHTER"/>
 <type available="no" number="76" name="TRAP_PART"/>
 <type available="no" number="84" name="TYPE_SPAWN_INFO"/>
 <type available="no" number="89" name="AURA"/>
