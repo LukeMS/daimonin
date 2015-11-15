@@ -761,7 +761,7 @@ CFParm * CFWFindPlayer(CFParm *PParm)
 }
 
 /*****************************************************************************/
-/* manual_apply wrapper.                                                     */
+/* apply_object wrapper.                                                     */
 /*****************************************************************************/
 /* 0 - object applying;                                                      */
 /* 1 - object to apply;                                                      */
@@ -772,7 +772,7 @@ CFParm * CFWManualApply(CFParm *PParm)
     CFParm     *CFP;
     static int  val;
     CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    val = manual_apply((object_t *) (PParm->Value[0]), (object_t *) (PParm->Value[1]), *(int *) (PParm->Value[2]));
+    val = apply_object((object_t *) (PParm->Value[0]), (object_t *) (PParm->Value[1]), *(int *) (PParm->Value[2]));
     CFP->Value[0] = &val;
     return CFP;
 }

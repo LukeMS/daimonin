@@ -240,7 +240,7 @@ void give_initial_items(object_t *pl, struct objectlink_t *items)
                 CLEAR_FLAG(op, FLAG_DAMNED);
             }
 
-            /* WARNING: we force here the flag "applied" without calling manual_apply().
+            /* WARNING: we force here the flag "applied" without calling apply_object().
              * We do this to avoid apply messages & commands send to the client - item applying
              * is normally an action which works ONLY for active playing character.
              * We must ensure here, that our applyable startup items don't trigger deeper

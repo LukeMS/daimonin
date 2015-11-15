@@ -1578,7 +1578,7 @@ static void ApplySavebed(player_t *pl, object_t *bed)
  *
  * aflag is special (always apply/unapply) flags.  Nothing is done with
  * them in this function - they are passed to apply_equipment(). */
-int manual_apply(object_t *who, object_t *what, int aflag)
+int apply_object(object_t *who, object_t *what, int aflag)
 {
     player_t *pl = NULL;
     int     r;

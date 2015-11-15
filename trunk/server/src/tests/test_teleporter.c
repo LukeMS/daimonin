@@ -52,7 +52,7 @@ START_TEST (simple_teleporter_without_path)
     fail_unless(apple->map == map, "Apple initially in incorrect map");
 
     /* Switch the lever and make sure the inverse is true */
-    manual_apply(lever, lever, 0);
+    apply_object(lever, lever, 0);
 
     fail_if(apple->x == 1 && apple->y == 1 && apple->map == map, "Apple wasn't teleported");
     fail_unless(apple->x == 0 && apple->y == 0, "Apple teleported to incorrect spot");
@@ -77,7 +77,7 @@ START_TEST (bad_teleporter_without_path)
     teleport->stats.sp = 100;
 
     /* Switch the lever and make sure the inverse is true */
-    manual_apply(lever, lever, 0);
+    apply_object(lever, lever, 0);
 
     fail_unless(apple->x == 1 && apple->y == 1 && apple->map == map, "Apple was teleported with bad teleporter");
     fail_unless(QUERY_FLAG(teleport, FLAG_REMOVED), "Bad teleporter wasn't removed");
@@ -98,7 +98,7 @@ START_TEST (simple_teleporter_with_path)
     fail_unless(apple->map == map, "Apple initially in incorrect map");
 
     /* Switch the lever and make sure the inverse is true */
-    manual_apply(lever, lever, 0);
+    apply_object(lever, lever, 0);
 
     fail_if(apple->x == 1 && apple->y == 1 && apple->map == map, "Apple wasn't teleported");
     fail_unless(apple->x == 2 && apple->y == 2, "Apple teleported to incorrect spot. Ended up on (%d, %d)", apple->x, apple->y);
