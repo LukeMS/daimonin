@@ -251,7 +251,7 @@ START_TEST (buttons_check_mapload)
     fail_if(fire5b->glow_radius, "light5b glows");
 
     /* Switch the lever and make sure the inverse is true */
-    manual_apply(lever, lever, 0);
+    apply_object(lever, lever, 0);
 
     fail_unless(creator1->above || creator1->below, "creator1 created nothing");
     fail_unless(creator2->above || creator2->below, "creator2 created nothing");
@@ -295,7 +295,7 @@ START_TEST (buttons_check_env_sensor)
     fail_if(sensor->weight_limit, "env sensor senses");
 
     /* Switch the lever and make sure the inverse is true */
-    manual_apply(lever, lever, 0);
+    apply_object(lever, lever, 0);
     fail_if(!light3->glow_radius, "light source 2 doesn't glow");
 
     /* The new light should activate the env sensor, let it sense... */
@@ -307,7 +307,7 @@ START_TEST (buttons_check_env_sensor)
     fail_if(!sensor->weight_limit, "env sensor doesn't sense");
 
     /* Switch the lever and make sure the inverse is true */
-    manual_apply(lever, lever, 0);
+    apply_object(lever, lever, 0);
     process_events();
     process_events();
     fail_if(sensor->weight_limit, "env sensor senses though light being off");
@@ -342,7 +342,7 @@ START_TEST (buttons_check_pedestal)
     fail_if(pedestal6->weight_limit, "sys. visible pedestal 2 is triggered");
 
     /* Switch the lever and make sure the inverse is true */
-    manual_apply(lever, lever, 0);
+    apply_object(lever, lever, 0);
 
     fail_unless(pedestal1->weight_limit, "visible pedestal 1 is not triggered");
     fail_unless(pedestal2->weight_limit, "invisible pedestal 1 is not triggered"); /* Bug 0000480 fails here */
@@ -368,7 +368,7 @@ START_TEST (buttons_creator_with_mover)
 
     process_events();
     process_events(); /* Bug 000482 crashes here */
-    manual_apply(lever, lever, 0);
+    apply_object(lever, lever, 0);
 
     for(mover = MSP_GET_FIRST(msp); mover; mover = mover->above)
     {

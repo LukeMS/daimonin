@@ -121,7 +121,7 @@
 void                        move_apply(object_t *const trap, object_t *const victim, object_t *const originator, const int flags);
 void                        do_learn_spell(object_t *op, int spell, int special_prayer);
 void                        do_forget_spell(object_t *op, int spell);
-int                         manual_apply(object_t *op, object_t *tmp, int aflag);
+int                         apply_object(object_t *op, object_t *tmp, int aflag);
 int                         apply_equipment(object_t *who, object_t *op, int aflags);
 void                        turn_on_light(object_t *op);
 void                        turn_off_light(object_t *op);

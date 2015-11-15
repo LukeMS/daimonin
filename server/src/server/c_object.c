@@ -707,7 +707,7 @@ char *examine(object_t *op, object_t *tmp, int flag)
          * event. -- Smacky 20080426 */
         if (tmp->type == SIGN ||
             tmp->type == GRAVESTONE)
-            manual_apply(op, tmp, 0);
+            apply_object(op, tmp, 0);
 
 #ifdef DAI_DEVELOPMENT_CONTENT
         if ((GET_GMASTER_MODE(op) & (GMASTER_MODE_MW | GMASTER_MODE_MM | GMASTER_MODE_SA)))
