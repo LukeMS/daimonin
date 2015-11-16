@@ -297,11 +297,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define strncasecmp(_s1_,_s2_,_nrof_) strnicmp(_s1_,_s2_,_nrof_)
 #endif
 
-#if defined(vax) || defined(ibm032)
-size_t  strftime(char *, size_t, const char *, const struct tm *);
-time_t  mktime(struct tm *);
-#endif
-
 #ifndef WIN32 /* ---win32 we define this stuff in win32.h */
 #if HAVE_DIRENT_H
 # include <dirent.h>

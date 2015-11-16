@@ -25,11 +25,6 @@
 
 #include <global.h>
 
-#if defined(vax) || defined(ibm032)
-size_t  strftime(char *, size_t, const char *, const struct tm *);
-time_t  mktime(struct tm *);
-#endif
-
 static void ApplySavebed(player_t *pl, object_t *bed);
 static void ApplyPotion(object_t *op, object_t *tmp);
 static void ApplyContainer(object_t *op, object_t *sack);
