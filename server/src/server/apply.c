@@ -1143,7 +1143,6 @@ extern void do_learn_spell(object_t *op, int spell)
     if (check_spell_known(op, spell))
     {
         ndi(NDI_UNIQUE, 0, op, "You already know the spell '%s'!", spells[spell].name);
-        remove_ob(tmp);
         return;
     }
 
