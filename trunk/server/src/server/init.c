@@ -126,7 +126,6 @@ static void init_strings()
     shstr_cons.stat_power = add_string("power");
     shstr_cons.stat_charisma = add_string("charisma");
 
-    shstr_cons.special_prayer = add_string("special prayer");
     shstr_cons.grace_limit = add_string("grace limit");
     shstr_cons.restore_grace = add_string("restore grace");
     shstr_cons.restore_hitpoints = add_string("restore hitpoints");

@@ -277,7 +277,6 @@ CommArray_s CommandsSA[] =
     {"fix_me", command_fix_me,   0.0},
     {"forget_spell", command_forget_spell, 0.0},
     {"free", command_free,0.0},
-    {"learn_special_prayer", command_learn_special_prayer, 0.0},
     {"learn_spell", command_learn_spell, 0.0},
     {"logs", command_logs,   0.0},
     {"patch", command_patch,0.0},

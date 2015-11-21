@@ -188,58 +188,6 @@
 //        return op->stats.sp;
 //}
 //
-//static void check_special_prayers(object *op, object *god)
-//{
-//    /* Ensure that 'op' doesn't know any special prayers that are not granted
-//     * by 'god'.
-//     */
-//    treasure   *tr;
-//    objectlink *ol;
-//    object     *tmp, *next_tmp;
-//    int         spell;
-//
-//    /* Outer loop iterates over all special prayer marks */
-//    for (tmp = op->inv; tmp; tmp = next_tmp)
-//    {
-//        next_tmp = tmp->below;
-//
-//        if (tmp->type != FORCE || tmp->slaying == NULL || tmp->slaying != shstr_cons.special_prayer)
-//            continue;
-//        spell = tmp->stats.sp;
-//
-//        if (god->randomitems == NULL)
-//        {
-//            LOG(llevBug, "BUG: check_special_prayers(): %s without randomitems\n", STRING_OBJ_NAME(god));
-//            do_forget_spell(op, spell);
-//            continue;
-//        }
-//
-//        /* Inner loop tries to find the special prayer in the god's treasure
-//               * list.
-//            */
-//        for (ol = god->randomitems; ol; ol = ol->next)
-//        {
-//            for (tr = ol->objlink.tl->items; tr; tr = tr->next)
-//            {
-//                object *item;
-//                if (tr->item == NULL)
-//                    continue;
-//                item = &tr->item->clone;
-//
-//                if (item->type == SPELLBOOK && get_spell_number(item) == spell)
-//                {
-//                    /* Current god allows this special prayer.*/
-//                    spell = -1;
-//                    break;
-//                }
-//            }
-//        }
-//
-//        if (spell >= 0)
-//            do_forget_spell(op, spell);
-//    }
-//}
-//
 ///*
 // * become_follower - This function is called whenever a player has
 // * switched to a new god. It handles basically all the stat changes
@@ -385,8 +333,6 @@
 //
 //    SET_FLAG(skillgroup, FLAG_APPLIED);
 //    change_abil(op, skillgroup);
-//
-//    check_special_prayers(op, new_god);
 //}
 //
 ///* op is the player.
@@ -736,8 +682,6 @@
 //            STRING_OBJ_NAME(god));
 //        return;
 //    }
-//
-//    check_special_prayers(op, god);
 //
 //    /* lets do some checks of whether we are kosher with our god */
 //    if (god_examines_priest(op, god) < 0)
