@@ -119,7 +119,7 @@
 #endif
 /* apply.c */
 void                        move_apply(object_t *const trap, object_t *const victim, object_t *const originator, const int flags);
-void                        do_learn_spell(object_t *op, int spell, int special_prayer);
+void                        do_learn_spell(object_t *op, int spell);
 void                        do_forget_spell(object_t *op, int spell);
 int                         apply_object(object_t *op, object_t *tmp, int aflag);
 int                         apply_equipment(object_t *who, object_t *op, int aflags);
@@ -316,7 +316,6 @@ int                         command_vol(object_t *op, char *params);
 int                         command_gmasterlist(object_t *op, char *params);
 int                         command_gmasterfile(object_t *op, char *params);
 int                         command_learn_spell(object_t *op, char *params);
-int                         command_learn_special_prayer(object_t *op, char *params);
 int                         command_forget_spell(object_t *op, char *params);
 int                         command_listplugins(object_t *op, char *params);
 int                         command_loadplugin(object_t *op, char *params);

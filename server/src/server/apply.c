@@ -1132,75 +1132,16 @@ static void ApplyBook(object_t *op, object_t *tmp)
     }
 }
 
-/* Special prayers are granted by gods and lost when the follower decides
- * to pray to a different gods.  'Force' objects keep track of which
- * prayers are special. */
-static object_t *find_special_prayer_mark(object_t *op, int spell)
+extern void do_learn_spell(object_t *op, int spell)
 {
-    object_t *tmp,
-           *next;
-
-    FOREACH_OBJECT_IN_OBJECT(tmp, op, next)
-    {
-        if (tmp->type == FORCE &&
-            tmp->slaying &&
-            tmp->slaying == shstr_cons.special_prayer &&
-            tmp->stats.sp == spell)
-        {
-            return tmp;
-        }
-    }
-
-    return NULL;
-}
-
-static void insert_special_prayer_mark(object_t *op, int spell)
-{
-    object_t *force   = get_archetype("force");
-    force->speed = 0;
-    update_ob_speed(force);
-    FREE_AND_COPY_HASH(force->slaying, "special prayer");
-    force->stats.sp = spell;
-    insert_ob_in_ob(force, op);
-}
-
-extern void do_learn_spell(object_t *op, int spell, int special_prayer)
-{
-    object_t *tmp = find_special_prayer_mark(op, spell);
-
     if (op->type != PLAYER)
     {
         LOG(llevBug, "BUG: do_learn_spell(): not a player ->%s\n", op->name);
         return;
     }
 
-    /* Upgrade special prayers to normal prayers */
-    if (check_spell_known(op, spell))
-    {
-        ndi(NDI_UNIQUE, 0, op, "You already know the spell '%s'!", spells[spell].name);
-
-        if (special_prayer || !tmp)
-        {
-            LOG(llevBug, "BUG: do_learn_spell(): spell already known, but can't upgrade it\n");
-            return;
-        }
-        remove_ob(tmp);
-        return;
-    }
-
-    /* Learn new spell/prayer */
-    if (tmp)
-    {
-        LOG(llevBug, "BUG: do_learn_spell(): spell unknown, but special prayer mark present\n");
-        remove_ob(tmp);
-    }
     play_sound_player_only(CONTR(op), SOUND_LEARN_SPELL, SOUND_NORMAL, 0, 0);
     CONTR(op)->known_spells[CONTR(op)->nrofknownspells++] = spell;
-
-    /* For godgiven spells the player gets a reminder-mark inserted,
-       that this spell must be removed on changing cults! */
-    if (special_prayer)
-        insert_special_prayer_mark(op, spell);
 
     send_spelllist_cmd(op, spells[spell].name, SPLIST_MODE_ADD);
     ndi(NDI_UNIQUE, 0, op, "You have learned the %s %s!",
@@ -1210,8 +1151,7 @@ extern void do_learn_spell(object_t *op, int spell, int special_prayer)
 
 extern void do_forget_spell(object_t *op, int spell)
 {
-    object_t *tmp;
-    int     i;
+    int i;
 
     if (op->type != PLAYER)
     {
@@ -1228,9 +1168,6 @@ extern void do_forget_spell(object_t *op, int spell)
     ndi(NDI_UNIQUE, 0, op, "You lose knowledge of %s.", spells[spell].name);
 
     send_spelllist_cmd(op, spells[spell].name, SPLIST_MODE_REMOVE);
-    tmp = find_special_prayer_mark(op, spell);
-    if (tmp)
-        remove_ob(tmp);
 
     for (i = 0; i < CONTR(op)->nrofknownspells; i++)
     {
@@ -1293,7 +1230,8 @@ static void ApplySpellbook(object_t *op, object_t *tmp)
         identify(tmp);
     }
 
-    if (check_spell_known(op, tmp->stats.sp) && (tmp->stats.Wis || find_special_prayer_mark(op, tmp->stats.sp) == NULL))
+    if (check_spell_known(op, tmp->stats.sp) &&
+        tmp->stats.Wis)
     {
         ndi(NDI_UNIQUE, 0, op, "You already know that spell.\n");
         return;
@@ -1320,7 +1258,7 @@ static void ApplySpellbook(object_t *op, object_t *tmp)
     else if (QUERY_FLAG(tmp, FLAG_NO_DROP))
     {
         ndi(NDI_UNIQUE, 0, op, "You succeed in learning the spell!");
-        do_learn_spell(op, tmp->stats.sp, 0);
+        do_learn_spell(op, tmp->stats.sp);
 
         /* xp gain to literacy for spell learning */
         if (!QUERY_FLAG(tmp, FLAG_NO_DROP))

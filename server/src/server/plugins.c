@@ -810,10 +810,7 @@ CFParm * CFWDoLearnSpell(CFParm *PParm)
     }
     else
     {
-        do_learn_spell((object_t *) (PParm->Value[0]), *(int *) (PParm->Value[1]), 0);
-        /* The 0 parameter is marker for special_prayer - godgiven spells,
-         * which will be deleted when player changes god.
-         */
+        do_learn_spell((object_t *) (PParm->Value[0]), *(int *) (PParm->Value[1]));
     }
     return NULL;
 }

@@ -1158,7 +1158,6 @@ EXTERN struct shstr_constants
     shstr_t *stat_wisdom;
     shstr_t *stat_power;
     shstr_t *stat_charisma;
-    shstr_t *special_prayer;
     shstr_t *grace_limit;
     shstr_t *restore_grace;
     shstr_t *restore_hitpoints;

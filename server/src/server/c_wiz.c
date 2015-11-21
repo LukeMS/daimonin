@@ -50,7 +50,6 @@ static int BanAddToBanList(object_t *op, ENUM_BAN_TYPE ban_type, char *str, int 
 static int BanRemove(object_t *op, ENUM_BAN_TYPE ban_type, char *str);
 static int BanRemoveFromBanList(object_t *op, ENUM_BAN_TYPE ban_type, char *str, int mute);
 
-static int CommandLearnSpellOrPrayer(object_t *op, char *params, int special_prayer);
 static int CreateObject(object_t *op, char *params, CreateMode_t mode);
 static int CheckAttributeValue(char *var, char *val, CreateMode_t mode);
 
@@ -2391,7 +2390,7 @@ int command_gmasterfile(object_t *op, char *params)
     return COMMANDS_RTN_VAL_OK;
 }
 
-static int CommandLearnSpellOrPrayer(object_t *op, char *params, int special_prayer)
+int command_learn_spell(object_t *op, char *params)
 {
     int spell;
 
@@ -2409,19 +2408,8 @@ static int CommandLearnSpellOrPrayer(object_t *op, char *params, int special_pra
         return COMMANDS_RTN_VAL_ERROR;
     }
 
-    do_learn_spell(op, spell, special_prayer);
+    do_learn_spell(op, spell);
     return COMMANDS_RTN_VAL_OK;
-}
-
-// These 2 are not in the current command list ... don't know why - TW
-int command_learn_spell(object_t *op, char *params)
-{
-    return CommandLearnSpellOrPrayer(op, params, 0);
-}
-
-int command_learn_special_prayer(object_t *op, char *params)
-{
-    return CommandLearnSpellOrPrayer(op, params, 1);
 }
 
 int command_forget_spell(object_t *op, char *params)
