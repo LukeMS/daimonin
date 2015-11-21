@@ -1140,9 +1140,15 @@ extern void do_learn_spell(object_t *op, int spell)
         return;
     }
 
+    if (check_spell_known(op, spell))
+    {
+        ndi(NDI_UNIQUE, 0, op, "You already know the spell '%s'!", spells[spell].name);
+        remove_ob(tmp);
+        return;
+    }
+
     play_sound_player_only(CONTR(op), SOUND_LEARN_SPELL, SOUND_NORMAL, 0, 0);
     CONTR(op)->known_spells[CONTR(op)->nrofknownspells++] = spell;
-
     send_spelllist_cmd(op, spells[spell].name, SPLIST_MODE_ADD);
     ndi(NDI_UNIQUE, 0, op, "You have learned the %s %s!",
                   (spells[spell].type == SPELL_TYPE_PRIEST) ? "prayer" :
