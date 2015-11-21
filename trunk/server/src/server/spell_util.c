@@ -2304,7 +2304,7 @@ void move_bolt(object_t *op)
     if (--(op->stats.hp) < 0)
     {
         remove_ob(op);
-        check_walk_off(op, NULL, MOVE_APPLY_DEFAULT);
+        check_walk_off(op, NULL, 0);
         return;
     }
 

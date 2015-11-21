@@ -1400,7 +1400,7 @@ static void ApplyTreasure(object_t *op, object_t *tmp)
       /* Done to re-stack map with player on top? */
       SET_FLAG (op, FLAG_NO_APPLY);
       remove_ob (op);
-      check_walk_off (op, NULL, MOVE_APPLY_DEFAULT);
+      check_walk_off (op, NULL, 0);
       insert_ob_in_map (op, op->map, NULL,0);
       CLEAR_FLAG (op, FLAG_NO_APPLY);
     }

@@ -1958,7 +1958,7 @@ object_t *kill_object(object_t *victim, object_t *killer, const char *headline, 
     {
         /* Any other object that is killed is just removed from the game. */
         remove_ob(victim);
-        check_walk_off(victim, NULL, MOVE_APPLY_DEFAULT);
+        check_walk_off(victim, NULL, 0);
     }
 
     return NULL;
@@ -2303,7 +2303,7 @@ static void KillMonster(object_t *victim, object_t *killer, object_t *killer_own
     victim->speed = 0.0;
     update_ob_speed(victim); /* remove from active list (if on) */
     remove_ob(victim);
-    check_walk_off(victim, NULL, MOVE_APPLY_DEFAULT);
+    check_walk_off(victim, NULL, 0);
 }
 
 /*
