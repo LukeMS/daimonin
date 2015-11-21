@@ -315,8 +315,6 @@ int                         command_gm(object_t *op, char *params);
 int                         command_vol(object_t *op, char *params);
 int                         command_gmasterlist(object_t *op, char *params);
 int                         command_gmasterfile(object_t *op, char *params);
-int                         command_learn_spell(object_t *op, char *params);
-int                         command_forget_spell(object_t *op, char *params);
 int                         command_listplugins(object_t *op, char *params);
 int                         command_loadplugin(object_t *op, char *params);
 int                         command_unloadplugin(object_t *op, char *params);

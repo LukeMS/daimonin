@@ -2390,52 +2390,6 @@ int command_gmasterfile(object_t *op, char *params)
     return COMMANDS_RTN_VAL_OK;
 }
 
-int command_learn_spell(object_t *op, char *params)
-{
-    int spell;
-
-    if (!op ||
-        op->type != PLAYER ||
-        !CONTR(op))
-        return COMMANDS_RTN_VAL_ERROR;
-
-    if (!params)
-        return COMMANDS_RTN_VAL_SYNTAX;
-
-    if ((spell = look_up_spell_name(params)) <= 0)
-    {
-        ndi(NDI_UNIQUE, 0, op, "Unknown spell.");
-        return COMMANDS_RTN_VAL_ERROR;
-    }
-
-    do_learn_spell(op, spell);
-    return COMMANDS_RTN_VAL_OK;
-}
-
-int command_forget_spell(object_t *op, char *params)
-{
-    int spell;
-
-    if (!op ||
-        op->type != PLAYER ||
-        !CONTR(op))
-        return COMMANDS_RTN_VAL_ERROR;
-
-    if (!params)
-        return COMMANDS_RTN_VAL_SYNTAX;
-
-    if ((spell = look_up_spell_name(params)) <= 0)
-    {
-        ndi(NDI_UNIQUE, 0, op, "Unknown spell.");
-
-        return COMMANDS_RTN_VAL_ERROR;
-    }
-
-    do_forget_spell(op, spell);
-
-    return COMMANDS_RTN_VAL_OK;
-}
-
 /* GROS */
 /* Lists all plugins currently loaded with their IDs and full names.         */
 int command_listplugins(object_t *op, char *params)
