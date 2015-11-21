@@ -313,11 +313,11 @@ static int PushLiving(object_t *who, sint8 dir, object_t *pusher)
                y = pusher->y;
 
         remove_ob(who);
-        if (check_walk_off(who, NULL, MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
+        if (check_walk_off(who, NULL, 0) != CHECK_WALK_OK)
             return 0;
 
         remove_ob(pusher);
-        if (check_walk_off(pusher, NULL, MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
+        if (check_walk_off(pusher, NULL, 0) != CHECK_WALK_OK)
         {
             /* something is wrong, put who back */
             insert_ob_in_map(who, who->map, NULL, 0);
@@ -337,7 +337,7 @@ static int PushLiving(object_t *who, sint8 dir, object_t *pusher)
     if (who->more != NULL && owner == pusher)
     {
         remove_ob(who);
-        if (check_walk_off(who, NULL, MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
+        if (check_walk_off(who, NULL, 0) != CHECK_WALK_OK)
             return 0;
         (void)move_ob(pusher, dir, pusher);
         pet_follow_owner(who);
@@ -489,7 +489,7 @@ sint8 enter_map(object_t *who, msp_t *msp, object_t *originator, uint8 oflags, u
         {
             remove_ob(who);
 
-            if (check_walk_off(who, originator, MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
+            if (check_walk_off(who, originator, 0) != CHECK_WALK_OK)
             {
                 return MOVE_RESULT_WHO_DESTROYED;
             }

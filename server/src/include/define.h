@@ -812,7 +812,6 @@
 #define F_TRUE 2    /* True value of item, unadjusted */
 
 /* move_apply() function call flags */
-#define MOVE_APPLY_DEFAULT  0
 #define MOVE_APPLY_WALK_ON  1
 #define MOVE_APPLY_FLY_ON   2
 #define MOVE_APPLY_WALK_OFF 4
