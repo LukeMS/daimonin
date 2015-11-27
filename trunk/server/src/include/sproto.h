@@ -465,13 +465,6 @@ sint8                       enter_map(object_t *who, msp_t *msp, object_t *origi
 sint8                       enter_map_by_name(object_t *who, shstr_t *path_sh, shstr_t *orig_path_sh, sint16 x, sint16 y, uint32 mflags);
 sint8                       enter_map_by_exit(object_t *who, object_t *exit_ob);
 /* pets.c */
-int                         add_pet(object_t *owner, object_t *pet, int mode);
-void                        terminate_all_pets(object_t *owner);
-void                        save_all_pets(FILE *fp, object_t *owner, int flag);
-void                        save_pet(object_t *pet);
-void                        remove_all_pets(map_t *map);
-void                        pets_follow_owner(object_t *owner);
-void                        pet_follow_owner(object_t *pet);
 /* player.c */
 player_t                     *find_player(char *plname);
 player_t                     *find_player_hash(const char *plname);

@@ -614,6 +614,68 @@ struct object_t
       QUERY_FLAG((_O_), FLAG_REFL_MISSILE)) ? 1 : 0)
 #endif
 
+extern void      mark_object_removed(object_t *ob);
+extern object_t *merge_ob(object_t *op, object_t *tmp);
+extern sint32    sum_weight(object_t *op);
+extern object_t *is_player_inv(object_t *op);
+extern void      dump_object2(const object_t *op);
+extern void      dump_object(const object_t *op);
+extern void      dump_me(object_t *op, char *outstr, size_t bufsize);
+extern void      dump_all_objects(void);
+extern void      free_all_object_data(void);
+extern object_t *get_owner(object_t *op);
+extern void      clear_owner(object_t *op);
+extern void      set_owner(object_t * const op, object_t * const owner);
+extern void      copy_owner(object_t *op, object_t *clone);
+extern void      initialize_object(object_t *op);
+extern void      copy_object(object_t *src, object_t *dest);
+extern void      copy_object_data(object_t *op2, object_t *op);
+extern object_t *get_object(void);
+extern void      update_turn_face(object_t *op);
+extern void      activelist_insert(object_t *op);
+extern void      activelist_remove(object_t *op);
+extern void      update_ob_speed(object_t *op);
+#ifndef USE_OLD_UPDATE
+#else
+extern void      update_object(object_t *op, int action);
+#endif
+extern void      destroy_object(object_t *ob);
+extern void      free_object_data(object_t *ob, int free_static_data);
+extern int       count_free(void);
+extern int       count_used(void);
+extern void      remove_ob(object_t *op);
+extern void      remove_ob_inv(object_t *op);
+extern object_t *kill_object(object_t *victim, object_t *killer, const char *headline, const char *detail);
+extern object_t *insert_ob_in_map(object_t *const op, map_t *m, object_t *const originator, const int flag);
+extern void      replace_insert_ob_in_map(char *arch_string, object_t *op);
+extern object_t *get_split_ob(object_t *orig_ob, uint32 nr);
+extern object_t *decrease_ob_nr(object_t *op, uint32 i);
+extern object_t *insert_ob_in_ob(object_t *op, object_t *where);
+extern int       check_walk_on(object_t *const op, object_t *const originator, int flags);
+extern int       check_walk_off(object_t *op, object_t *originator, int flags);
+extern object_t *present_arch(archetype_t *at, map_t *m, sint16 x, sint16 y);
+extern object_t *present(unsigned char type, map_t *m, sint16 x, sint16 y);
+extern object_t *present_in_ob(unsigned char type, object_t *op);
+extern object_t *present_arch_in_ob(archetype_t *at, object_t *op);
+extern object_t *present_arch_in_ob_temp(archetype_t *at, object_t *op);
+extern int       find_dir_2(int x, int y);
+extern int       absdir(int d);
+extern int       dirdiff(int dir1, int dir2);
+extern object_t *clone_object(object_t *original, uint8 mode);
+extern object_t *load_object_str(char *obstr);
+extern void      object_gc();
+extern int       auto_apply(object_t *op);
+extern object_t *locate_beacon(shstr_t *id);
+extern void      init_object_initializers();
+extern object_t *find_next_object(object_t *op, uint8 type, uint8 mode, object_t *root);
+extern void      revert_buff_stats(object_t *item);
+extern void      fix_buff_stats(object_t *item);
+extern object_t *check_buff_exists(object_t *item, const char *name);
+extern int       add_item_buff(object_t *item, object_t *buff, short just_checking);
+extern int       remove_item_buff(object_t *item, char *name, uint32 nrof);
+extern char     *query_name(object_t *what, object_t *who, uint32 nrof, uint8 mode);
+extern map_t    *parent_map(object_t *what);
+
 #endif /* ifndef __OBJECT_H */
 
 #ifndef __PETS_H
@@ -625,5 +687,13 @@ struct object_t
 #define PET_VALID(pet_ol, _owner_) \
     (OBJECT_VALID((pet_ol)->objlink.ob, (pet_ol)->id) && \
      (pet_ol)->objlink.ob->owner == (_owner_) && (pet_ol)->objlink.ob->owner_count == (_owner_)->count)
+
+extern int  add_pet(object_t *owner, object_t *pet, int mode);
+extern void terminate_all_pets(object_t *owner);
+extern void save_all_pets(FILE *fp, object_t *owner, int flag);
+extern void save_pet(object_t *pet);
+extern void remove_all_pets(map_t *map);
+extern void pets_follow_owner(object_t *owner);
+extern void pet_follow_owner(object_t *pet);
 
 #endif /* ifndef __PETS_H */
