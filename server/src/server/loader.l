@@ -915,7 +915,7 @@ static const char *flag_names[NUM_FLAGS + 1] =
     /*  15 */ "friendly",
     /*  16 */ NULL, // FLAG_REMOVED
     /*  17 */ "been_applied",
-    /*  18 */ NULL, // FLAG_OBJECT_WAS_MOVED
+    /*  18 */ NULL, // FLAG_INSERTED
     /*  19 */ "treasure",
     /*  20 */ "is_neutral",
     /*  21 */ "see_invisible",

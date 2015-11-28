@@ -119,7 +119,7 @@ void free_player(player_t *pl)
         if (!QUERY_FLAG(pl->ob, FLAG_REMOVED))
         {
             remove_ob(pl->ob);
-            check_walk_off(pl->ob, NULL, MOVE_APPLY_VANISHED);
+            move_check_off(pl->ob, NULL, MOVE_FLAG_VANISHED);
         }
     }
     /* Free pet links - moved that before remove from active list */
@@ -289,9 +289,9 @@ void flee_player(object_t *op)
     {
         int m = 1 - (RANDOM() & 2);
 
-        if (move_ob(op, absdir(dir + diff * m), NULL) != MOVE_RESULT_INSERTION_FAILED ||
+        if (move_ob(op, absdir(dir + diff * m), NULL) != MOVE_RETURN_INSERTION_FAILED ||
             (diff == 0 &&
-             move_ob(op, absdir(dir - diff * m), NULL) != MOVE_RESULT_INSERTION_FAILED))
+             move_ob(op, absdir(dir - diff * m), NULL) != MOVE_RETURN_INSERTION_FAILED))
         {
             return;
         }
@@ -344,7 +344,7 @@ int move_player(object_t * const op, int dir, const int flag)
 
     if (flag)
     {
-        if (move_ob(op, dir, NULL) != MOVE_RESULT_SUCCESS)
+        if (move_ob(op, dir, NULL) != MOVE_RETURN_SUCCESS)
         {
             op->anim_enemy_dir = dir;
         }
@@ -526,7 +526,7 @@ void cast_dust(object_t *op, object_t *throw_ob, int dir)
     if (!QUERY_FLAG(throw_ob, FLAG_REMOVED))
     {
         remove_ob(throw_ob);
-        check_walk_off(throw_ob, NULL, 0);
+        move_check_off(throw_ob, NULL, MOVE_FLAG_VANISHED);
     }
 }
 
@@ -711,7 +711,7 @@ void kick_player(player_t *pl)
             /* Kick the player. */
             activelist_remove(tmp->ob);
             /* remove_ob(tmp->ob); */
-            check_walk_off(tmp->ob, NULL, MOVE_APPLY_VANISHED);
+            move_check_off(tmp->ob, NULL, MOVE_FLAG_VANISHED);
             tmp->ob->direction = 0;
             LOG(llevInfo, "%s is kicked out of the game.\n",
                 STRING_OBJ_NAME(tmp->ob));

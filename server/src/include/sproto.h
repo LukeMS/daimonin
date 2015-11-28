@@ -118,7 +118,7 @@
 //void                        move_firechest(object *op);
 #endif
 /* apply.c */
-void                        move_apply(object_t *const trap, object_t *const victim, object_t *const originator, const int flags);
+void                        move_apply(object_t *const trap, object_t *const victim, object_t *const originator, const uint16 flags);
 void                        do_learn_spell(object_t *op, int spell);
 void                        do_forget_spell(object_t *op, int spell);
 int                         apply_object(object_t *op, object_t *tmp, int aflag);
@@ -456,14 +456,6 @@ objectlink_t                 *add_linked_spawn(object_t *spawn);
 void                        remove_linked_spawn_list(map_t *map);
 void                        send_link_spawn_signal(object_t *spawn, object_t *target, int signal);
 /* move.c */
-sint8                       move_ob(object_t *who, sint8 dir, object_t *originator);
-int                         teleport(object_t *teleporter, object_t *user);
-int                         push_roll_object(object_t * const op, int dir, const int flag);
-int                         missile_reflection_adjust(object_t *op, int flag);
-uint8                       leave_map(player_t *pl, map_t *newmap);
-sint8                       enter_map(object_t *who, msp_t *msp, object_t *originator, uint8 oflags, uint32 iflags);
-sint8                       enter_map_by_name(object_t *who, shstr_t *path_sh, shstr_t *orig_path_sh, sint16 x, sint16 y, uint32 mflags);
-sint8                       enter_map_by_exit(object_t *who, object_t *exit_ob);
 /* pets.c */
 /* player.c */
 player_t                     *find_player(char *plname);

@@ -1269,7 +1269,7 @@ static object_t *PickUp(object_t *who, object_t *what, object_t *where, uint32 n
             {
                 remove_ob(what);
 
-                if (check_walk_off(what, NULL, MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
+                if (move_check_off(what, NULL, MOVE_FLAG_VANISHED) > MOVE_RETURN_SUCCESS)
                 {
                     return NULL;
                 }

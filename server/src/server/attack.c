@@ -661,7 +661,7 @@ int damage_ob(object_t *op, int dam, object_t *hitter, attack_envmode_t env_atta
     if (QUERY_FLAG(hitter, FLAG_ONE_HIT))
     {
         remove_ob(hitter); /* Remove, but don't drop inventory */
-        check_walk_off(hitter, NULL, MOVE_APPLY_VANISHED);
+        move_check_off(hitter, NULL, MOVE_FLAG_VANISHED);
     }
     /* Lets handle creatures that are splitting now */
     else if (!OBJECT_FREE(op) && QUERY_FLAG(op, FLAG_SPLITTING))
@@ -681,7 +681,7 @@ int damage_ob(object_t *op, int dam, object_t *hitter, attack_envmode_t env_atta
         }
 
         remove_ob(op);
-        if (check_walk_off(op, NULL, MOVE_APPLY_VANISHED) == CHECK_WALK_OK)
+        if (move_check_off(op, NULL, MOVE_FLAG_VANISHED) == MOVE_RETURN_SUCCESS)
         {
             msp_t *msp = MSP_KNOWN(op);
 

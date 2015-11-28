@@ -921,7 +921,7 @@ int command_summon(object_t *op, char *params)
 
     msp = MSP_KNOWN(op);
 
-    if (enter_map(pl->ob, msp, op, OVERLAY_WITHIN_LOS | OVERLAY_FIRST_AVAILABLE, 0) == MOVE_RESULT_SUCCESS)
+    if (enter_map(pl->ob, msp, op, OVERLAY_WITHIN_LOS | OVERLAY_FIRST_AVAILABLE, 0) == MOVE_RETURN_SUCCESS)
     {
         ndi(NDI_UNIQUE, 0, pl->ob, "You are summoned.");
         ndi(NDI_UNIQUE, 0, op, "OK.");
@@ -1147,7 +1147,7 @@ int command_remove(object_t *op, char *params)
         return COMMANDS_RTN_VAL_SYNTAX;
 
     remove_ob(tmp);
-    check_walk_off(tmp, NULL, MOVE_APPLY_VANISHED);
+    move_check_off(tmp, NULL, MOVE_FLAG_VANISHED);
 
     return COMMANDS_RTN_VAL_OK;
 }

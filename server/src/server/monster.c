@@ -394,7 +394,7 @@ static int do_move_monster(object_t *op, int dir, uint16 forbidden)
     {
         /* Can the monster move directly toward waypoint? */
         if (!(forbidden & (1 << dir)) &&
-            move_ob(op, dir, NULL) == MOVE_RESULT_SUCCESS)
+            move_ob(op, dir, NULL) == MOVE_RETURN_SUCCESS)
         {
             return TRUE;
         }
@@ -403,13 +403,13 @@ static int do_move_monster(object_t *op, int dir, uint16 forbidden)
 
         /* try different detours */
         if ((!(forbidden & (1 << absdir(dir + m))) &&
-             move_ob(op, absdir(dir + m), NULL) == MOVE_RESULT_SUCCESS) ||
+             move_ob(op, absdir(dir + m), NULL) == MOVE_RETURN_SUCCESS) ||
             (!(forbidden & (1 << absdir(dir - m))) &&
-             move_ob(op, absdir(dir - m), NULL) == MOVE_RESULT_SUCCESS) ||
+             move_ob(op, absdir(dir - m), NULL) == MOVE_RETURN_SUCCESS) ||
             (!(forbidden & (1 << absdir(dir + m * 2))) &&
-             move_ob(op, absdir(dir + m * 2), NULL) == MOVE_RESULT_SUCCESS) ||
+             move_ob(op, absdir(dir + m * 2), NULL) == MOVE_RETURN_SUCCESS) ||
             (!(forbidden & (1 << absdir(dir - m * 2))) &&
-             move_ob(op, absdir(dir - m * 2), NULL) == MOVE_RESULT_SUCCESS))
+             move_ob(op, absdir(dir - m * 2), NULL) == MOVE_RETURN_SUCCESS))
         {
             return TRUE;
         }

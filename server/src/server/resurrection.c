@@ -123,7 +123,7 @@
 //        }
 //
 //        remove_ob(corpse);
-//        check_walk_off(corpse, NULL, MOVE_APPLY_VANISHED);
+//        move_check_off(corpse, NULL, MOVE_FLAG_VANISHED);
 //    }
 //
 //    switch (spell_type)

@@ -965,7 +965,7 @@ int insert_spell_effect(char *archname, map_t *m, int x, int y)
         if (!QUERY_FLAG(effect_ob, FLAG_REMOVED))
         {
             remove_ob(effect_ob);
-            check_walk_off(effect_ob, NULL, MOVE_APPLY_VANISHED);
+            move_check_off(effect_ob, NULL, MOVE_FLAG_VANISHED);
         }
         return 1;
     }
@@ -2081,7 +2081,7 @@ void move_cone(object_t *op)
     {
         LOG(llevBug, "BUG: Tried to move_cone object %s without a map.\n", STRING_OBJ_NAME(op));
         remove_ob(op);
-        check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+        move_check_off(op, NULL, MOVE_FLAG_VANISHED);
         return;
     }
 
@@ -2096,7 +2096,7 @@ void move_cone(object_t *op)
     if (get_owner(op) == NULL)
     {
         remove_ob(op);
-        check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+        move_check_off(op, NULL, MOVE_FLAG_VANISHED);
         return;
     }
 
@@ -2127,7 +2127,7 @@ void move_cone(object_t *op)
         else
         {
             remove_ob(op);
-            check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+            move_check_off(op, NULL, MOVE_FLAG_VANISHED);
         }
         return;
     }
@@ -2304,7 +2304,7 @@ void move_bolt(object_t *op)
     if (--(op->stats.hp) < 0)
     {
         remove_ob(op);
-        check_walk_off(op, NULL, 0);
+        move_check_off(op, NULL, MOVE_FLAG_VANISHED);
         return;
     }
 
@@ -2458,7 +2458,7 @@ void move_golem(object_t *op)
     /* Do golem attacks/movement for single & multisq golems.  */
     tag = op->count;
 
-    if (move_ob(op, op->direction, NULL) == MOVE_RESULT_SUCCESS)
+    if (move_ob(op, op->direction, NULL) == MOVE_RETURN_SUCCESS)
     {
         return;
     }
@@ -2558,7 +2558,7 @@ void move_magic_missile(object_t *op)
     if (owner == NULL)
     {
         remove_ob(op);
-        check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+        move_check_off(op, NULL, MOVE_FLAG_VANISHED);
         return;
     }
 
@@ -2570,7 +2570,7 @@ void move_magic_missile(object_t *op)
     if (!msp)
     {
         remove_ob(op);
-        check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+        move_check_off(op, NULL, MOVE_FLAG_VANISHED);
         return;
     }
 
@@ -2583,14 +2583,14 @@ void move_magic_missile(object_t *op)
         if (OBJECT_VALID(op, tag))
         {
             remove_ob(op);
-            check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+            move_check_off(op, NULL, MOVE_FLAG_VANISHED);
         }
 
         return;
     }
 
     remove_ob(op);
-    check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+    move_check_off(op, NULL, MOVE_FLAG_VANISHED);
 
     if (!op->direction ||
         (msp->flags & MSP_FLAG_BLOCKSVIEW) ||
@@ -2629,7 +2629,7 @@ void explode_object(object_t *op)
     {
         LOG(llevBug, "BUG: explode_object(): op %s without other_arch\n", STRING_OBJ_NAME(op));
         remove_ob(op);
-        check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+        move_check_off(op, NULL, MOVE_FLAG_VANISHED);
         return;
     }
 
@@ -2650,12 +2650,12 @@ void explode_object(object_t *op)
         {
             LOG(llevBug, "BUG: explode_object(): env out of map (%s)\n", STRING_OBJ_NAME(op));
             remove_ob(op);
-            check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+            move_check_off(op, NULL, MOVE_FLAG_VANISHED);
             return;
         }
 
         remove_ob(op);
-        check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+        move_check_off(op, NULL, MOVE_FLAG_VANISHED);
         op->x = x;
         op->y = y;
 
@@ -2709,7 +2709,7 @@ void explode_object(object_t *op)
 //                  if (!tailor_god_spell(tmp, op))
 //                  {
 //                      remove_ob(op);
-//                      check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+//                      move_check_off(op, NULL, MOVE_FLAG_VANISHED);
 //                      return;
 //                  }
 //               */
@@ -2737,7 +2737,7 @@ void explode_object(object_t *op)
     if (OBJECT_VALID(op, op_tag))
     {
         remove_ob(op);
-        check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+        move_check_off(op, NULL, MOVE_FLAG_VANISHED);
     }
 }
 

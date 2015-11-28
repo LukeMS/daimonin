@@ -51,12 +51,12 @@ sint8 move_ob(object_t *who, sint8 dir, object_t *originator)
     if (!who)
     {
         LOG(llevBug, "BUG: move_ob(): Trying to move NULL.\n");
-        return MOVE_RESULT_INSERTION_FAILED;
+        return MOVE_RETURN_INSERTION_FAILED;
     }
     else if (QUERY_FLAG(who, FLAG_REMOVED))
     {
         LOG(llevBug, "BUG: move_ob: monster has been removed - will not process further\n");
-        return MOVE_RESULT_INSERTION_FAILED;
+        return MOVE_RETURN_INSERTION_FAILED;
     }
     else if (who->head)
     {
@@ -74,7 +74,7 @@ sint8 move_ob(object_t *who, sint8 dir, object_t *originator)
     /* Nothing can move out of map, obviously. */
     if ((block = msp_blocked(who, NULL, ox, oy)) == (uint32)MSP_FLAG_OUT_OF_MAP)
     {
-        return MOVE_RESULT_INSERTION_FAILED;
+        return MOVE_RETURN_INSERTION_FAILED;
     }
     /* Otherwise only consider blockages if not a gmaster with wizpass. */
     else if (!IS_GMASTER_WIZPASS(who))
@@ -131,12 +131,12 @@ sint8 move_ob(object_t *who, sint8 dir, object_t *originator)
             }
 
             /* When who opens a door, that's his movement over for this turn. */
-            return MOVE_RESULT_SUCCESS;
+            return MOVE_RETURN_SUCCESS;
         }
         /* Any other block halts movement. */
         else if (block)
         {
-            return MOVE_RESULT_INSERTION_FAILED;
+            return MOVE_RETURN_INSERTION_FAILED;
         }
     }
 
@@ -145,9 +145,9 @@ sint8 move_ob(object_t *who, sint8 dir, object_t *originator)
     /* Remember that the actual process of moving from A to B can itself result
      * in the destruction of who (for example, who steps off a button which
      * triggers an explosion) so we're not home free yet. */
-    if (check_walk_off(who, originator, MOVE_APPLY_MOVE) != CHECK_WALK_OK)
+    if (move_check_off(who, originator, 0) == MOVE_RETURN_DESTROYED)
     {
-        return MOVE_RESULT_WHO_DESTROYED;
+        return MOVE_RETURN_DESTROYED;
     }
 
     /* If we've got this far, who is actually able to be moved. */
@@ -159,7 +159,204 @@ sint8 move_ob(object_t *who, sint8 dir, object_t *originator)
     }
 
     insert_ob_in_map(who, who->map, originator, 0);
-    return MOVE_RESULT_SUCCESS;
+    return MOVE_RETURN_SUCCESS;
+}
+
+/* move_check_off() is called after who is removed from a map; it checks for,
+ * and when found, applies any other objects in the same msp as each part of
+ * who and which respond to flags.
+ *
+ * who must be non-NULL. It must be currently removed from a map and not have
+ * no apply set.
+ *
+ * originator is the object, usually a player or monster that caused who to be
+ * removed. It may be NULL or it may be who.
+ *
+ * flags should be either 0 or MOVE_FLAG_VANISHED,
+ *
+ * The return is:
+ *     MOVE_RETURN_FAILURE if one of the parameters failed a sanity check;
+ *     MOVE_RETURN_SUCCESS if everything went OK (this does not imply whether 
+ *     the insertion caused an auto-apply);
+ *     MOVE_RETURN_DESTROYED if who was destroyed/killed during the process; or
+ *     MOVE_RETURN_MOVED if who was  otherwise removed or reinserted during the
+ *     process.
+ *
+ * This function must be called explicitly after a remove_ob(). */
+sint8 move_check_off(object_t *who, object_t *originator, uint8 flags)
+{
+    object_t *part;
+
+    /* Sanity checks. */
+    if (!who ||
+        !QUERY_FLAG(who, FLAG_REMOVED) ||
+        !QUERY_FLAG(who, FLAG_INSERTED) ||
+        !who->map ||
+        QUERY_FLAG(who, FLAG_NO_APPLY))
+    {
+        return MOVE_RETURN_FAILURE;
+    }
+
+    /* Correct flags according to whether who is airborne or not. */
+    MOVE_SET_OFF_FLAGS(who, flags);
+
+    /* Check each part of who, starting with the head (handles singleparts
+     * correctly). Really the caller should have passed us the head in the
+     * first place but this should handle all cases. */
+    for (part = (who->head) ? who->head : who; part; part = part->more)
+    {
+        msp_t    *msp = MSP_KNOWN(part);
+        object_t *this,
+                 *next;
+
+        /* Test the msp flags for a quick resolution. */
+        if (!MOVE_TEST_OFF_MSP_AGAINST_FLAGS(msp, flags))
+        {
+            continue;
+        }
+
+        /* We established that who has this flag set on entry. This means all
+         * parts have it individually set. Now we (temporarily) clear it for
+         * this part. */
+        CLEAR_FLAG(part, FLAG_INSERTED);
+
+        /* Now we must check against every object in this msp. */
+        FOREACH_OBJECT_IN_MSP(this, msp, next)
+        {
+            /* But not the part itself, obviously. */
+            if (this == part)
+            {
+                continue;
+            }
+
+            /* Otherwise, test if this object responds to our flags. */
+            if (MOVE_TEST_OFF_OBJECT_AGAINST_FLAGS(this, flags))
+            {
+                tag_t tag = who->count;
+
+                move_apply(this, part, originator, flags);
+
+                /* If part was destroyed this means all parts were destroyed,
+                 * so return now. */
+                if (OBJECT_FREE(part) ||
+                    tag != who->count)
+                {
+                    return MOVE_RETURN_DESTROYED;
+                }
+                /* If part was reinserted (again this means all parts were),
+                 * return. */
+                else if (QUERY_FLAG(part, FLAG_INSERTED))
+                {
+                    return MOVE_RETURN_MOVED;
+                }
+            }
+        }
+
+        SET_FLAG(part, FLAG_INSERTED);
+    }
+
+    return MOVE_RETURN_SUCCESS;
+}
+
+/* move_check_on() is called when who is inserted in a map; it checks for, and
+ * when found, applies any other objects in the same msp as each part of who
+ * and which respond to flags.
+ *
+ * who must be non-NULL. It must be currently inserted on a map and not have no
+ * apply set.
+ *
+ * originator is the object, usually a player or monster that caused who to be
+ * inserted. It may be NULL or it may be who.
+ *
+ * flags should be 0 (this parameter is for parity with move_check_off()_and
+ * future expansion).
+ *
+ * The return is:
+ *     MOVE_RETURN_FAILURE if one of the parameters failed a sanity check;
+ *     MOVE_RETURN_SUCCESS if everything went OK (this does not imply whether the
+ *     insertion caused an auto-apply);
+ *     MOVE_RETURN_DESTROYED if who was destroyed/killed during the process; or
+ *     MOVE_RETURN_MOVED if who was  otherwise removed or reinserted during the
+ *     process.
+ *
+ * This function is called implicitly from insert_ob_in_map() (unless
+ * INS_NO_APPLY is specified) so for the most part needn't be called
+ * otherwise. */
+sint8 move_check_on(object_t *who, object_t *originator, uint8 flags)
+{
+    object_t *part;
+
+    /* Sanity checks. */
+    if (!who ||
+        QUERY_FLAG(who, FLAG_REMOVED) ||
+        !QUERY_FLAG(who, FLAG_INSERTED) ||
+        !who->map ||
+        QUERY_FLAG(who, FLAG_NO_APPLY))
+    {
+        return MOVE_RETURN_FAILURE;
+    }
+
+    /* Correct flags according to whether who is airborne or not. */
+    MOVE_SET_ON_FLAGS(who, flags);
+
+    /* Check each part of who, starting with the head (handles singleparts
+     * correctly). Really the caller should have passed us the head in the
+     * first place but this should handle all cases. */
+    for (part = (who->head) ? who->head : who; part; part = part->more)
+    {
+        msp_t    *msp = MSP_KNOWN(part);
+        object_t *this,
+                 *next;
+
+        /* Test the msp flags for a quick resolution. */
+        if (!MOVE_TEST_ON_MSP_AGAINST_FLAGS(msp, flags))
+        {
+            continue;
+        }
+
+        /* We established that who has this flag set on entry. This means all
+         * parts have it individually set. Now we (temporarily) clear it for
+         * this part. */
+        CLEAR_FLAG(part, FLAG_INSERTED);
+
+        /* Now we must check against every object in this msp. */
+        FOREACH_OBJECT_IN_MSP(this, msp, next)
+        {
+            /* But not the part itself, obviously. */
+            if (this == part)
+            {
+                continue;
+            }
+
+            /* Otherwise, test if this object responds to our flags. */
+            if (MOVE_TEST_ON_OBJECT_AGAINST_FLAGS(this, flags))
+            {
+                tag_t tag = who->count;
+
+                move_apply(this, part, originator, flags);
+
+                /* If part was destroyed this means all parts were destroyed,
+                 * so return now. */
+                if (OBJECT_FREE(part) ||
+                    tag != who->count)
+                {
+                    return MOVE_RETURN_DESTROYED;
+                }
+                /* If part was removed or reinserted (again this means all
+                 * parts were), return. */
+                else if (QUERY_FLAG(part, FLAG_REMOVED) ||
+                    QUERY_FLAG(part, FLAG_INSERTED))
+                {
+                    SET_FLAG(part, FLAG_INSERTED);
+                    return MOVE_RETURN_MOVED;
+                }
+            }
+        }
+
+        SET_FLAG(part, FLAG_INSERTED);
+    }
+
+    return MOVE_RETURN_SUCCESS;
 }
 
 /*
@@ -277,7 +474,7 @@ int push_roll_object(object_t * const op, int dir, const int flag)
         else if (QUERY_FLAG(this, FLAG_CAN_ROLL))
         {
             if ((random_roll(0, this->weight / 50000 - 1) > op->stats.Str) ||
-                move_ob(this, dir, op) == MOVE_RESULT_INSERTION_FAILED)
+                move_ob(this, dir, op) == MOVE_RETURN_INSERTION_FAILED)
             {
                 ndi(NDI_UNIQUE, 0, op, "You fail to push %s.",
                     QUERY_SHORT_NAME(this, op));
@@ -313,36 +510,40 @@ static int PushLiving(object_t *who, sint8 dir, object_t *pusher)
                y = pusher->y;
 
         remove_ob(who);
-        if (check_walk_off(who, NULL, 0) != CHECK_WALK_OK)
+
+        if (move_check_off(who, NULL, MOVE_FLAG_VANISHED) > MOVE_RETURN_SUCCESS)
+        {
             return 0;
+        }
 
         remove_ob(pusher);
-        if (check_walk_off(pusher, NULL, 0) != CHECK_WALK_OK)
+
+        if (move_check_off(pusher, NULL, MOVE_FLAG_VANISHED) > MOVE_RETURN_SUCCESS)
         {
             /* something is wrong, put who back */
             insert_ob_in_map(who, who->map, NULL, 0);
             return 0;
         }
+
+        /* FIXME: Hm, I think this'll screw up if pushing across map boundaries
+         * (everyone jumps to the opposite side of their respective map) Should
+         * use out_of_map().
+         *
+         * -- Smacky 20151125 */
         pusher->x = who->x;
-        who->x = x;
         pusher->y = who->y;
-        who->y = y;
-
-        insert_ob_in_map(who, who->map, pusher, 0);
         insert_ob_in_map(pusher, pusher->map, pusher, 0);
-
+        who->x = x;
+        who->y = y;
+        insert_ob_in_map(who, who->map, pusher, 0);
         return 0;
     }
-/* TODO: allow multi arch pushing. Can't be very difficult */
+
+    /* TODO: allow multi arch pushing. Can't be very difficult */
     if (who->more != NULL && owner == pusher)
     {
-        remove_ob(who);
-        if (check_walk_off(who, NULL, 0) != CHECK_WALK_OK)
-            return 0;
         (void)move_ob(pusher, dir, pusher);
         pet_follow_owner(who);
-
-
         return 1;
     }
 
@@ -370,7 +571,7 @@ static int PushLiving(object_t *who, sint8 dir, object_t *pusher)
     str2 = (pusher->stats.Str > 0 ? pusher->stats.Str : 9 + pusher->level / 10);
 
     if (random_roll(str1, str1 / 2 + str1 * 2) >= random_roll(str2, str2 / 2 + str2 * 2) ||
-        move_ob(who, dir, pusher) != MOVE_RESULT_SUCCESS)
+        move_ob(who, dir, pusher) != MOVE_RETURN_SUCCESS)
     {
         ndi(NDI_UNIQUE, 0, who, "%s tried to push you.",
             QUERY_SHORT_NAME(pusher, who));
@@ -412,7 +613,7 @@ uint8 leave_map(player_t *pl, map_t *newmap)
     uint8      r;
 
     remove_ob(pl->ob); /* TODO: hmm... never drop inv here? */
-    r = check_walk_off(pl->ob, NULL, MOVE_APPLY_VANISHED);
+    r = move_check_off(pl->ob, NULL, MOVE_FLAG_VANISHED);
 
     if (oldmap &&
         oldmap != newmap)
@@ -463,7 +664,7 @@ sint8 enter_map(object_t *who, msp_t *msp, object_t *originator, uint8 oflags, u
      * different map). */
     if (i == -1)
     {
-        return MOVE_RESULT_INSERTION_FAILED;
+        return MOVE_RETURN_INSERTION_FAILED;
     }
     else if (i > 0)
     {
@@ -474,24 +675,30 @@ sint8 enter_map(object_t *who, msp_t *msp, object_t *originator, uint8 oflags, u
         msp = MSP_GET(m, x, y);
     }
 
+    /* FIXME: I am sure this is wrong.
+     *
+     * -- Smacky 20151125 */
     /* If it is a player login, he has yet to be inserted anyplace.
      * otherwise, we need to deal with removing the object here. */
     if (!QUERY_FLAG(who, FLAG_REMOVED))
     {
         if (pl)
         {
-            if (leave_map(pl, msp->map) != CHECK_WALK_OK)
+            if (leave_map(pl, msp->map) == MOVE_RETURN_DESTROYED)
             {
-                return MOVE_RESULT_WHO_DESTROYED;
+                return MOVE_RETURN_DESTROYED;
             }
         }
         else
         {
-            remove_ob(who);
+            uint8 mflags = 0;
 
-            if (check_walk_off(who, originator, 0) != CHECK_WALK_OK)
+            remove_ob(who);
+            MOVE_SET_OFF_FLAGS(who, mflags);
+
+            if (move_check_off(who, originator, mflags) == MOVE_RETURN_DESTROYED)
             {
-                return MOVE_RESULT_WHO_DESTROYED;
+                return MOVE_RETURN_DESTROYED;
             }
         }
     }
@@ -505,7 +712,7 @@ sint8 enter_map(object_t *who, msp_t *msp, object_t *originator, uint8 oflags, u
 
     if (!insert_ob_in_map(who, msp->map, originator, iflags))
     {
-        return MOVE_RESULT_WHO_DESTROYED;
+        return MOVE_RETURN_DESTROYED;
     }
 
     /* do some action special for players after we have inserted them */
@@ -522,7 +729,7 @@ sint8 enter_map(object_t *who, msp_t *msp, object_t *originator, uint8 oflags, u
         /* TODO: Pets, golems? */
     }
 
-    return MOVE_RESULT_SUCCESS;
+    return MOVE_RETURN_SUCCESS;
 }
 
 /* Function is used from player loader, scripts and other "direct access" situations.
@@ -546,7 +753,7 @@ sint8 enter_map_by_name(object_t *who, shstr_t *path_sh, shstr_t *orig_path_sh, 
     {
         if (!orig_path_sh)
         {
-            return MOVE_RESULT_INSERTION_FAILED;
+            return MOVE_RETURN_INSERTION_FAILED;
         }
 
         if ((mflags & (MAP_STATUS_UNIQUE | MAP_STATUS_INSTANCE)))
@@ -554,7 +761,7 @@ sint8 enter_map_by_name(object_t *who, shstr_t *path_sh, shstr_t *orig_path_sh, 
             /* Sanity checks. */
             if (!pl)
             {
-                return MOVE_RESULT_INSERTION_FAILED;
+                return MOVE_RETURN_INSERTION_FAILED;
             }
 
             if ((mflags & MAP_STATUS_UNIQUE))
@@ -595,7 +802,7 @@ sint8 enter_map_by_name(object_t *who, shstr_t *path_sh, shstr_t *orig_path_sh, 
                 if (!pl ||
                     (mflags & (MAP_STATUS_NO_FALLBACK | MAP_STATUS_LOAD_ONLY)))
                 {
-                    return MOVE_RESULT_INSERTION_FAILED;
+                    return MOVE_RETURN_INSERTION_FAILED;
                 }
 
                 path_sh = pl->savebed_map;
@@ -616,7 +823,7 @@ sint8 enter_map_by_name(object_t *who, shstr_t *path_sh, shstr_t *orig_path_sh, 
             (mflags & MAP_STATUS_NO_FALLBACK) ||
             !orig_path_sh) /* we only try path_sh !  - no fallback to a different map */
         {
-            return MOVE_RESULT_INSERTION_FAILED;
+            return MOVE_RETURN_INSERTION_FAILED;
         }
 
         /* For player we first try to the bind point (aka savebed) */
@@ -644,7 +851,7 @@ sint8 enter_map_by_name(object_t *who, shstr_t *path_sh, shstr_t *orig_path_sh, 
         }
         else /* we NEVER use the emergency map for mobs */
         {
-            return MOVE_RESULT_INSERTION_FAILED;
+            return MOVE_RETURN_INSERTION_FAILED;
         }
     }
 
@@ -652,7 +859,7 @@ sint8 enter_map_by_name(object_t *who, shstr_t *path_sh, shstr_t *orig_path_sh, 
     if (!who ||
         (mflags & MAP_STATUS_LOAD_ONLY))
     {
-        return MOVE_RESULT_INSERTION_FAILED;
+        return MOVE_RETURN_INSERTION_FAILED;
     }
 
     /* This is EXTREMLY useful for quest maps with treasure rooms. */
@@ -708,7 +915,7 @@ sint8 enter_map_by_exit(object_t *who, object_t *exit_ob)
     /* Event trigger and quick exit */
     if (trigger_object_plugin_event(EVENT_TRIGGER, exit_ob, who, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
     {
-        return MOVE_RESULT_INSERTION_FAILED;
+        return MOVE_RETURN_INSERTION_FAILED;
     }
 
     /* If the destination path is nonexistent or invalid, we ain't goin'
@@ -718,7 +925,7 @@ sint8 enter_map_by_exit(object_t *who, object_t *exit_ob)
     {
         ndi(NDI_UNIQUE, 0, who, "%s is temporarily closed.",
             QUERY_SHORT_NAME(exit_ob, who));
-        return MOVE_RESULT_INSERTION_FAILED;
+        return MOVE_RETURN_INSERTION_FAILED;
     }
 
     /* Get the map the exit is on (or the environment of the exit is on). */
@@ -781,7 +988,7 @@ sint8 enter_map_by_exit(object_t *who, object_t *exit_ob)
                 mstatus);
         }
 
-        return MOVE_RESULT_INSERTION_FAILED;
+        return MOVE_RETURN_INSERTION_FAILED;
     }
     /* Multiplayer maps are easy as reference is always NULL and the
      * destination path is the same as the original destination path. */
@@ -831,7 +1038,7 @@ sint8 enter_map_by_exit(object_t *who, object_t *exit_ob)
              * change soon. */
             if (!pl)
             {
-                return MOVE_RESULT_INSERTION_FAILED;
+                return MOVE_RETURN_INSERTION_FAILED;
             }
 
             /* For a unique, the destination path is in server/data/players/.
@@ -900,7 +1107,7 @@ sint8 enter_map_by_exit(object_t *who, object_t *exit_ob)
     {
         ndi(NDI_UNIQUE, 0, who, "%s is closed.",
             QUERY_SHORT_NAME(exit_ob, who));
-        return MOVE_RESULT_INSERTION_FAILED;
+        return MOVE_RETURN_INSERTION_FAILED;
     }
 
     /* Now we got for sure transported away.
@@ -934,7 +1141,7 @@ sint8 enter_map_by_exit(object_t *who, object_t *exit_ob)
      * (no need for MSP_GET() as out_of_map() needn't and mustn't be called). */
     if (OUT_OF_REAL_MAP(m, x, y))
     {
-        return MOVE_RESULT_INSERTION_FAILED;
+        return MOVE_RETURN_INSERTION_FAILED;
     }
 
     msp = MSP_RAW(m, x, y);
@@ -957,7 +1164,7 @@ sint8 enter_map_by_exit(object_t *who, object_t *exit_ob)
     /* enter_map() may destroy who; if so, just return that info. */
     i = enter_map(who, msp, exit_ob, oflags, 0);
 
-    if (i != MOVE_RESULT_SUCCESS)
+    if (i != MOVE_RETURN_SUCCESS)
     {
         return i;
     }
@@ -971,9 +1178,9 @@ sint8 enter_map_by_exit(object_t *who, object_t *exit_ob)
         /* CHECK THIS! */
         if (who->stats.hp == 0)
         {
-            return MOVE_RESULT_WHO_DESTROYED;
+            return MOVE_RETURN_DESTROYED;
         }
     }
 
-    return MOVE_RESULT_SUCCESS;
+    return MOVE_RETURN_SUCCESS;
 }

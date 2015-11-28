@@ -202,11 +202,6 @@ extern int rv_get(object_t *op1, msp_t *msp1, object_t *op2, msp_t *msp2, rv_t *
 #ifndef __MAP_H
 #define __MAP_H
 
-/* Return values for the move.c functions. */
-#define MOVE_RESULT_SUCCESS          0
-#define MOVE_RESULT_INSERTION_FAILED 1
-#define MOVE_RESULT_WHO_DESTROYED    2
-
 /* for server->client map protocol. Tell client how to handle its local map cache */
 #define MAP_UPDATE_CMD_SAME 0
 #define MAP_UPDATE_CMD_NEW 1

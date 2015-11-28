@@ -600,13 +600,13 @@
                                 */
 #define FLAG_FRIENDLY       15 /* Will help players */
 /*
- *  FLAG_OBJECT_WAS_MOVED, REMOVED and BEEN_APPLIED are direct used from
+ *  FLAG_INSERTED, REMOVED and BEEN_APPLIED are direct used from
  *  object.c/can_merge() - change it too when you move this flag! See also
  *  FLAG_APPLIED
  */
 #define FLAG_REMOVED        16 /* Object is not in any map or invenory */
 #define FLAG_BEEN_APPLIED   17 /* The object has been applied in the past - its "identified by using" */
-#define FLAG_OBJECT_WAS_MOVED 18     /* internal used from remove_ob() und insert_xx() */
+#define FLAG_INSERTED       18 /* Object is or has been in a map or invenory */
 #define FLAG_TREASURE       19 /* Will generate treasure when applied */
 #define FLAG_IS_NEUTRAL     20 /* alignment of this object: we need the explicit neutral setting for items */
 #define FLAG_SEE_INVISIBLE  21 /* Will see invisible player */
@@ -810,25 +810,6 @@
 #define F_BUY 0
 #define F_SELL 1
 #define F_TRUE 2    /* True value of item, unadjusted */
-
-/* move_apply() function call flags */
-#define MOVE_APPLY_WALK_ON  1
-#define MOVE_APPLY_FLY_ON   2
-#define MOVE_APPLY_WALK_OFF 4
-#define MOVE_APPLY_FLY_OFF  8
-#define MOVE_APPLY_MOVE     16 /* means: our object makes a step in/out of this tile */
-#define MOVE_APPLY_VANISHED 32 /* when a player logs out, the player char not "move" out of a tile
-                                * but it "turns to nothing on the spot". This sounds senseless but for
-                               * example a move out can trigger a teleporter action. This flag prevents
-                               * a loging out/exploding object is teleported after removing it from the spot.
-                               */
-#define MOVE_APPLY_SAVING   64 /* move_apply() called from saving function */
-
-/* WALK ON/OFF function return flags */
-#define CHECK_WALK_OK        0
-#define CHECK_WALK_DESTROYED 1
-#define CHECK_WALK_MOVED     2
-
 
 #define ARCH_MAX_TYPES       512 /* important - this must be higher as max type number! */
 /* GET_?_FROM_DIR if used only for positional firing where dir is X and Y

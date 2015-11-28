@@ -544,7 +544,7 @@ int move_symptom(object_t *symptom)
     {
         /* outside a monster/player, die immediately */
         remove_ob(symptom);
-        check_walk_off(symptom, NULL, MOVE_APPLY_VANISHED);
+        move_check_off(symptom, NULL, MOVE_FLAG_VANISHED);
         return 0;
     }
     if (symptom->stats.dam > 0)

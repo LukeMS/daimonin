@@ -345,7 +345,7 @@ static const char *GameObject_flags[NUM_FLAGS + 1 + 1] =
     /*  15 */ "f_friendly",
     /*  16 */ "?f_is_removed",
     /*  17 */ "f_been_applied",
-    /*  18 */ "?f_was_moved",
+    /*  18 */ "?f_inserted",
     /*  19 */ "f_treasure",
     /*  20 */ "f_is_neutral",
     /*  21 */ "f_see_invisible",

@@ -116,11 +116,11 @@ START_TEST (buttons_move_apply_check_inv)
     insert_ob_in_map(cont1, map, NULL, 0);
     fail_if(cont1->x != c7->x+1 || cont1->y != c7->y, "insertion missed");
     fail_if(sword->nrof != 10, "sword nrof wrong before test");
-    fail_if(move_ob(cont1, 7, NULL) != MOVE_RESULT_SUCCESS, "checker 7 blocked cont with sword");
+    fail_if(move_ob(cont1, 7, NULL) != MOVE_RETURN_SUCCESS, "checker 7 blocked cont with sword");
     fail_if(sword->nrof > 9, "sword nrof not reduced"); 
     fail_if(sword->nrof < 9, "sword nrof reduced too much (got %d, expected 9)",sword->nrof); 
     remove_ob(cont1);
-    check_walk_off(cont1, cont1, 0);
+    move_check_off(cont1, cont1, MOVE_FLAG_VANISHED);
     fail_if(sword->nrof > 8, "sword nrof not reduced"); 
     fail_if(sword->nrof < 8, "sword nrof reduced too much (got %d, expected 8)",sword->nrof); 
 
@@ -129,10 +129,10 @@ START_TEST (buttons_move_apply_check_inv)
     insert_ob_in_map(cont1, map, NULL, 0);
     fail_if(cont1->x != c8->x+1 || cont1->y != c8->y+1, "insertion missed");
     fail_if(sword->nrof != 8, "sword nrof changed (got %d)", sword->nrof); 
-    fail_if(move_ob(cont1, 8, NULL) != MOVE_RESULT_INSERTION_FAILED, "checker 8 didn't block cont with sword");
+    fail_if(move_ob(cont1, 8, NULL) != MOVE_RETURN_INSERTION_FAILED, "checker 8 didn't block cont with sword");
     fail_if(sword->nrof != 8, "sword nrof changed (got %d)", sword->nrof); 
     remove_ob(cont1);
-    check_walk_off(cont1, cont1, 0);
+    move_check_off(cont1, cont1, MOVE_FLAG_VANISHED);
     fail_if(sword->nrof != 8, "sword nrof changed (got %d)", sword->nrof); 
 
     cont1->type = CONTAINER;
