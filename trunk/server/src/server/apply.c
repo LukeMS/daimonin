@@ -748,13 +748,13 @@ static void ApplySign(object_t *op, object_t *sign)
  *
  * I added the flags parameter to give the single events more information
  * about whats going on:
- * Most important is the "MOVE_APPLY_VANISHED" flag.
+ * Most important is the "MOVE_FLAG_VANISHED" flag.
  * If set, a object has left a tile but "vanished" and not moved (perhaps
  * it exploded or whatever). This means that some events are not triggered
  * like trapdoors or teleporter traps for example which have a "FLY/MOVE_OFF"
  * set. This will avoid that they touch invalid objects.
  */
-void move_apply(object_t *const trap_obj, object_t *const victim, object_t *const originator, const int flags)
+void move_apply(object_t *const trap_obj, object_t *const victim, object_t *const originator, const uint16 flags)
 {
     object_t *const trap = (trap_obj->head) ? trap_obj->head : trap_obj;
     player_t       *pl = NULL;
@@ -873,7 +873,7 @@ void move_apply(object_t *const trap_obj, object_t *const victim, object_t *cons
           goto leave;
 
         case THROWN_OBJ:
-          if (trap->inv == NULL || (flags & MOVE_APPLY_VANISHED))
+          if (trap->inv == NULL || (flags & MOVE_FLAG_VANISHED))
               goto leave;
           /* fallthrough */
         case ARROW:
@@ -904,7 +904,7 @@ void move_apply(object_t *const trap_obj, object_t *const victim, object_t *cons
 
 //        case FBULLET:
         case BULLET:
-          if ((QUERY_FLAG(victim, FLAG_NO_PASS) || IS_LIVE(victim)) && !(flags & MOVE_APPLY_VANISHED))
+          if ((QUERY_FLAG(victim, FLAG_NO_PASS) || IS_LIVE(victim)) && !(flags & MOVE_FLAG_VANISHED))
               check_fired_arch(trap);
           goto leave;
 
@@ -917,7 +917,7 @@ void move_apply(object_t *const trap_obj, object_t *const victim, object_t *cons
               int       max, sound_was_played;
               object_t   *ab;
 
-              if ((flags & MOVE_APPLY_VANISHED))
+              if ((flags & MOVE_FLAG_VANISHED))
                   goto leave;
 
               if (!trap->weight_limit)
@@ -954,7 +954,7 @@ void move_apply(object_t *const trap_obj, object_t *const victim, object_t *cons
 
         case PIT:
           /* Pit not open? */
-          if ((flags & MOVE_APPLY_VANISHED) || trap->stats.wc > 0)
+          if ((flags & MOVE_FLAG_VANISHED) || trap->stats.wc > 0)
               goto leave;
           play_sound_map(MSP_KNOWN(victim), SOUND_FALL_HOLE, SOUND_NORMAL);
 
@@ -965,7 +965,7 @@ void move_apply(object_t *const trap_obj, object_t *const victim, object_t *cons
           goto leave;
 
         case EXIT:
-          if (!(flags & MOVE_APPLY_VANISHED) &&
+          if (!(flags & MOVE_FLAG_VANISHED) &&
               pl)
           {
               (void)enter_map_by_exit(victim, trap);
@@ -974,7 +974,7 @@ void move_apply(object_t *const trap_obj, object_t *const victim, object_t *cons
           goto leave;
 
         case SHOP_MAT:
-          if (!(flags & MOVE_APPLY_VANISHED))
+          if (!(flags & MOVE_FLAG_VANISHED))
               ApplyShopMat(trap, victim);
           goto leave;
 
@@ -994,12 +994,12 @@ void move_apply(object_t *const trap_obj, object_t *const victim, object_t *cons
           goto leave;
 
         case RUNE:
-          if (!(flags & MOVE_APPLY_VANISHED) && trap->level && IS_LIVE(victim))
+          if (!(flags & MOVE_FLAG_VANISHED) && trap->level && IS_LIVE(victim))
               spring_trap(trap, victim);
           goto leave;
 
         case GRAVESTONE:
-          if (!(flags & MOVE_APPLY_VANISHED) &&
+          if (!(flags & MOVE_FLAG_VANISHED) &&
               pl &&
               trap->level >= 1 &&
               trap->stats.dam >= 1)
@@ -1023,24 +1023,24 @@ void move_apply(object_t *const trap_obj, object_t *const victim, object_t *cons
 //        /* The following missile types do not cause TRIGGER events */
 //        case MMISSILE:
 //          /* no need to hit anything */
-//          if (IS_LIVE(victim) && !(flags & MOVE_APPLY_VANISHED))
+//          if (IS_LIVE(victim) && !(flags & MOVE_FLAG_VANISHED))
 //          {
 //              tag_t     trap_tag    = trap->count;
 //              damage_ob(victim, trap->stats.dam, trap, ENV_ATTACK_CHECK);
 //              if (!was_destroyed(trap, trap_tag))
 //                  remove_ob(trap);
-//              check_walk_off(trap, NULL, MOVE_APPLY_VANISHED);
+//              move_check_off(trap, NULL, MOVE_FLAG_VANISHED);
 //          }
 //          goto leave;
 //        case CANCELLATION:
 //        case BALL_LIGHTNING:
-//          if (IS_LIVE(victim) && !(flags & MOVE_APPLY_VANISHED))
+//          if (IS_LIVE(victim) && !(flags & MOVE_FLAG_VANISHED))
 //              damage_ob(victim, trap->stats.dam, trap, ENV_ATTACK_CHECK);
 //          goto leave;
 //
 //          /* we don't have this atm.
 //          case DEEP_SWAMP:
-//            if(!(flags&MOVE_APPLY_VANISHED))
+//            if(!(flags&MOVE_FLAG_VANISHED))
 //              walk_on_deep_swamp (trap, victim);
 //            goto leave;
 //          */
@@ -1364,7 +1364,7 @@ static void ApplyTreasure(object_t *op, object_t *tmp)
     do
     {
         remove_ob(treas);
-        check_walk_off(treas, NULL, MOVE_APPLY_VANISHED);
+        move_check_off(treas, NULL, MOVE_FLAG_VANISHED);
         ndi(NDI_UNIQUE, 0, op, "You find %s in the chest.",
             QUERY_SHORT_NAME(treas, op));
         treas->x = op->x,treas->y = op->y;
@@ -1400,7 +1400,7 @@ static void ApplyTreasure(object_t *op, object_t *tmp)
       /* Done to re-stack map with player on top? */
       SET_FLAG (op, FLAG_NO_APPLY);
       remove_ob (op);
-      check_walk_off (op, NULL, 0);
+      move_check_off (op, NULL, MOVE_FLAG_VANISHED);
       insert_ob_in_map (op, op->map, NULL,0);
       CLEAR_FLAG (op, FLAG_NO_APPLY);
     }

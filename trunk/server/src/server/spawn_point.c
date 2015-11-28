@@ -239,7 +239,7 @@ void spawn_point(object_t *op)
 
                 /* darkness has changed - now remove the spawned monster */
                 remove_ob(op->enemy);
-                check_walk_off(op->enemy, NULL, MOVE_APPLY_VANISHED);
+                move_check_off(op->enemy, NULL, MOVE_FLAG_VANISHED);
             }
             else
                 return;
@@ -277,7 +277,7 @@ void spawn_point(object_t *op)
             STRING_MAP_PATH(op->map), op->x, op->y);
         /* kill this spawn point - its useless and need to fixed from the map maker/generator */
         remove_ob(op);
-        check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+        move_check_off(op, NULL, MOVE_FLAG_VANISHED);
         return;
     }
 

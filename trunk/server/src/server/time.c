@@ -193,7 +193,7 @@ void remove_door(object_t *op)
     if (op->sub_type1 == ST1_DOOR_NORMAL)
         play_sound_map(MSP_KNOWN(op), SOUND_OPEN_DOOR, SOUND_NORMAL);
     remove_ob(op);
-    check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+    move_check_off(op, NULL, MOVE_FLAG_VANISHED);
 }
 
 void remove_door2(object_t *op, object_t *opener)
@@ -228,7 +228,7 @@ void remove_door2(object_t *op, object_t *opener)
         if (op->sub_type1 == ST1_DOOR_NORMAL)
             play_sound_map(MSP_KNOWN(op), SOUND_OPEN_DOOR, SOUND_NORMAL);
         remove_ob(op);
-        check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+        move_check_off(op, NULL, MOVE_FLAG_VANISHED);
     }
     else if (!op->last_eat) /* if set, we are have opened a closed door - now handle autoclose */
     {
@@ -238,7 +238,7 @@ void remove_door2(object_t *op, object_t *opener)
         remove_ob(op); /* to trigger all the updates/changes on map and for player, we
                          * remove and reinsert it. a bit overhead but its secure and simple
                          */
-        check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+        move_check_off(op, NULL, MOVE_FLAG_VANISHED);
         FOREACH_OBJECT_IN_OBJECT(this, op, next)
         {
             if (this->type == RUNE &&
@@ -282,7 +282,7 @@ void remove_door3(object_t *op)
         LOG(llevBug, "BUG: door with speed but no map?! killing object...done. (%s - (%d,%d))\n", STRING_OBJ_NAME(op), op->x,
             op->y);
         remove_ob(op);
-        check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+        move_check_off(op, NULL, MOVE_FLAG_VANISHED);
         return;
     }
 
@@ -305,7 +305,7 @@ void remove_door3(object_t *op)
         remove_ob(op); /* to trigger all the updates/changes on map and for player, we
                          * remove and reinsert it. a bit overhead but its secure and simple
                          */
-        check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+        move_check_off(op, NULL, MOVE_FLAG_VANISHED);
         op->last_eat = 0; /* mark this door as "its closed" */
         op->speed = 0.0f;   /* remove from active list */
         op->speed_left = 0.0f;
@@ -349,7 +349,7 @@ void remove_force(object_t *op)
     if (!env)
     {
         remove_ob(op);
-        check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+        move_check_off(op, NULL, MOVE_FLAG_VANISHED);
 
         return;
     }
@@ -485,7 +485,7 @@ void remove_force(object_t *op)
         FIX_PLAYER(env ,"remove force - bug? fix monster?");
     }
 
-    check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+    move_check_off(op, NULL, MOVE_FLAG_VANISHED);
 }
 
 void poison_more(object_t *op)
@@ -494,7 +494,7 @@ void poison_more(object_t *op)
     if (op->env == NULL || !IS_LIVE(op->env) || op->env->stats.hp < 0)
     {
         remove_ob(op);
-        check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+        move_check_off(op, NULL, MOVE_FLAG_VANISHED);
         return;
     }
     if (!op->stats.food)
@@ -509,7 +509,7 @@ void poison_more(object_t *op)
             ndi(NDI_UNIQUE, 0, op->env, "You feel much better now.");
         }
         remove_ob(op);
-        check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+        move_check_off(op, NULL, MOVE_FLAG_VANISHED);
         return;
     }
     if (op->env->type == PLAYER)
@@ -606,7 +606,7 @@ void move_gate(object_t *op)
                 if (i != -1)
                 {
                     remove_ob(this);
-                    check_walk_off(this, NULL, MOVE_APPLY_VANISHED);
+                    move_check_off(this, NULL, MOVE_FLAG_VANISHED);
                     this->x += OVERLAY_X(i);
                     this->y += OVERLAY_Y(i);
                     insert_ob_in_map(this, m, op, 0);
@@ -982,7 +982,7 @@ void change_object(object_t *op)
 
     env = op->env;
     remove_ob(op);
-    check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+    move_check_off(op, NULL, MOVE_FLAG_VANISHED);
 
     for (i = 0; i < 1; i++) /* atm we only generate per change tick *ONE* object_t */
     {
@@ -1074,7 +1074,7 @@ void move_teleporter(object_t *op)
                 LOG(llevMapbug, "MAPBUG:: Removed illegal teleporter [%s %d %d] (destination out of map = %d %d)!\n",
                     STRING_MAP_PATH(m2), op->x, op->y, x2, y2);
                 remove_ob(op);
-                check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+                move_check_off(op, NULL, MOVE_FLAG_VANISHED);
                 return;
             }
 
@@ -1765,7 +1765,7 @@ int process_object(object_t *op)
         if (op->type == TYPE_SPARKLY)
         {
             remove_ob(op);
-            check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+            move_check_off(op, NULL, MOVE_FLAG_VANISHED);
             return 0;
         }
         else if (op->type == CONTAINER &&
@@ -1792,7 +1792,7 @@ int process_object(object_t *op)
             else
             {
                 remove_ob(op);
-                check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+                move_check_off(op, NULL, MOVE_FLAG_VANISHED);
             }
 
             return 1;

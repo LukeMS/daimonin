@@ -460,25 +460,24 @@ int change_abil(object_t *op, object_t *tmp)
         }
     }
 
-    /* TODO: For now it is easier to treat flying and levitating as the same,
-     * but in future they should be subtly different (ie, with different actual
-     * effects, not just messages) -- Smacky 20080926 */
-    if (QUERY_FLAG(tmp, FLAG_FLYING) || QUERY_FLAG(tmp, FLAG_LEVITATE))
+    /* FIXME: This whole change_abil()/fix_player() paradigm is a stupid way to
+     * handle this.
+     *
+     * -- Smacky 20151128 */
+    if (QUERY_FLAG(tmp, FLAG_FLYING) ||
+        QUERY_FLAG(tmp, FLAG_LEVITATE))
     {
         if (applied > 0)
         {
             success = 1;
 
             if (IS_AIRBORNE(&refop))
-                ndi(NDI_UNIQUE | NDI_WHITE, 0, op, "You are airborne. You feel a little more stable.");
+            {
+                ndi(NDI_UNIQUE | NDI_WHITE, 0, op, "You are already airborne but you feel a little more stable.");
+            }
             else
             {
                 ndi(NDI_UNIQUE | NDI_GREY, 0, op, "You become airborne!");
-
-                if (op->speed > 1) // why? and shouldn't we call update_ob_speed() too?
-                    op->speed = 1; // also, why not do this when you stop flying too? -- Smacky 20080926
-
-                check_walk_on(op, op, 0);
             }
         }
         else
@@ -486,12 +485,12 @@ int change_abil(object_t *op, object_t *tmp)
             success = 1;
 
             if (IS_AIRBORNE(op))
-                ndi(NDI_UNIQUE | NDI_WHITE, 0, op, "You are airborne. You feel a little less stable.");
+            {
+                ndi(NDI_UNIQUE | NDI_WHITE, 0, op, "You are still airborne but you feel a little less stable.");
+            }
             else
             {
-                ndi(NDI_UNIQUE | NDI_GREY, 0, op, "You are no longer airborne.");
-
-                check_walk_on(op, op, 0);
+                ndi(NDI_UNIQUE | NDI_GREY, 0, op, "You are no longer airborne!");
             }
         }
     }

@@ -1148,7 +1148,7 @@ void ai_avoid_line_of_fire(object_t *op, struct mob_behaviour_param *params, mov
                     STRING_OBJ_NAME(missile), TAG(missile),
                     STRING_MAP_PATH(missile->map), missile->x, missile->y);
                 remove_ob(missile);
-                check_walk_off(missile, NULL, MOVE_APPLY_VANISHED);
+                move_check_off(missile, NULL, MOVE_FLAG_VANISHED);
             }
 
             return;

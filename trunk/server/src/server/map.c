@@ -2602,7 +2602,7 @@ static void UpdateMapTiles(map_t *m)
     remove_ob((_O_)); \
     if ((_C_)) \
     { \
-        check_walk_off((_O_), NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING); \
+        move_check_off((_O_), NULL, MOVE_FLAG_VANISHED); \
     }
 
 #define VALIDATE_NEXT(_T_, _N_, _P_, _L_) \
@@ -2752,7 +2752,7 @@ static void SaveObjects(map_t *m, FILE *fp)
                  * We need to be a bit careful here.
                  *
                  * We will give the move_apply() code (which handles object changes when
-                 * something is removed) the MOVE_APPLY_VANISHED flag - we MUST
+                 * something is removed) the MOVE_FLAG_VANISHED flag - we MUST
                  * take care in all called function about it.
                  *
                  * a example: A button which is pressed will call a spawn point "remove object x"

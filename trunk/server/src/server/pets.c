@@ -137,7 +137,7 @@ void save_pet(object_t *pet)
     if (!QUERY_FLAG(pet, FLAG_REMOVED))
     {
         remove_ob(pet);
-        if (check_walk_off(pet, NULL, MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
+        if (move_check_off(pet, NULL, MOVE_FLAG_VANISHED) > MOVE_RETURN_SUCCESS)
         {
             ndi(NDI_UNIQUE, 0, pet->owner, "%s has disappeared!",
                 QUERY_SHORT_NAME(pet, pet->owner));
@@ -162,7 +162,7 @@ void pet_follow_owner(object_t *pet)
     if (!QUERY_FLAG(pet, FLAG_REMOVED))
     {
         remove_ob(pet);
-        if (check_walk_off(pet, NULL, MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
+        if (move_check_off(pet, NULL, MOVE_FLAG_VANISHED) > MOVE_RETURN_SUCCESS)
         {
             ndi(NDI_UNIQUE, 0, pet->owner, "%s has disappeared!",
                 QUERY_SHORT_NAME(pet, pet->owner));
@@ -270,7 +270,7 @@ void terminate_all_pets(object_t *owner)
         if(PET_VALID(ol, owner))
         {
             remove_ob(ol->objlink.ob);
-            check_walk_off(ol->objlink.ob, NULL, MOVE_APPLY_VANISHED);
+            move_check_off(ol->objlink.ob, NULL, MOVE_FLAG_VANISHED);
         }
     }
 }

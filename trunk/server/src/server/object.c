@@ -36,8 +36,6 @@ static void Copy(object_t *from, object_t *to);
 static void KillPlayer(player_t *pl, object_t *killer, object_t *killer_owner, const char *detail);
 static void KillMonster(object_t *victim, object_t *killer, object_t *killer_owner);
 
-static int static_walk_semaphore = FALSE; /* see walk_off/walk_on functions  */
-
 /* find_dir_2(delta-x,delta-y) will return a direction in which
  * an object which has subtracted the x and y coordinates of another
  * object, needs to travel toward it. */
@@ -1507,7 +1505,6 @@ void remove_ob(object_t *op)
     }
 
     mark_object_removed(op);
-    SET_FLAG(op, FLAG_OBJECT_WAS_MOVED);
 
     if (op->env)
     {
@@ -1958,7 +1955,7 @@ object_t *kill_object(object_t *victim, object_t *killer, const char *headline, 
     {
         /* Any other object that is killed is just removed from the game. */
         remove_ob(victim);
-        check_walk_off(victim, NULL, 0);
+        move_check_off(victim, NULL, MOVE_FLAG_VANISHED);
     }
 
     return NULL;
@@ -2303,7 +2300,7 @@ static void KillMonster(object_t *victim, object_t *killer, object_t *killer_own
     victim->speed = 0.0;
     update_ob_speed(victim); /* remove from active list (if on) */
     remove_ob(victim);
-    check_walk_off(victim, NULL, 0);
+    move_check_off(victim, NULL, MOVE_FLAG_VANISHED);
 }
 
 /*
@@ -2334,8 +2331,7 @@ static void KillMonster(object_t *victim, object_t *killer, object_t *killer_own
 
 object_t *insert_ob_in_map(object_t *const op, map_t *m, object_t *const originator, const int flag)
 {
-    object_t         *tmp = NULL,
-                   *top;
+    object_t       *top;
     sint16          x,
                     y;
     msp_t       *msp;
@@ -2448,7 +2444,7 @@ object_t *insert_ob_in_map(object_t *const op, map_t *m, object_t *const origina
         (void)merge_ob(op, NULL);
 
     CLEAR_FLAG(op, FLAG_REMOVED);
-    SET_FLAG(op, FLAG_OBJECT_WAS_MOVED); /* we need this for FLY/MOVE_ON/OFF */
+    SET_FLAG(op, FLAG_INSERTED);
     CLEAR_FLAG(op, FLAG_APPLIED);       /* nothing on the floor can be applied */
     CLEAR_FLAG(op, FLAG_INV_LOCKED);    /* or locked */
 
@@ -2598,40 +2594,17 @@ object_t *insert_ob_in_map(object_t *const op, map_t *m, object_t *const origina
      * objects - for example when we hit a teleporter trap.
      * Check only for single tiles || or head but ALWAYS for heads.
      */
-    if (!(flag & INS_NO_WALK_ON) && (msp->flags & (MSP_FLAG_WALK_ON | MSP_FLAG_FLY_ON) || op->more) && !op->head)
+    if (!(flag & INS_NO_WALK_ON) &&
+        !op->head &&
+        (op->more ||
+         (msp->flags & (MSP_FLAG_FLY_ON | MSP_FLAG_WALK_ON))))
     {
-        for (tmp = op; tmp; tmp = tmp->more)
+        if (move_check_on(op, originator, 0) == MOVE_RETURN_DESTROYED)
         {
-            int event;
-
-            msp = MSP_KNOWN(tmp);
-
-            /* tmp is flying/levitating but no fly event here */
-            if (IS_AIRBORNE(tmp)) /* Old code queried op only, but as
-                                   * check_walk_on() may be called on tmp and
-                                   * queries it for the flying flags, we must
-                                   * do so here too -- Smacky 20080926 */
-            {
-                if (!(msp->flags & MSP_FLAG_FLY_ON))
-                    continue;
-            }
-            /* tmp is walkimg but no walk event here */
-            else
-            {
-                if (!(msp->flags & MSP_FLAG_WALK_ON))
-                    continue;
-            }
-
-            /* there is a move event appropriate to tmp's move type here */
-            if ((event = check_walk_on(tmp, originator, MOVE_APPLY_MOVE)))
-            {
-                if (event == CHECK_WALK_MOVED)
-                    return op; /* don't return NULL - we are valid but we was moved */
-                else
-                    return NULL; /* CHECK_WALK_DESTROYED */
-            }
+            return NULL;
         }
     }
+
     return op;
 }
 
@@ -2772,7 +2745,7 @@ object_t * decrease_ob_nr(object_t *op, uint32 i)
         {
             op->nrof -= i;
             remove_ob(op);
-            check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+            move_check_off(op, NULL, MOVE_FLAG_VANISHED);
 
             /* Anything left? Reinsert it at head of inv. */
             if (op->nrof)
@@ -2862,7 +2835,7 @@ object_t *insert_ob_in_ob(object_t *op, object_t *where)
      * inserted. */
     merged = merge_ob(op, NULL);
     CLEAR_FLAG(op, FLAG_REMOVED);
-    SET_FLAG(op, FLAG_OBJECT_WAS_MOVED);
+    SET_FLAG(op, FLAG_INSERTED);
 
     if (!where->inv)
     {
@@ -2922,218 +2895,6 @@ object_t *insert_ob_in_ob(object_t *op, object_t *where)
     }
 
     return op;
-}
-
-/*
- * Checks if any objects which has the WALK_ON() (or FLY_ON() if the
- * object is flying) flag set, will be auto-applied by the insertion
- * of the object into the map (applying is instantly done).
- * Any speed-modification due to SLOW_MOVE() of other present objects
- * will affect the speed_left of the object.
- *
- * originator: Player, monster or other object that caused 'op' to be inserted
- * into 'map'.  May be NULL.
- *
- * Return value: 1 if 'op' was destroyed, 0 otherwise.
- *
- * 4-21-95 added code to check if appropriate skill was readied - this will
- * permit faster movement by the player through this terrain. -b.t.
- *
- * MSW 2001-07-08: Check all objects on space, not just those below
- * object being inserted.  insert_ob_in_map may not put new objects
- * on top.
- */
-
-int check_walk_on(object_t *const op, object_t *const originator, int flags)
-{
-    uint8      fly,
-               local_walk_semaphore = 0; // 1= root call for static_walk_semaphore setting
-    tag_t      tag;
-    msp_t  *msp;
-    object_t    *this,
-              *next;
-
-    if (QUERY_FLAG(op, FLAG_NO_APPLY))
-    {
-        return 0;
-    }
-
-    /* This flag ensures we notice when a moving event has appeared! Because
-     * the functions who set/clear the flag can be called recursive from this
-     * function and walk_off() we need a static, global semaphor like flag to
-     * ensure we don't clear the flag except in the mother call. */
-    if (!static_walk_semaphore)
-    {
-        local_walk_semaphore = 1;
-        static_walk_semaphore = 1;
-        CLEAR_FLAG(op, FLAG_OBJECT_WAS_MOVED);
-    }
-
-    if ((fly = IS_AIRBORNE(op)))
-    {
-        flags |= MOVE_APPLY_FLY_ON;
-    }
-    else
-    {
-        flags |= MOVE_APPLY_WALK_ON;
-    }
-
-    tag = op->count;
-    msp = MSP_KNOWN(op);
-
-    FOREACH_OBJECT_IN_MSP(this, msp, next)
-    {
-        /* Can't apply yourself. */
-        if (this == op)
-        {
-            continue;
-        }
-
-        if ((fly)
-            ? QUERY_FLAG(this, FLAG_FLY_ON)
-            : QUERY_FLAG(this, FLAG_WALK_ON))
-        {
-            move_apply(this, op, originator, flags); /* apply_func must handle multi arch parts....
-                                                     * NOTE: move_apply() can be heavy recursive and recall
-                                                     * this function too.*/
-
-            if (!OBJECT_VALID(op, tag)) // we got killed, removed or whatever
-            {
-                if (local_walk_semaphore)
-                {
-                    static_walk_semaphore = 0;
-                }
-
-                return CHECK_WALK_DESTROYED;
-            }
-
-            /* and here a remove_ob() or insert_xx() was triggered - we MUST stop now */
-            if (QUERY_FLAG(op, FLAG_OBJECT_WAS_MOVED))
-            {
-                if (local_walk_semaphore)
-                {
-                    static_walk_semaphore = 0;
-                }
-
-                return CHECK_WALK_MOVED;
-            }
-        }
-    }
-
-    if (local_walk_semaphore)
-    {
-        static_walk_semaphore = 0;
-    }
-
-    return CHECK_WALK_OK;
-}
-
-/* Different to check_walk_on() this must be called explicit and its
- * handles muti arches at once.
- * There are some flags notifiying move_apply() about the kind of event
- * we have.
- */
-int check_walk_off(object_t *op, object_t *originator, int flags)
-{
-    object_t     *part;
-    int         local_walk_semaphore    = FALSE; /* when TRUE, this function is root call for static_walk_semaphore setting */
-    int         fly;
-    tag_t       tag;
-
-
-    if (!op || !op->map) /* no map, no walk off - item can be in inventory and/or ... */
-        return CHECK_WALK_OK; /* means "nothing happens here" */
-
-    if (!QUERY_FLAG(op, FLAG_REMOVED))
-    {
-        LOG(llevBug, "BUG: check_walk_off: object %s is not removed when called\n", STRING_OBJ_NAME(op));
-        return CHECK_WALK_OK;
-    }
-
-    if (QUERY_FLAG(op, FLAG_NO_APPLY))
-        return CHECK_WALK_OK;
-
-    tag = op->count;
-    if ((fly = IS_AIRBORNE(op)))
-        flags |= MOVE_APPLY_FLY_OFF;
-    else
-        flags |= MOVE_APPLY_WALK_OFF;
-
-    for (part = op; part; part = part->more) /* check single and multi arches */
-    {
-        map_t    *m = op->map;
-        sint16    x = part->x,
-                  y = part->y;
-        msp_t    *msp = MSP_GET2(m, x, y);
-        object_t *tmp,
-                 *next;
-
-        if (!(msp->flags & (MSP_FLAG_WALK_OFF | MSP_FLAG_FLY_OFF))) /* no event on this tile */
-        {
-            continue;
-        }
-
-        /* This flags ensures we notice when a moving event has appeared!
-         * Because the functions who set/clear the flag can be called recursive
-         * from this function and walk_off() we need a static, global semaphor
-         * like flag to ensure we don't clear the flag except in the mother
-         * call. */
-        if (!static_walk_semaphore)
-        {
-            local_walk_semaphore = TRUE;
-            static_walk_semaphore = TRUE;
-            CLEAR_FLAG(op, FLAG_OBJECT_WAS_MOVED);
-        }
-
-        FOREACH_OBJECT_IN_MSP(tmp, msp, next)
-        {
-            if (tmp == part) /* its the ob part in this space... better not >1 part in same space of same arch */
-            {
-                continue;
-            }
-
-            if ((fly) ? QUERY_FLAG(tmp, FLAG_FLY_OFF) : QUERY_FLAG(tmp, FLAG_WALK_OFF)) /* event */
-            {
-                move_apply(tmp, part, originator, flags);
-
-                if (OBJECT_FREE(part) ||
-                    tag != op->count)
-                {
-                    if (local_walk_semaphore)
-                    {
-                        static_walk_semaphore = FALSE;
-                    }
-
-                    return CHECK_WALK_DESTROYED;
-                }
-
-                /* and here a insert_xx() was triggered - we MUST stop now */
-                if (!QUERY_FLAG(part, FLAG_REMOVED) ||
-                    QUERY_FLAG(part, FLAG_OBJECT_WAS_MOVED))
-                {
-                    if (local_walk_semaphore)
-                    {
-                        static_walk_semaphore = FALSE;
-                    }
-
-                    return CHECK_WALK_MOVED;
-                }
-            }
-        }
-
-        if (local_walk_semaphore)
-        {
-            local_walk_semaphore = FALSE;
-            static_walk_semaphore = FALSE;
-        }
-    }
-
-    if (local_walk_semaphore)
-    {
-        static_walk_semaphore = FALSE;
-    }
-
-    return CHECK_WALK_OK;
 }
 
 /* present_arch(arch, map, x, y) searches for any objects with

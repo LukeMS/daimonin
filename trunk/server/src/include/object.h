@@ -651,8 +651,6 @@ extern void      replace_insert_ob_in_map(char *arch_string, object_t *op);
 extern object_t *get_split_ob(object_t *orig_ob, uint32 nr);
 extern object_t *decrease_ob_nr(object_t *op, uint32 i);
 extern object_t *insert_ob_in_ob(object_t *op, object_t *where);
-extern int       check_walk_on(object_t *const op, object_t *const originator, int flags);
-extern int       check_walk_off(object_t *op, object_t *originator, int flags);
 extern object_t *present_arch(archetype_t *at, map_t *m, sint16 x, sint16 y);
 extern object_t *present(unsigned char type, map_t *m, sint16 x, sint16 y);
 extern object_t *present_in_ob(unsigned char type, object_t *op);
@@ -677,6 +675,111 @@ extern char     *query_name(object_t *what, object_t *who, uint32 nrof, uint8 mo
 extern map_t    *parent_map(object_t *what);
 
 #endif /* ifndef __OBJECT_H */
+
+#ifndef __MOVE_H
+#define __MOVE_H
+
+/* MOVE_FLAG_* are flags which may be passed to move_check_off/on() and
+ * indicate the type of move being made.
+ *
+ * VANISHED is of particular importance. This indicates that the moving object
+ * has simply disappeared. Broadly, a vanished object applies map connected
+ * objects but avoids any effects on the vanished object itself.
+ *
+ * Otherwise there are two movement types, flying and walking. For several
+ * reasons Daimonin has a quite simple system where objects are either airborne
+ * (flying or levitating) or they're not (walking). The off/on indicates
+ * whether the object is moving off of or on to  a square. */
+/* TODO: For now it is easier to treat flying and levitating as the same,
+ * but in future they should be subtly different (ie, with different actual
+ * effects, not just messages) -- Smacky 20080926 */
+#define MOVE_FLAG_VANISHED (1 << 0)
+#define MOVE_FLAG_FLY_OFF  (1 << 1)
+#define MOVE_FLAG_FLY_ON   (1 << 2)
+#define MOVE_FLAG_WALK_OFF (1 << 3)
+#define MOVE_FLAG_WALK_ON  (1 << 4)
+
+/* MOVE_SET_OFF_FLAGS() correctly sets the MOVE_FLAGs for _O_ according to its
+ * airborne status. These flags may then be passed to move_check_off(). */
+#define MOVE_SET_OFF_FLAGS(_O_, _F_) \
+    (_F_) &= ~(MOVE_FLAG_WALK_ON | MOVE_FLAG_FLY_ON); \
+    if (IS_AIRBORNE((_O_))) \
+    { \
+        (_F_) |= MOVE_FLAG_FLY_OFF; \
+        (_F_) &= ~MOVE_FLAG_WALK_OFF; \
+    } \
+    else \
+    { \
+        (_F_) |= MOVE_FLAG_WALK_OFF; \
+        (_F_) &= ~MOVE_FLAG_FLY_OFF; \
+    }
+
+/* MOVE_SET_ON_FLAGS() correctly sets the MOVE_FLAGs for _O_ according to its
+ * airborne status. These flags may then be passed to move_check_on(). */
+#define MOVE_SET_ON_FLAGS(_O_, _F_) \
+    (_F_) &= ~(MOVE_FLAG_VANISHED | MOVE_FLAG_WALK_OFF | MOVE_FLAG_FLY_OFF); \
+    if (IS_AIRBORNE((_O_))) \
+    { \
+        (_F_) |= MOVE_FLAG_FLY_ON; \
+        (_F_) &= ~MOVE_FLAG_WALK_ON; \
+    } \
+    else \
+    { \
+        (_F_) |= MOVE_FLAG_WALK_ON; \
+        (_F_) &= ~MOVE_FLAG_FLY_ON; \
+    }
+
+/* MOVE_TEST_OFF_MSP_AGAINST_FLAGS() tests the _MSP_ flags against _F_,
+ * returning 1 if there is a match or 0 if there is not. */
+#define MOVE_TEST_OFF_MSP_AGAINST_FLAGS(_MSP_, _F_) \
+    ((((_F_) & MOVE_FLAG_FLY_OFF) && \
+      ((_MSP_)->flags & MSP_FLAG_FLY_OFF)) || \
+     (((_F_) & MOVE_FLAG_WALK_OFF) && \
+      ((_MSP_)->flags & MSP_FLAG_WALK_OFF))) ? 1 : 0
+
+/* MOVE_TEST_OFF_OBJECT_AGAINST_FLAGS() tests the _O_ flags against _F_,
+ * returning 1 if there is a match or 0 if there is not. */
+#define MOVE_TEST_OFF_OBJECT_AGAINST_FLAGS(_O_, _F_) \
+    ((((_F_) & MOVE_FLAG_FLY_OFF) && \
+      QUERY_FLAG((_O_), FLAG_FLY_OFF)) || \
+     (((_F_) & MOVE_FLAG_WALK_OFF) && \
+      QUERY_FLAG((_O_), FLAG_WALK_OFF))) ? 1 : 0
+
+/* MOVE_TEST_ON_MSP_AGAINST_FLAGS() tests the _MSP_ flags against _F_,
+ * returning 1 if there is a match or 0 if there is not. */
+#define MOVE_TEST_ON_MSP_AGAINST_FLAGS(_MSP_, _F_) \
+    ((((_F_) & MOVE_FLAG_FLY_ON) && \
+      ((_MSP_)->flags & MSP_FLAG_FLY_ON)) || \
+     (((_F_) & MOVE_FLAG_WALK_ON) && \
+      ((_MSP_)->flags & MSP_FLAG_WALK_ON))) ? 1 : 0
+
+/* MOVE_TEST_ON_OBJECT_AGAINST_FLAGS() tests the _O_ flags against _F_,
+ * returning 1 if there is a match or 0 if there is not. */
+#define MOVE_TEST_ON_OBJECT_AGAINST_FLAGS(_O_, _F_) \
+    ((((_F_) & MOVE_FLAG_FLY_ON) && \
+      QUERY_FLAG((_O_), FLAG_FLY_ON)) || \
+     (((_F_) & MOVE_FLAG_WALK_ON) && \
+      QUERY_FLAG((_O_), FLAG_WALK_ON))) ? 1 : 0
+
+/* MOVE_RETURN_* Are possible return values of the move functions. */
+#define MOVE_RETURN_FAILURE          -1
+#define MOVE_RETURN_SUCCESS          0
+#define MOVE_RETURN_INSERTION_FAILED 1
+#define MOVE_RETURN_DESTROYED        2
+#define MOVE_RETURN_MOVED            3
+
+extern sint8 move_ob(object_t *who, sint8 dir, object_t *originator);
+extern sint8 move_check_off(object_t *who, object_t *originator, uint8 flags);
+extern sint8 move_check_on(object_t *who, object_t *originator, uint8 flags);
+extern int   teleport(object_t *teleporter, object_t *user);
+extern int   push_roll_object(object_t * const op, int dir, const int flag);
+extern int   missile_reflection_adjust(object_t *op, int flag);
+extern uint8 leave_map(player_t *pl, map_t *newmap);
+extern sint8 enter_map(object_t *who, msp_t *msp, object_t *originator, uint8 oflags, uint32 iflags);
+extern sint8 enter_map_by_name(object_t *who, shstr_t *path_sh, shstr_t *orig_path_sh, sint16 x, sint16 y, uint32 mflags);
+extern sint8 enter_map_by_exit(object_t *who, object_t *exit_ob);
+
+#endif /* ifndef __MOVE_H */
 
 #ifndef __PETS_H
 #define __PETS_H

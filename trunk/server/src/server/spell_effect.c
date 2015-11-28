@@ -1181,7 +1181,7 @@ void check_fired_arch(object_t *op)
     {
         probe(op);
         remove_ob(op);
-        check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+        move_check_off(op, NULL, MOVE_FLAG_VANISHED);
         return;
     }
 
@@ -1217,7 +1217,7 @@ void check_fired_arch(object_t *op)
             if (!QUERY_FLAG(op, FLAG_REMOVED))
             {
                 remove_ob(op);
-                check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+                move_check_off(op, NULL, MOVE_FLAG_VANISHED);
                 return;
             }
         }
@@ -1256,7 +1256,7 @@ void move_fired_arch(object_t *op)
     }
 
     remove_ob(op);
-    check_walk_off(op, NULL, 0);
+    move_check_off(op, NULL, MOVE_FLAG_VANISHED);
 
     if (!msp)
     {
@@ -1280,7 +1280,7 @@ void move_fired_arch(object_t *op)
             {
                 probe(op);
                 remove_ob(op);
-                check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+                move_check_off(op, NULL, MOVE_FLAG_VANISHED);
                 return;
             }
         }
@@ -1617,7 +1617,7 @@ void move_fired_arch(object_t *op)
 //    if (owner && (!(owner->path_attuned & PATH_ELEC)) && (op->attacktype & AT_GODPOWER))
 //    {
 //        remove_ob(op);
-//        check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+//        move_check_off(op, NULL, MOVE_FLAG_VANISHED);
 //        new_draw_info(NDI_UNIQUE, 0, owner,
 //                             "The ball lightning dispells immediately.  Perhaps you need attunement to the spell path?");
 //        return;
@@ -1656,7 +1656,7 @@ void move_fired_arch(object_t *op)
 //    }
 //
 //    remove_ob(op);
-//    check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+//    move_check_off(op, NULL, MOVE_FLAG_VANISHED);
 //    op->y = ny;
 //    op->x = nx;
 //    if (!insert_ob_in_map(op, op->map, op, 0))
@@ -1963,7 +1963,7 @@ void move_fired_arch(object_t *op)
 //    {
 //        SET_FLAG(op, FLAG_NO_APPLY);
 //        remove_ob(op);
-//        if (check_walk_off(op, NULL, MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
+//        if (move_check_off(op, NULL, MOVE_FLAG_VANISHED) != MOVE_RETURN_SUCCESS)
 //            return;
 //        if (!insert_ob_in_map(op, op->map, op, 0))
 //            return;
@@ -2242,7 +2242,7 @@ void move_fired_arch(object_t *op)
 //    if (op->stats.hp == 0 || get_owner(op) == NULL)
 //    {
 //        remove_ob(op);
-//        check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+//        move_check_off(op, NULL, MOVE_FLAG_VANISHED);
 //        return;
 //    }
 //    op->stats.hp--;
@@ -2435,7 +2435,7 @@ void move_fired_arch(object_t *op)
 //            enter_map_by_exit(op, wor);
 //    }
 //    remove_ob(wor);
-//    check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+//    move_check_off(op, NULL, MOVE_FLAG_VANISHED);
 //*/
 //}
 //
@@ -3321,7 +3321,7 @@ void move_fired_arch(object_t *op)
 //                  if (SK_level(op) > tmp->level)
 //                  {
 //                      remove_ob(tmp);
-//                      check_walk_off(tmp, NULL, MOVE_APPLY_VANISHED);
+//                      move_check_off(tmp, NULL, MOVE_FLAG_VANISHED);
 //                  }
 //                  break;
 //              }
@@ -3333,7 +3333,7 @@ void move_fired_arch(object_t *op)
 //                      if (!tmp->stats.hp)
 //                      {
 //                          remove_ob(tmp);
-//                          check_walk_off(tmp, NULL, MOVE_APPLY_VANISHED);
+//                          move_check_off(tmp, NULL, MOVE_FLAG_VANISHED);
 //                      }
 //                  }
 //                  break;

@@ -220,7 +220,7 @@ void rune_attack(object_t *op, object_t *victim)
             object_t *disease = op->inv;
             infect_object(victim, disease, 1);
             remove_ob(disease);
-            check_walk_off(disease, NULL, MOVE_APPLY_VANISHED);
+            move_check_off(disease, NULL, MOVE_FLAG_VANISHED);
         }
     }
     else
@@ -306,7 +306,7 @@ void spring_trap(object_t *trap, object_t *victim)
     {
         /* This is necessary if the trap is inside something else */
         remove_ob(trap);
-        check_walk_off(trap, NULL, MOVE_APPLY_VANISHED);
+        move_check_off(trap, NULL, MOVE_FLAG_VANISHED);
         set_traped_flag(env);
         trap->x = victim->x;trap->y = victim->y;
         if (!insert_ob_in_map(trap, victim->map, trap, 0))
@@ -475,7 +475,7 @@ int trap_disarm(object_t *disarmer, object_t *trap, int risk)
     {
         ndi(NDI_UNIQUE, 0, disarmer, "You successfuly remove the %s (lvl %d)!", trap->name, trap->level);
         remove_ob(trap);
-        check_walk_off(trap, NULL, MOVE_APPLY_VANISHED);
+        move_check_off(trap, NULL, MOVE_FLAG_VANISHED);
         set_traped_flag(env);
         /* If it is your own trap, (or any players trap), don't you don't
            * get exp for it.

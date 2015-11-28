@@ -273,7 +273,7 @@ void move_missile(object_t *op)
     if (!(hitter = get_owner(op)))
     {
         remove_ob(op);
-        check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+        move_check_off(op, NULL, MOVE_FLAG_VANISHED);
 
         return;
     }
@@ -282,7 +282,7 @@ void move_missile(object_t *op)
     {
         LOG(llevBug, "BUG: Arrow %s had no map.\n", STRING_OBJ_NAME(op));
         remove_ob(op);
-        check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+        move_check_off(op, NULL, MOVE_FLAG_VANISHED);
         return;
     }
 
@@ -487,7 +487,7 @@ void move_missile(object_t *op)
 
     /* Move the arrow. */
     remove_ob(op);
-    if (check_walk_off(op, NULL, MOVE_APPLY_VANISHED) == CHECK_WALK_OK)
+    if (move_check_off(op, NULL, MOVE_FLAG_VANISHED) == MOVE_RETURN_SUCCESS)
     {
         op->x = x;
         op->y = y;
@@ -547,7 +547,7 @@ static inline object_t * fix_stopped_missile(object_t *op)
             if(!QUERY_FLAG(op, FLAG_REMOVED))
             {
                 remove_ob(op);
-                check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+                move_check_off(op, NULL, MOVE_FLAG_VANISHED);
             }
             return NULL;
         }
@@ -584,7 +584,7 @@ void stop_missile(object_t *op)
         object_t *payload = op->inv;
 
         remove_ob(payload);
-        check_walk_off(payload, NULL, MOVE_APPLY_VANISHED);
+        move_check_off(payload, NULL, MOVE_FLAG_VANISHED);
 
         trigger_object_plugin_event(EVENT_STOP,
             payload, NULL, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL);
@@ -609,7 +609,7 @@ void stop_missile(object_t *op)
             }
         }
         remove_ob(op);
-        check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+        move_check_off(op, NULL, MOVE_FLAG_VANISHED);
     }
     else
     {
