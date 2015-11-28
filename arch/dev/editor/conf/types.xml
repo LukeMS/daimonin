@@ -279,7 +279,7 @@
      and invisible. They don't interact with players at all. -->
 
 <!--####################################################################-->
-<type number="997" name="default_flags">
+<type number="996" name="default_flags">
   <description><![CDATA[
 	This is not a type - its a template for the item flags we need for import.
     ]]>
@@ -381,6 +381,32 @@
     Marks an object as no teleport object. A no teleport object can't be
     teleported by teleporter except the object is inside the inventory of
     another object which can be teleported.
+  </attribute>
+</section>
+</type>
+
+<!--####################################################################-->
+<type number="997" name="move_flags">
+  <description><![CDATA[
+	This is not a type - its a template for the move flags we need for import.
+    ]]>
+  </description>
+<section name="move flags">
+  <attribute arch="fly_off" editor="fly off" type="bool">
+    If set, the object auto-applies when another, airborne object moves off of
+    it.
+  </attribute>
+  <attribute arch="fly_on" editor="fly on" type="bool">
+    If set, the object auto-applies when another, airborne object moves on to
+    it.
+  </attribute>
+  <attribute arch="walk_off" editor="walk off" type="bool">
+    If set, the object auto-applies when another, non-airborne object moves off
+    of it.
+  </attribute>
+  <attribute arch="walk_on" editor="walk on" type="bool">
+    If set, the object auto-applies when another, non-airborne object moves on
+    to it.
   </attribute>
 </section>
 </type>
@@ -948,6 +974,7 @@
 <!--####################################################################-->
 <type number="18" name="Altar">
   <import_type name="default_flags" />
+  <import_type name="move_flags" />
   <ignore>
     <ignore_list name="non_pickable" />
     <ignore_list name="default_setting" />
@@ -1001,7 +1028,6 @@
     direction 0 &lt;none&gt;. For other spells like fireball,
     it should be set a valid point of the compass direction.
   </attribute>
-  <attribute arch="walk_on" value="1" type="fixed" />
   <attribute arch_begin="msg" arch_end="endmsg" editor="message" type="text">
     This text will be displayed to the player
     in the exact moment when the altar is activated.
@@ -1011,6 +1037,7 @@
 <!--####################################################################-->
 <type number="31" name="Altar Trigger">
   <import_type name="default_flags" />
+  <import_type name="move_flags" />
   <ignore>
     <ignore_list name="non_pickable" />
     <ignore_list name="default_setting" />
@@ -1075,7 +1102,6 @@
     used for altars being connected to gates, resulting in the
     gate being opened and closed again.
   </attribute>
-  <attribute arch="walk_on" value="1" type="fixed" />
   <attribute arch_begin="msg" arch_end="endmsg" editor="message" type="text">
     This text will be displayed to the player
     in the exact moment when the altar is activated.
@@ -1471,6 +1497,7 @@
 <!--####################################################################-->
 <type number="92" name="Button">
   <import_type name="default_flags" />
+  <import_type name="move_flags" />
   <ignore>
     <ignore_list name="non_pickable" />
     <ignore_list name="default_setting" />
@@ -1481,8 +1508,6 @@
     player or monster steps on it. When the button is "released", the
     &lt;connection&gt; value gets triggered a second time. ]]>
   </description>
-  <attribute arch="walk_on" value="1" type="fixed" />
-  <attribute arch="walk_off" value="1" type="fixed" />
   <attribute arch="no_pick" value="1" type="fixed" />
   <attribute arch="weight" editor="press weight" type="string">
     The button is pressed (triggered), as soon as
@@ -1506,6 +1531,7 @@
 <!--####################################################################-->
 <type number="30" name="Trigger Button">
   <import_type name="default_flags" />
+  <import_type name="move_flags" />
   <ignore>
     <ignore_list name="non_pickable" />
     <ignore_list name="default_setting" />
@@ -1520,8 +1546,6 @@
     is still on it. In the time between trigger and reset, the
     TRIGGER_BUTTON can't be triggered. ]]>
   </description>
-  <attribute arch="walk_on" value="1" type="fixed" />
-  <attribute arch="walk_off" value="1" type="fixed" />
   <attribute arch="no_pick" value="1" type="fixed" />
   <attribute arch="weight" editor="press weight" type="string">
     The button is pressed (triggered), as soon as
@@ -1797,6 +1821,7 @@
 <!--####################################################################-->
 <type number="112" name="Director">
   <import_type name="default_flags" />
+  <import_type name="move_flags" />
   <ignore>
     <ignore_list name="non_pickable" />
     <ignore_list name="default_setting" />
@@ -1832,8 +1857,6 @@
   <attribute arch="maxsp" editor="turn value" type="int">
     If object is turned, turn it "turn value" steps every time.
   </attribute>
-  <attribute arch="walk_on" value="1" type="fixed" />
-  <attribute arch="fly_on" value="1" type="fixed" />
 </type>
 
 <!--####################################################################-->
@@ -1998,6 +2021,7 @@
 <!--####################################################################-->
 <type number="66" name="Exit">
   <import_type name="default_flags" />
+  <import_type name="move_flags" />
   <ignore>
     <ignore_list name="non_pickable" />
     <ignore_list name="default_setting" />
@@ -2098,14 +2122,6 @@
     never fails).
     If either are set and so is this, the activator is not inserted at the
     default spot if no free spot is found.
-  </attribute>
-</section>
-<section name="move flags">
-  <attribute arch="fly_on" editor="fly on" type="bool">
-    If set, a player flying on to the exit will activate it.
-  </attribute>
-  <attribute arch="walk_on" editor="walk on" type="bool">
-    If set, a player walking on to the exit will activate it
   </attribute>
 </section>
   <attribute arch_begin="msg" arch_end="endmsg" editor="exit message" type="text">
@@ -4061,6 +4077,7 @@
 <!--####################################################################-->
 <type number="40" name="Mover">
   <import_type name="default_flags" />
+  <import_type name="move_flags" />
   <ignore>
     <ignore_list name="non_pickable" />
     <ignore_list name="default_setting" />
@@ -4128,20 +4145,13 @@
     route! Note that it's useful to set this NPC immune to everything,
     preventing the player to push the NPC off his trace.
   </attribute>
-  <attribute arch="walk_on" editor="move walking creatures" type="bool">
-    This should always be set.
-  </attribute>
-  <attribute arch="fly_on" editor="move flying creatures" type="bool">
-    Move flying creatures enabled means all flying (living)
-    objects will get moved too. If disabled, only walking
-    (non-flying) creatures will get moved.
-  </attribute>
 </section>
 </type>
 
 <!--####################################################################-->
 <type number="17" name="Pedestal">
   <import_type name="default_flags" />
+  <import_type name="move_flags" />
   <ignore>
     <ignore_list name="non_pickable" />
     <ignore_list name="default_setting" />
@@ -4183,13 +4193,12 @@
     can have different effects. See the object you are connecting
     to this.
   </attribute>
-  <attribute arch="walk_on" value="1" type="fixed" />
-  <attribute arch="walk_off" value="1" type="fixed" />
 </type>
 
 <!--####################################################################-->
 <type number="32" name="Trigger Pedestal">
   <import_type name="default_flags" />
+  <import_type name="move_flags" />
   <ignore>
     <ignore_list name="non_pickable" />
     <ignore_list name="default_setting" />
@@ -4237,8 +4246,6 @@
     can have different effects. See the object you are connecting
     to this.
   </attribute>
-  <attribute arch="walk_on" value="1" type="fixed" />
-  <attribute arch="walk_off" value="1" type="fixed" />
 </type>
 
 <!--####################################################################-->
@@ -4672,6 +4679,7 @@
 
 <!--####################################################################-->
 <type number="154" name="Rune &amp; Trap">
+  <import_type name="move_flags" />
   <import_type name="resist_values" />
   <ignore>
     <ignore_list name="non_pickable" />
@@ -4694,7 +4702,6 @@
     together with spellcasting- and  attack-runes is usually a bad idea. ]]>
   </use>
   <attribute arch="no_pick" value="1" type="fixed" />
-  <attribute arch="walk_on" value="1" type="fixed" />
   <attribute arch="level" editor="rune level" type="int">
     This value sets the level the rune will cast the spell it contains at,
     if applicable. A level 99 rune casts a very, very mean spell of whatever.
@@ -5024,6 +5031,7 @@
 <!--####################################################################-->
 <type number="69" name="Shop Mat">
   <import_type name="default_flags" />
+  <import_type name="move_flags" />
   <ignore>
     <ignore_list name="non_pickable" />
     <ignore_list name="default_setting" />
@@ -5043,19 +5051,12 @@
     Not more and not less than that. ]]>
   </use>
   <attribute arch="no_pick" value="1" type="fixed" />
-  <attribute arch="walk_on" editor="apply by walking" type="bool">
-    If set, the player can enter/leave the
-    shop by just walking into the shop mat.
-  </attribute>
-  <attribute arch="fly_on" editor="apply by flying" type="bool">
-    If set, the player can enter/leave the
-    shop by "flying" into the shop mat.
-  </attribute>
 </type>
 
 <!--####################################################################-->
 <type number="98" name="Sign &amp; MagicMouth">
   <import_type name="default_flags" />
+  <import_type name="move_flags" />
   <ignore>
     <ignore_list name="non_pickable" />
     <ignore_list name="default_setting" />
@@ -5102,17 +5103,6 @@
     If this flag is set, the mouth will also be activated if the activator is
     traveling in that direction + or - 1. For example, when entering a room
     through a doorway.
-  </attribute>
-  <attribute arch="walk_on" editor="activate by walking" type="bool">
-    If set, the player gets the message when walking on top of the object.
-    This is the typical configuration
-    for a "magic_mouth": The player walks through a dungeon and suddenly he
-    gets a message. Use this to create some roleplay atmosphere, and to inform
-    the player about possible dangers or secrets.
-  </attribute>
-  <attribute arch="fly_on" editor="activate by flying" type="bool">
-    If set, the player gets the message when flying (=levitating) on top
-    of the object. Usually this should be set together with walk_on.
   </attribute>
   <attribute arch="food" editor="counter" type="int">
     If a counter-value is set (greater zero), the sign/magic_mouth can be applied
@@ -5211,6 +5201,7 @@
 <!--####################################################################-->
 <type number="90" name="Spinner">
   <import_type name="default_flags" />
+  <import_type name="move_flags" />
   <ignore>
     <ignore_list name="non_pickable" />
     <ignore_list name="default_setting" />
@@ -5232,9 +5223,8 @@
     When placing spinners on a map with magic walls, make sure the spell-
     projectiles from magic walls don't get to fly in loops. ]]>
   </use>
-  <attribute arch="walk_on" value="1" type="fixed" />
-  <attribute arch="fly_on" value="1" type="fixed" />
 </type>
+
 <!--####################################################################-->
 <type number="41" name="Teleporter">
   <import_type name="default_flags" />
@@ -5377,7 +5367,6 @@
     are not supposed to be used to randomly interconnect maps like teleporters. ]]>
   </use>
   <attribute arch="no_pick" value="1" type="fixed" />
-  <attribute arch="walk_on" value="1" type="fixed" />
   <attribute arch="weight" editor="hold weight" type="int">
     This value defines how much weight the trapdoor can hold.
     Once items or creatures are gathered on the trapdoor, with
