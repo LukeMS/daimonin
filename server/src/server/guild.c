@@ -47,6 +47,8 @@ object_t *guild_get(player_t *pl, char *name)
                 }
             }
         }
+
+        return walk;
     }
 
     return NULL;
