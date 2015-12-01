@@ -1528,7 +1528,6 @@ int apply_object(object_t *who, object_t *what, int aflag)
             what->type == BOOK ||
             what->type == SPELLBOOK ||
             what->type == TYPE_SKILL ||
-            what->type == CLOSE_CON ||
             what->type == CONTAINER ||
             what->type == TREASURE ||
             what->type == SAVEBED ||
@@ -1679,18 +1678,6 @@ int apply_object(object_t *who, object_t *what, int aflag)
         case TYPE_LIGHT_REFILL:
         ApplyLightRefill(who, what);
         r = 1;
-        break;
-
-          /* Eneq(@csd.uu.se): Handle apply on containers. */
-        case CLOSE_CON:
-        if (trigger_object_plugin_event(EVENT_APPLY, what, who, NULL, NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
-        {
-            r = 1;
-            break;
-        }
-
-        ApplyContainer(who, what->env);
-        r = 4;
         break;
 
         case CONTAINER:

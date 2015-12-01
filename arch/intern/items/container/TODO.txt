@@ -1,0 +1,13 @@
+These 'objects' are only used to hold the face/snimation of opened containers;
+no other attribute is used by the server.
+
+I think these must be from CF days which obviously handled containers
+differently.
+
+The fact that some files/objects are called close (eg, saddle_close).arc just
+adds to the confusion 
+
+The fact that other files are called open but define an object called close (eg,
+open_sack.arc) is taking the piss.
+
+-- Smacky 20151201
