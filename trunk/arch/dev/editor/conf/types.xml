@@ -6034,7 +6034,6 @@ that food.]]>
 <type available="no" number="114" name="FORCE"/>
 <type available="no" number="115" name="POTION_EFFECT"/>
 <type available="no" number="120" name="TYPE_QUEST_CONTAINER"/>
-<type available="no" number="121" name="CLOSE_CON"/>
 <type available="no" number="125" name="TYPE_WEALTH"/>
 <type available="no" number="126" name="TYPE_AI"/>
 <type available="no" number="127" name="TYPE_AGGRO_HISTORY"/>

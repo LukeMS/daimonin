@@ -346,7 +346,7 @@ char *examine(object_t *op, object_t *tmp, int flag)
     char    buf[LARGE_BUF];
     int     i;
 
-    if (tmp == NULL || tmp->type == CLOSE_CON)
+    if (tmp == NULL)
         return NULL;
 
     *buf_out='\0';

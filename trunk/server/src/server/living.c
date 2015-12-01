@@ -1111,7 +1111,6 @@ void fix_player(object_t *op)
              || tmp->type == TYPE_SKILLGROUP
              || tmp->type == POTION
              || tmp->type == CONTAINER
-             || tmp->type == CLOSE_CON
              || tmp->type == TYPE_LIGHT_REFILL
              || tmp->type == MONSTER)
             continue;

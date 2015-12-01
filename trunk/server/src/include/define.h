@@ -211,7 +211,7 @@
 #define TYPE_EVENT_OBJECT       118    /* event/script object_t */
 #define TYPE_WAYPOINT_OBJECT    119    /* waypoint object_t */
 #define TYPE_QUEST_CONTAINER    120    /* used to store quest infos in players */
-#define CLOSE_CON               121    /* Eneq(@csd.uu.se): Id for close_container archetype. */
+/* 121 is free. */
 #define CONTAINER               122
 /* 123 is free. */
 /* 124 is free. */

@@ -319,7 +319,6 @@ static struct constant_decl preset_game_constants[] =
     {"TYPE_EVENT_OBJECT",     TYPE_EVENT_OBJECT},
     {"TYPE_WAYPOINT_OBJECT",  TYPE_WAYPOINT_OBJECT},
     {"TYPE_QUEST_CONTAINER",  TYPE_QUEST_CONTAINER},
-    {"TYPE_CLOSE_CON",        CLOSE_CON},
     {"TYPE_CONTAINER",        CONTAINER},
     {"TYPE_WEALTH",           TYPE_WEALTH},
     {"TYPE_AI",               TYPE_AI},

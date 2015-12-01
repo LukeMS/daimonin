@@ -606,7 +606,6 @@ int need_identify(const object_t *const op)
         case CONTAINER:
         case DRINK:
         case INORGANIC:
-        case CLOSE_CON:
         case CLOAK:
         case GEM:
         case TYPE_PEARL:
