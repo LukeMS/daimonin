@@ -1132,58 +1132,6 @@ static void ApplyBook(object_t *op, object_t *tmp)
     }
 }
 
-extern void do_learn_spell(object_t *op, int spell)
-{
-    if (op->type != PLAYER)
-    {
-        LOG(llevBug, "BUG: do_learn_spell(): not a player ->%s\n", op->name);
-        return;
-    }
-
-    if (check_spell_known(op, spell))
-    {
-        ndi(NDI_UNIQUE, 0, op, "You already know the spell '%s'!", spells[spell].name);
-        return;
-    }
-
-    play_sound_player_only(CONTR(op), SOUND_LEARN_SPELL, SOUND_NORMAL, 0, 0);
-    CONTR(op)->known_spells[CONTR(op)->nrofknownspells++] = spell;
-    send_spelllist_cmd(op, spells[spell].name, SPLIST_MODE_ADD);
-    ndi(NDI_UNIQUE, 0, op, "You have learned the %s %s!",
-                  (spells[spell].type == SPELL_TYPE_PRIEST) ? "prayer" :
-                  "spell", spells[spell].name);
-}
-
-extern void do_forget_spell(object_t *op, int spell)
-{
-    int i;
-
-    if (op->type != PLAYER)
-    {
-        LOG(llevBug, "BUG: do_forget_spell(): not a player: %s (%d)\n", STRING_OBJ_NAME(op), spell);
-        return;
-    }
-    if (!check_spell_known(op, spell))
-    {
-        LOG(llevBug, "BUG: do_forget_spell(): spell %d not known\n", spell);
-        return;
-    }
-
-    play_sound_player_only(CONTR(op), SOUND_LOSE_SOME, SOUND_NORMAL, 0, 0);
-    ndi(NDI_UNIQUE, 0, op, "You lose knowledge of %s.", spells[spell].name);
-
-    send_spelllist_cmd(op, spells[spell].name, SPLIST_MODE_REMOVE);
-
-    for (i = 0; i < CONTR(op)->nrofknownspells; i++)
-    {
-        if (CONTR(op)->known_spells[i] == spell)
-        {
-            CONTR(op)->known_spells[i] = CONTR(op)->known_spells[--CONTR(op)->nrofknownspells];
-            return;
-        }
-    }
-    LOG(llevBug, "BUG: do_forget_spell(): couldn't find spell %d\n", spell);
-}
 
 static void ApplySpellbook(object_t *op, object_t *tmp)
 {
