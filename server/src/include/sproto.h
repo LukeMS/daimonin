@@ -119,8 +119,6 @@
 #endif
 /* apply.c */
 void                        move_apply(object_t *const trap, object_t *const victim, object_t *const originator, const uint16 flags);
-void                        do_learn_spell(object_t *op, int spell);
-void                        do_forget_spell(object_t *op, int spell);
 int                         apply_object(object_t *op, object_t *tmp, int aflag);
 int                         apply_equipment(object_t *who, object_t *op, int aflags);
 void                        turn_on_light(object_t *op);
@@ -589,6 +587,8 @@ void                        dump_spells(void);
 int                         insert_spell_effect(char *archname, map_t *m, int x, int y);
 spell                      *find_spell(int spelltype);
 int                         check_spell_known(object_t *op, int spell_type);
+void                        do_learn_spell(object_t *op, int spell);
+void                        do_forget_spell(object_t *op, int spell);
 int                         cast_spell(object_t *op, object_t *caster, int dir, int type, int ability, SpellTypeFrom item,
                                        char *stringarg);
 int                         fire_bolt(object_t *op, object_t *caster, int dir, int type, int magic);
