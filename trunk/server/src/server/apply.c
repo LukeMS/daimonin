@@ -673,7 +673,6 @@ static void ApplySign(object_t *op, object_t *sign)
         {
             if (!change_skill(op, SK_LITERACY))
             {
-                ndi(NDI_UNIQUE, 0, op, "You are unable to decipher the strange symbols.");
                 return;
             }
             else if((op->chosen_skill->weight_limit & sign->weight_limit) != sign->weight_limit)
@@ -1074,7 +1073,6 @@ static void ApplyBook(object_t *op, object_t *tmp)
     /* you has the right skill & language knowledge to read it? */
     if (!change_skill(op, SK_LITERACY))
     {
-        ndi(NDI_UNIQUE, 0, op, "You are unable to decipher the strange symbols.");
         return;
     }
     else if((op->chosen_skill->weight_limit & tmp->weight_limit)!=tmp->weight_limit)
@@ -1161,7 +1159,6 @@ static void ApplySpellbook(object_t *op, object_t *tmp)
      * lower than the spell will make learning the spell more difficult */
     if (!change_skill(op, SK_LITERACY))
     {
-        ndi(NDI_UNIQUE, 0, op, "You can't read! Your attempt fails.");
         return;
     }
     if (tmp->stats.sp <0 || tmp->stats.sp> NROFREALSPELLS || spells[tmp->stats.sp].level > (SK_level(op) + 10))
@@ -1248,8 +1245,6 @@ static void ApplyScroll(object_t *op, object_t *tmp)
         /* players need a literacy skill to read stuff! */
         if (!change_skill(op, SK_LITERACY))
         {
-            ndi(NDI_UNIQUE, 0, op, "You are unable to decipher the strange symbols.");
-            /* op->chosen_skill=old_skill;*/
             return;
         }
 
@@ -1259,8 +1254,6 @@ static void ApplyScroll(object_t *op, object_t *tmp)
              */
         if (!change_skill(op, (spells[scroll_spell].type == SPELL_TYPE_PRIEST ? SK_DIVINE_PRAYERS : SK_WIZARDRY_SPELLS)))
         {
-            ndi(NDI_UNIQUE, 0, op, "You can read the scroll but you don't understand it.");
-            /* op->chosen_skill=old_skill;*/
             return;
         }
 
@@ -1558,10 +1551,6 @@ int apply_object(object_t *who, object_t *what, int aflag)
             }
 
             pray_at_altar(who, what);
-        }
-        else
-        {
-            ndi(NDI_UNIQUE, 0, who, "Nothing happens. It seems you miss the right skill.");
         }
 
         r = 4;
