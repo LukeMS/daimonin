@@ -637,9 +637,9 @@ int check_skill_to_apply(object_t *who, object_t *item)
     {
         if (!change_skill(who, add_skill))
         {
-            /*ndi(NDI_UNIQUE, 0,who,"You don't have the needed skill '%s'!", skills[add_skill]->clone.name);*/
             return 0;
         }
+
         change_skill(who, NO_SKILL_READY);
     }
 
@@ -649,7 +649,6 @@ int check_skill_to_apply(object_t *who, object_t *item)
     {
         if (!change_skill(who, skill))
         {
-            /*ndi(NDI_UNIQUE, 0,who,"You don't have the needed skill '%s'!", skills[skill]->clone.name);*/
             return 0;
         }
     }
@@ -751,19 +750,25 @@ int use_skill(object_t *op, char *string)
 #endif
 
     /* Change to the new skill, then execute it. */
-    if (change_skill(op, sknum))
+    if (!change_skill(op, sknum))
     {
-        if (op->chosen_skill->sub_type1 != ST1_SKILL_USE)
-            ndi(NDI_UNIQUE, 0, op, "You can't use this skill in this way.");
-        else
-        {
-            if (!check_skill_action_time(op, op->chosen_skill)) /* are we idle from other action? */
-                return 0;
+        return 0;
+    }
 
-            if (do_skill(op, op->facing, string))
+    if (op->chosen_skill->sub_type1 != ST1_SKILL_USE)
+    {
+        ndi(NDI_UNIQUE, 0, op, "You can't use ~%s~ in this way!",
+            op->chosen_skill->name);
+    }
+    else
+    {
+        if (check_skill_action_time(op, op->chosen_skill) && /* are we idle from other action? */
+            do_skill(op, op->facing, string))
+        {
             return 1;
         }
     }
+
     return 0;
 }
 
@@ -774,6 +779,14 @@ int use_skill(object_t *op, char *string)
  * skill is already nr the function changes nothing but still returns 1. OTOH
  * if who does not possess skill nr the function sttill changes nothing but
  * returns 0.
+ *
+ * When a new skill is requested but unknown to the player, he is messaged to
+ * this effect. But when the skill is known (therefore changed to), no message
+ * is given; this is because (a) usually the skill is used immediately so the
+ * change is apparent through context/action and (b) the client is sent the new
+ * skill nr anyway so a message would just be spam. Either way, functions which
+ * call this one should therefore rely on this in-built notification and not
+ * spam there own success/failure messages.
  *
  * If nr is NO_SKILL_READY, any old skill is unapplied, but no new skill is
  * applied. The return is 0. */
@@ -810,7 +823,7 @@ sint8 change_skill(object_t *who, sint16 nr)
         /* Do not change chosen skill at all. */
         if (!(new = CONTR(who)->skill_ptr[nr]))
         {
-            ndi(NDI_UNIQUE, 0, who, "You have no knowledge of ~%s~.",
+            ndi(NDI_UNIQUE, 0, who, "You lack the ~%s~ skill!",
                 skills[nr]->clone.name);
             success = 0;
         }
@@ -822,12 +835,6 @@ sint8 change_skill(object_t *who, sint16 nr)
                 STRING_OBJ_NAME(who), TAG(who),
                 (old) ? STRING_OBJ_NAME(old) : "NONE", STRING_OBJ_NAME(new));
 #endif
-
-            /* At least one of these lines is unnecessary: confirmation or
-             * just spam? I vote to get rid of the ndi() -- srs() uses less
-             * resources and allows the client more control. */
-            ndi(NDI_UNIQUE, 0, who, "You ready the skill ~%s~.",
-                STRING_OBJ_NAME(new));
             send_ready_skill(CONTR(who), new->name);
             who->chosen_skill = new;
             SET_FLAG(new, FLAG_APPLIED);

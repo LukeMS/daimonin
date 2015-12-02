@@ -97,12 +97,8 @@ int command_setgod(object_t *op, char *params)
         return 0;
     }
 
-    change_skill(ob, SK_DIVINE_PRAYERS);
-
-    if (!ob->chosen_skill || ob->chosen_skill->stats.sp != SK_DIVINE_PRAYERS)
+    if (!change_skill(ob, SK_DIVINE_PRAYERS))
     {
-        ndi(NDI_UNIQUE, 0, op, "%s doesn't have praying skill.", ob->name);
-
         return 0;
     }
 
