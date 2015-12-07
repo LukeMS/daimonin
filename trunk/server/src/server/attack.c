@@ -207,6 +207,7 @@ int attack_ob(object_t *target, object_t *hitter, object_t *hit_obj)
     if (target->type == MONSTER &&
         !OBJECT_VALID(target->enemy, target->enemy_count) &&
         is_aimed_missile(hit_obj) &&
+        MOB_DATA(target) != NULL &&
         !mob_can_see_obj(target, hitter, MOB_DATA(target)->known_mobs))
     {
         ndi(NDI_ORANGE, 0, hitter, "Stealth attack direct hit! (+50%% damage)");
