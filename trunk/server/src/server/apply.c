@@ -1202,8 +1202,6 @@ static void ApplySpellbook(object_t *op, object_t *tmp)
     if (QUERY_FLAG(op, FLAG_CONFUSED))
     {
         ndi(NDI_UNIQUE, 0, op, "In your confused state you flub the wording of the text!");
-        /* this needs to be a - number [garbled] */
-        scroll_failure(op, 0 - random_roll(0, spells[tmp->stats.sp].level), spells[tmp->stats.sp].sp);
     }
     else if (QUERY_FLAG(tmp, FLAG_NO_DROP))
     {
@@ -2743,51 +2741,6 @@ void apply_light(object_t *who, object_t *op)
             }
         }
     }
-}
-
-/* scroll_failure()- hacked directly from spell_failure */
-
-void scroll_failure(object_t *op, int failure, int power)
-{
-    if (abs(failure / 4) > power)
-        power = abs(failure / 4); /* set minimum effect */
-
-    if (failure <= -1 && failure > -15) /* wonder */
-    {
-        ndi(NDI_UNIQUE, 0, op, "Your spell warps!.");
-        cast_cone(op, op, 0, 10, SP_WOW, spellarch[SP_WOW], SK_level(op), 0);
-    }
-    else if (failure <= -15 && failure > -35) /* drain mana */
-    {
-        ndi(NDI_UNIQUE, 0, op, "Your mana is drained!.");
-        op->stats.sp -= random_roll(0, power - 1);
-        if (op->stats.sp < 0)
-            op->stats.sp = 0;
-    }
-
-    /* even nastier effects continue...*/
-#ifdef SPELL_FAILURE_EFFECTS /* removed this - but perhaps we want add some of this nasty effects */
-    else if (failure <= -35 && failure > -60) /* confusion */
-    {
-        ndi(NDI_UNIQUE, 0, op, "The magic recoils on you!");
-        confuse_player(op, op, power);
-    }
-    else if (failure <= -60 && failure > -70) /* paralysis */
-    {
-        ndi(NDI_UNIQUE, 0, op, "The magic recoils and paralyzes you!");
-        paralyze_player(op, op, power);
-    }
-    else if (failure <= -70 && failure > -80) /* blind */
-    {
-        ndi(NDI_UNIQUE, 0, op, "The magic recoils on you!");
-        blind_player(op, op, power);
-    }
-    else if (failure <= -80) /* blast the immediate area */
-    {
-        ndi(NDI_UNIQUE, 0, op, "You unlease uncontrolled mana!");
-        cast_mana_storm(op, power);
-    }
-#endif
 }
 
 /*  peterm:  do_power_crystal

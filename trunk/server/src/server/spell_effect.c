@@ -31,59 +31,6 @@
 
 static int Detection(int type, object_t *this);
 
-/*
- * spell_failure()  handles the various effects for differing degrees
- * of failure badness.
- */
-#ifdef SPELL_FAILURE_EFFECTS
-
-/* Might be a better way to do this, but this should work */
-#define ISQRT(val) ((int)sqrt((double) val))
-
-void spell_failure(object_t *op, int failure, int power)
-{
-    if (failure <= -20 && failure > -40) /* wonder */
-    {
-        ndi(NDI_UNIQUE, 0, op, "Your spell causes an unexpected effect.");
-        cast_cone(op, op, 0, 10, SP_WOW, spellarch[SP_WOW], SK_level(op),, 0);
-    }
-    else if (failure <= -40 && failure > -60) /* confusion */
-    {
-        ndi(NDI_UNIQUE, 0, op, "Your magic recoils on you!");
-        confuse_player(op, op, 160);
-    }
-    else if (failure <= -60 && failure > -80) /* paralysis */
-    {
-        ndi(NDI_UNIQUE, 0, op, "Your magic recoils on you!");
-        paralyze_player(op, op, 99);
-    }
-    else if (failure <= -80) /* blast the immediate area */
-    {
-        msp_t *msp = MSP_KNOWN(op);
-        object_t *tmp;
-
-        /* Safety check to make sure we don't get any mana storms in scorn */
-        if ((msp->flags & MSP_FLAG_NO_SPELLS))
-        {
-            ndi(NDI_UNIQUE, 0, op, "The magic warps and you are turned inside out!");
-            damage_ob(tmp, 9998, op, ENV_ATTACK_CHECK);
-        }
-        else
-        {
-            ndi(NDI_UNIQUE, 0, op, "You lose control of the mana!  The uncontrolled magic blasts you!");
-            tmp = get_archetype("loose_magic");
-            tmp->level = SK_level(op);
-            tmp->stats.maxhp = tmp->count; /*??*/
-            tmp->stats.hp += ISQRT(power); // increase the area of destruction a little for more powerful spells
-            tmp->stats.dam = (power > 25) ? 25 + ISQRT(power) : power; /* nasty recoils! */
-            tmp->x = op->x;
-            tmp->y = op->y;
-            insert_ob_in_map(tmp, op->map, NULL, 0);
-        }
-    }
-}
-#endif
-
 /* Oct 95 - hacked on this to bring in cosmetic differences for MULTIPLE_GOD hack -b.t. */
 
 void prayer_failure(object_t *op, int failure, int power)

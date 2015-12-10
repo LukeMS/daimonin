@@ -124,7 +124,6 @@ int                         apply_equipment(object_t *who, object_t *op, int afl
 void                        turn_on_light(object_t *op);
 void                        turn_off_light(object_t *op);
 void                        apply_light(object_t *who, object_t *op);
-void                        scroll_failure(object_t *op, int failure, int power);
 /* attack.c */
 int                         attack_ob(object_t *op, object_t *hitter, object_t *hit_obj);
 int                         damage_ob(object_t *op, int dam, object_t *hitter, attack_envmode_t env_attack);
