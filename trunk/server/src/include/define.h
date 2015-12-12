@@ -89,10 +89,10 @@
 #define PEDESTAL                17
 #define ALTAR                   18
 #define BUFF_FORCE              19
-#define LOCKED_DOOR             20
+#define TYPE_DOOR               20
 #define SPECIAL_KEY             21
 #define MAP                     22
-#define DOOR                    23
+/* 23 is free. */
 #define TYPE_SPARKLY            24
 #define MMISSILE                25
 #define TIMED_GATE              26

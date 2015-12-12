@@ -3979,11 +3979,18 @@ uint32 msp_blocked(object_t *what, map_t *m, sint16 x, sint16 y)
                 if (block == MSP_FLAG_DOOR_CLOSED &&
                     QUERY_FLAG(what, FLAG_CAN_OPEN_DOOR))
                 {
-                    /* ...check if what can open THIS door. If not, return with
-                     * the MSP_FLAG_NO_PASS flag. */
-                    if (!open_door(what, msp, 0))
+                    object_t *this,
+                        *next2;
+
+                    FOREACH_OBJECT_IN_MSP(this, msp, next2)
                     {
-                        return block | MSP_FLAG_NO_PASS;
+                        /* ...check if what can open THIS door. If not, return with
+                         * the MSP_FLAG_NO_PASS flag. */
+                        if (this->type == TYPE_DOOR &&
+                            !door_open(what, this, DOOR_MODE_TEST))
+                        {
+                            return block | MSP_FLAG_NO_PASS;
+                        }
                     }
                 }
                 /* Otherwise, if there's a block, return it. */
@@ -4021,11 +4028,18 @@ uint32 msp_blocked(object_t *what, map_t *m, sint16 x, sint16 y)
             what &&
             QUERY_FLAG(what, FLAG_CAN_OPEN_DOOR))
         {
-            /* ...check if what can open THIS door. If not, return with
-             * the MSP_FLAG_NO_PASS flag. */
-            if (!open_door(what, msp, 0))
+            object_t *this,
+                *next;
+
+            FOREACH_OBJECT_IN_MSP(this, msp, next)
             {
-                return block | MSP_FLAG_NO_PASS;
+                /* ...check if what can open THIS door. If not, return with
+                 * the MSP_FLAG_NO_PASS flag. */
+                if (this->type == TYPE_DOOR &&
+                    !door_open(what, this, DOOR_MODE_TEST))
+                {
+                    return block | MSP_FLAG_NO_PASS;
+                }
             }
         }
         /* Otherwise, if there's a block, return it. */

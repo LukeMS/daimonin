@@ -437,7 +437,7 @@ int trap_show(object_t *trap, object_t *where)
     trap->layer = MSP_SLAYER_ITEMB;
     trap->stats.Cha = 1; // make it visible
 
-    if (env && env->type != PLAYER && env->type != MONSTER && env->type != LOCKED_DOOR && !QUERY_FLAG(env, FLAG_NO_PASS))
+    if (env && env->type != PLAYER && env->type != MONSTER && env->type != TYPE_DOOR && !QUERY_FLAG(env, FLAG_NO_PASS))
     {
         SET_FLAG(env, FLAG_IS_TRAPED);
 #ifndef USE_OLD_UPDATE

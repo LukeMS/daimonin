@@ -221,10 +221,9 @@ static struct constant_decl preset_game_constants[] =
     {"TYPE_ARMOUR",           ARMOUR},
     {"TYPE_PEDESTAL",         PEDESTAL},
     {"TYPE_ALTAR",            ALTAR},
-    {"TYPE_LOCKED_DOOR",      LOCKED_DOOR},
+    {"TYPE_DOOR",             TYPE_DOOR},
     {"TYPE_SPECIAL_KEY",      SPECIAL_KEY},
     {"TYPE_MAP",              MAP},
-    {"TYPE_DOOR",             DOOR},
 /*    {"TYPE_KEY",              KEY},*/
     {"TYPE_MMISSILE",         MMISSILE},
     {"TYPE_TIMED_GATE",       TIMED_GATE},

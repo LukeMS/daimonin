@@ -2843,7 +2843,7 @@
 </type>
 
 <!--####################################################################-->
-<type number="20" name="Locked Door">
+<type number="20" name="Door">
   <import_type name="default_flags" />
   <ignore>
     <attribute arch="no_magic" />
@@ -2851,48 +2851,41 @@
     <ignore_list name="non_pickable" />
   </ignore>
   <description><![CDATA[
-    A locked door can be opened only when car
-    the appropriate special key. ]]>
+    Doors are map objects which have two states, closed or open. When closed,
+    they block passage and optionally view. When open, these blocks are removed.
+    A door is generally opened by a player or monster moving onto the same
+    square. It'll then remain open for a short time until it automatically
+    closes. ]]>
   </description>
   <use><![CDATA[
-    If you want to create a locked door that cannot be opened (no key),
-    set a &lt;key string&gt; like "no_key_available". This will clarify things
-    and only a fool would create a key matching that string.
+    Doors may be locked, in which case the potential opener will need a matching
+    key or marker force in his inv. Attempting to open a locked door with the
+    key will generate a message.
 
-    Door-objects can not only be used for "doors". In many maps these
-    are used with all kinds of faces/names, especially often as
-    "magic force". A good example is the map "Lake_Country/ebony/masterlev".
-    There you have magic forces (door objects) put under certain artifact
-    items. To get your hands on the artifacts, you need to bring up the
-    appropriate quest items (key objects). ]]>
+    Doors may be trapped, in which case the trap(s) will spring on the opener.
+    
+    While a door itself should be singlepart only, it is common practice to have
+    two side-by-side to create a double door (three or more looks a little
+    strange because of the hinges but for gameplay purposes these are ignored
+    anyway). Since 0.10.7 multiparts can move through doors if their is enough
+    room. ]]>
   </use>
   <attribute arch="no_pick" value="1" type="fixed" />
   <attribute arch="slaying" editor="key string" type="string">
-    The &lt;key string&gt; in the door must be identical with the
-    &lt;key string&gt; in the special key, then the door is unlocked.
-    It is VERY important to set the &lt;key string&gt; to something that
-    is unique among the map set.
+    A &lt;key string&gt; marks the door as locked.
 
-    DON'T EVER USE the default string "set_individual_value".
-  </attribute>
-  <attribute arch="other_arch" editor="change to object" type="string">
-    If set, the door will when opened changed permanently to this object.
-    If not set, the door will be used as "auto-closing" door, using the
-    open counter value.
+    A potenttial opener wil need a key or marker force with an identical
+    &lt;key string&gt; in his inv to unlock and open the door (which will lock
+    again when it closes).
+
+    Locked doors are NOT a secure way to absolutely restrict access.
+
+    &lt;key strings&gt; must be exclusive to the lock(s)/key(s) of the map
+    designers choosing. MW/MMs should prefix with 'account-'.
   </attribute>
   <attribute arch="sp" editor="open counter" type="int">
-    A opened door will auto-close after some time. As higher
-    this value as longer the door stay open.
-  </attribute>
-  <attribute arch="no_magic" editor="restrict spells" type="bool">
-    Restricting the use of spells to pass this door.
-    This should be set in most cases.
-    (Don't forget that the spell "dimension door" is easily
-    available at about wisdom level 10).
-  </attribute>
-  <attribute arch="damned" editor="restrict prayers" type="bool">
-    Restricting the use of prayers to pass this door.
-    This should be set in most cases.
+    An opened door will auto-close (and relock if &lt;key string&gt; is set)
+    after approximately &lt;open counter&gt; seconds.
   </attribute>
   <attribute arch_begin="msg" arch_end="endmsg" editor="lock message" type="text">
     When a player is trying to open the door without carrying the
@@ -6001,7 +5994,6 @@ that food.]]>
 <type available="no" number="11" name="FBALL"/>
 <type available="no" number="12" name="LIGHTNING"/>
 <type available="no" number="22" name="MAP"/>
-<type available="no" number="23" name="DOOR"/>
 <type available="no" number="25" name="MMISSILE"/>
 <type available="yes" number="28" name="FLOORMASK"/>
 <type available="no" number="37" name="CLASS"/>

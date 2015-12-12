@@ -605,11 +605,6 @@ int                         SP_lvl_dam_adjust(int level, int spell_type, int bas
 /* stats.c */
 void                        stats_event(stats_event_type type, ...);
 /* time.c */
-object_t                     *find_key(object_t *op, object_t *door);
-int                         open_door(object_t *op, msp_t *msp, int mode);
-void                        remove_door(object_t *op);
-void                        remove_door2(object_t *op, object_t *opener);
-void                        remove_door3(object_t *op);
 void                        regenerate_rod(object_t *rod);
 void                        remove_force(object_t *op);
 void                        poison_more(object_t *op);

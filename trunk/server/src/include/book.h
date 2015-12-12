@@ -50,3 +50,15 @@
                                 BOOK_BUF:BASE_BOOK_BUF+((xyz)->weight/10);
 
 #endif /* ifndef __BOOK_H */
+
+#ifndef __DOOR_H
+#define __DOOR_H
+
+#define DOOR_MODE_TEST 0
+#define DOOR_MODE_OPEN 1
+
+extern object_t *door_find_key(object_t *who, object_t *what);
+extern sint8     door_open(object_t *who, object_t *what, uint8 mode);
+extern void      door_close(object_t *what);
+
+#endif /* ifndef __DOOR_H */
