@@ -963,6 +963,8 @@ extern sint16 brightness[MAX_DARKNESS + 1];
 #include "channel.h"
 #endif
 
+#include "book.h"
+
 /* increase when you add more as 12 player races to client_settings */
 #define MAX_PLAYER_ARCH     (12*4)
 
