@@ -196,7 +196,7 @@ struct attribute_decl GameObject_attributes[] =
     /* TODO: will require animation lookup function. How about face, is that a special anim? */
     {"max_buffs",             FIELDTYPE_UINT8,     offsetof(object_t, max_buffs),                 0,                  0},
     {"magic",                 FIELDTYPE_SINT8,     offsetof(object_t, magic),                     0,                  0},
-    {"state",                 FIELDTYPE_UINT8,     offsetof(object_t, state),                     0,                  0},
+    {"state",                 FIELDTYPE_UINT8,     offsetof(object_t, state),                     FIELDFLAG_READONLY, 0},
     {"level",                 FIELDTYPE_SINT8,     offsetof(object_t, level),                     FIELDFLAG_PLAYER_READONLY, 0},
     {"direction",             FIELDTYPE_SINT8,     offsetof(object_t, direction),                 0,                  0},
     {"facing",                FIELDTYPE_SINT8,     offsetof(object_t, facing),                    0,                  0},
