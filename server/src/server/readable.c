@@ -30,7 +30,6 @@
 /* laid down initial file - dec 1995. -b.t. thomas@astro.psu.edu */
 
 #include <global.h>
-#include "book.h"
 
 /* Define this if you want to archive book titles by contents.
  * This option should enforce UNIQUE combinations of titles,authors and
