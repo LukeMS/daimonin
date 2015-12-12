@@ -437,7 +437,7 @@ static void ApplyContainer(object_t *op, object_t *sack)
     {
         if (sack->sub_type1 == ST1_CONTAINER_NORMAL)
         {
-            object_t *key = find_key(op, sack);
+            object_t *key = door_find_key(op, sack);
 
             if (!key)
             {

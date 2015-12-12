@@ -166,11 +166,11 @@ static object_t *IsValidTarget(object_t *what, object_t*who)
      * relative alignments, powers, etc (that should have been caught long
      * before this stage), just on whether it is technically possible for what
      * to be attacked. */
-    /* TODO: Not sure the FLAG_CAN_ROLL/LOCKED_DOOR stuff is implemented. */
+    /* TODO: Not sure the FLAG_CAN_ROLL/TYPE_DOOR stuff is implemented. */
     if ((IS_LIVE(what) &&
          what->stats.hp > 0) ||
         QUERY_FLAG(what, FLAG_CAN_ROLL) ||
-        what->type == LOCKED_DOOR)
+        what->type == TYPE_DOOR)
     {
         return what;
     }

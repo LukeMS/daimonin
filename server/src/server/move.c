@@ -86,7 +86,8 @@ sint8 move_ob(object_t *who, sint8 dir, object_t *originator)
          * instructions. */
         /* Much of the following code block is adapted from msp_blocked(), so
          * see that function for futher explanation. */
-        if (block == MSP_FLAG_DOOR_CLOSED)
+        if (block == MSP_FLAG_DOOR_CLOSED &&
+            QUERY_FLAG(who, FLAG_CAN_OPEN_DOOR))
         {
             /* For multiparts we need to loop through each part again to find
              * the msps of the non-overlapping parts after the move. */
@@ -94,10 +95,10 @@ sint8 move_ob(object_t *who, sint8 dir, object_t *originator)
             {
                 FOREACH_PART_OF_OBJECT(part, who, next)
                 {
-                    sint16     x2 = part->arch->clone.x + ox,
-                               y2 = part->arch->clone.y + oy;
-                    object_t    *part2,
-                              *next2;
+                    sint16    x2 = part->arch->clone.x + ox,
+                              y2 = part->arch->clone.y + oy;
+                    object_t *part2,
+                             *next2;
 
                     FOREACH_PART_OF_OBJECT(part2, who, next2)
                     {
@@ -110,27 +111,44 @@ sint8 move_ob(object_t *who, sint8 dir, object_t *originator)
 
                     if (!part2)
                     {
-                        map_t *m = who->map;
-                        sint16     x = part->x + ox,
-                                   y = part->y + oy;
-                        msp_t  *msp = MSP_GET2(m, x, y);
+                        map_t    *m = who->map;
+                        sint16    x = part->x + ox,
+                                  y = part->y + oy;
+                        msp_t    *msp = MSP_GET2(m, x, y);
+                        object_t *this,
+                                 *next3;
 
-                        (void)open_door(who, msp, 1);
+                        FOREACH_OBJECT_IN_MSP(this, msp, next3)
+                        {
+                            if (this->type == TYPE_DOOR)
+                            {
+                                (void)door_open(who, this, DOOR_MODE_OPEN);
+                                return MOVE_RETURN_SUCCESS;
+                            }
+                        }
                     }
                 }
             }
             /* Singleparts are easy. */
             else
             {
-                map_t *m = who->map;
-                sint16     x = wx + ox,
-                           y = wy + oy;
-                msp_t  *msp = MSP_GET2(m, x, y);
+                map_t    *m = who->map;
+                sint16    x = wx + ox,
+                          y = wy + oy;
+                msp_t    *msp = MSP_GET2(m, x, y);
+                object_t *this,
+                         *next;
 
-                (void)open_door(who, msp, 1);
+                FOREACH_OBJECT_IN_MSP(this, msp, next)
+                {
+                    if (this->type == TYPE_DOOR)
+                    {
+                        (void)door_open(who, this, DOOR_MODE_OPEN);
+                        return MOVE_RETURN_SUCCESS;
+                    }
+                }
             }
 
-            /* When who opens a door, that's his movement over for this turn. */
             return MOVE_RETURN_SUCCESS;
         }
         /* Any other block halts movement. */
