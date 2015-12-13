@@ -90,7 +90,7 @@
 #define ALTAR                   18
 #define BUFF_FORCE              19
 #define TYPE_DOOR               20
-#define SPECIAL_KEY             21
+#define TYPE_KEY                21
 #define MAP                     22
 /* 23 is free. */
 #define TYPE_SPARKLY            24

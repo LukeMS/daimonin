@@ -496,7 +496,7 @@ void move_detector(object_t *op)
         {
             detected = 1;
         }
-        else if (this->type == SPECIAL_KEY &&
+        else if (this->type == TYPE_KEY &&
                  this->slaying == op->slaying)
         {
             detected = 1;
