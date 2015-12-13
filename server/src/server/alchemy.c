@@ -87,7 +87,7 @@ object_t *door_find_key(object_t *who, object_t *what)
 
     FOREACH_OBJECT_IN_OBJECT(this, who, next)
     {
-        if (this->type == SPECIAL_KEY ||
+        if (this->type == TYPE_KEY ||
             this->type == FORCE)
         {
             if (this->slaying == what->slaying)
@@ -155,7 +155,7 @@ sint8 door_open(object_t *who, object_t *what, uint8 mode)
 
             return 0; /* we can't open it! */
         }
-        else if (key->type == SPECIAL_KEY &&
+        else if (key->type == TYPE_KEY &&
             mode == DOOR_MODE_OPEN &&
             who->type == PLAYER)
         {
