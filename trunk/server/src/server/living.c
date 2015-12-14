@@ -898,7 +898,7 @@ void fix_player(object_t *op)
     /* ok, in crossfire, fix_player is called for objects not for players
      * we redirect mobs to fix_monster() and let only player pass
      */
-    if (QUERY_FLAG(op, FLAG_MONSTER) && op->type != PLAYER)
+    if (op->type == MONSTER)
     {
 #ifdef DEBUG_FIX_PLAYER
         LOG(llevDebug, "fix_player(%s [%x]): >> non player - redirect to fix_monster (%s)\n",
@@ -2440,7 +2440,6 @@ object_t * insert_base_info_object(object_t *op)
     CLEAR_FLAG(tmp, FLAG_ANIMATE);
     CLEAR_FLAG(tmp, FLAG_FRIENDLY);
     CLEAR_FLAG(tmp, FLAG_ALIVE);
-    CLEAR_FLAG(tmp, FLAG_MONSTER);
     CLEAR_FLAG(tmp, FLAG_IN_ACTIVELIST);
     insert_ob_in_ob(tmp, head); /* and put it in the mob */
 

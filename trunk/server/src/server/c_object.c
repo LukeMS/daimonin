@@ -383,7 +383,7 @@ char *examine(object_t *op, object_t *tmp, int flag)
     strcat(buf_out, "\n");
     buf[0] = '\0';
 
-    if (QUERY_FLAG(tmp, FLAG_MONSTER) || (tmp && tmp->type == PLAYER))
+    if (tmp->type == MONSTER || tmp->type == PLAYER)
     {
         strcat(buf_out, describe_item(tmp->head ? tmp->head : tmp));
         strcat(buf_out, "\n");

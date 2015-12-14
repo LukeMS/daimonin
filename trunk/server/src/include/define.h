@@ -540,7 +540,7 @@
 
 #define IS_LIVE(_O_) \
     ((_O_)->type == PLAYER || \
-     QUERY_FLAG((_O_), FLAG_MONSTER) || \
+     (_O_)->type == MONSTER || \
      QUERY_FLAG((_O_), FLAG_ALIVE))
 
 #define IS_ARROW(_O_) \
@@ -587,11 +587,7 @@
 #define FLAG_INITIALIZED    12 /* Used by some types to keep track of initialiization after map load (never saved) */
 
 #define FLAG_FLYING         13 /* Not affected by WALK_ON or SLOW_MOVE) */
-#define FLAG_MONSTER        14 /* A object with this flag is used like a object with
-                                * type == MONSTER. SO, we can use type GOLEMS objects
-                                * for example in attack functions like MONSTER without
-                                * checking all possible different type defines.
-                                */
+/* 14 is free. */
 #define FLAG_FRIENDLY       15 /* Will help players */
 /*
  *  FLAG_INSERTED, REMOVED and BEEN_APPLIED are direct used from
