@@ -4011,63 +4011,6 @@
 </type>
 
 <!--####################################################################-->
-<type number="65" name="Mood Floor">
-  <import_type name="default_flags" />
-  <ignore>
-    <attribute arch="damned" />
-    <ignore_list name="system_object" />
-  </ignore>
-  <description><![CDATA[
-    As the name implies, mood floors can change the "mood" of
-    a monsters/NPC. For example, an unaggressive monster could be
-    turned mad to start attacking. Similar, an aggressive monster
-    could be calmed. ]]>
-  </description>
-  <use><![CDATA[
-    Mood floors are absolutely cool for NPC interaction. To make an
-    unaggressive monster/NPC attack, put a creator with "other_arch
-    furious_floor" under it. Connect the creator to a magic_ear, so the
-    player speaks a keyword like "stupid sucker" - and the monster attacks.
-    <br><br>
-    To turn an NPC into a pet, put a charm_floor under it and connect
-    it directly to a magic_ear. Then the player speaks a keyword like
-    "help me" - and the NPC joins him as pet.
-    <br><br>
-    (Of course you must always give clear hints about keywords!
-    And there is no reason why you couldn't use a button/lever/pedestal
-    etc. instead of a magic_ear.) ]]>
-  </use>
-  <attribute arch="no_pick" value="1" type="fixed" />
-  <attribute arch="last_sp" editor="mood" type="list_mood">
-    &lt;mood&gt; is used to determine what will happen to the
-    monster when affected by the mood floor:
-
-    &lt;mood&gt; 'furious': Makes all monsters aggressive
-
-    &lt;mood&gt; 'angry': As above but pets are unaffected
-
-    &lt;mood&gt; 'calm': Makes all monsters unaggressive
-
-    &lt;mood&gt; 'sleep': Puts all monsters to sleep
-
-    &lt;mood&gt; 'charm': Turns monster into a pet of person
-                    who triggers the square. This setting is not
-                    enabled for continuous operation, you need to
-                    insert a &lt;connection&gt; value!
-  </attribute>
-  <attribute arch="connected" editor="connection" type="int">
-    This should only be set in combination with 'charm' mood.
-    Normally, monsters are affected by the mood floor as soon as they
-    step on it. But charming (monster -&gt; pet) is too powerful,
-    so it needs to be activated.
-
-    Typically it is connected to an altar, for buying a "hireling".
-    But a powerful pet could as well be the reward for solving a
-    quest. Or even better: It could be *part* of a quest!
-  </attribute>
-</type>
-
-<!--####################################################################-->
 <type number="40" name="Mover">
   <import_type name="default_flags" />
   <import_type name="move_flags" />

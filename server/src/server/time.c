@@ -1304,7 +1304,6 @@ void move_conn_sensor(object_t *op)
                     case TIMED_GATE:
                     case PIT:
                     case SIGN:
-                    case MOOD_FLOOR:
                     case TYPE_LIGHT_APPLY:
                     case FIREWALL:
                     case DIRECTOR:
@@ -1657,9 +1656,6 @@ int process_object(object_t *op)
 //          return 0;
 //        case EARTHWALL:
 //          damage_ob(op, 2, op, ENV_ATTACK_CHECK);
-//          return 0;
-//        case MOOD_FLOOR:
-//          do_mood_floor(op, op);
 //          return 0;
 //        case DEEP_SWAMP:
 //          move_deep_swamp(op);
