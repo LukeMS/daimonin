@@ -1458,7 +1458,7 @@ int process_object(object_t *op)
     if (OBJECT_FREE(op))
         return 1;
 
-    if (QUERY_FLAG(op, FLAG_MONSTER))
+    if (op->type == MONSTER)
         if (move_monster(op, TRUE))
             return 1;
 

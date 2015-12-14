@@ -401,13 +401,10 @@ static void process_map_events(map_t *map)
             if (!OBJECT_VALID(op, tag))
                 continue;
         }
-        else
+        else if (op->weapon_speed_left <= 0 &&
+            op->type == MONSTER)
         {
-            if (op->weapon_speed_left <= 0)
-            {
-                if (QUERY_FLAG(op, FLAG_MONSTER))
-                    move_monster(op, FALSE); /* false = only weapon action */
-            }
+            move_monster(op, FALSE); /* false = only weapon action */
         }
 
 

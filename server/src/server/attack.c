@@ -649,7 +649,7 @@ int damage_ob(object_t *op, int dam, object_t *hitter, attack_envmode_t env_atta
     }
     /* Eneq(@csd.uu.se): Check to see if monster runs away. */
     /* TODO: gecko: this should go into a behaviour... */
-    else if (QUERY_FLAG(op, FLAG_MONSTER) &&
+    else if (op->type == MONSTER &&
              op->stats.hp < (signed short)(((float)op->run_away / 100.0) * (float)op->stats.maxhp))
     {
         SET_FLAG(op, FLAG_RUN_AWAY);
@@ -1482,7 +1482,7 @@ void poison_player(object_t *op, object_t *hitter, float dam)
      */
 
     /* we only poison players and mobs! */
-    if (op->type != PLAYER && !QUERY_FLAG(op, FLAG_MONSTER))
+    if (op->type != PLAYER && op->type != MONSTER)
         return;
 
     if (tmp == NULL || hitter->type == POISON)

@@ -447,7 +447,7 @@ op->oz= op->z;
 							}
 ^flying{S}					SET_OR_CLEAR_FLAG(op, FLAG_FLYING, IVAL);
 ^levitate{S}				SET_OR_CLEAR_FLAG(op, FLAG_LEVITATE, IVAL);
-^monster{S}					SET_OR_CLEAR_FLAG(op, FLAG_MONSTER, IVAL);
+^monster{S}	// TODO: remove, and from arches, when 0.10.7 is on main
 ^no_attack{S}				SET_OR_CLEAR_FLAG(op, FLAG_NO_ATTACK, IVAL);
 ^invulnerable{S}			SET_OR_CLEAR_FLAG(op, FLAG_INVULNERABLE, IVAL);
 ^friendly{S}			    SET_OR_CLEAR_FLAG(op, FLAG_FRIENDLY, IVAL);

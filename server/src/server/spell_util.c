@@ -2472,7 +2472,7 @@ void move_golem(object_t *op)
     object_t     *part;
     tag_t       tag;
 
-    if (QUERY_FLAG(op, FLAG_MONSTER) && op->stats.hp)
+    if (op->stats.hp)
         return; /* Has already been moved */
 
     if (get_owner(op) == NULL)
@@ -2898,39 +2898,6 @@ int find_target_for_spell(object_t *op, object_t *item, object_t **target, int d
     }
 
     return FALSE; /* invalid target/spell or whatever */
-
-#if 0
-//    if(op->type!=PLAYER&&op->type!=RUNE)
-//    {
-//        tmp=get_owner(op);
-//        if(!tmp || !QUERY_FLAG(tmp,FLAG_MONSTER))
-//            tmp=op;
-//    }
-//    else
-//    {
-//        xt = op->x+OVERLAY_X(dir);
-//        yt = op->y+OVERLAY_Y(dir);
-//        if (!(m=out_of_map(op->map,&xt,&yt)))
-//            tmp=NULL;
-//        else
-//        {
-//            for(tmp=MSP_GET_LAST(m,xt,yt);tmp!=NULL;tmp=tmp->below)
-//            {
-//                if(tmp->type==PLAYER)
-//                    break;
-//            }
-//        }
-//    }
-//    if(tmp==NULL)
-//    {
-//        for(tmp=MSP_GET_LAST(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->below)
-//        {
-//            if(tmp->type==PLAYER)
-//                break;
-//        }
-//    }
-//    return tmp;
-#endif
 }
 
 int reduction_dir[OVERLAY_7X7][3] =

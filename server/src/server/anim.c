@@ -193,7 +193,7 @@ void animate_object(object_t *op, int count)
      *  We have then to change the frame and not increase the state */
 
     if ((!QUERY_FLAG(op, FLAG_SLEEP) && !QUERY_FLAG(op, FLAG_PARALYZED)))
-            /*      ||  (!QUERY_FLAG(op,FLAG_MONSTER) && op->type != PLAYER))  */
+            /*      ||  (op->type != MONSTER && op->type != PLAYER))  */
             /* only monster & players should be have sleep & paralyze? if not, attach upper line */
         op->state += count;    /* increase draw state (of the animation frame) */
     if (!count)

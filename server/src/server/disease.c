@@ -300,7 +300,7 @@ int infect_object(object_t *victim, object_t *disease, int force)
         victim = victim->head;
 
     /* don't infect inanimate objects */
-    if (!QUERY_FLAG(victim, FLAG_MONSTER) && victim->type != PLAYER)
+    if (victim->type != MONSTER && victim->type != PLAYER)
         return 0;
 
     /* check and see if victim can catch disease:  diseases

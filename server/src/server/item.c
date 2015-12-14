@@ -167,7 +167,7 @@ char * describe_item(const object_t *const op)
         sprintf(strchr(retbuf, '\0'), "(regen: hp %+d, mana %+d, grace %+d)",
             pl->gen_hp, pl->gen_sp, pl->gen_grace); 
     }
-    else if (QUERY_FLAG(op, FLAG_MONSTER))
+    else if (op->type == MONSTER)
     {
         describe_terrain(op, retbuf);
 
@@ -515,7 +515,7 @@ char * describe_item(const object_t *const op)
     }
 
     /* here we deal with all the special flags */
-    if (id_true || QUERY_FLAG(op, FLAG_MONSTER) || op->type == PLAYER)
+    if (id_true || op->type == MONSTER || op->type == PLAYER)
     {
         if (QUERY_FLAG(op, FLAG_SEE_INVISIBLE))
             strcat(retbuf, "(see invisible)");
