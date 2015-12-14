@@ -54,7 +54,6 @@ extern void             add_button_links(object_t *button, map_t *map, char *con
 extern void             add_button_link(object_t *button, map_t *map, int connected);
 extern void             remove_button_link(object_t *op);
 extern int              get_button_value(object_t *button);
-extern void             do_mood_floor(object_t *op, object_t *op2);
 extern object_t          *check_inv_recursive(object_t *op, object_t *trig);
 extern void             check_inv(object_t *op, object_t *trig);
 extern void             verify_button_links(map_t *map);

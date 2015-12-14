@@ -138,13 +138,7 @@
 #define FIREWALL                62
 #define ANVIL                   63
 #define CHECK_INV               64  /* by b.t. thomas@nomad.astro.psu.edu */
-#define MOOD_FLOOR              65  /* by b.t. thomas@nomad.astro.psu.edu
-                                      * values of last_sp set how to change:
-                                      * 0 = furious,    all monsters become aggressive
-                                      * 1 = angry, all but friendly become aggressive
-                                      * 2 = calm, all aggressive monsters calm down
-                                      * 3 = sleep, all monsters fall asleep
-                                      * 4 = charm, monsters become pets */
+/* 65 is free. */
 #define EXIT                    66
 #define TYPE_AGE_FORCE          67  /* this object is a age force */
 #define SHOP_FLOOR              68

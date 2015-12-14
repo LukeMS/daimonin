@@ -266,7 +266,6 @@ static struct constant_decl preset_game_constants[] =
     {"TYPE_FIREWALL",         FIREWALL},
     {"TYPE_ANVIL",            ANVIL},
     {"TYPE_CHECK_INV",        CHECK_INV},
-    {"TYPE_MOOD_FLOOR",       MOOD_FLOOR},
     {"TYPE_EXIT",             EXIT},
     {"TYPE_AGE_FORCE",        TYPE_AGE_FORCE},
     {"TYPE_SHOP_FLOOR",       SHOP_FLOOR},

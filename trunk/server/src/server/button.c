@@ -193,15 +193,6 @@ void signal_connection(object_t *op, object_t *activator, object_t *originator, 
 #endif
               break;
 
-            case MOOD_FLOOR:
-              /* Ignore map loading triggers */
-            /*
-              if(ignore_trigger_events)
-                  break;
-              do_mood_floor(tmp, op);
-              */
-              break;
-
             case TIMED_GATE:
               /* Ignore map loading triggers */
               if(ignore_trigger_events)
@@ -983,95 +974,6 @@ int get_button_value(object_t *button)
 
     return 0;
 }
-
-/* This routine makes monsters who are
- * standing on the 'mood floor' change their
- * disposition if it is different.
- * If floor is to be triggered must have
- * a speed of zero (default is 1 for all
- * but the charm floor type).
- * by b.t. thomas@nomad.astro.psu.edu
- */
-
-/* TODO: this needs to be updated for the new AI system if it is going to
- * be used at all. Gecko 2005-04-30 */
-#if 0
-void do_mood_floor(object_t *op, object_t *op2)
-{
-    LOG(llevBug, "BUG: mood floor used (not implemented yet)\n");
-    object_t *tmp;
-    object_t *tmp2;
-
-    for (tmp = op->above; tmp; tmp = tmp->above)
-        if (QUERY_FLAG(tmp, FLAG_MONSTER))
-            break;
-
-    /* doesn't effect players, and if there is a player on this space, won't also
-     * be a monster here.
-     */
-    if (!tmp || tmp->type == PLAYER)
-        return;
-
-    switch (op->last_sp)
-    {
-        case 0:
-          /* furious--make all monsters mad */
-          if (QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE))
-              CLEAR_FLAG(tmp, FLAG_UNAGGRESSIVE);
-          if (QUERY_FLAG(tmp, FLAG_FRIENDLY))
-          {
-              CLEAR_FLAG(tmp, FLAG_FRIENDLY);
-              /* lots of checks here, but want to make sure we don't
-               * dereference a null value
-               */
-              if (tmp->type == GOLEM && tmp->owner && tmp->owner->type == PLAYER && CONTR(tmp->owner)->golem == tmp)
-              {
-                  send_golem_control(tmp, GOLEM_CTR_RELEASE);
-                  CONTR(tmp->owner)->golem = NULL;
-              }
-              tmp->owner = NULL;
-          }
-          break;
-        case 1:
-          /* angry -- get neutral monsters mad */
-          if (QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE) && !QUERY_FLAG(tmp, FLAG_FRIENDLY))
-              CLEAR_FLAG(tmp, FLAG_UNAGGRESSIVE);
-          break;
-        case 2:
-          /* calm -- pacify unfriendly monsters */
-          if (!QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE))
-              SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
-          break;
-        case 3:
-          /* make all monsters fall asleep */
-          if (!QUERY_FLAG(tmp, FLAG_SLEEP))
-              SET_FLAG(tmp, FLAG_SLEEP);
-          break;
-        case 4:
-          /* charm all monsters */
-
-          if (op == op2)
-              break;         /* only if 'connected' */
-
-          for (tmp2 = MSP_GET_LAST(op2->map, op2->x, op2->y); /* finding an owner */
-                                  tmp2->type != PLAYER; tmp2 = tmp2->below)
-              if (tmp2->above == NULL)
-                  break;
-
-          if (tmp2->type != PLAYER)
-              break;
-          set_owner(tmp, tmp2);
-          SET_FLAG(tmp, FLAG_MONSTER);
-          tmp->stats.exp = 0;
-          SET_FLAG(tmp, FLAG_FRIENDLY);
-          tmp->move_type = PETMOVE;
-          break;
-
-        default:
-          break;
-    }
-}
-#endif
 
 /* this function returns the object it matches, or NULL if non.
  * It will descend through containers to find the object.
