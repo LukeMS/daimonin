@@ -142,12 +142,7 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
                 echo "### Make ${dai_svndir} structure."
                 mkdir ${dai_svndir}
                 mkdir ${dai_svndir}/daimonin
-                mkdir ${dai_svndir}/daimonin/trunk
-
-                if [ ${dai_gameserver} != "trunk" ]
-                then
-                    mkdir ${dai_svndir}/daimonin/${dai_gameserver}
-                fi
+                mkdir ${dai_svndir}/daimonin/${dai_gameserver}
 
                 if [ -n "${dai_gridarta_repo}" ]
                 then
@@ -196,11 +191,11 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
 
             echo
             echo "### Checkout/update and export arches"
-            echo "  # from ${dai_daimonin_repo}/trunk"
-            svn co ${dai_daimonin_repo}/trunk/arch ${dai_svndir}/daimonin/trunk/arch
-
-            if [ ${dai_gameserver} != "trunk" ]
+            if [ ${dai_gameserver} == "test" ]
             then
+                echo "  # from ${dai_daimonin_repo}/main"
+                svn co ${dai_daimonin_repo}/main/arch ${dai_svndir}/daimonin/${dai_gameserver}/arch
+            else
                 echo "  # from ${dai_daimonin_repo}/${dai_gameserver}"
                 svn co ${dai_daimonin_repo}/${dai_gameserver}/arch ${dai_svndir}/daimonin/${dai_gameserver}/arch
             fi
@@ -223,12 +218,7 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
                 svn co ${dai_daimonin_repo}/streams/newarch/arch ${dai_svndir}/daimonin/newarch/arch
             fi
 
-            svn export ${dai_svndir}/daimonin/trunk/arch ${dai_builddir}/arch
-
-            if [ ${dai_gameserver} != "trunk" ]
-            then
-                svn export --force ${dai_svndir}/daimonin/${dai_gameserver}/arch ${dai_builddir}/arch
-            fi
+            svn export --force ${dai_svndir}/daimonin/${dai_gameserver}/arch ${dai_builddir}/arch
 
             if [ -n "${dai_daiserv_repo}" ]
             then
@@ -247,11 +237,11 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
 
             echo
             echo "### Checkout/update and export maps"
-            echo "  # from ${dai_daimonin_repo}/trunk"
-            svn co ${dai_daimonin_repo}/trunk/maps ${dai_svndir}/daimonin/trunk/maps
-
-            if [ ${dai_gameserver} != "trunk" ]
+            if [ ${dai_gameserver} == "test" ]
             then
+                echo "  # from ${dai_daimonin_repo}/main"
+                svn co ${dai_daimonin_repo}/main/maps ${dai_svndir}/daimonin/${dai_gameserver}/maps
+            else
                 echo "  # from ${dai_daimonin_repo}/${dai_gameserver}"
                 svn co ${dai_daimonin_repo}/${dai_gameserver}/maps ${dai_svndir}/daimonin/${dai_gameserver}/maps
             fi
@@ -274,12 +264,7 @@ echo "${fromtime},${totime},${reason}" > ${dai_home}/${dai_time_data}
                 svn co ${dai_daimonin_repo}/streams/newarch/maps ${dai_svndir}/daimonin/newarch/maps
             fi
 
-            svn export ${dai_svndir}/daimonin/trunk/maps ${dai_builddir}/maps
-
-            if [ ${dai_gameserver} != "trunk" ]
-            then
-                svn export --force ${dai_svndir}/daimonin/${dai_gameserver}/maps ${dai_builddir}/maps
-             fi
+            svn export --force ${dai_svndir}/daimonin/${dai_gameserver}/maps ${dai_builddir}/maps
 
             if [ -n "${dai_daiserv_repo}" ]
             then
