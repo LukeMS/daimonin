@@ -442,8 +442,6 @@ static void AllocateMap(map_t *m)
     msp_t *msp;
     uint32    flags = 0;
 
-    m->in_memory = MAP_MEMORY_LOADING;
-
     /* Log this condition and free the storage.  We could I suppose
      * realloc, but if the caller is presuming the data will be intact,
      * that is their poor assumption. */
@@ -1494,6 +1492,7 @@ static map_t *LoadMap(shstr_t *path_sh, shstr_t *orig_path_sh, uint32 flags, shs
 #ifdef DEBUG_MAP
     LOG(llevInfo, "Allocate... ");
 #endif
+    m->in_memory = MAP_MEMORY_LOADING;
     AllocateMap(m);
 #ifdef DEBUG_MAP
     LOG(llevInfo, "Objects... ");
@@ -1509,6 +1508,7 @@ static map_t *LoadMap(shstr_t *path_sh, shstr_t *orig_path_sh, uint32 flags, shs
     LOG(llevInfo, "Buttons.\n");
 #endif
     update_buttons(m);
+    m->in_memory = MAP_MEMORY_ACTIVE;
     fclose(fp);
 
     return m;
@@ -1571,6 +1571,7 @@ static map_t *LoadTemporaryMap(map_t *m)
 #ifdef DEBUG_MAP
         LOG(llevInfo, "Allocate... ");
 #endif
+        m->in_memory = MAP_MEMORY_LOADING;
         AllocateMap(m);
 #ifdef DEBUG_MAP
         LOG(llevInfo, "Objects... ");
@@ -1580,7 +1581,6 @@ static map_t *LoadTemporaryMap(map_t *m)
         LOG(llevInfo, "Clean... ");
 #endif
         clean_tmp_map(m);
-        m->in_memory = MAP_MEMORY_ACTIVE;
      
 #ifdef DEBUG_MAP
         /* In case other objects press some buttons down. We handle here all
@@ -1591,6 +1591,7 @@ static map_t *LoadTemporaryMap(map_t *m)
         LOG(llevInfo, "Buttons.\n");
 #endif
         update_buttons(m);
+        m->in_memory = MAP_MEMORY_ACTIVE;
     }
 
     if (fp)
@@ -2567,7 +2568,6 @@ next:
     m->flags &= ~MAP_FLAG_NO_UPDATE; /* turn tile updating on again */
 #endif
 //    TPR_STOP("Load map");
-    m->in_memory = MAP_MEMORY_ACTIVE;
 
     /* this is the only place we can insert this because the
     * recursive nature of LoadObjects().
