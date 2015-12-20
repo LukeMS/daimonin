@@ -27,10 +27,6 @@
 
 static objectlink_t *get_first_button_link(object_t *button, uint8 mode);
 
-/* When a map is loaded, its buttons are synced. We don't want
- * to trigger scripts then so we use this global to indicate it */
-static int ignore_trigger_events = 0;
-
 /* Send signal from op to connection ol */
 void signal_connection(object_t *op, object_t *activator, object_t *originator, map_t *m)
 {
@@ -85,10 +81,11 @@ void signal_connection(object_t *op, object_t *activator, object_t *originator, 
     else
         olp = NULL;
 
-    if(! ignore_trigger_events)
-        if(trigger_object_plugin_event(EVENT_TRIGGER,
-                op, activator, originator, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
-            return;
+    if (m->in_memory != MAP_MEMORY_LOADING &&
+        trigger_object_plugin_event(EVENT_TRIGGER, op, activator, originator, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
+    {
+        return;
+    }
 
     /*LOG(llevDebug, "signal_connection: %s (%d)\n", op->name, op->count);*/
     for (ol = olp; ol; ol = ol->next)
@@ -115,10 +112,12 @@ void signal_connection(object_t *op, object_t *activator, object_t *originator, 
             return;
         }
 
-        if(! ignore_trigger_events && tmp != op)
-            if(trigger_object_plugin_event(EVENT_TRIGGER,
-                    tmp, activator, originator, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
-                continue;
+        if (m->in_memory != MAP_MEMORY_LOADING &&
+            tmp != op &&
+            trigger_object_plugin_event(EVENT_TRIGGER, tmp, activator, originator, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
+        {
+            continue;
+        }
 
         switch (tmp->type)
         {
@@ -142,7 +141,7 @@ void signal_connection(object_t *op, object_t *activator, object_t *originator, 
 
             case SIGN:
               /* Ignore map loading triggers */
-              if(ignore_trigger_events)
+              if(m->in_memory == MAP_MEMORY_LOADING)
                   break;
 
               /* Ignore button up, otherwise two of everything for everybody else, */
@@ -195,7 +194,7 @@ void signal_connection(object_t *op, object_t *activator, object_t *originator, 
 
             case TIMED_GATE:
               /* Ignore map loading triggers */
-              if(ignore_trigger_events)
+              if(m->in_memory == MAP_MEMORY_LOADING)
                   break;
               tmp->speed = 0.5;
               update_ob_speed(tmp);  /* original values */
@@ -206,7 +205,7 @@ void signal_connection(object_t *op, object_t *activator, object_t *originator, 
 
             case FIREWALL:
               /* Ignore map loading triggers */
-              if(ignore_trigger_events)
+              if(m->in_memory == MAP_MEMORY_LOADING)
                   break;
               if (op->last_eat) /* connection flag1 = on/off */
                   tmp->last_eat != 0 ? (tmp->last_eat = 0) : (tmp->last_eat = 1);
@@ -231,7 +230,7 @@ void signal_connection(object_t *op, object_t *activator, object_t *originator, 
 
             case DIRECTOR:
               /* Ignore map loading triggers */
-              if(ignore_trigger_events)
+              if(m->in_memory == MAP_MEMORY_LOADING)
                   break;
               if (tmp->stats.maxsp) /* next direction */
               {
@@ -251,14 +250,14 @@ void signal_connection(object_t *op, object_t *activator, object_t *originator, 
               /* Ignore map loading triggers
                * Rationale: connected teleports should only trigger
                * at connection state changes. */
-              if(ignore_trigger_events)
+              if(m->in_memory == MAP_MEMORY_LOADING)
                   break;
               move_teleporter(tmp);
               break;
 
             case CREATOR:
               /* Ignore map loading triggers */
-              if(ignore_trigger_events)
+              if(m->in_memory == MAP_MEMORY_LOADING)
                   break;
               /* Ignore "off" signals */
               if(! op->weight_limit)
@@ -292,7 +291,7 @@ void signal_connection(object_t *op, object_t *activator, object_t *originator, 
 
             case SPAWN_POINT:
               /* Ignore map loading triggers */
-              if(ignore_trigger_events)
+              if(m->in_memory == MAP_MEMORY_LOADING)
                   break;
               if(op->weight_limit) /* Only trigger on positive edge */
                   spawn_point(tmp);
@@ -428,9 +427,6 @@ void update_buttons(map_t *m)
 {
     objectlink_t *obp;
 
-    /* Don't trigger plugin events from this function */
-    ignore_trigger_events = 1;
-
     for (obp = m->buttons; obp; obp = obp->next)
     {
         objectlink_t *ol;
@@ -498,8 +494,6 @@ void update_buttons(map_t *m)
             }
         }
     }
-
-    ignore_trigger_events = 0;
 }
 
 #define ARCH_SACRIFICE(xyz) ((xyz)->slaying)
