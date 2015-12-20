@@ -616,7 +616,7 @@ static void init_mon_info(void)
 
     for (at = first_archetype; at != NULL; at = at->next)
     {
-        if (&at->clone.type == MONSTER /*&& !QUERY_FLAG(&at->clone, FLAG_FRIENDLY)*/
+        if (at->clone.type == MONSTER /*&& !QUERY_FLAG(&at->clone, FLAG_FRIENDLY)*/
          && !QUERY_FLAG(&at->clone, FLAG_CHANGING))
         {
             objectlink_t *mon = objectlink_get(OBJLNK_FLAG_OB);
