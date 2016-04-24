@@ -4165,6 +4165,8 @@ static uint32 IsBlocked(msp_t *msp, object_t *what)
             }
         }
 
+		// No player on that square, so don't worry about PvP.
+		outflags &= ~MSP_FLAG_PVP;
         outflags &= ~MSP_FLAG_PLAYER;
 
         /* B.) MSP_FLAG_NO_PASS - if set we leave here when no PASS_THRU is set and/or the passer has no CAN_PASS_THRU. */
