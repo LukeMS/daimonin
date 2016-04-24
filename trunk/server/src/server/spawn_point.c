@@ -350,11 +350,15 @@ void spawn_point(object_t *op)
         return; /* that happens when we have no free spot....*/
     }
 
-    mob->env = NULL;
-    mob->map = msp->map;
-    mob->x = msp->x + OVERLAY_X(i);
-    mob->y = msp->y + OVERLAY_Y(i);
-    mob->type = MONSTER;
+	FOREACH_PART_OF_OBJECT(tmp, mob, next)
+	{
+		tmp->env = NULL;
+		tmp->map = msp->map;
+		tmp->x = msp->x + OVERLAY_X(i);
+		tmp->y = msp->y + OVERLAY_Y(i);
+		tmp->type = MONSTER;
+	}
+
     Autogen(mob, op->map->difficulty);
 
     /* normal spawning may be interrupted by a script, allowing you to do
