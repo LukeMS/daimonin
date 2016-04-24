@@ -2072,6 +2072,8 @@ int fix_generated_item(object_t **op_ptr, object_t *creator, int difficulty, int
               else if (temp > 110)
                   temp = 110;
               op->level = temp;
+			  op->item_level = temp;
+			  op->item_skill = SKILLGROUP_MAGIC + 1;
               if (temp < spells[op->stats.sp].level)
                   temp = spells[op->stats.sp].level;
               op->value = (int) (1850.0f * spells[op->stats.sp].value_mul);
@@ -2090,6 +2092,8 @@ int fix_generated_item(object_t **op_ptr, object_t *creator, int difficulty, int
               else if (temp > 110)
                   temp = 110;
               op->level = temp;
+			  op->item_level = temp;
+			  op->item_skill = SKILLGROUP_MAGIC + 1;
               if (temp < spells[op->stats.sp].level)
                   temp = spells[op->stats.sp].level;
               op->value = (int) (1850.0f * spells[op->stats.sp].value_mul);
