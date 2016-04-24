@@ -95,7 +95,7 @@ char * describe_attack(const object_t *const op, int newline)
             if (flag)
             {
                 if (!newline)
-                    strcat(buf, "(Attacks: ");
+                    strcat(buf, "(attacks: ");
             }
             else
             {
@@ -434,6 +434,12 @@ char * describe_item(const object_t *const op)
                       }
                   }
               }
+
+			  sprintf(buf, "%s", describe_resistance(op, 0));
+			  strcat(retbuf, buf);
+
+			  sprintf(buf, "%s", describe_attack(op, 0));
+			  strcat(retbuf, buf);
               break;
 
             case FOOD:
