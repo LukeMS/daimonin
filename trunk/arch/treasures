@@ -3616,22 +3616,22 @@ treasureone loot_base
   more
   arch token_generic
     artifact_chance 100
-    chance 1
+    chance 65
     magic 0
   more
   arch sphere_generic
     artifact_chance 100
-    chance 1
+    chance 65
     magic 0
   more
   arch critter_generic
     artifact_chance 100
-    chance 1
+    chance 65
     magic 0
   more
   arch tripyra_stone_generic
     artifact_chance 100
-    chance 1
+    chance 65
     magic 0
 end
 #
