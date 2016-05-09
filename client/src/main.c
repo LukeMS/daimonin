@@ -412,6 +412,7 @@ void init_game_data(void)
     memset(&cpl, 0, sizeof(cpl));
     cpl.ob = player_item();
 
+    quickslot_init();
     init_keys();
     init_player_data();
     clear_metaserver_data();
@@ -1895,25 +1896,31 @@ int main(int argc, char *argv[])
         if (cpl.menustatus == MENU_NO && (drag = draggingInvItem(DRAG_GET_STATUS)))
         {
             item   *Item = NULL;
-            if (drag == DRAG_IWIN_INV)
-                Item = locate_item(cpl.win_inv_tag);
-            else if (drag == DRAG_IWIN_BELOW)
-                Item = locate_item(cpl.win_below_tag);
-            else if (drag == DRAG_QUICKSLOT)
-                Item = locate_item(cpl.win_quick_tag);
-            else if (drag == DRAG_PDOLL)
-                Item = locate_item(cpl.win_pdoll_tag);
-            /*  else Item = locate_item(cpl.win_quick_tag); */
-            if (Item)
+
+            if (drag == DRAG_QUICKSLOT_SPELL)
             {
                 SDL_GetMouseState(&x, &y);
-                if (drag == DRAG_QUICKSLOT_SPELL)
-                    sprite_blt(spell_list[quick_slots[cpl.win_quick_tag].spell.groupNr].entry[quick_slots[cpl.win_quick_tag].spell.classNr][quick_slots[cpl.win_quick_tag].spell.spellNr].icon,
-                               x, y, NULL, NULL);
-                else
-                    blt_inv_item_centered(Item, x, y);
-
+                sprite_blt(spell_list[new_quickslots[cpl.win_quick_tag].group].entry[new_quickslots[cpl.win_quick_tag].path][new_quickslots[cpl.win_quick_tag].tag].icon,
+                           x, y, NULL, NULL);
                 map_udate_flag = 2;
+            }
+            else
+            {
+                if (drag == DRAG_IWIN_INV)
+                    Item = locate_item(cpl.win_inv_tag);
+                else if (drag == DRAG_IWIN_BELOW)
+                    Item = locate_item(cpl.win_below_tag);
+                else if (drag == DRAG_QUICKSLOT)
+                    Item = locate_item(new_quickslots[cpl.win_quick_tag].tag);
+                else if (drag == DRAG_PDOLL)
+                    Item = locate_item(cpl.win_pdoll_tag);
+                /*  else Item = locate_item(cpl.win_quick_tag); */
+                if (Item)
+                {
+                    SDL_GetMouseState(&x, &y);
+                    blt_inv_item_centered(Item, x, y);
+                    map_udate_flag = 2;
+                }
             }
         }
 
@@ -2039,6 +2046,13 @@ int main(int argc, char *argv[])
                 string_blt(ScreenSurface, &font_small, buf, rec.x, rec.y,
                            COLOR_DEFAULT, NULL, NULL);
             }
+        }
+
+        if (GameStatus == GAME_STATUS_PLAY && cpl.ob && cpl.ob->inv && quickslots_loaded == FALSE)
+        {
+            LOG(LOG_MSG, "Loading quickslot settings for server\n");
+            load_quickslots_entrys();
+            quickslots_loaded = TRUE;
         }
 
         /* TODO: This should be moved to the anim functions, but for that we
@@ -2382,7 +2396,7 @@ static void InitPhysFS(const char *argv0)
         {
             sprintf(home, "%s", env);
             sprintf(root_buf, "Application Data%sDaimonin", sep);
-            sprintf(buf, "%s%s%d.%d",
+            sprintf(buf, "%s%d.%d",
                     root_buf, DAI_VERSION_RELEASE, DAI_VERSION_MAJOR);
         }
         /* Not defined either? Just use the the base dir. */
@@ -2417,7 +2431,7 @@ static void InitPhysFS(const char *argv0)
     // like a virus checker and not telling us "the truth about what our access is doing",
     // even they tell us by error flow that all is fine.
     // Not giving back the right error messages to IO functions is simply a hack and some
-    // windows versions are doing it. 
+    // windows versions are doing it.
 
     // simply check our user patch is there
     // PHYSFS *can* create it, but sometimes access control says no
@@ -2492,7 +2506,7 @@ static void InitPhysFS(const char *argv0)
                 exit(EXIT_FAILURE);
             }
         }
-    } 
+    }
 #endif
 
     /* Make sure all the dirs that may be written to exist. */

@@ -86,7 +86,7 @@ _player_doll_pos    widget_player_doll[PDOLL_INIT] =
     };
 void clear_player(void)
 {
-    memset(quick_slots, -1, sizeof(quick_slots));
+    quickslot_init();
     free_all_items(cpl.sack);
     free_all_items(cpl.below);
     free_all_items(cpl.ob);
@@ -534,7 +534,7 @@ void widget_show_player_doll_event(int x, int y, int MEvent)
     {
         item *op;
 
-        cpl.inventory_win = IWIN_BELOW; 
+        cpl.inventory_win = IWIN_BELOW;
         sound_play_effect(SOUNDTYPE_CLIENT, SOUND_GET, 0, 0, 100);
         process_macro_keys(KEYFUNC_GET, 0); /* get to inv */
 
