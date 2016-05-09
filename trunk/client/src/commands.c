@@ -1229,7 +1229,6 @@ void PlayerCmd(char *data, int len)
     map_redraw_flag=1;
 //    textwin_showstring(COLOR_GREEN,"map_draw_update: PlayerCmd");
 
-
     ignore_list_load();
     chatfilter_list_load();
     kill_list_load();
@@ -1239,8 +1238,6 @@ void PlayerCmd(char *data, int len)
             LOG(LOG_DEBUG,"trying to open chatlogfile: %s\n",filename);
             if (!msglog) msglog = fopen_wrapper(filename, "a");
 #endif
-    LOG(LOG_MSG, "Loading quickslot settings for server\n");
-    load_quickslots_entrys();
     save_options_dat();
 }
 

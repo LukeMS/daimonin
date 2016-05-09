@@ -42,7 +42,8 @@ int                     media_show_update;
 int                     keybind_startoff    = 0;
 static char            *get_range_item_name(int id);
 
-_quickslot              quick_slots[MAX_QUICK_SLOTS];
+int                     quickslots_loaded = FALSE;
+_quickslot_two          new_quickslots[MAX_QUICK_SLOTS];
 int                     quickslots_pos[MAX_QUICK_SLOTS][2]  =
     {
         {17,1}, {50,1}, {83,1}, {116,1}, {149,1}, {182,1}, {215,1}, {248,1}
@@ -1563,26 +1564,26 @@ void show_quickslots(int x, int y)
 
     for (i = MAX_QUICK_SLOTS - 1; i >= 0; i--)
     {
-        if (quick_slots[i].shared.tag != -1)
+        if (new_quickslots[i].type > 0)
         {
-            /* spell in quickslot */
-            if (quick_slots[i].shared.is_spell == 1)
+            if (new_quickslots[i].type == 1)
             {
-                sprite_blt(spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].icon,
-                           x + quickslots_pos[i][qsx]+xoff, y + quickslots_pos[i][qsy], NULL, NULL);
+                sprite_blt(spell_list[new_quickslots[i].group].entry[new_quickslots[i].path][new_quickslots[i].tag].icon,
+                           x + quickslots_pos[i][qsx] + xoff, y + quickslots_pos[i][qsy], NULL, NULL);
                 if (mx >= x + quickslots_pos[i][qsx]+xoff
-                        && mx < x + quickslots_pos[i][qsx]+xoff + 33
-                        && my >= y + quickslots_pos[i][qsy]
-                        && my < y + quickslots_pos[i][qsy] + 33
-                        && GetMouseState(&mx,&my,QUICKSLOT_ID))
+                    && mx < x + quickslots_pos[i][qsx]+xoff + 33
+                    && my >= y + quickslots_pos[i][qsy]
+                    && my < y + quickslots_pos[i][qsy] + 33
+                    && GetMouseState(&mx,&my,QUICKSLOT_ID))
+                {
                     show_tooltip(mx, my,
-                                 spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].name);
+                        spell_list[new_quickslots[i].group].entry[new_quickslots[i].path][new_quickslots[i].tag].name);
+                }
             }
-            /* item in quickslot */
             else
             {
                 item   *tmp;
-                tmp = locate_item_from_item(cpl.ob, quick_slots[i].shared.tag);
+                tmp = locate_item_from_item(cpl.ob, new_quickslots[i].tag);
                 if (tmp)
                 {
                     blt_inv_item(tmp, x + quickslots_pos[i][qsx]+xoff, y + quickslots_pos[i][qsy]);
@@ -1599,6 +1600,7 @@ void show_quickslots(int x, int y)
                 }
             }
         }
+
         sprintf(buf, "F%d", i + 1);
         string_blt(ScreenSurface, &font_tiny_out, buf, x + quickslots_pos[i][qsx]+xoff + 12, y + quickslots_pos[i][qsy] - 6,
                   COLOR_DEFAULT, NULL, NULL);
@@ -1630,26 +1632,26 @@ void widget_quickslots(int x, int y)
 
     for (i = MAX_QUICK_SLOTS - 1; i >= 0; i--)
     {
-        if (quick_slots[i].shared.tag != -1)
+        if (new_quickslots[i].tag != -1)
         {
-            /* spell in quickslot */
-            if (quick_slots[i].shared.is_spell == 1)
+            if (new_quickslots[i].type == 1)
             {
-                sprite_blt(spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].icon,
-                           x + quickslots_pos[i][qsx]+xoff, y + quickslots_pos[i][qsy], NULL, NULL);
+                sprite_blt(spell_list[new_quickslots[i].group].entry[new_quickslots[i].path][new_quickslots[i].tag].icon,
+                           x + quickslots_pos[i][qsx] + xoff, y + quickslots_pos[i][qsy], NULL, NULL);
                 if (mx >= x + quickslots_pos[i][qsx]+xoff
-                        && mx < x + quickslots_pos[i][qsx]+xoff + 33
-                        && my >= y + quickslots_pos[i][qsy]
-                        && my < y + quickslots_pos[i][qsy] + 33
-                        && GetMouseState(&mx,&my,QUICKSLOT_ID))
+                    && mx < x + quickslots_pos[i][qsx]+xoff + 33
+                    && my >= y + quickslots_pos[i][qsy]
+                    && my < y + quickslots_pos[i][qsy] + 33
+                    && GetMouseState(&mx,&my,QUICKSLOT_ID))
+                {
                     show_tooltip(mx, my,
-                                 spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].name);
+                        spell_list[new_quickslots[i].group].entry[new_quickslots[i].path][new_quickslots[i].tag].name);
+                }
             }
-            /* item in quickslot */
-            else
+            else if (new_quickslots[i].type == 2)
             {
                 item   *tmp;
-                tmp = locate_item_from_item(cpl.ob, quick_slots[i].shared.tag);
+                tmp = locate_item_from_item(cpl.ob, new_quickslots[i].tag);
                 if (tmp)
                 {
                     blt_inv_item(tmp, x + quickslots_pos[i][qsx]+xoff, y + quickslots_pos[i][qsy]);
@@ -1666,6 +1668,7 @@ void widget_quickslots(int x, int y)
                 }
             }
         }
+
         sprintf(buf, "F%d", i + 1);
         string_blt(ScreenSurface, &font_tiny_out, buf, x + quickslots_pos[i][qsx]+xoff + 12, y + quickslots_pos[i][qsy] - 6,
                   COLOR_DEFAULT, NULL, NULL);
@@ -1675,28 +1678,33 @@ void widget_quickslots_mouse_event(int x, int y, int MEvent)
 {
     if (MEvent==1) /* Mouseup Event */
     {
+        // Verify we're actually dragging something.
         if (draggingInvItem(DRAG_GET_STATUS) > DRAG_IWIN_BELOW)
         {
             int ind = get_quickslot(x, y);
             if (ind != -1) /* valid slot */
             {
-                if (draggingInvItem(DRAG_GET_STATUS) == DRAG_QUICKSLOT_SPELL)
+                // Moving a spell from one quickslot to another
+                if (draggingInvItem(DRAG_GET_STATUS) == DRAG_QUICKSLOT_SPELL ||
+                    draggingInvItem(DRAG_GET_STATUS) == DRAG_QUICKSLOT)
                 {
-                    quick_slots[ind].shared.is_spell = 1;
-                    quick_slots[ind].spell.groupNr = quick_slots[cpl.win_quick_tag].spell.groupNr;
-                    quick_slots[ind].spell.classNr = quick_slots[cpl.win_quick_tag].spell.classNr;
-                    quick_slots[ind].shared.tag = quick_slots[cpl.win_quick_tag].spell.spellNr;
+                    quickslot_swap(ind, cpl.win_quick_tag);
                     cpl.win_quick_tag = -1;
                 }
                 else
                 {
                     if (draggingInvItem(DRAG_GET_STATUS) == DRAG_IWIN_INV)
+                    {
                         cpl.win_quick_tag = cpl.win_inv_tag;
+                    }
                     else if (draggingInvItem(DRAG_GET_STATUS) == DRAG_PDOLL)
+                    {
                         cpl.win_quick_tag = cpl.win_pdoll_tag;
-                    quick_slots[ind].shared.tag = cpl.win_quick_tag;
-                    quick_slots[ind].item.invSlot = ind;
-                    quick_slots[ind].shared.is_spell = 0;
+                    }
+
+                    // itemnr and nrof will be set later.
+                    quickslot_set(ind, 2, -1, -1, cpl.win_quick_tag, 0, 0);
+
                     /* now we do some tests... first, ensure this item can fit */
                     update_quickslots(-1);
                     /* now: if this is null, item is *not* in the main inventory
@@ -1725,28 +1733,27 @@ void widget_quickslots_mouse_event(int x, int y, int MEvent)
     {
         /* drag from quickslots */
         int   ind = get_quickslot(x, y);
-        if (ind != -1 && quick_slots[ind].shared.tag != -1) /* valid slot */
+        if (ind != -1 && new_quickslots[ind].type > 0) /* valid slot */
         {
-            cpl.win_quick_tag = quick_slots[ind].shared.tag;
+            cpl.win_quick_tag = new_quickslots[ind].tag;
             if ((SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)))
             {
-                if (quick_slots[ind].shared.is_spell == 1)
+                if (new_quickslots[ind].type == 1)
                 {
                     draggingInvItem(DRAG_QUICKSLOT_SPELL);
-                    quick_slots[ind].spell.spellNr = quick_slots[ind].shared.tag;
-                    cpl.win_quick_tag = ind;
+                    //new_quickslots[ind].spell.spellNr = quick_slots[ind].shared.tag;
                 }
                 else
                 {
                     draggingInvItem(DRAG_QUICKSLOT);
                 }
-                quick_slots[ind].shared.tag = -1;
+                cpl.win_quick_tag = ind;
             }
             else
             {
                 int stemp = cpl.      inventory_win, itemp = cpl.win_inv_tag;
                 cpl.inventory_win = IWIN_INV;
-                cpl.win_inv_tag = quick_slots[ind].shared.tag;
+                cpl.win_inv_tag = new_quickslots[ind].tag;
                 process_macro_keys(KEYFUNC_APPLY, 0);
                 cpl.inventory_win = stemp;
                 cpl.win_inv_tag = itemp;
@@ -1785,32 +1792,36 @@ void update_quickslots(int del_item)
 
     for (i = 0; i < MAX_QUICK_SLOTS; i++)
     {
-        if (quick_slots[i].shared.tag == del_item)
-            quick_slots[i].shared.tag = -1;
-        if (quick_slots[i].shared.tag == -1)
-            continue;
-        /* only items in the *main* inventory can used with quickslot! */
-        if (quick_slots[i].shared.is_spell == 0)
+        // Quickslot is uninitialized; don't worry about it
+        if (new_quickslots[i].type == 0)
         {
-            if (!locate_item_from_inv(cpl.ob->inv, quick_slots[i].shared.tag))
-                quick_slots[i].shared.tag = -1;
-            if (quick_slots[i].shared.tag != -1)
-                quick_slots[i].item.nr = locate_item_nr_from_tag(cpl.ob->inv, quick_slots[i].shared.tag);
+            continue;
+        }
+
+        if (new_quickslots[i].tag == del_item)
+        {
+            new_quickslots[i].tag = -1;
+        }
+        if (new_quickslots[i].tag == -1)
+        {
+            continue;
+        }
+
+        if (new_quickslots[i].type == 3)
+        {
+            if (!locate_item_from_inv(cpl.ob->inv, new_quickslots[i].tag))
+            {
+                quickslot_unset(i);
+            }
+            else
+            {
+                new_quickslots[i].itemnr = locate_item_nr_from_tag(cpl.ob->inv, new_quickslots[i].tag);
+            }
         }
     }
 }
 
-static void freeQuickSlots(_quickslot *quickslots, int size)
-{
-    int i;
-
-    for (i = 0; i != size; ++i)
-    {
-        if (quickslots[i].shared.is_spell == 0)
-            FREE(quickslots[i].name.name);
-    }
-}
-
+#if 0
 static int readNextQuickSlots(FILE *fp, char *server, int *port, char *name, _quickslot *quickslots)
 {
     int     ch, i, r;
@@ -1892,13 +1903,65 @@ static int readNextQuickSlots(FILE *fp, char *server, int *port, char *name, _qu
     }
     return r;
 }
+#endif
 
 /******************************************************************
  Restore quickslots from last game.
 ******************************************************************/
-#define QUICKSLOT_FILE "settings/quick.dat"
-#define QUICKSLOT_FILE_VERSION 2
+#define QUICKSLOT_FILE "settings/%s/%s/quick.dat"
+#define QUICKSLOT_FILE_VERSION 1
 #define QUICKSLOT_FILE_HEADER ((QUICKSLOT_FILE_VERSION << 24) | 0x53 << 16 | 0x51 << 8 | 0x44)
+
+void load_quickslots_entrys()
+{
+    int             q;
+    _quickslot_two *slot;
+    char            filebuf[MEDIUM_BUF];
+    char            slotbuf[SMALL_BUF];
+    char            line[SMALL_BUF];
+    uint8           linenr = 0;
+    item           *first;
+    int             it_tag;
+    _quickslot_two  tmp;
+    PHYSFS_File    *handle;
+
+    LOG(LOG_MSG, "Trying to load quickslots... ");
+    sprintf(filebuf, QUICKSLOT_FILE, ServerName, cpl.name);
+
+    file_path((const char *)filebuf, "r");
+
+    if (!(handle = PHYSFS_openRead(filebuf)))
+    {
+        LOG(LOG_ERROR, "FAILED: %s!\n", PHYSFS_getLastError());
+        return;
+    }
+
+    while (PHYSFS_readString(handle, line, sizeof(line)) >= 0)
+    {
+        sscanf(line, "%u %d %d %d %d %d\n", &(tmp.type), &(tmp.group),
+               &(tmp.path), &(tmp.tag), &(tmp.itemnr), &(tmp.nrof));
+
+        if (tmp.type > 0)
+        {
+            if (tmp.type == 2)
+            {
+                first = cpl.ob->inv;
+                it_tag = locate_item_tag_from_nr(first, tmp.itemnr);
+                quickslot_set(linenr, tmp.type, tmp.group, tmp.path, it_tag, tmp.itemnr, first->nrof);
+            }
+            else
+            {
+                quickslot_set(linenr, tmp.type, tmp.group, tmp.path, tmp.tag, tmp.itemnr, tmp.nrof);
+            }
+        }
+
+        linenr++;
+    }
+
+    PHYSFS_close(handle);
+    LOG(LOG_MSG,"OK!\n");
+}
+#if 0
 void load_quickslots_entrys()
 {
     long        header;
@@ -1993,150 +2056,41 @@ void load_quickslots_entrys()
     fclose(stream);
     update_quickslots(-1);
 }
+#endif
 
 /******************************************************************
  Save the current quickslots.
 ******************************************************************/
 void save_quickslots_entrys()
 {
-    long        header;
-    char        name[40], server[2048];
-    int         n, size, w;
-    _quickslot  quickslots[MAX_QUICK_SLOTS];
-    FILE       *stream;
+    int             q;
+    _quickslot_two *slot;
+    char            filebuf[MEDIUM_BUF];
+    char            slotbuf[SMALL_BUF];
+    PHYSFS_File    *handle;
 
-    if (!(stream = fopen_wrapper(QUICKSLOT_FILE, "rb+")))
+    LOG(LOG_MSG, "Trying to save quickslots... ");
+    sprintf(filebuf, QUICKSLOT_FILE, ServerName, cpl.name);
+
+    file_path((const char *)filebuf, "w");
+
+    if (!(handle = PHYSFS_openWrite(filebuf)))
     {
-        if (!(stream = fopen_wrapper(QUICKSLOT_FILE, "wb+")))
-            return;
-    }
-    header = QUICKSLOT_FILE_HEADER;
-    fwrite(&header, sizeof(header), 1, stream);
-    for (n = w = 0; n != MAX_QUICK_SLOTS; ++n)
-    {
-        w += sizeof(uint8);
-        if (quick_slots[n].shared.is_spell == 0)
-        {
-            item *ob = locate_item_from_inv(cpl.ob->inv, quick_slots[n].item.tag);
-
-            w += sizeof(int);
-            MALLOC(quick_slots[n].name.name, sizeof(char) * 128);
-            if (ob != NULL)
-            {
-                int i = strlen(ob->s_name) + 1;
-
-                strncpy(quick_slots[n].name.name, ob->s_name, i);
-                w += i;
-            }
-            else
-                w += sizeof(char);
-        }
-        else
-            w += sizeof(int) * 3;
-    }
-    /* readNextQuickSlots has problems with wb+ and rb+ opened files */
-    n = ftell(stream);
-
-    if (!(freopen(file_path(QUICKSLOT_FILE, "rb"),"rb",stream)))
+        LOG(LOG_ERROR, "FAILED: %s!\n", PHYSFS_getLastError());
         return;
-
-    fseek(stream,n,SEEK_SET);
-    while ((size = readNextQuickSlots(stream, server, &n, name, quickslots)) != 0)
-    {
-        if (!strcmp(ServerName, server) && n == ServerPort && !strcmp(cpl.name, name))
-        {
-            if ((n = w - size) != 0)
-            {
-                char  *buf;
-                long   pos = ftell(stream);
-
-                if (!(freopen(file_path(QUICKSLOT_FILE, "rb+"),"rb+",stream)))
-                    return;
-
-                fseek(stream, 0, SEEK_END);
-                w = ftell(stream) - pos;
-                MALLOC(buf, w);
-                fseek(stream, pos, SEEK_SET);
-
-                if (fread(buf, 1, w, stream) <= 0)
-                {
-                    LOG(LOG_ERROR, "Failed to read data from file '%s'!\n", QUICKSLOT_FILE);
-                    fclose(stream);
-                    freeQuickSlots(quick_slots, MAX_QUICK_SLOTS);
-                    return;
-                }
-
-                fseek(stream, pos + n, SEEK_SET);
-                fwrite(buf, 1, w, stream);
-                if (n < 0)
-                {
-                    w = ftell(stream);
-                    rewind(stream);
-                    buf = (char *)realloc(buf, w);
-
-                    if (fread(buf, 1, w, stream) <= 0)
-                    {
-                        LOG(LOG_ERROR, "Failed to read data from file '%s'!\n", QUICKSLOT_FILE);
-                        fclose(stream);
-                        freeQuickSlots(quick_slots, MAX_QUICK_SLOTS);
-                        return;
-                    }
-
-                    if (!(freopen(file_path(QUICKSLOT_FILE, "wb+"), "wb+", stream)))
-                        return;
-
-                    fwrite(buf, 1, w, stream);
-                }
-                FREE(buf);
-                fseek(stream, pos, SEEK_SET);
-            }
-            fseek(stream, -size, SEEK_CUR);
-            for (n = 0; n != MAX_QUICK_SLOTS; ++n)
-            {
-                fwrite(&quick_slots[n].shared.is_spell, sizeof(uint8), 1, stream);
-                if (quick_slots[n].shared.is_spell == 0)
-                {
-                    fwrite(&quick_slots[n].item.nr, sizeof(int), 1, stream);
-                    fwrite(quick_slots[n].name.name, sizeof(char), strlen(quick_slots[n].name.name) + 1, stream);
-                }
-                else
-                {
-                    fwrite(&quick_slots[n].shared.tag, sizeof(int), 1, stream);
-                    fwrite(&quick_slots[n].spell.groupNr, sizeof(int), 1, stream);
-                    fwrite(&quick_slots[n].spell.classNr, sizeof(int), 1, stream);
-                }
-            }
-            fclose(stream);
-            freeQuickSlots(quick_slots, MAX_QUICK_SLOTS);
-            return;
-        }
     }
 
-    if (!(freopen(file_path(QUICKSLOT_FILE, "rb+"),"rb+",stream)))
-        return;
-
-    fseek(stream, 0, SEEK_END);
-    fwrite(&ServerName, sizeof(char), strlen(ServerName) + 1, stream);
-    fwrite(&ServerPort, sizeof(int), 1, stream);
-    fwrite(&cpl.name, sizeof(char), strlen(cpl.name) + 1, stream);
-    for (n = 0; n != MAX_QUICK_SLOTS; ++n)
+    for (q = 0; q < MAX_QUICK_SLOTS; q++)
     {
-        fwrite(&quick_slots[n].shared.is_spell, sizeof(uint8), 1, stream);
-        if (quick_slots[n].shared.is_spell == 0)
-        {
-            fwrite(&quick_slots[n].item.nr, sizeof(int), 1, stream);
-            fwrite(quick_slots[n].name.name, sizeof(char), strlen(quick_slots[n].name.name) + 1, stream);
-        }
-        else
-        {
-            fwrite(&quick_slots[n].shared.tag, sizeof(int), 1, stream);
-            fwrite(&quick_slots[n].spell.groupNr, sizeof(int), 1, stream);
-            fwrite(&quick_slots[n].spell.classNr, sizeof(int), 1, stream);
-        }
+        slot = &new_quickslots[q];
+        sprintf(slotbuf, "%u %d %d %d %d %d\n", slot->type, slot->group, slot->path, slot->tag, slot->itemnr, slot->nrof);
+
+        PHYSFS_writeString(handle, slotbuf);
     }
-    fclose(stream);
-    freeQuickSlots(quick_slots, MAX_QUICK_SLOTS);
+
+    PHYSFS_close(handle);
 }
+
 void widget_event_target(int x, int y, SDL_Event event)
 {
     /* combat modus */
@@ -2307,4 +2261,52 @@ void reload_icons(void)
 
 }
 
+void quickslot_set(int qs, uint8 type, int group, int path, int tag, int itemnr, int nrof)
+{
+    new_quickslots[qs].type = type;
+    new_quickslots[qs].group = group;
+    new_quickslots[qs].path = path;
+    new_quickslots[qs].tag = tag;
+    new_quickslots[qs].itemnr = itemnr;
+    new_quickslots[qs].nrof = nrof;
 
+}
+
+/* Set a quickslot to be "uninitialized". Only bother with one attribute because
+ * quickslots should *ONLY* be changed by set_quickslot, which already resets all
+ * attributes.
+ */
+void quickslot_unset(int qs)
+{
+    memset(&new_quickslots[qs], 0, sizeof(_quickslot_two));
+}
+
+/* Swap quickslots between src and dest. */
+void quickslot_swap(int qs_dest, int qs_src)
+{
+    _quickslot_two tmp;
+
+    if (new_quickslots[qs_src].type == 0)
+    {
+        LOG(LOG_DEBUG, "quickslot_swap(): Source quickslot was uninitialized!");
+        return;
+    }
+
+    // If the dest is not initialized, there's no swapping to do, just move src.
+    if (new_quickslots[qs_dest].type == 0)
+    {
+        new_quickslots[qs_dest] = new_quickslots[qs_src];
+        quickslot_unset(qs_src);
+        return;
+    }
+
+    tmp = new_quickslots[qs_dest];
+    new_quickslots[qs_dest] = new_quickslots[qs_src];
+    new_quickslots[qs_src] = tmp;
+}
+
+void quickslot_init()
+{
+    memset(&new_quickslots, 0, sizeof(new_quickslots));
+    quickslots_loaded = FALSE;
+}

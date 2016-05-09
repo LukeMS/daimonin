@@ -56,41 +56,20 @@ extern _dialog_list_set create_list_set;
 extern int              keybind_status;
 
 #define MAX_QUICK_SLOTS 8
-typedef union _quickslot
+
+typedef struct _quickslot_two
 {
-    struct
-    {
-        uint8         is_spell; /* do we have an item or a spell in quickslot */
-        int             tag;
-    }
-    shared;
-    struct
-    {
-        uint8         is_spell;
-        int             tag;     /* what item/spellNr in quickslot */
-        int             invSlot;
-        int             nr;
-    }
-    item;
-    struct
-    {
-        uint8         is_spell;
-        int             tag;
-        int             spellNr;     /* */
-        int             groupNr; /* spellgroup */
-        int             classNr; /* spellclass */
-    }
-    spell;
-    struct
-    {
-        uint8         is_spell;
-        int             tag;
-        char           *name;
-    }
-    name;
-}
-_quickslot;
-extern _quickslot   quick_slots[MAX_QUICK_SLOTS];
+    uint8 type; // 1 = spell, 2 = item, 0 = uninitialized
+    int group; // which spellgroup (spell/prayer)
+    int path; // which spell path (chaos, elemental, etc.)
+    int tag; // id of spell/skill, or tag of inv item
+    int itemnr; // slot nr of the item
+    int nrof; // quantity for inv items
+
+} _quickslot_two;
+
+extern _quickslot_two new_quickslots[MAX_QUICK_SLOTS];
+extern int quickslots_loaded;
 
 typedef struct _media_file
 {
@@ -151,7 +130,7 @@ extern void     load_settings(void);
 extern void     read_settings(void);
 extern void     read_spells(void);
 extern void     read_skills(void);
-extern uint8  blt_face_centered(int face, int x, int y);
+extern uint8    blt_face_centered(int face, int x, int y);
 extern int      get_quickslot(int x, int y);
 extern void     show_quickslots(int x, int y);
 extern void     widget_quickslots(int x, int y);
@@ -164,7 +143,13 @@ extern void     widget_event_target(int x, int y, SDL_Event event);
 extern void     widget_show_target(int x, int y);
 extern void     reload_icons(void);
 
-extern int get_bmap_id(char *name);
-extern void reset_menu_status(void);
+extern int      get_bmap_id(char *name);
+extern void     reset_menu_status(void);
+
+// TODO: find a better place for these
+extern void     quickslot_set(int qs, uint8 type, int group, int path, int tag, int itemnr, int nrof);
+extern void     quickslot_unset(int qs);
+extern void     quickslot_swap(int qs_dest, int qs_src);
+extern void     quickslot_init();
 
 #endif /* ifndef __MENU_H */

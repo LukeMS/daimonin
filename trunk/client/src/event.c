@@ -2088,24 +2088,27 @@ void quickslot_key(SDL_KeyboardEvent *key, int slot)
 {
     int     tag;
 
+    if (slot < 0 || slot > MAX_QUICK_SLOTS)
+    {
+        return;
+    }
+
     /* put spell into quickslot */
     if (!key && cpl.menustatus == MENU_SPELL)
     {
         if (spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr].flag
                 == LIST_ENTRY_KNOWN)
         {
-            if (quick_slots[slot].shared.is_spell == 1 && quick_slots[slot].shared.tag == spell_list_set.entry_nr)
+            if (new_quickslots[slot].type == 1 && new_quickslots[slot].group == spell_list_set.group_nr &&
+                new_quickslots[slot].path == spell_list_set.class_nr && new_quickslots[slot].tag == spell_list_set.entry_nr)
             {
-                quick_slots[slot].shared.is_spell = 0;
-                quick_slots[slot].shared.tag = -1;
+                quickslot_unset(slot);
                 textwin_showstring(COLOR_DGOLD, "unset F%d.", slot + 1);
             }
             else
             {
-                quick_slots[slot].shared.is_spell = 1;
-                quick_slots[slot].spell.groupNr = spell_list_set.group_nr;
-                quick_slots[slot].spell.classNr = spell_list_set.class_nr;
-                quick_slots[slot].shared.tag = spell_list_set.entry_nr;
+                quickslot_set(slot, 1, spell_list_set.group_nr, spell_list_set.class_nr,
+                              spell_list_set.entry_nr, -1, -1);
                 textwin_showstring(COLOR_DGOLD, "set F%d to %s",
                                    slot + 1,
                                    spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr].name);
@@ -2121,13 +2124,12 @@ void quickslot_key(SDL_KeyboardEvent *key, int slot)
 
         if (tag == -1 || !locate_item(tag))
             return;
-        quick_slots[slot].shared.is_spell = 0;
-        if (quick_slots[slot].shared.tag == tag)
-            quick_slots[slot].shared.tag = -1;
+        new_quickslots[slot].type = 0;
+        if (new_quickslots[slot].tag == tag)
+            quickslot_unset(slot);
         else
         {
-            quick_slots[slot].shared.tag = tag;
-            quick_slots[slot].item.invSlot = cpl.win_inv_slot;
+            quickslot_set(slot, 2, -1, -1, tag, cpl.win_inv_slot, -1);
             textwin_showstring(COLOR_DGOLD, "set F%d to %s",
                                slot + 1, locate_item(tag)->s_name);
         }
@@ -2135,29 +2137,27 @@ void quickslot_key(SDL_KeyboardEvent *key, int slot)
     /* apply item or ready spell */
     else
     {
-        if (quick_slots[slot].shared.tag != -1)
+        if (new_quickslots[slot].type <= 0)
         {
-            if (quick_slots[slot].shared.is_spell == 1)
+            return;
+        }
+        if (new_quickslots[slot].tag != -1)
+        {
+            if (new_quickslots[slot].type == 1)
             {
-                fire_mode_tab[FIRE_MODE_SPELL].spell = &spell_list[quick_slots[slot].spell.groupNr].entry[quick_slots[slot].spell.classNr][quick_slots[slot].shared.tag];
+                fire_mode_tab[FIRE_MODE_SPELL].spell = &spell_list[new_quickslots[slot].group].entry[new_quickslots[slot].path][new_quickslots[slot].tag];
                 RangeFireMode = FIRE_MODE_SPELL;
-                spell_list_set.group_nr = quick_slots[slot].spell.groupNr;
-                spell_list_set.class_nr = quick_slots[slot].spell.classNr;
-                spell_list_set.entry_nr = quick_slots[slot].shared.tag;
+                spell_list_set.group_nr = new_quickslots[slot].group;
+                spell_list_set.class_nr = new_quickslots[slot].path;
+                spell_list_set.entry_nr = new_quickslots[slot].tag;
                 return;
             }
-            if (locate_item(quick_slots[slot].shared.tag))
+            else if (locate_item(new_quickslots[slot].tag))
             {
-#ifdef DEBUG_TEXT
-                textwin_showstring(COLOR_DGOLD, "F%d quick apply %s",
-                                   slot + 1,
-                                   locate_item(quick_slots[slot].shared.tag)->s_name);
-#endif
-                client_send_apply(quick_slots[slot].shared.tag);
+                client_send_apply(new_quickslots[slot].tag);
                 return;
             }
         }
-        textwin_showstring(COLOR_DGOLD, "F%d quick slot is empty", slot + 1);
     }
 }
 
