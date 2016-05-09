@@ -194,7 +194,7 @@ sint8 move_ob(object_t *who, sint8 dir, object_t *originator)
  *
  * The return is:
  *     MOVE_RETURN_FAILURE if one of the parameters failed a sanity check;
- *     MOVE_RETURN_SUCCESS if everything went OK (this does not imply whether 
+ *     MOVE_RETURN_SUCCESS if everything went OK (this does not imply whether
  *     the insertion caused an auto-apply);
  *     MOVE_RETURN_DESTROYED if who was destroyed/killed during the process; or
  *     MOVE_RETURN_MOVED if who was  otherwise removed or reinserted during the
@@ -927,6 +927,7 @@ sint8 enter_map_by_exit(object_t *who, object_t *exit_ob)
                y;
     msp_t     *msp;
     sint8      i;
+    char       path[MAXPATHLEN];
 
     who = (who->head) ? who->head : who;
 
@@ -934,6 +935,13 @@ sint8 enter_map_by_exit(object_t *who, object_t *exit_ob)
     if (trigger_object_plugin_event(EVENT_TRIGGER, exit_ob, who, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
     {
         return MOVE_RETURN_INSERTION_FAILED;
+    }
+
+    // Got a relative path from a script.
+    if (exit_ob->slaying != NULL && *(exit_ob->slaying) != '/')
+    {
+        (void)normalize_path(who->map->orig_path, exit_ob->slaying, path);
+        FREE_AND_COPY_HASH(exit_ob->slaying, path);
     }
 
     /* If the destination path is nonexistent or invalid, we ain't goin'
