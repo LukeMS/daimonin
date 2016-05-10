@@ -44,7 +44,7 @@ export dai_server_exe="daimonin_server"
 # while ${dai_recollect_sh} is a purpose-written BASH scriptt of about 4KB) and
 # speed (Gridarta does the job in seconds -- but you do need to fetch and build
 # it first -- whereas ${dai_recollect_sh} takes a few minutes).
-export dai_daimonin_repo="https://daimonin.svn.sourceforge.net/svnroot/daimonin"
+export dai_daimonin_repo="https://svn.code.sf.net/p/daimonin/code"
 export dai_gridarta_repo="https://gridarta.svn.sourceforge.net/svnroot/gridarta"
 
 # If not null, these point to repositories containg maps and arches which are
