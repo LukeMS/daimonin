@@ -10,7 +10,15 @@ local ib = InterfaceBuilder()
 local sum
 local spell
 
--- Note: all spell teaching disabled and moved to quests in the stonehaven village.
+local function dsCost(level)
+    local cost = 100 + 4 * level * level
+
+    if level >= 60 then
+        cost = cost + 4000 * level - 240000
+    end
+
+    return cost
+end
 
 local function topicDefault()
     ib:SetHeader("st_001", me)
@@ -38,7 +46,7 @@ end
 local function topicCast(what)
     ib:SetHeader("st_005", me)
     if what=="sick" then
-        ib:SetMsg("I can cast ~Remove Deathsick~ for " .. pl:ShowCost(100 + (4 * pl.level * pl.level)))
+        ib:SetMsg("I can cast ~Remove Deathsick~ for " .. pl:ShowCost(dsCost(pl.level)))
     elseif what == "deplete" then
         ib:SetMsg("I can cast ~Remove Depletion~ for ".. pl:ShowCost(5 * pl.level))
     elseif what == "restore" then
@@ -60,7 +68,7 @@ end
 local function topicDoCast(what)
     ib:SetHeader("st_005", me)
     if what == "sick" then
-        sum = 100 + (4 * pl.level * pl.level)
+        sum = dsCost(pl.level)
         spell = "remove death sickness"
     elseif what == "deplete" then
         sum = 5 * pl.level
