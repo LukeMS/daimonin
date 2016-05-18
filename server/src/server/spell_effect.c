@@ -291,22 +291,22 @@ int cast_heal(object_t *op, int level, object_t *target, int spell_type)
           break;
 
         case SP_REMOVE_SLOW:
-          success = (cure_what_ails_you(target, ST1_FORCE_CONFUSED)) ? 1 : 0;
+          success = (cure_what_ails_you(target, ST1_FORCE_SLOWED)) ? 1 : 0;
 
           break;
 
         case SP_REMOVE_FEAR:
-          success = (cure_what_ails_you(target, ST1_FORCE_CONFUSED)) ? 1 : 0;
+          success = (cure_what_ails_you(target, ST1_FORCE_FEAR)) ? 1 : 0;
 
           break;
 
         case SP_REMOVE_SNARE:
-          success = (cure_what_ails_you(target, ST1_FORCE_CONFUSED)) ? 1 : 0;
+          success = (cure_what_ails_you(target, ST1_FORCE_SNARE)) ? 1 : 0;
 
           break;
 
         case SP_REMOVE_PARALYZE:
-          success = (cure_what_ails_you(target, ST1_FORCE_CONFUSED)) ? 1 : 0;
+          success = (cure_what_ails_you(target, ST1_FORCE_PARALYZE)) ? 1 : 0;
 
           break;
 
@@ -3874,7 +3874,7 @@ void move_fired_arch(object_t *op)
 //    /* we create a hitter object -- the spell */
 //    hitter = get_archetype("face_of_death");
 //    hitter->level = casting_level(caster, SP_FINGER_DEATH);
-//		
+//
 //    set_owner(hitter, op);
 //    hitter->x = target->x;
 //    hitter->y = target->y;

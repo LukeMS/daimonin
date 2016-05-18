@@ -557,9 +557,8 @@ static void RegrowBurdenTree(object_t *op, sint32 nrof, sint8 mode)
         return;
     }
 
-    /* Ensure mode is either 1 or -1 then multiply weight by this. */
+    /* Ensure mode is either 1 or -1 */
     mode = (mode >= 0) ? 1 : -1;
-    weight *= mode;
 
     /* Loop through the ancestors (envs) of op, adjusting their carrying and
      * notifying clients as necessary. */
@@ -570,6 +569,13 @@ static void RegrowBurdenTree(object_t *op, sint32 nrof, sint8 mode)
         {
             break;
         }
+
+        /* We ALWAYS multiply mode on a per-item basis because otherwise if
+         * the previous value of where had a damage_round_tag it would still be
+         * added to the carrying of the player. It's always safe to set weigh
+         * to the appropriate type because the +- operation doesn't change at
+         * all in this function. */
+        weight *= mode;
 
         if (where->type == CONTAINER)
         {
@@ -1915,7 +1921,7 @@ object_t *kill_object(object_t *victim, object_t *killer, const char *headline, 
         ndi(NDI_WHITE, 0, victim, "%s", buf);
         sprintf(gbuf, "~%s~ %s", QUERY_SHORT_NAME(victim, NULL), buf + 6);
 
-        /* Tell victim's group about their friend's demise. */ 
+        /* Tell victim's group about their friend's demise. */
         for (member = pl->group_leader; member; member = CONTR(member)->group_next)
         {
             if (member != victim)
@@ -2079,7 +2085,7 @@ static void KillPlayer(player_t *pl, object_t *killer, object_t *killer_owner, c
         {
             increment_pvp_counter(victim, (PVP_STATFLAG_DEATH_TOTAL | PVP_STATFLAG_DEATH_ROUND));
             increment_pvp_counter(killer_owner, (PVP_STATFLAG_KILLS_TOTAL | PVP_STATFLAG_KILLS_ROUND));
-        } 
+        }
         else
         {
             increment_pvp_counter(victim, PVP_STATFLAG_DEATH_ROUND);
@@ -3689,7 +3695,7 @@ int remove_item_buff(object_t *item, char *name, uint32 nrof)
  * no article but yes nrof.
  *
  * TODO: status will probably be removed and handled client-side in future.
- * 
+ *
  * NOTE: Capitalisation, pluralisation and other string mungeing will be
  * handled client-side. */
 char *query_name(object_t *what, object_t *who, uint32 article, uint8 status)
@@ -3864,7 +3870,7 @@ char *query_name(object_t *what, object_t *who, uint32 article, uint8 status)
                 else if ((CONTR(who)->group_status & GROUP_STATUS_GROUP) &&
                     CONTR(CONTR(who)->group_leader)->group_id == what->stats.maxhp)
                 {
-                    sprintf(strchr(cp, '\0'), " (bounty of your group%s)", 
+                    sprintf(strchr(cp, '\0'), " (bounty of your group%s)",
                         (QUERY_FLAG(what, FLAG_BEEN_APPLIED)) ? ", SEARCHED" : "");
                 }
                 else
