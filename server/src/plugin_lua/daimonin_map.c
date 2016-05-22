@@ -80,7 +80,7 @@ static const char *Map_flags[] =
     "?f_permdeath",
     "?f_ultradeath",
     "?f_ultimatedeath",
-    "?f_pvp",
+    "f_pvp",
 
     FLAGLIST_END_MARKER
 };
