@@ -423,6 +423,7 @@ void init_tadclock(void)
 {
     char  filename[MEDIUM_BUF];
     FILE *fp;
+    sint8 v;
 
     sprintf(filename, "%s/clockdata", settings.localdir);
     LOG(llevSystem, "Reading clockdata from '%s'... ", filename);
@@ -455,6 +456,15 @@ void init_tadclock(void)
 
     memset(&tadnow, 0, sizeof(timeanddate_t));
     tick_tadclock();
+
+    /* Set the original daylight brighness. Without this, outdoor maps will
+     * be completely dark for an Arkhe our every time the server starts up.
+     */
+    v = Daylight[tadnow.hour];
+
+    tadnow.daylight_darkness = v;
+    tadnow.daylight_brightness = brightness[ABS(v)];
+
 }
 
 /* This performs the basic function of advancing the clock one tick forward.
