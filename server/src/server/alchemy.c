@@ -193,7 +193,8 @@ sint8 door_open(object_t *who, object_t *what, uint8 mode)
     move_check_off(what, NULL, MOVE_FLAG_VANISHED);
 
     /* Now we update and reinsert it. */
-    what->state = 1;
+    //what->state = 1;
+    what->direction = absdir(what->direction + 1);
     what->last_sp = what->stats.sp;
     what->speed = 0.125f;
     what->speed_left = -0.250f;
@@ -279,7 +280,8 @@ void door_close(object_t *what)
     move_check_off(what, NULL, MOVE_FLAG_VANISHED);
 
     /* Now we update and reinsert it. */
-    what->state = 0;
+    //what->state = 0;
+    what->direction = absdir(what->direction - 1);
     what->speed = what->speed_left = 0.0f;
     update_ob_speed(what);
 

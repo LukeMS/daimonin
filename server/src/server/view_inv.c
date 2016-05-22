@@ -380,25 +380,28 @@ static void NotifyClients(_server_client_cmd cmd, uint16 flags, object_t *op)
         msp_t *msp = MSP_KNOWN(op);
         object_t   *next;
 
-        /* Send cmd to each valid client on the square. */
-        FOREACH_OBJECT_IN_MSP(who, msp, next)
+        if (who && msp)
         {
-            player_t *pl;
-
-            if (who->type != PLAYER)
+            /* Send cmd to each valid client on the square. */
+            FOREACH_OBJECT_IN_MSP(who, msp, next)
             {
-                continue;
-            }
+                player_t *pl;
 
-            pl = CONTR(who);
+                if (who->type != PLAYER)
+                {
+                    continue;
+                }
 
-            if (!pl->socket.look_flag)
-            {
-                sb = BroadcastItemCmd(sb, cmd, flags, pl, op);
-            }
-            else
-            {
-                esrv_send_below(pl);
+                pl = CONTR(who);
+
+                if (!pl->socket.look_flag)
+                {
+                    sb = BroadcastItemCmd(sb, cmd, flags, pl, op);
+                }
+                else
+                {
+                    esrv_send_below(pl);
+                }
             }
         }
     }
@@ -851,7 +854,7 @@ object_t *esrv_get_ob_from_count(object_t *who, tag_t count)
                     IS_GMASTER_INVIS(this) ||
                     (QUERY_FLAG((this), FLAG_IS_INVISIBLE) &&
                      !QUERY_FLAG((who), FLAG_SEE_INVISIBLE)))
-                    
+
                 {
                     continue;
                 }
