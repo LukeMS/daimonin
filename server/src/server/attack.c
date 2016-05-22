@@ -76,8 +76,8 @@ attack_name_t attack_name[NROFATTACKS] =
     { "PA", "paralyze", NULL, NULL },
     { "SN", "snare", NULL, NULL },
     { "??", "internal", NULL, NULL },
-};    
-      
+};
+
 /* If you want to weight things so certain resistances show up more often than
  * others, just add more entries in the table for the protections you want to
  * show up. */
@@ -198,7 +198,7 @@ int attack_ob(object_t *target, object_t *hitter, object_t *hit_obj)
     hitdam  = hit_obj->stats.dam;
 
     /* Missile hits on mobs who are looking the other way are stealth hits and
-     * do 1.5 damage. */
+     * do 1.5x damage. */
     /* TODO: To prevent exploits (A lures the mob so B can follow behind
      * scoring multiple stealth hits) we should only allow a stealth hit when
      * the mob is not alert. */
@@ -1426,31 +1426,31 @@ static attack_envmode_t AbortAttack(object_t *target, object_t *hitter, attack_e
  */
 object_t * hit_with_arrow(object_t *op, object_t *victim)
 {
-    object_t *hitter;
+    object_t *owner;
     int     hit_something   = 0;
-    tag_t   hitter_tag;
+    tag_t   owner_tag;
 
-    hitter = op;
-    hitter_tag = hitter->count;
+    owner = op->owner;
+    owner_tag = op->owner_count;
 
     if(!trigger_object_plugin_event(EVENT_ATTACK,
-                hitter, hitter, victim, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
+                victim, op, owner, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
     {
         /*LOG(llevNoLog, "hit: %s (%d %d)\n", hitter->name, op->stats.dam, op->stats.wc);*/
-        hit_something = attack_ob(victim, hitter, op);
+        hit_something = attack_ob(victim, owner, op);
     }
 
     /* hopefully the walk_off event was triggered somewhere there */
-    if (!OBJECT_VALID(hitter, hitter_tag) || hitter->env != NULL)
+    if (!OBJECT_VALID(owner, owner_tag) || owner->env != NULL)
         return NULL;
 
     /* Missile hit victim */
     if (hit_something)
     {
         trigger_object_plugin_event(EVENT_STOP,
-                hitter, victim, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL);
+                op, victim, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL);
 
-        stop_missile(hitter);
+        stop_missile(op);
         return NULL;
     }
 
