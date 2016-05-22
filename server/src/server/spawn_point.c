@@ -118,6 +118,8 @@ static void Autogen(object_t *monster, sint16 diff)
                              MAX(1, MIN(monster->level, MAXMOBLEVEL)),
                              ART_CHANCE_UNSET, 0);
     }
+
+    SETUP_MOB_DATA(monster);
 }
 
 void adjust_monster(object_t *monster)
