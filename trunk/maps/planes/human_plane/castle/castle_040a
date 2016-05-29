@@ -3,7 +3,7 @@ name Guild Hall
 msg
 Creator: Daimonin Map Editor
 Date:    7/16/2004
-Modified: 2010-09-18 Franklin Barnett (aka _person_)
+Modified: 2016-05-29 joel
 endmsg
 width 24
 height 24
@@ -684,7 +684,6 @@ x 4
 y 5
 end
 arch buckler
-no_pick 1
 unpaid 1
 identified 1
 x 4
@@ -695,7 +694,6 @@ x 4
 y 6
 end
 arch gauntlets_leather
-no_pick 1
 unpaid 1
 identified 1
 x 4
@@ -710,7 +708,6 @@ x 4
 y 7
 end
 arch girdle
-no_pick 1
 unpaid 1
 identified 1
 x 4
@@ -721,7 +718,6 @@ x 4
 y 8
 end
 arch leather_armour
-no_pick 1
 unpaid 1
 identified 1
 x 4
@@ -900,7 +896,6 @@ x 5
 y 5
 end
 arch axe
-no_pick 1
 unpaid 1
 identified 1
 x 5
@@ -915,7 +910,6 @@ x 5
 y 6
 end
 arch tanto
-no_pick 1
 unpaid 1
 identified 1
 x 5
@@ -926,7 +920,6 @@ x 5
 y 7
 end
 arch hammer_military
-no_pick 1
 unpaid 1
 identified 1
 x 5
@@ -937,7 +930,6 @@ x 5
 y 8
 end
 arch sword
-no_pick 1
 unpaid 1
 identified 1
 x 5
@@ -1113,7 +1105,6 @@ x 6
 y 5
 end
 arch t_dagger
-no_pick 1
 unpaid 1
 identified 1
 nrof 5
@@ -1125,7 +1116,6 @@ x 6
 y 6
 end
 arch torch
-no_pick 1
 unpaid 1
 identified 1
 nrof 5
@@ -1138,7 +1128,6 @@ x 6
 y 7
 end
 arch sack
-no_pick 1
 unpaid 1
 identified 1
 x 6
