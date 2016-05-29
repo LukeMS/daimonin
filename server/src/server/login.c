@@ -121,7 +121,7 @@ int player_save(object_t *op)
 #ifdef USE_CHANNELS
     /* save the channel stuff */
     fprintf(fp, "Channels_On %d\n",pl->channels_on);
-    fprintf(fp, "channels %d\n",pl->channel_count);
+    fprintf(fp, "channels2 %d\n",pl->channel_count);
     for (pl_channel=pl->channels;pl_channel;pl_channel=pl_channel->next_channel)
     {
         fprintf(fp,"%s %c %lu\n",pl_channel->channel->name, pl_channel->shortcut, pl_channel->mute_counter);
@@ -512,7 +512,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
 #ifdef USE_CHANNELS
         else if (!strcmp(buf, "Channels_On"))
             pl->channels_on=value;
-        else if (!strcmp(buf,"channels"))
+        else if (!strcmp(buf,"channels2"))
         {
             with_channels = TRUE;
             channelcount=value;

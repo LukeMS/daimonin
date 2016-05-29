@@ -22,7 +22,7 @@
 */
 #include <global.h>
 
-#ifdef USE_CHANNELS
+//#ifdef USE_CHANNELS
 
 
 struct channels *channel_list_start = NULL;
@@ -867,8 +867,8 @@ void load_channels(void)
     int     channelgmastermode=GMASTER_MODE_NO;
     char    defaultshortcut='#';
 
-    LOG(llevInfo,"loading channel_file....\n");
-    sprintf(buf, "%s/channel_file", settings.localdir);
+    LOG(llevInfo,"loading channel_file2....\n");
+    sprintf(buf, "%s/channel_file2", settings.localdir);
 
     if ((channelfile = fopen(buf, "r")) == NULL)
     {
@@ -878,10 +878,10 @@ void load_channels(void)
         final_addChannel(CHANNEL_NAME_MW, 'W', 3, 1, 1, GMASTER_MODE_MW);
         final_addChannel(CHANNEL_NAME_GM, 'G', 3, 1, 1, GMASTER_MODE_GM);
         final_addChannel(CHANNEL_NAME_VOL, 'V', 3, 1, 1, GMASTER_MODE_VOL);
-        final_addChannel("Auction", 'a', 2, 2, 1, GMASTER_MODE_NO);
-        final_addChannel("General", 'g', -1, 2, 1, GMASTER_MODE_NO);
+        final_addChannel("Auction", 'a', 2, 1, 1, GMASTER_MODE_NO);
+        final_addChannel("General", 'g', -1, 1, 1, GMASTER_MODE_NO);
         final_addChannel("Help", 'h', 4, 1, 1, GMASTER_MODE_NO);
-        final_addChannel("Quest", 'q', 5, 2, 1, GMASTER_MODE_NO);
+        final_addChannel("Quest", 'q', 5, 1, 1, GMASTER_MODE_NO);
 
         return;
     }
@@ -1066,8 +1066,8 @@ void save_channels(void)
     struct channels *channel;
     FILE   *fp;
 
-    LOG(llevSystem,"write channel_file...\n");
-    sprintf(filename, "%s/channel_file", settings.localdir);
+    LOG(llevSystem,"write channel_file2...\n");
+    sprintf(filename, "%s/channel_file2", settings.localdir);
     if ((fp = fopen(filename, "w")) == NULL)
     {
         LOG(llevBug, "BUG: Cannot open %s for writing\n", filename);
@@ -1173,6 +1173,7 @@ void kickPlayerFromChannel(struct player_channel *cpl, char *params)
     struct player_channel *kick;
     char buf[MEDIUM_BUF];
 
+#if 0
     if (!params)
     {
         ndi(NDI_UNIQUE, 0, cpl->pl->ob, "Syntax: -<channel>!kick <player>");
@@ -1189,6 +1190,7 @@ void kickPlayerFromChannel(struct player_channel *cpl, char *params)
     removeChannelFromPlayer(pl, kick, buf);
     ndi(NDI_UNIQUE, 0, cpl->pl->ob, "You kicked player %s from channel %s.",pl->ob->name, cpl->channel->name);
     CHATLOG("Pl >%s< kicked pl %s from channel %s\n", cpl->pl->ob->name, pl->ob->name, cpl->channel->name);
+#endif // 0
 
     return;
 
@@ -1481,7 +1483,7 @@ void addChannelHist(struct channels *channel, const char* name, char *msg, int m
 
 
 
-#endif
+//#endif
 
 
 
