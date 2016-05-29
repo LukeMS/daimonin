@@ -396,6 +396,16 @@ arch shop_floor
 x 2
 y 1
 end
+arch potion_generic
+layer 4
+value 99
+level 15
+sp 3
+identified 1
+unpaid 1
+x 2
+y 1
+end
 arch shop_floor
 x 2
 y 2
