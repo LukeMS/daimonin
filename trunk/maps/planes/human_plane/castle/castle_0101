@@ -1,16 +1,15 @@
 arch map
 name Stonehaven
-background_music ColeStandard.ogg
 msg
 Created:  2004-06-09 Daimonin Map Editor
-Modified: 2009-03-30 smacky
+Modified: 2016-05-29 joel
 endmsg
 width 24
 height 24
 difficulty 8
+darkness -1
 outdoor 1
 no_harm 1
-darkness -1
 tile_path_1 castle_0102
 tile_path_2 castle_0201
 tile_path_3 castle_0100
@@ -19,6 +18,7 @@ tile_path_5 castle_0202
 tile_path_6 castle_0200
 tile_path_7 castle_0000
 tile_path_8 castle_0002
+background_music ColeStandard.ogg
 end
 arch grassd_2
 end
@@ -183,7 +183,6 @@ x 1
 y 3
 end
 arch axe_broad
-no_pick 1
 identified 1
 unpaid 1
 x 1
@@ -194,7 +193,6 @@ x 1
 y 4
 end
 arch whip_war
-no_pick 1
 identified 1
 unpaid 1
 x 1
@@ -205,7 +203,6 @@ x 1
 y 5
 end
 arch club_big
-no_pick 1
 identified 1
 unpaid 1
 x 1
@@ -216,7 +213,6 @@ x 1
 y 6
 end
 arch mstar
-no_pick 1
 identified 1
 unpaid 1
 x 1
@@ -232,7 +228,6 @@ x 1
 y 7
 end
 arch tanto
-no_pick 1
 identified 1
 unpaid 1
 x 1
@@ -248,7 +243,6 @@ x 1
 y 8
 end
 arch pallasch
-no_pick 1
 identified 1
 unpaid 1
 x 1
@@ -259,7 +253,6 @@ x 1
 y 9
 end
 arch gladius
-no_pick 1
 identified 1
 unpaid 1
 x 1
@@ -270,7 +263,6 @@ x 1
 y 10
 end
 arch tsurugi
-no_pick 1
 identified 1
 unpaid 1
 x 1
@@ -297,7 +289,6 @@ end
 arch t_hammer
 layer 4
 unpaid 1
-no_pick 1
 identified 1
 nrof 10
 x 1
@@ -310,7 +301,6 @@ end
 arch t_axe
 layer 4
 unpaid 1
-no_pick 1
 identified 1
 nrof 10
 x 1
@@ -322,7 +312,6 @@ y 14
 end
 arch bow
 identified 1
-no_pick 1
 unpaid 1
 x 1
 y 14
@@ -333,7 +322,6 @@ y 15
 end
 arch crossbow
 identified 1
-no_pick 1
 unpaid 1
 x 1
 y 15
@@ -349,7 +337,6 @@ y 16
 end
 arch sling
 identified 1
-no_pick 1
 unpaid 1
 x 1
 y 16
@@ -418,7 +405,6 @@ x 2
 y 3
 end
 arch helm_battle
-no_pick 1
 identified 1
 unpaid 1
 x 2
@@ -433,7 +419,6 @@ x 2
 y 4
 end
 arch shield_war
-no_pick 1
 identified 1
 unpaid 1
 x 2
@@ -444,7 +429,6 @@ x 2
 y 5
 end
 arch helm_horn
-no_pick 1
 identified 1
 unpaid 1
 x 2
@@ -455,7 +439,6 @@ x 2
 y 6
 end
 arch shield
-no_pick 1
 identified 1
 unpaid 1
 x 2
@@ -470,8 +453,6 @@ x 2
 y 7
 end
 arch helm_leather
-name cap
-no_pick 1
 identified 1
 unpaid 1
 x 2
@@ -482,7 +463,6 @@ x 2
 y 8
 end
 arch shield_round
-no_pick 1
 identified 1
 unpaid 1
 x 2
@@ -493,8 +473,6 @@ x 2
 y 9
 end
 arch hat_feather
-name feathered hat
-no_pick 1
 identified 1
 unpaid 1
 x 2
@@ -509,7 +487,6 @@ x 2
 y 10
 end
 arch buckler
-no_pick 1
 identified 1
 unpaid 1
 x 2
@@ -526,7 +503,6 @@ end
 arch t_dagger
 layer 4
 unpaid 1
-no_pick 1
 identified 1
 nrof 10
 x 2
@@ -543,7 +519,6 @@ end
 arch t_star
 layer 4
 unpaid 1
-no_pick 1
 identified 1
 nrof 10
 x 2
@@ -556,7 +531,6 @@ end
 arch arrow
 layer 4
 unpaid 1
-no_pick 1
 identified 1
 nrof 25
 x 2
@@ -569,7 +543,6 @@ end
 arch bolt
 layer 4
 unpaid 1
-no_pick 1
 identified 1
 nrof 25
 x 2
@@ -586,7 +559,6 @@ end
 arch sstone
 layer 4
 unpaid 1
-no_pick 1
 identified 1
 nrof 25
 x 2
@@ -659,7 +631,6 @@ x 3
 y 3
 end
 arch fighting_boots
-no_pick 1
 identified 1
 unpaid 1
 x 3
@@ -674,7 +645,6 @@ x 3
 y 4
 end
 arch gauntlets_leather
-no_pick 1
 identified 1
 unpaid 1
 x 3
@@ -685,7 +655,6 @@ x 3
 y 5
 end
 arch combat_boots
-no_pick 1
 identified 1
 unpaid 1
 x 3
@@ -696,7 +665,6 @@ x 3
 y 6
 end
 arch gloves
-no_pick 1
 identified 1
 unpaid 1
 x 3
@@ -711,7 +679,6 @@ x 3
 y 7
 end
 arch kicking_boots
-no_pick 1
 identified 1
 unpaid 1
 x 3
@@ -722,7 +689,6 @@ x 3
 y 8
 end
 arch belt
-no_pick 1
 identified 1
 unpaid 1
 x 3
@@ -733,7 +699,6 @@ x 3
 y 9
 end
 arch fencing_boots
-no_pick 1
 identified 1
 unpaid 1
 x 3
@@ -748,7 +713,6 @@ x 3
 y 10
 end
 arch girdle
-no_pick 1
 identified 1
 unpaid 1
 x 3
@@ -763,7 +727,6 @@ x 3
 y 12
 end
 arch banded_mail
-no_pick 1
 identified 1
 unpaid 1
 x 3
@@ -778,7 +741,6 @@ x 3
 y 13
 end
 arch splint_mail
-no_pick 1
 identified 1
 unpaid 1
 x 3
@@ -789,7 +751,6 @@ x 3
 y 14
 end
 arch lamellar_mail
-no_pick 1
 identified 1
 unpaid 1
 x 3
@@ -800,7 +761,6 @@ x 3
 y 15
 end
 arch lamp
-no_pick 1
 identified 1
 unpaid 1
 x 3
@@ -817,7 +777,6 @@ end
 arch oil_lamp
 layer 4
 unpaid 1
-no_pick 1
 identified 1
 nrof 5
 x 3
@@ -890,7 +849,6 @@ x 4
 y 3
 end
 arch voulge
-no_pick 1
 identified 1
 unpaid 1
 x 4
@@ -901,7 +859,6 @@ x 4
 y 4
 end
 arch halberd
-no_pick 1
 identified 1
 unpaid 1
 x 4
@@ -912,7 +869,6 @@ x 4
 y 5
 end
 arch bec_de_corbin
-no_pick 1
 identified 1
 unpaid 1
 x 4
@@ -923,7 +879,6 @@ x 4
 y 6
 end
 arch lucern_hammer
-no_pick 1
 identified 1
 unpaid 1
 x 4
@@ -934,7 +889,6 @@ x 4
 y 7
 end
 arch ranseur
-no_pick 1
 identified 1
 unpaid 1
 x 4
@@ -945,7 +899,6 @@ x 4
 y 8
 end
 arch pike
-no_pick 1
 identified 1
 unpaid 1
 x 4
@@ -956,7 +909,6 @@ x 4
 y 9
 end
 arch glaive
-no_pick 1
 identified 1
 unpaid 1
 x 4
@@ -967,7 +919,6 @@ x 4
 y 10
 end
 arch guisarme
-no_pick 1
 identified 1
 unpaid 1
 x 4
@@ -982,7 +933,6 @@ x 4
 y 12
 end
 arch leather_cuirass
-no_pick 1
 identified 1
 unpaid 1
 x 4
@@ -993,7 +943,6 @@ x 4
 y 13
 end
 arch scale_mail
-no_pick 1
 identified 1
 unpaid 1
 x 4
@@ -1004,7 +953,6 @@ x 4
 y 14
 end
 arch brigandine
-no_pick 1
 identified 1
 unpaid 1
 x 4
@@ -1015,7 +963,6 @@ x 4
 y 15
 end
 arch r_sack
-no_pick 1
 identified 1
 unpaid 1
 x 4
@@ -1026,7 +973,6 @@ x 4
 y 16
 end
 arch sack
-no_pick 1
 identified 1
 unpaid 1
 x 4
