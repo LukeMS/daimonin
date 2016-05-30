@@ -2,13 +2,13 @@ arch map
 name Stonehaven
 msg
 Created:  2004-06-04 Daimonin Map Editor
-Modified: 2009-03-30 smacky
+Modified: 2016-05-30 joel
 endmsg
 width 24
 height 24
 difficulty 1
-outdoor 1
 darkness -1
+outdoor 1
 tile_path_1 castle_0001
 tile_path_2 castle_0100
 tile_path_5 castle_0101
@@ -3292,7 +3292,7 @@ msg
 The door is sealed from within.
 endmsg
 slaying 38162
-direction 5
+direction 7
 x 23
 y 5
 end
