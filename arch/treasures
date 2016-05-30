@@ -425,6 +425,45 @@ treasure player_ogre_male
   arch guild_force
 end
 #
+treasure player_ogre_female
+  arch dress
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch pants
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch torch
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch torch
+    magic_chance 0
+    artifact_chance 0
+  more
+  list player_starting_wealth
+    magic_chance 0
+    artifact_chance 0
+  more
+  arch skill_use_magic_item
+  more
+  arch skill_literacy
+  more
+  arch skill_throwing
+  more
+  arch skill_punching
+  more
+  arch rank_force
+  more
+  arch alignment_force
+    title true neutral
+  more
+  arch age_force_ogre
+  more
+  arch guild_force
+end
+#
 treasureone player_starting_wealth
   arch coppercoin
     magic_chance 0
@@ -1853,6 +1892,10 @@ treasureone armour_start
 end
 #
 treasureone armour_mail
+  arch armour_ag
+    difficulty 45
+    chance 20
+  more
   arch banded_mail
     difficulty 12
     chance 20
@@ -2193,6 +2236,10 @@ treasureone armour_mail_start
 end
 #
 treasureone armour_bracers
+  arch bracers_ag
+    chance 8
+    difficulty 45
+  more
   arch bracers_ac
     chance 35
     material_quality 80
@@ -2211,6 +2258,10 @@ treasureone armour_bracers
 end
 #
 treasureone armour_boots
+  arch boots_ag
+    chance 8
+    difficulty 45
+  more
   arch sandals
     chance 20
     material_quality 80
@@ -2595,6 +2646,10 @@ treasureone armour_gauntlet
 end
 #
 treasureone armour_girdle
+  arch belt_ag
+    chance 8
+    difficulty 45
+  more
   arch girdle
     chance 15
     material_quality 80
@@ -2614,6 +2669,10 @@ treasureone armour_girdle
 end
 #
 treasureone armour_legs
+  arch pants_ag
+    difficulty 45
+    chance 8
+  more
   arch legs_leather
     chance 15
     material_quality 80
@@ -2667,6 +2726,10 @@ treasureone armour_shoulder
 end
 #
 treasureone armour_helm
+  arch helmet_ag
+    difficulty 45
+    chance 8
+  more
   arch helm_field
     difficulty 9
     chance 12
@@ -3616,22 +3679,25 @@ treasureone loot_base
   more
   arch token_generic
     artifact_chance 100
-    chance 65
+	difficulty 90
+    chance 1
     magic 0
   more
   arch sphere_generic
     artifact_chance 100
-    chance 65
+	difficulty 70
+    chance 1
     magic 0
   more
   arch critter_generic
     artifact_chance 100
-    chance 65
+    chance 1
     magic 0
   more
   arch tripyra_stone_generic
     artifact_chance 100
-    chance 65
+	difficulty 100
+    chance 1
     magic 0
 end
 #

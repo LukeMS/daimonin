@@ -48,7 +48,7 @@ The dwarves itself don't talk much about it...
 char Ogre
 ogre_male.151 8 3 3 0 0 0
 1 ogre_male ogre_male.151
-0 x x
+1 ogre_female ogre_female.151
 0 x x
 0 x x
 19 12 15 11 10 10 10
