@@ -1195,10 +1195,16 @@ void move_fired_arch(object_t *op)
     if (msp &&
         (!op->last_sp-- ||
          (!op->direction ||
-          MSP_IS_RESTRICTED(msp))) &&
-        op->other_arch)
+          MSP_IS_RESTRICTED(msp))))
     {
-        explode_object(op);
+        if (op->other_arch)
+        {
+            explode_object(op);
+            return;
+        }
+
+        remove_ob(op);
+        move_check_off(op, NULL, MOVE_FLAG_VANISHED);
         return;
     }
 
