@@ -348,7 +348,7 @@ int attack_ob(object_t *target, object_t *hitter, object_t *hit_obj)
         }
 
         /* the damage is between 70 and 100% of the (adjusted) base damage */
-        hitdam = damage_ob(target, random_roll((int)(hitdam*0.7f)+1, hitdam), hitter, env_attack);
+        hitdam = damage_ob(target, random_roll((int)(hitdam*0.7f)+1, hitdam), hit_obj, env_attack);
         if (!OBJECT_VALID(target, op_tag) ||
             !OBJECT_VALID(hitter, hitter_tag) ||
             AbortAttack(target, hitter, env_attack))
