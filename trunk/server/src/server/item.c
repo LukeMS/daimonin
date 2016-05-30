@@ -165,7 +165,7 @@ char * describe_item(const object_t *const op)
 
         describe_terrain(op, retbuf);
         sprintf(strchr(retbuf, '\0'), "(regen: hp %+d, mana %+d, grace %+d)",
-            pl->gen_hp, pl->gen_sp, pl->gen_grace); 
+            pl->gen_hp, pl->gen_sp, pl->gen_grace);
     }
     else if (op->type == MONSTER)
     {
@@ -463,7 +463,7 @@ char * describe_item(const object_t *const op)
                   else
                   {
                       sprintf(strchr(retbuf, '\0'), "(health per second for %d seconds: hp %+d, mana %+d, grace %+d)",
-                          op->last_eat, op->stats.hp, op->stats.sp, op->stats.grace); 
+                          op->last_eat, op->stats.hp, op->stats.sp, op->stats.grace);
                   }
               }
               break;
@@ -517,7 +517,7 @@ char * describe_item(const object_t *const op)
     if (id_true && more_info)
     {
         sprintf(strchr(retbuf, '\0'), "(regen: hp %+d, mana %+d, grace %+d)",
-            op->stats.hp, op->stats.sp, op->stats.grace); 
+            op->stats.hp, op->stats.sp, op->stats.grace);
     }
 
     /* here we deal with all the special flags */
@@ -572,7 +572,7 @@ char * describe_item(const object_t *const op)
              op->stats.maxgrace))
         {
             sprintf(strchr(retbuf, '\0'), "(health: hp %+d, mana %+d, grace %+d)",
-                op->stats.maxhp, op->stats.maxsp, op->stats.maxgrace); 
+                op->stats.maxhp, op->stats.maxsp, op->stats.maxgrace);
         }
     }
     return retbuf;
@@ -1076,6 +1076,7 @@ static object_t *PickUp(object_t *who, object_t *what, object_t *where, uint32 n
 {
     player_t   *pl = (who->type == PLAYER) ? CONTR(who) : NULL;
     msp_t *msp;
+    sint32 weight, tmp_nrof;
 
     /* For a pick up to inv (ie, where is NULL), who might have an appropriate
      * readied container in his inventory, so check that. */
@@ -1141,6 +1142,11 @@ static object_t *PickUp(object_t *who, object_t *what, object_t *where, uint32 n
     /* When where is non-NULL we're trying to put what in it. */
     else
     {
+        tmp_nrof = what->nrof;
+        what->nrof = nrof;
+        weight = (sint32)(WEIGHT_OVERALL(what));
+        what->nrof = tmp_nrof;
+
         /* Containers can't be put in other containers. */
         if (what->type == CONTAINER)
         {
@@ -1164,15 +1170,16 @@ static object_t *PickUp(object_t *who, object_t *what, object_t *where, uint32 n
 
             return NULL;
         }
+
         /* Check that where has enough space for what. */
         /* TODO: If nrof > 1 perhaps split what to fit? */
-        else if (where->weight_limit < where->carrying + (sint32)(WEIGHT_OVERALL(what)))
+        else if (where->weight_limit < where->carrying + weight)
         {
             if (pl)
             {
                 ndi(NDI_UNIQUE, 0, who, "%s %s too heavy to fit in %s!",
                    query_name(what, who, ARTICLE_DEFINITE, 0),
-                   (what->nrof > 1) ? "are" : "is",
+                   (nrof > 1) ? "are" : "is",
                    query_name(where, who, ARTICLE_DEFINITE, 0));
             }
 
@@ -1309,6 +1316,9 @@ static object_t *PickUp(object_t *who, object_t *what, object_t *where, uint32 n
  * up. */
 static object_t *CanPickUp(object_t *who, object_t *what, object_t *where, uint32 nrof)
 {
+    sint32 tmp_nrof;
+    sint32 weight;
+
     /* Picking up players would cause mayhem so it's not allowed. */
     if (what->type == PLAYER)
     {
@@ -1390,7 +1400,14 @@ static object_t *CanPickUp(object_t *who, object_t *what, object_t *where, uint3
                 (sint32)CONTR(who)->weight_limit :
                 ((who->weight_limit > 0) ? who->weight_limit : 20000);
 
-            if (who_limit < who->carrying + (sint32)(WEIGHT_OVERALL(what)))
+            // Hack to allow WEIGHT_OVERALL to not account for full stack.
+            // TODO: Change WEIGHT_OVERALL
+            tmp_nrof = what->nrof;
+            what->nrof = nrof;
+            weight = (sint32)(WEIGHT_OVERALL(what));
+            what->nrof = tmp_nrof;
+
+            if (who_limit < who->carrying + weight)
             {
                 if (who->type == PLAYER)
                 {
