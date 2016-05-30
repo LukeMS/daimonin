@@ -55,7 +55,7 @@ attack_name_t attack_name[NROFATTACKS] =
     { "AC", "acid", NULL, "dissolved by" },
     { "SO", "sonic", NULL, "sonically shattered by" },
     { "CH", "channelling", NULL, "mentally overwhelmed by" },
-    { "CO", "corruption", NULL, "spiritually corrupted by" },
+    { "CR", "corruption", NULL, "spiritually corrupted by" },
     { "PS", "psionic", NULL, "psionically defeated by" },
     { "LI", "light", NULL, NULL },
     { "SH", "shadow", NULL, NULL },
