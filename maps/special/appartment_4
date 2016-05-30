@@ -1,16 +1,16 @@
 arch map
 name Stoneglow - Luxurious Apartment
-background_music 110-keybd.ogg
 msg
 Created:  2004-07-26 Daimonin Map Editor
-Modified: 2009-03-30 smacky
+Modified: 2016-05-30 joel
 endmsg
 width 14
 height 14
 difficulty 1
-darkness -1
+darkness 8
 no_summon 1
 no_harm 1
+background_music 110-keybd.ogg
 end
 arch blocked
 end
@@ -260,10 +260,10 @@ x 2
 y 1
 end
 arch letter
-name letter - a'pply to read
 msg
 Welcome to your new apartment! Items left here, either in the provided containers or just dropped on the floor, will be ~permanently~ stored.
 endmsg
+name letter - a'pply to read
 x 2
 y 1
 end
