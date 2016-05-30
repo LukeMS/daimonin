@@ -19,7 +19,7 @@ else
         pinfo.race = "/planes/human_plane"..string.sub(path, 7)
     end
 
-    ac:SetPosition(game:ReadyMap(pinfo.race), pinfo.last_sp, pinfo.last_grace)
+    ac:SetPosition(game:ReadyMap(pinfo.race), pinfo.last_sp, pinfo.last_grace, game.OVERLAY_FIXED)
 end
 
 ap:Save()
