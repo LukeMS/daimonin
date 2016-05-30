@@ -72,7 +72,7 @@ attack_name_t attack_name[NROFATTACKS] =
     { "CA", "cancellation", NULL, NULL },
     { "CF", "confusion", NULL, NULL },
     { "FE", "fear", NULL, NULL },
-    { "SL", "slow", NULL, NULL },
+    { "SW", "slow", NULL, NULL },
     { "PA", "paralyze", NULL, NULL },
     { "SN", "snare", NULL, NULL },
     { "??", "internal", NULL, NULL },

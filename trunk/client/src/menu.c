@@ -280,7 +280,7 @@ void widget_show_resist(int x, int y)
         print_resist("CF", 128, 51, ATNR_CONFUSION);
         print_resist("FE", 158, 51, ATNR_FEAR);
 
-        print_resist("SL", 8, 63, ATNR_SLOW);
+        print_resist("SW", 8, 63, ATNR_SLOW);
         print_resist("PA", 38, 63, ATNR_PARALYZE);
         print_resist("SN", 68, 63, ATNR_SNARE);
     }
