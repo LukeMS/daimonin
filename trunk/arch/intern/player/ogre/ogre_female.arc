@@ -15,7 +15,7 @@ speed 0.95
 face ogre_female.151
 animation ogre_female
 is_animated 1
-anim_speed 3
+anim_speed 1
 type 1
 level 1
 hp -1
