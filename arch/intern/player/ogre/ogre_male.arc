@@ -4,7 +4,7 @@ randomitems player_ogre_male
 layer 6
 can_open_door 1
 no_pick 1
-is_female 1
+is_male 1
 is_neutral 1
 identified 1
 direction 5
