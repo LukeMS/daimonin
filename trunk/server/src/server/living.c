@@ -1926,7 +1926,12 @@ void fix_player(object_t *op)
      * each point of Str > 10.
      *
      * -- Smacky 20150714 */
-    pl->weight_limit = op->weight_limit + 50000 * stat_bonus[op->stats.Str] - 50000;
+    /* I (hopefully) temporarily changed this until I can figure out a good way
+     * to adjust stat boni. It's the same as the old version (i.e. it doesn't
+     * use the stat_bonus table).
+     * -- _people_ 20160601
+     */
+    pl->weight_limit = op->weight_limit + 5000 * op->stats.Str - 10;
 
     /* we calculate this: we get weight_limit - ENCUMBRANCE_LIMIT %. Thats around 35% of the
     * value ATM. Thats our base. Then we check how much of this last 35% we really carry. Thats
