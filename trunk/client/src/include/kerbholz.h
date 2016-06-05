@@ -34,6 +34,9 @@ typedef struct kills_list
     unsigned int session;
 } _kills_list;
 
+#define NROF_KILL_MESSAGES 16
+extern const char *kill_messages[];
+
 int addKill(char *name);
 void addNewKill(char *name, unsigned int kills, unsigned int session);
 void kill_list_show(int type);

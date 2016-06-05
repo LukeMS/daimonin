@@ -30,6 +30,14 @@
 
 struct kills_list *kills_list_start = NULL;
 
+const char *kill_messages[] = {"~ died (killed by ~you", "~ died (poisoned by ~you", "~ died (beaten to death by ~you",
+                                "~ died (sliced 'n' diced by ~you", "~ died (hacked to pieces by ~you",
+                                "~ died (poked fatally by ~you", "~ died (burned to a crisp by ~you",
+                                "~ died (frozen by ~you", "~ died (electrocuted by ~you", "~ died (poisoned by ~you",
+                                "~ died (dissolved by ~you", "~ died (sonically shattered by ~you",
+                                "~ died (mentally overwhelmed by ~you", "~ died (spiritually corrupted by ~you",
+                                "~ died (psionically defeated by ~you", "~ died (withered by ~you" };
+
 /* add an entry to the kill list
  * return 1 if new kill (mob with tha name killed for the first time)
  * 2 if 'old' kill
