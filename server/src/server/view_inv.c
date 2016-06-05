@@ -565,7 +565,7 @@ static char *PrepareData(_server_client_cmd cmd, uint16 flags, player_t *pl,
             object_t *who = (pl) ? pl->ob : NULL;
             size_t  len;
 
-            sprintf(name, "%s", query_name(op, who, ARTICLE_NONE, 0));
+            sprintf(name, "%s", query_name(op, who, ARTICLE_NONE, (op->type == RING || op->type == AMULET) ? 1 : 0));
             name[127] = '\0'; // max 127
             len = strlen(name);
             *((uint8 *)cp++) = len + 1;
