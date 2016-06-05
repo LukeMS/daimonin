@@ -187,9 +187,9 @@ void textwin_showstring(int flags, char *format, ...)
     char       *text;
     int         actWin, z;
     /* Hmm I'm not 100& sure, if this is the best place for that */
+    char        *tok;
     char *buf2;
-    char        *enemy1;
-    char        enemy2[MEDIUM_BUF];
+    char        enemy[MEDIUM_BUF];
     int         newkill=0;
     struct kills_list *node=NULL;
 
@@ -197,43 +197,42 @@ void textwin_showstring(int flags, char *format, ...)
     vsprintf(buf, format, ap);
     va_end(ap);
 
-    if (options.statsupdate && !strncmp(buf,"You killed ",11))
-        statometer.kills++;
-
-    if (options.kerbholz)
+    for (i = 0; i < NROF_KILL_MESSAGES; i++)
     {
-        if (!strncmp(buf,"You killed ",11))
+        if ((tok = strstr(buf, kill_messages[i])))
         {
-            enemy1=strstr(buf, " with ");
-            if (enemy1!=0)
+            if (options.statsupdate)
             {
-                strncpy(enemy2,buf+11,enemy1-(buf+11));
-                enemy2[enemy1-(buf+11)]=0;
-            } else {
-                strncpy(enemy2,buf+11,(strlen(buf+11)-1));
-                enemy2[strlen(buf+11)-1]=0;
+                statometer.kills++;
             }
-            newkill=addKill(enemy2);
+            break;
+        }
+    }
 
-            if (newkill>0)
+    if (options.kerbholz && tok)
+    {
+        memset(enemy, '\0', MEDIUM_BUF);
+
+        strncpy(enemy, buf + 1, tok - buf);
+        newkill=addKill(enemy);
+
+        if (newkill>0)
+        {
+            if (newkill==1)
             {
-                if (newkill==1)
-                {
-                    strcat(buf, " for the first time!");
-                    flags=flags | COLOR_GREEN;
-                }
-                else
-                {
-                    node=getKillEntry(enemy2);
-
-                    if (node)
-                    {
-                        sprintf(strchr(buf, '\0'), " %d/%d times.",
-                                node->session, node->kills);
-                    }
-                }
-
+                strcat(buf, " (first kill)");
             }
+            else
+            {
+                node=getKillEntry(enemy);
+
+                if (node)
+                {
+                    sprintf(strchr(buf, '\0'), " (%d/%d)",
+                            node->session, node->kills);
+                }
+            }
+
         }
     }
 
