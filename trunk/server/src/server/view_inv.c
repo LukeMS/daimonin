@@ -380,7 +380,7 @@ static void NotifyClients(_server_client_cmd cmd, uint16 flags, object_t *op)
         msp_t *msp = MSP_KNOWN(op);
         object_t   *next;
 
-        if (who && msp)
+        if (msp)
         {
             /* Send cmd to each valid client on the square. */
             FOREACH_OBJECT_IN_MSP(who, msp, next)
