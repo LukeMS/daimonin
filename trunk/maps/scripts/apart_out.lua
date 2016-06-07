@@ -6,7 +6,7 @@ local ap = me.map
 local pinfo = ac:GetPlayerInfo("APARTMENT_INFO")
 local path
 
-if pinfo == nil then
+if pinfo == nil or pinfo.race == nil or pinfo.race == "" then
     ac:SetPosition(game:ReadyMap("/emergency"), 0, 0)
 else
     -- convert exit map path if pre-reorganization:
