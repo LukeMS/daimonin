@@ -140,7 +140,7 @@ void npc_call_for_help(object_t *op) {
               register_npc_known_obj(friend->ob, op->enemy, FRIENDSHIP_ATTACK, 0);
           }
       }
-  
+
 }
 #endif
 
@@ -678,7 +678,7 @@ int nret;
         nXRange = params[AIPARAM_MOVE_RANDOMLY_XLIMIT].intvalue;
         nLimitXY = 2;
     }
-    
+
     if(params[AIPARAM_MOVE_RANDOMLY_YLIMIT].flags & AI_PARAM_PRESENT){
         nYRange = params[AIPARAM_MOVE_RANDOMLY_YLIMIT].intvalue;
         nLimitXY |= 1;
@@ -764,7 +764,7 @@ int nret;
                     aDirWeight[dir_turn(op->direction, 4)] = 1;
                     return 1;
                 }
-                break;                
+                break;
             case 7:
                 if(    op->map->tiling.tile_map[TILING_DIRECTION_EAST] &&
                     ((op->map->tiling.tile_map[TILING_DIRECTION_EAST] == basemap->tiling.tile_map[TILING_DIRECTION_WEST]) ||
@@ -829,7 +829,7 @@ int nret;
     return nret;
 }
 
-/*	fill aDirWeight[9] with possible directions 
+/*	fill aDirWeight[9] with possible directions
 	returns the max random number + 1
 */
 int ai_move_randomly_behaviour(int aDirWeight[9], object_t *op, struct mob_behaviour_param *params){
@@ -864,7 +864,7 @@ int nret;
         nret += aDirWeight[dir_turn(nLastDir, 1)] *= 32;  /* turn on the right once */
 
         nret += aDirWeight[dir_turn(nLastDir, -1)] *= 32; /* turn on the left once */
-        
+
         nret += aDirWeight[dir_turn(nLastDir, 2)] *= 4; /* turn on the right twice */
 
         nret += aDirWeight[dir_turn(nLastDir, -2)] *= 4; /* turn on the left twice */
@@ -876,7 +876,7 @@ int nret;
         nret += aDirWeight[dir_turn(nLastDir, 4)] *= 1; /* turn on the right 4 times */
 
         nret += aDirWeight[0] *= 4; /* don't move */
-        
+
         return nret;
     }
 }
@@ -1211,7 +1211,7 @@ void ai_avoid_line_of_fire(object_t *op, struct mob_behaviour_param *params, mov
                 break;
 /* Currently there is no good way I can think of for cone dodging.
  * the way it is currently handled causes the mob to freeze if it can't
- * find a safe way to dodge, which makes it too easy to kill and 
+ * find a safe way to dodge, which makes it too easy to kill and
  * slows the server down. */
 #if 0
             /* Area-like "missiles" */
@@ -1315,7 +1315,7 @@ void ai_optimize_line_of_fire(object_t *op, struct mob_behaviour_param *params, 
 
                 /* Find a spot in or near line of fire, and forbid movements to other spots */
                 if (msp &&
-                    RV_GET_OBJ_TO_MSP(op, msp, &rv, RV_DIAGONAL_DISTANCE))
+                    RV_GET_OBJ_TO_MSP(op->enemy, msp, &rv, RV_DIAGONAL_DISTANCE))
                 {
                     if (RV_TEST_MISSILE_EXACT(rv))
                     {
@@ -1892,7 +1892,7 @@ void ai_look_for_objects(object_t *op, struct mob_behaviour_param *params)
                 } else
                     update_npc_known_obj(known, 0, 0);
             }
-            
+
         }
     }
 }
