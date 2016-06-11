@@ -3973,7 +3973,7 @@ char *query_name(object_t *what, object_t *who, uint32 article, uint8 status)
         case FOOD:
         case DRINK:
         case CONTAINER:
-        if (!what->title)
+        if (!what->title && !QUERY_FLAG(what, FLAG_IS_NAMED))
         {
             sprintf(strchr(cp, '\0'), " %s", describe_item(what));
         }
