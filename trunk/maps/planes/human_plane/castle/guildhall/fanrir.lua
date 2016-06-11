@@ -389,7 +389,7 @@ local function topic_quest()
             ib:AddMsg("\n|(2)| a ~silver~ coin. You can probably pick up a "..
                       "beginner's sword for a couple of these. But if you " ..
                       "hang on to them until you have ~100~, that's worth:\n")
-            ib:AddMsg("\n|(3)| a ~gold~ coin which just happens to bbe the " ..
+            ib:AddMsg("\n|(3)| a ~gold~ coin which just happens to be the " ..
                       "monthly rent on my larder. But I assume you won't " ..
                       "be renting a larder, so with the saving after " ..
                       "~1000~ months you'll have the equivalent of:\n")
