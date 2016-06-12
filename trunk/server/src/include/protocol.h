@@ -26,7 +26,7 @@
 
 #define DAI_VERSION_RELEASE 0
 #define DAI_VERSION_MAJOR 10
-#define DAI_VERSION_MINOR 7
+#define DAI_VERSION_MINOR 8
 #define PROTOCOL_VERSION 991031
 
 /* min & max length of player & account names & password
@@ -318,7 +318,7 @@ enum
 #define UPD_ANIM        (1 << 5)
 #define UPD_ANIMSPEED   (1 << 6)
 #define UPD_NROF        (1 << 7)
-#define UPD_DIRECTION   (1 << 8) 
+#define UPD_DIRECTION   (1 << 8)
 #define UPD_QUALITY     (1 << 9)
 #define UPD_SERVERFLAGS (1 << 15)
 //#define UPD_ALL         0xffff
@@ -353,7 +353,7 @@ enum
 #define FFLAG_CONFUSED  (1 << 1) // confused
 #define FFLAG_PARALYZED (1 << 2) // paralyzed
 #define FFLAG_SCARED    (1 << 3) // scared - it will run away
-#define FFLAG_EATING    (1 << 4) // eating 
+#define FFLAG_EATING    (1 << 4) // eating
 #define FFLAG_INVISIBLE (1 << 5) // invisible (normal or gmaster)
 #define FFLAG_ETHEREAL  (1 << 6) // ethereal
 /* TODO: Unfortunately EATING was added in place of BLINDED at some point in
