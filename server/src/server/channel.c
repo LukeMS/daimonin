@@ -292,8 +292,9 @@ int command_channel(object_t *ob, char *params)
             return 0;
         }
 
-        sprintf(buf, "%s (examine worth: %s)",
+        sprintf(buf, "%s %s (examine worth: %s)",
             query_name(targetob, ob, targetob->nrof, 1),
+            describe_item(targetob),
             cost_string_from_value(targetob->value * targetob->nrof, COSTSTRING_SHORT));
 
         if (check_channel_mute(pl_channel))

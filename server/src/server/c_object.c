@@ -389,9 +389,12 @@ char *examine(object_t *op, object_t *tmp, int flag)
         strcat(buf_out, "\n");
         examine_monster(NULL, tmp, buf_out, flag);
     }
+
     /* we don't double use the item_xxx arch commands, so they are always valid */
     else if (QUERY_FLAG(tmp, FLAG_IDENTIFIED))
     {
+        strcat(buf_out, describe_item(tmp));
+
         /* if one of this is set, we have a ego item */
         if (QUERY_FLAG(tmp, FLAG_IS_GOOD))
             strcat(buf_out, "It is good aligned\n.");
