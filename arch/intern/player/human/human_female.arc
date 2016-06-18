@@ -15,7 +15,7 @@ speed 0.95
 face human_female.151
 animation human_female
 is_animated 1
-anim_speed 1
+anim_speed 3
 type 1
 level 1
 hp -1
@@ -33,5 +33,4 @@ can_use_weapon 1
 is_player 1
 weight 55000
 food 750
-is_named 1
 end
