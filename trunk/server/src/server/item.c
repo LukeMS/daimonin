@@ -766,10 +766,11 @@ int check_magical_container(const object_t *op, const object_t *env)
  * if it wasn't. */
 object_t *pick_up(object_t *who, object_t *what, object_t *where, uint32 nrof)
 {
-    player_t   *pl = NULL;
-    object_t   *from,
-             *to = who,
-             *outof;
+    player_t    *pl = NULL;
+    object_t    *from,
+                *to = who,
+                *outof;
+    uint32      tmp_nrof;
 
     /* Sanity checks: must be a who and only players and monsters can pick
      * things up; must be a what; if there is a where, it must be a
@@ -918,6 +919,9 @@ object_t *pick_up(object_t *who, object_t *what, object_t *where, uint32 nrof)
         object_t *into = (what->env &&
             what->env->type == CONTAINER) ? what->env : where;
 
+        tmp_nrof = what->nrof;
+        what->nrof = nrof;
+
         if (from != who &&
             QUERY_FLAG(from, FLAG_IS_GIVING))
         {
@@ -967,6 +971,8 @@ object_t *pick_up(object_t *who, object_t *what, object_t *where, uint32 nrof)
                 }
             }
         }
+
+        what->nrof = tmp_nrof;
 
         ndi(NDI_UNIQUE, 0, who, "%s.", buf);
     }
