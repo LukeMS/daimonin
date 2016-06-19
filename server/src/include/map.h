@@ -568,6 +568,32 @@ extern void    map_transfer_apartment_items(map_t *map_old, map_t *map_new, sint
             } \
         } \
     } \
+    else \
+    { \
+        if (!((_MSP_)->flags & MSP_FLAG_NO_PASS)) \
+        { \
+            if (QUERY_FLAG((_O_), FLAG_PASS_THRU)) \
+            { \
+                (_MSP_)->flags |= MSP_FLAG_PASS_THRU; \
+            } \
+            if (QUERY_FLAG((_O_), FLAG_PASS_ETHEREAL)) \
+            { \
+                (_MSP_)->flags |= MSP_FLAG_PASS_ETHEREAL; \
+            } \
+        } \
+        else \
+        { \
+            (_MSP_)->flags &= ~MSP_FLAG_NO_PASS; \
+            if (!QUERY_FLAG((_O_), FLAG_PASS_THRU)) \
+            { \
+                (_MSP_)->flags &= ~MSP_FLAG_PASS_THRU; \
+            } \
+            if (!QUERY_FLAG((_O_), FLAG_PASS_ETHEREAL)) \
+            { \
+                (_MSP_)->flags &= ~MSP_FLAG_PASS_ETHEREAL; \
+            } \
+        } \
+    } \
     if ((_O_)->type == CHECK_INV) \
     { \
         (_MSP_)->flags |= MSP_FLAG_CHECK_INV; \
