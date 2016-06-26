@@ -12,7 +12,7 @@ is_animated 1
 anim_speed 3
 speed 1
 nrof 1
-value 250000
+value 25000
 weight 50
 material 4
 end
