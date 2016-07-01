@@ -2095,36 +2095,32 @@ static void KillPlayer(player_t *pl, object_t *killer, object_t *killer_owner, c
 #ifdef USE_GRAVESTONES
     /* Put a gravestone up where or near to where the character died if there
      * is a free spot and isn't already one there. */
-    if (!(thing = arch_to_object(archetype_global._gravestone)))
+    if ((thing = arch_to_object(archetype_global._gravestone)))
     {
-        return;
+        thing->level = victim->level;
+        sprintf(buf, "%s's gravestone", STRING_OBJ_NAME(victim));
+        FREE_AND_COPY_HASH(thing->name, buf);
+        m = msp->map;
+        get_tad(m->tadnow, m->tadoffset);
+        sprintf(buf, "R.I.P. %s\n\nLevel %d %s\n\n%s%s%s.\n\nOn %s",
+            QUERY_SHORT_NAME(victim, NULL),
+            (int)victim->level, STRING_OBJ_RACE(victim),
+            detail, (killer) ? " " : "", (killer) ? QUERY_SHORT_NAME(killer, NULL) : "",
+            print_tad(m->tadnow, TAD_SHOWDATE | TAD_LONGFORM));
+        FREE_AND_COPY_HASH(thing->msg, buf);
+        i = (uint8)overlay_find_free(msp, thing, 0, OVERLAY_7X7,
+            OVERLAY_IGNORE_TERRAIN | OVERLAY_WITHIN_LOS | OVERLAY_FIRST_AVAILABLE);
+
+        if ((sint8)i != -1)
+        {
+            x = msp->x + OVERLAY_X((sint8)i);
+            y = msp->y + OVERLAY_Y((sint8)i);
+            m = OUT_OF_MAP(m, x, y);
+            thing->x = x;
+            thing->y = y;
+            insert_ob_in_map(thing, m, NULL, INS_NO_WALK_ON);
+        }
     }
-
-    thing->level = victim->level;
-    sprintf(buf, "%s's gravestone", STRING_OBJ_NAME(victim));
-    FREE_AND_COPY_HASH(thing->name, buf);
-    m = msp->map;
-    get_tad(m->tadnow, m->tadoffset);
-    sprintf(buf, "R.I.P. %s\n\nLevel %d %s\n\n%s%s%s.\n\nOn %s",
-        QUERY_SHORT_NAME(victim, NULL),
-        (int)victim->level, STRING_OBJ_RACE(victim),
-        detail, (killer) ? " " : "", (killer) ? QUERY_SHORT_NAME(killer, NULL) : "",
-        print_tad(m->tadnow, TAD_SHOWDATE | TAD_LONGFORM));
-    FREE_AND_COPY_HASH(thing->msg, buf);
-    i = (uint8)overlay_find_free(msp, thing, 0, OVERLAY_7X7,
-        OVERLAY_IGNORE_TERRAIN | OVERLAY_WITHIN_LOS | OVERLAY_FIRST_AVAILABLE);
-
-    if ((sint8)i == -1)
-    {
-        return;
-    }
-
-    x = msp->x + OVERLAY_X((sint8)i);
-    y = msp->y + OVERLAY_Y((sint8)i);
-    m = OUT_OF_MAP(m, x, y);
-    thing->x = x;
-    thing->y = y;
-    insert_ob_in_map(thing, m, NULL, INS_NO_WALK_ON);
 #endif
 
     /* STEP 4: Respawn victim. */
