@@ -1075,8 +1075,6 @@ enum apply_flag
         (_PL_)->ob->enemy_count = 0; \
     }
 
-extern void init_block(void);
-extern void set_block(int x, int y, int bx, int by);
 extern void los_update(player_t *pl);
 extern int  obj_in_line_of_sight(object_t *op, object_t *obj, rv_t *rv);
 extern void los_find_target(player_t *pl, uint8 mode, sint16 start, sint16 stop, sint16 ox, sint16 oy);

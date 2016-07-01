@@ -104,7 +104,6 @@ CommArray_s Commands[] =
     {"sa",            command_sa,             0.0f, 1, NULL}, /*enters sa mode*/
     {"gmasterlist",   command_gmasterlist,    0.0f, 1, NULL}, /*lists accounts on gmasterfile*/
     {"password",      command_password,       0.0f, 1, NULL}, /* change pwd */
-    {"los",           command_los,            0.0f, 1, NULL},
 };
 
 CommArray_s EmoteCommands[] =

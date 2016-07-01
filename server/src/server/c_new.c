@@ -49,26 +49,6 @@ int command_run_stop(object_t *op, char *params)
     return 0;
 }
 
-/* command_los() is a temporary command to facilitate the development
- * of SEnLoS. It toggles between the new and old LoS code (for this
- * player only). */ 
-int command_los(object_t *op, char *params)
-{
-    player_t *pl;
-
-    if (!op ||
-        op->type != PLAYER ||
-        !(pl = CONTR(op)))
-    {
-        return COMMANDS_RTN_VAL_ERROR;
-    }
-
-    pl->use_old_los = !pl->use_old_los;
-    pl->update_los = 1;
-    ndi(NDI_UNIQUE, 0, op, "Toggle use_old_los to %u", pl->use_old_los);
-    return COMMANDS_RTN_VAL_OK;
-}
-
 /* comman_combat() toggles combat mode. */
 int command_combat(object_t *op, char *params)
 {
