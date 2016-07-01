@@ -1425,7 +1425,6 @@ void init_library()
     init_globals();
     init_mempools();   /* Inits the mempool manager and the object system */
     init_vars();
-    init_block();
     LOG(llevInfo, "%s.\nCopyright (C) 2002-2009 Michael Toennies.\n",
         version_string());
     ReadBmapNames();
