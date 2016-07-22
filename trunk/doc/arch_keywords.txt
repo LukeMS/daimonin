@@ -33,7 +33,7 @@ Unsorted Commands
 "randomitems","editor_folder","no_skill_ident","glow_radius","is_thrown","is_cauldron",
 "is_dust","connected","no_steal","tear_down","been_applied","unique","inv_locked",
 "applied","auto_apply","unpaid","no_pick","will_apply","pick_up","can_roll",
-"is_used_up","identified","startequip","blocksview","no_magic","wiz","container",
+"is_used_up","identified","blocksview","no_magic","wiz","container",
 "no_drop","lifesave","changing","splitting","was_wiz","slow_move","no_fix_player",
 "see_anywhere",
 

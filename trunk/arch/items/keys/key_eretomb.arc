@@ -9,7 +9,7 @@ face key_eretomb.101
 type 21
 value 100
 weight 100
-startequip 1
+no_drop 1
 nrof 1
 identified 1
 known_cursed 1

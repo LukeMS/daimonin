@@ -22179,7 +22179,7 @@ face key2.111
 type 21
 value 100
 weight 100
-startequip 1
+no_drop 1
 nrof 1
 identified 1
 known_cursed 1
@@ -22197,7 +22197,7 @@ face key_blue.111
 type 21
 value 100
 weight 100
-startequip 1
+no_drop 1
 nrof 1
 identified 1
 known_cursed 1
@@ -22215,7 +22215,7 @@ face key_brown.111
 type 21
 value 100
 weight 100
-startequip 1
+no_drop 1
 nrof 1
 identified 1
 known_cursed 1
@@ -22233,7 +22233,7 @@ face key_eretomb.101
 type 21
 value 100
 weight 100
-startequip 1
+no_drop 1
 nrof 1
 identified 1
 known_cursed 1
@@ -22268,7 +22268,7 @@ slaying 887744
 type 21
 value 100
 weight 100
-startequip 1
+no_drop 1
 nrof 1
 identified 1
 known_cursed 1
@@ -31993,7 +31993,7 @@ layer 3
 name quest object
 face quest_object.101
 quest_item 1
-startequip 1
+no_drop 1
 identified 1
 known_cursed 1
 known_magical 1

@@ -50,7 +50,7 @@ local function allowKey()
     local key = pl:CreateObjectInside("key_brown", game.IDENTIFIED, 1)
     key.name = key_name
     key.slaying = key_string
-    key.f_startequip = 1
+    key.f_no_drop = 1
     key_given = true
 end
 
