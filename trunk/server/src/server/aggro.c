@@ -593,9 +593,7 @@ static inline int aggro_exp_group(object_t *victim, object_t *aggro)
 
         /* No exp don't means no quests... So, we check it here - and we fake
          * a in_group_exp_range() check, so we set NOEXP right for the quest trigger
-         * check when we drop the vicitim inventory (even when we skip normal
-         * loot with startequip flag)
-         */
+         * check when we drop the victim inventory */
         for(tmp=leader;tmp;tmp=CONTR(tmp)->group_next)
         {
             player_t *pl = CONTR(tmp);
