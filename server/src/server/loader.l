@@ -456,7 +456,6 @@ op->oz= op->z;
 ^changing{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_CHANGING, IVAL);
 ^splitting{S}	    SET_OR_CLEAR_FLAG(op, FLAG_SPLITTING, IVAL);
 ^hitback{S}  	    SET_OR_CLEAR_FLAG(op, FLAG_HITBACK, IVAL);
-^startequip{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NO_DROP, IVAL); // deprecated -- use ^no_drop(S)
 ^allowsview{S}	    SET_OR_CLEAR_FLAG(op, FLAG_ALLOWSVIEW, IVAL);
 ^blocksview{S}	    SET_OR_CLEAR_FLAG(op, FLAG_BLOCKSVIEW, IVAL);
 ^undead{S}  	    SET_OR_CLEAR_FLAG(op, FLAG_UNDEAD, IVAL);
