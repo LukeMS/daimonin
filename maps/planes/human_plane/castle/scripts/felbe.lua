@@ -56,7 +56,7 @@ local function topicAccept()
             letter.message = "" -- Set the message for letter
             letter.name = "Felbe's Letter"
             letter.f_identified = 1
-            letter.f_startequip = 1
+            letter.f_no_drop = 1
             ds:Set("felbe_msg", "felbe_letter")
             ib:AddMsg("\n\nHere's the letter, now hurry and go.")
         end

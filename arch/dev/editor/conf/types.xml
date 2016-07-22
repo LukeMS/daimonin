@@ -308,7 +308,7 @@
     If an item is known cursed, the player has
     knowledge about it and see the cursed flag.
   </attribute>
-  <attribute arch="startequip" editor="NO-DROP item" type="bool">
+  <attribute arch="no_drop" editor="NO-DROP item" type="bool">
     A NO-DROP item vanishes as soon as the player
     drops it to the ground.
   </attribute>
@@ -5580,7 +5580,6 @@ trigger works as a container for the real quest objects.]]>
   <ignore>
     <attribute arch="one_drop" />
     <attribute arch="quest_item" />
-    <attribute arch="startequip" />
   </ignore>
   <description><![CDATA[A Quest Object is a generic object which fakes a real
 object. Its used as a dummy object when we send someone to get that sword or
@@ -5596,10 +5595,6 @@ that food.]]>
     Item is a quest item. This item will be inserted in the
     quest container when a quest is finished and for that player
     this item will never drop again.
-  </attribute>
-  <attribute arch="startequip" editor="NO-DROP item" type="bool">
-    A NO-DROP item vanishes as soon as the player
-    drops it to the ground.
   </attribute>
   <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
     This text may describe the object.

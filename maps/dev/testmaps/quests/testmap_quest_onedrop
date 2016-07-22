@@ -582,7 +582,7 @@ one_drop 1
 arch key_blue
 name test key one drop container quest item
 quest_item 1
-startequip 1
+no_drop 1
 end
 end
 end
@@ -1056,7 +1056,7 @@ one_drop 1
 arch key_blue
 name test key one drop quest item
 quest_item 1
-startequip 1
+no_drop 1
 end
 end
 end

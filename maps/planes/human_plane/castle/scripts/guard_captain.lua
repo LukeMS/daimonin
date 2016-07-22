@@ -252,7 +252,7 @@ local function topicLetter1()
         letter.name = "Guard Captain Aldus's Letter"
         letter.message = ""
         letter.f_identified = 1
-        letter.f_startequip = 1
+        letter.f_no_drop = 1
         ib:AddMsg("\n\nSo, give this letter to Felbe.")
     end
     pl:Interface(game.GUI_NPC_MODE_NPC, ib:Build())

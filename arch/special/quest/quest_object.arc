@@ -4,7 +4,7 @@ layer 3
 name quest object
 face quest_object.101
 quest_item 1
-startequip 1
+no_drop 1
 identified 1
 known_cursed 1
 known_magical 1
