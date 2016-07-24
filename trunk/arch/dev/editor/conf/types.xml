@@ -1286,7 +1286,7 @@
     This is a very powerful ability and it
     shouldn't be handed out cheap!
   </attribute>
-  <attribute arch="reflect_missile" editor="give reflect missiles" type="bool">
+  <attribute arch="can_reflect_missile" editor="give reflect missiles" type="bool">
     If a player is wearing any piece of equipment with
     the ability to &lt;reflect missiles&gt;, all kinds of
     projectiles (e.g. arrows, bolts, boulders) will
