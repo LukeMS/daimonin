@@ -367,7 +367,7 @@
     a shop mat, paying the demanded price. Setting this flag makes sense
     only for pickable items inside shops.
   </attribute>
-  <attribute arch="can_reflect_spell" editor="can reflect spells" type="bool">
+  <attribute arch="can_reflect_castable" editor="can reflect spells" type="bool">
   object CAN reflect spells. See reflect spells.
   </attribute>
   <attribute arch="can_reflect_missile" editor="can reflect missiles" type="bool">
@@ -1275,7 +1275,7 @@
     invisible and tries to sneak around monsters.
     (At least that was the idea behind it)
   </attribute>
-  <attribute arch="reflect_spell" editor="give reflect spells" type="bool">
+  <attribute arch="can_reflect_castable" editor="give reflect spells" type="bool">
     If a player is wearing any piece of equipment with
     the ability to &lt;reflect spells&gt;, all kinds of
     spell-bullets and -beams will bounce off him.
