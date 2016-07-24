@@ -463,8 +463,6 @@ op->oz= op->z;
 ^surrendered{S}  	SET_OR_CLEAR_FLAG(op, FLAG_SURRENDERED, IVAL);
 ^unaggressive{S}    SET_OR_CLEAR_FLAG(op, FLAG_UNAGGRESSIVE, IVAL);
 ^can_reflect_missile{S} SET_OR_CLEAR_FLAG(op, FLAG_REFL_MISSILE, IVAL);
-^reflect_spell{S}   SET_OR_CLEAR_FLAG(op, FLAG_REFL_CASTABLE, IVAL); // deprecated -- use ^can_reflect_castable(S)
-^can_reflect_spell{S}   SET_OR_CLEAR_FLAG(op, FLAG_REFL_CASTABLE, IVAL); // deprecated -- use ^can_reflect_castable(S)
 ^can_reflect_castable{S}   SET_OR_CLEAR_FLAG(op, FLAG_REFL_CASTABLE, IVAL);
 ^use_dmg_info{S}	SET_OR_CLEAR_FLAG(op, FLAG_USE_DMG_INFO, IVAL);
 ^no_magic{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_NO_SPELLS, IVAL); // deprecated -- use ^no_spells(S)
