@@ -17,7 +17,7 @@ path_repelled 256
 path_denied 33920
 terrain_flag 63
 can_open_door 1
-can_reflect_spell 1
+can_reflect_castable 1
 can_use_weapon 1
 can_use_armour 1
 can_use_ring 1
