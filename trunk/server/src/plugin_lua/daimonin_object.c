@@ -341,7 +341,7 @@ static const char *GameObject_flags[NUM_FLAGS + 1 + 1] =
     /*  11 */ "f_is_animated",
     /*  12 */ "?f_is_initialized",
     /*  13 */ "f_flying",
-    /*  14 */ "f_monster",
+    /*  14 */ NULL, // free
     /*  15 */ "f_friendly",
     /*  16 */ "?f_is_removed",
     /*  17 */ "f_been_applied",

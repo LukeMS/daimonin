@@ -447,7 +447,6 @@ op->oz= op->z;
 							}
 ^flying{S}					SET_OR_CLEAR_FLAG(op, FLAG_FLYING, IVAL);
 ^levitate{S}				SET_OR_CLEAR_FLAG(op, FLAG_LEVITATE, IVAL);
-^monster{S}	// TODO: remove, and from arches, when 0.10.7 is on main
 ^no_attack{S}				SET_OR_CLEAR_FLAG(op, FLAG_NO_ATTACK, IVAL);
 ^invulnerable{S}			SET_OR_CLEAR_FLAG(op, FLAG_INVULNERABLE, IVAL);
 ^friendly{S}			    SET_OR_CLEAR_FLAG(op, FLAG_FRIENDLY, IVAL);
@@ -907,7 +906,7 @@ static const char *flag_names[NUM_FLAGS + 1] =
     /*  11 */ "is_animated",
     /*  12 */ NULL, // FLAG_INITIALIZED
     /*  13 */ "flying",
-    /*  14 */ "monster",
+    /*  14 */ NULL, // free
     /*  15 */ "friendly",
     /*  16 */ NULL, // FLAG_REMOVED
     /*  17 */ "been_applied",
