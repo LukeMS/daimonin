@@ -13,7 +13,6 @@ item_level 255
 glow_radius 2
 corpse 1
 alive 1
-monster 1
 is_evil 1
 terrain_flag 1
 can_open_door 1

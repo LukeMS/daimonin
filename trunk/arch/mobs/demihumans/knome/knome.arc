@@ -13,7 +13,6 @@ item_level 255
 mpart_id 3
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 1

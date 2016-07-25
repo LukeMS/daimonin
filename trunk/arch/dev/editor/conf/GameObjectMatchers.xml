@@ -9,7 +9,6 @@
         <title xml:lang="sv">Monster</title>
         <Or>
             <TypeNrs numbers="80 81 83" />
-            <Attrib name="monster" />
         </Or>
     </GameObjectMatcher>
 
@@ -140,7 +139,6 @@
         <title xml:lang="sv">Monster</title>
         <Or>
             <TypeNrs numbers="80 81 83" />
-            <Attrib name="monster" />
         </Or>
     </GameObjectMatcher>
 
