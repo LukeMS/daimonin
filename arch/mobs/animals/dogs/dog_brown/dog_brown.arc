@@ -12,7 +12,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 friendly 1

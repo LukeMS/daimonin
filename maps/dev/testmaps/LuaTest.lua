@@ -357,7 +357,6 @@ elseif (msg == 'clone') then
     clone = activator:Clone(game.CLONE_WITHOUT_INVENTORY)
     clone:SetPosition(10, 10)
     clone.f_friendly = false
-    clone.f_monster = true
     clone.max_hitpoints = 1
     clone.level = 1
     clone.name = clone.name .. " II"

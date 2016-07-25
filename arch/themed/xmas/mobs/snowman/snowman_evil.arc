@@ -10,7 +10,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_open_door 1

@@ -12,7 +12,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 terrain_flag 1
 can_open_door 1
