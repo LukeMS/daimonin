@@ -464,9 +464,7 @@ op->oz= op->z;
 ^can_reflect_missile{S} SET_OR_CLEAR_FLAG(op, FLAG_REFL_MISSILE, IVAL);
 ^can_reflect_castable{S}   SET_OR_CLEAR_FLAG(op, FLAG_REFL_CASTABLE, IVAL);
 ^use_dmg_info{S}	SET_OR_CLEAR_FLAG(op, FLAG_USE_DMG_INFO, IVAL);
-^no_magic{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_NO_SPELLS, IVAL); // deprecated -- use ^no_spells(S)
 ^no_spells{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_NO_SPELLS, IVAL);
-^no_cleric{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_NO_PRAYERS, IVAL); // deprecated -- use ^no_prayers`(S)
 ^no_prayers{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_NO_PRAYERS, IVAL);
 ^no_fix_player{S}   SET_OR_CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER, IVAL);
 ^tear_down{S}	    SET_OR_CLEAR_FLAG(op, FLAG_TEAR_DOWN, IVAL);
