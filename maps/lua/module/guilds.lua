@@ -8,7 +8,7 @@
 module_guildsLOADED = true
 ---------------------------------------
 ---------------------------------------
--- Use bitmasks for flags such as no_archery and no_magic.
+-- Use bitmasks for flags such as no_archery and no_spells.
 ---------------------------------------
 require "bitmasks"
 

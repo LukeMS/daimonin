@@ -262,11 +262,11 @@
     flag is set too, objects with the CAN_PASS_THRU flag can pass.
     Ethereal can't pass this as long pass_ethereal is not set!
   </attribute>
-  <attribute arch="no_magic" editor="no spells" type="bool">
+  <attribute arch="no_spells" editor="no spells" type="bool">
     If enabled, it is impossible for players to use (wizard-)
     spells on that spot.
   </attribute>
-  <attribute arch="no_cleric" editor="no prayers" type="bool">
+  <attribute arch="no_prayers" editor="no prayers" type="bool">
     If enabled, it is impossible for players to use (cleric-)
     prayers on that spot.
   </attribute>
@@ -2189,7 +2189,7 @@
 <type number="77" name="Wall">
   <import_type name="default_flags" />
   <ignore>
-    <attribute arch="no_magic" />
+    <attribute arch="no_spells" />
     <attribute arch="damned" />
     <ignore_list name="non_pickable" />
   </ignore>
@@ -2201,7 +2201,7 @@
   <attribute arch="no_pass" editor="blocking passage" type="bool">
     If set, the object cannot be passed by players nor monsters.
   </attribute>
-  <attribute arch="no_magic" editor="restrict spells" type="bool">
+  <attribute arch="no_spells" editor="restrict spells" type="bool">
     This takes effect only with &lt;blocksview&gt; disabled.
     Restricting the use of spells to pass this wall.
   </attribute>
@@ -2276,7 +2276,7 @@
 <type number="91" name="Gate">
   <import_type name="attack_values" />
   <ignore>
-    <attribute arch="no_magic" />
+    <attribute arch="no_spells" />
     <attribute arch="damned" />
     <ignore_list name="non_pickable" />
   </ignore>
@@ -2304,7 +2304,7 @@
     about 6 or 7) means completely closed/up state. I suggest you don't
     mess with this value - Leave the default in place.
   </attribute>
-  <attribute arch="no_magic" editor="restrict spells" type="bool">
+  <attribute arch="no_spells" editor="restrict spells" type="bool">
     Restricting the use of spells to pass this gate. This has
     an effect only if &lt;block view&gt; is disabled.
   </attribute>
@@ -2325,7 +2325,7 @@
 <type number="26" name="Timed Gate">
   <import_type name="attack_values" />
   <ignore>
-    <attribute arch="no_magic" />
+    <attribute arch="no_spells" />
     <attribute arch="damned" />
     <ignore_list name="non_pickable" />
   </ignore>
@@ -2356,7 +2356,7 @@
     it reset itself. When opened, it stays this time open, then it close. 10 ticks
     are around 5 seconds.
   </attribute>
-  <attribute arch="no_magic" editor="restrict spells" type="bool">
+  <attribute arch="no_spells" editor="restrict spells" type="bool">
     Restricting the use of spells to pass this gate. This has
     an effect only if &lt;block view&gt; is disabled.
   </attribute>
@@ -2846,7 +2846,7 @@
 <type number="20" name="Door">
   <import_type name="default_flags" />
   <ignore>
-    <attribute arch="no_magic" />
+    <attribute arch="no_spells" />
     <attribute arch="damned" />
     <ignore_list name="non_pickable" />
   </ignore>
@@ -4723,7 +4723,7 @@
     </UL> ]]>
   </use>
   <attribute arch="no_pick" value="1" type="fixed" />
-  <attribute arch="no_magic" value="1" type="fixed" />
+  <attribute arch="no_spells" value="1" type="fixed" />
   <attribute arch="damned" value="1" type="fixed" />
 </type>
 
@@ -4942,7 +4942,7 @@
   </use>
   <attribute arch="no_pick" value="1" type="fixed" />
   <attribute arch="sys_object" value="1" type="fixed" />
-  <attribute arch="no_magic" value="1" type="fixed" />
+  <attribute arch="no_spells" value="1" type="fixed" />
   <attribute arch="auto_apply" editor="generate goods" type="bool">
     If enabled, items will appear on this square when the map is loaded.
     You need to specify a &lt;treasurelist&gt; to define what kinds of items
