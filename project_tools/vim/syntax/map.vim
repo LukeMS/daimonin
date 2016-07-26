@@ -38,7 +38,7 @@ syntax match mapString contained
 " These attributes take integer values. The value can be positive (unsigned)
 " or negative (signed) or zero.
 syntax match mapAttribute contained nextgroup=mapNumber
-     \ "^\%(darkness\|difficulty\|enter_x\|enter_y\|fixed_login\|fixed_resettime\|height\|instance\|light\|map_tag\|multi\|no_harm\|no_spells\|no_priest\|no_save\|no_summon\|outdoor\|pvp\|perm_death\|reset_timeout\|swap_time\|tileset_id\|tileset_x\|tileset_y\|ultimate_death\|ultra_death\|unique\|width\)\s\+"
+     \ "^\%(darkness\|difficulty\|enter_x\|enter_y\|fixed_login\|fixed_resettime\|height\|instance\|light\|map_tag\|multi\|no_harm\|no_magic\|no_priest\|no_save\|no_summon\|outdoor\|pvp\|perm_death\|reset_timeout\|swap_time\|tileset_id\|tileset_x\|tileset_y\|ultimate_death\|ultra_death\|unique\|width\)\s\+"
 syntax match mapNumber contained
      \ "\-\?\d\+$"
 
