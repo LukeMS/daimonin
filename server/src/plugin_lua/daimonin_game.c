@@ -420,9 +420,6 @@ static struct constant_decl preset_game_constants[] =
     {"STAT_NONE",         STAT_NONE},
 
     /*moneyblock_t modes (global.h) */
-    {"MONEYSTRING_ALL",     MONEY_MODE_ALL},     // deprecated -- use MONEY_MODE_*
-    {"MONEYSTRING_NOTHING", MONEY_MODE_NOTHING}, // deprecated -- use MONEY_MODE_*
-    {"MONEYSTRING_AMOUNT",  MONEY_MODE_AMOUNT},  // deprecated -- use MONEY_MODE_*
     {"MONEY_MODE_ALL",      MONEY_MODE_ALL},
     {"MONEY_MODE_NOTHING",  MONEY_MODE_NOTHING},
     {"MONEY_MODE_AMOUNT",   MONEY_MODE_AMOUNT},
