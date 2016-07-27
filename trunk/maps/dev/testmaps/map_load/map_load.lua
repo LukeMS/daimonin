@@ -15,7 +15,7 @@ local function topicDefault()
 end
 
 local function jmpTel()
-    ac:SetPosition(me.map:ReadyInheritedMap("/dev/testmaps/map_load/testmap_mt_tile_3"), 0, 0, game.MFLAG_FIXED_POS)
+    ac:SetPosition(me.map:ReadyInheritedMap("/dev/testmaps/map_load/testmap_mt_tile_3"), 0, 0, game.OVERLAY_FIXED)
     ac:Interface(game.GUI_NPC_MODE_NO)
 end
 
