@@ -56,8 +56,6 @@ static struct attribute_decl Map_attributes[] =
     {"width",              FIELDTYPE_UINT16, offsetof(map_t, width),              FIELDFLAG_READONLY, 0},
     {"enter_x",            FIELDTYPE_UINT16, offsetof(map_t, enter_x),            FIELDFLAG_READONLY, 0},
     {"enter_y",            FIELDTYPE_UINT16, offsetof(map_t, enter_y),            FIELDFLAG_READONLY, 0},
-    {"darkness",           FIELDTYPE_SINT8,  offsetof(map_t, ambient_darkness),   FIELDFLAG_READONLY, 0}, // deprecated
-    {"light_value",        FIELDTYPE_SINT32, offsetof(map_t, ambient_brightness), FIELDFLAG_READONLY, 0}, // deprecated
     {"ambient_darkness",   FIELDTYPE_SINT8,  offsetof(map_t, ambient_darkness),   FIELDFLAG_READONLY, 0},
     {"ambient_brightness", FIELDTYPE_SINT16, offsetof(map_t, ambient_brightness), FIELDFLAG_READONLY, 0},
     {"path",               FIELDTYPE_SHSTR,  offsetof(map_t, path),               FIELDFLAG_READONLY, 0},
