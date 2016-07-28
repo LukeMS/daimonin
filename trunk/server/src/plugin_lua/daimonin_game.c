@@ -219,7 +219,6 @@ static struct constant_decl preset_game_constants[] =
     {"TYPE_PEDESTAL",         PEDESTAL},
     {"TYPE_ALTAR",            ALTAR},
     {"TYPE_DOOR",             TYPE_DOOR},
-    {"TYPE_SPECIAL_KEY",      TYPE_KEY}, // deprecated -- 0.10.6 compatibility only
     {"TYPE_KEY",              TYPE_KEY},
     {"TYPE_MAP",              MAP},
     {"TYPE_MMISSILE",         MMISSILE},
@@ -242,7 +241,6 @@ static struct constant_decl preset_game_constants[] =
     {"TYPE_TELEPORTER",       TELEPORTER},
     {"TYPE_CREATOR",          CREATOR},
     {"TYPE_SKILL",            TYPE_SKILL},
-    {"TYPE_EXPERIENCE",       TYPE_SKILLGROUP}, // deprecated
     {"TYPE_SKILLGROUP",       TYPE_SKILLGROUP},
     {"TYPE_EARTHWALL",        EARTHWALL},
     {"TYPE_GOLEM",            GOLEM},
