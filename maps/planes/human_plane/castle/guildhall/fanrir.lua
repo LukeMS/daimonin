@@ -47,7 +47,7 @@ local function give_key()
     -- Check if player has the appropriate key.
     ---------
     for obj in obj_inventory(player) do
-        if obj.type == game.TYPE_SPECIAL_KEY and
+        if obj.type == game.TYPE_KEY and
            obj.slaying == "Find Fanrir's Lunch" then
             key = obj
 

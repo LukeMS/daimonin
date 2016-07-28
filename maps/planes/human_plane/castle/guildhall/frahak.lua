@@ -122,7 +122,7 @@ end
 local function topFindtraps()
     local sobj = pl:GetSkill(game.TYPE_SKILL, skill)
     local slevel = sobj.level + 1
-    local eobj = pl:GetSkill(game.TYPE_EXPERIENCE, game.SKILLGROUP_AGILITY)
+    local eobj = pl:GetSkill(game.TYPE_SKILLGROUP, game.SKILLGROUP_AGILITY)
     if  eobj ~= nil and eobj.level >= slevel then
         ib:SetHeader("st_005", me)
         ib:SetTitle("Find Traps Skill Cost")
@@ -141,7 +141,7 @@ end
 local function topTeachtraps()
     local sobj = pl:GetSkill(game.TYPE_SKILL, skill)
     local slevel = sobj.level + 1
-    local eobj = pl:GetSkill(game.TYPE_EXPERIENCE, game.SKILLGROUP_AGILITY)
+    local eobj = pl:GetSkill(game.TYPE_SKILLGROUP, game.SKILLGROUP_AGILITY)
     ib:SetHeader("st_005", me)
     ib:SetTitle("Teach Find	Traps")
     ib:SetMsg("\nYou have " .. pl:ShowCost(pl:GetMoney()) .. "\n ")
