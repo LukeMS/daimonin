@@ -493,7 +493,7 @@ elseif msg == 'createobject' then
 elseif msg == 'brightness' then
     b1 = me.map:GetBrightnessOnSquare(me.x, me.y, 0)
     b2 = me.map:GetBrightnessOnSquare(me.x, me.y, 1)
-    me:SayTo(activator, "Global map brightness is "..me.map.darkness.." or "..me.map.light_value.." depending on scale")
+    me:SayTo(activator, "Global map brightness is "..me.map.ambient_darkness.." or "..me.map.ambient_brightness.." depending on scale")
     me:SayTo(activator, "Brightness here is "..b1.." or "..b2.." depending on scale")
 
 -- Test beacons
