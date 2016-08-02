@@ -244,7 +244,7 @@ int check_banned(NewSocket *ns, const char *account, const char *name, char *ip)
                 if(ol->objlink.ban->name == name)
                 {
                     ban_inform_client(ns, ol, BANTYPE_CHAR, account, name, ip);
-                    return TRUE;
+                    return 1;
                 }
         }
     }
@@ -260,7 +260,7 @@ int check_banned(NewSocket *ns, const char *account, const char *name, char *ip)
                 if(ol->objlink.ban->account == account)
                 {
                     ban_inform_client(ns, ol, BANTYPE_ACCOUNT, account, name, ip);
-                    return TRUE;
+                    return 1;
                 }
         }
     }
@@ -275,12 +275,12 @@ int check_banned(NewSocket *ns, const char *account, const char *name, char *ip)
                 if(ip_compare(ol->objlink.ban->ip,ip))
                 {
                     ban_inform_client(ns, ol, BANTYPE_IP, account, name, ip);
-                    return TRUE;
+                    return 1;
                 }
         }
     }
 
-    return FALSE;
+    return 0;
 }
 
 static void ban_inform_client(NewSocket *ns, objectlink_t *ol, ENUM_BAN_TYPE ban_type, const char *account, const char *name, char *ip)

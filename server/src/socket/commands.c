@@ -518,7 +518,7 @@ void cs_cmd_generic(char *buf, int len, NewSocket *ns)
         case COMMANDS_RTN_VAL_OK:
             /* Command was a success; send message to appropriate channel, if defined */
             if (csp->ch_name)
-                if ((channel=findGlobalChannelFromName(NULL, csp->ch_name, TRUE)))
+                if ((channel=findGlobalChannelFromName(NULL, csp->ch_name, 1)))
                 {
                     sprintf(ch_buf, "%s%s -- /%s %s", STRING_OBJ_NAME(ob),
                             (pl->privacy) ? " (~Privacy mode~)" : "", buf, (cp) ? cp : "");
@@ -585,7 +585,7 @@ void cs_cmd_setup(char *buf, int len, NewSocket *ns)
     /* run through the cmds of setup
     * syntax is setup <cmdname1> <parameter> <cmdname2> <parameter> ...
     *
-    * we send the status of the cmd back, or a FALSE is the cmd is the server unknown
+    * we send the status of the cmd back, or a 0 is the cmd is the server unknown
     * The client then must sort this out
     */
 
@@ -1085,7 +1085,7 @@ void cs_cmd_move(char *buf, int len, NewSocket *ns)
     dir = GetChar_Buffer(buf);
     mode = GetChar_Buffer(buf);
 
-    move_player(pl->ob, dir, TRUE);
+    move_player(pl->ob, dir, 1);
 
     /*
     if (params)
@@ -1093,7 +1093,7 @@ void cs_cmd_move(char *buf, int len, NewSocket *ns)
     if (params[0] == 'r' && !CONTR(op)->run_on)
     CONTR(op)->run_on = 1;
     }
-    move_player(op, dir, TRUE);
+    move_player(op, dir, 1);
     int command_stay(object_t *op, char *params)
     {
     fire(op, 0);
@@ -1124,7 +1124,7 @@ void cs_cmd_examine(char *buf, int len, NewSocket *ns)
         /*LOG(llevDebug, "Player '%s' tried examine the unknown object (%d)\n",pl->ob->name, tag);*/
         return;
     }
-    examine(pl->ob, op, TRUE);
+    examine(pl->ob, op, 1);
 }
 
 /* Client wants to apply some object.  Lets do so. */
@@ -1327,7 +1327,7 @@ void cs_cmd_fire(char *params, int len, NewSocket *ns)
 
     /* first, call move_player() to determinate we CAN move.
      * have in mind we are perhaps confused - so dir can change! */
-    if ((dir = move_player(op, dir, FALSE)) == -1)
+    if ((dir = move_player(op, dir, 0)) == -1)
     {
         return;
     }

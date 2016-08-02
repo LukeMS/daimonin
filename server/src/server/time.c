@@ -1459,7 +1459,7 @@ int process_object(object_t *op)
         return 1;
 
     if (op->type == MONSTER)
-        if (move_monster(op, TRUE))
+        if (move_monster(op, 1))
             return 1;
 
     if (QUERY_FLAG(op, FLAG_CHANGING) && !op->state)

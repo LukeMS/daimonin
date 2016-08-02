@@ -49,7 +49,7 @@ int parse_ip(const char * ip, unsigned char ip_terms[], int mask_pos[])
     if (!ip)
     {
         LOG(llevDebug, "parse_ip: IP address is null.\n");
-        return FALSE;
+        return 0;
     }
 
     mask_pos[0] = -1; /* Term containing a mask */
@@ -64,7 +64,7 @@ int parse_ip(const char * ip, unsigned char ip_terms[], int mask_pos[])
         ip_terms[11] = 255;
         ip_terms[12] = 127;
         ip_terms[15] = 1;
-        return TRUE;
+        return 1;
     }
 
     strcpy(buffer,ip);
@@ -95,12 +95,12 @@ int parse_ip(const char * ip, unsigned char ip_terms[], int mask_pos[])
     if (strchr(buffer, ':'))
     {
         if (!inet_pton(AF_INET6, buffer, ip_terms))
-            return FALSE;
+            return 0;
     }
     else
     {
         if (!inet_pton(AF_INET, buffer, ip_terms))
-            return FALSE;
+            return 0;
 
         /* IPv4 only uses 4 terms ... */
         ip_terms[10] = 255;
@@ -188,11 +188,11 @@ int parse_ip(const char * ip, unsigned char ip_terms[], int mask_pos[])
 
     }
 
-    return TRUE;
+    return 1;
 }
 
 /* Compare IP address strings
- * returns TRUE if a match is found
+ * returns 1 if a match is found
  * Updated by Torchwood, Aug 2012 */
 int ip_compare(const char * ip1, const char * ip2)
 {
@@ -203,13 +203,13 @@ int ip_compare(const char * ip1, const char * ip2)
     LOG(llevDebug, "ip_compare: Comparing %s to %s.\n", ip1, ip2);
 
     if (!ip1 || !ip2)
-        return FALSE;
+        return 0;
 
     /* Check we have valid IP address strings, and find the position of the FIRST wildcard */
     if (!parse_ip(ip1, ip1_terms, mask_pos1))
-        return FALSE;
+        return 0;
     if (!parse_ip(ip2, ip2_terms, mask_pos2))
-        return FALSE;
+        return 0;
 
 #ifdef DEBUG_IPCOMPARE
     for (i=0; i<16; i++)
@@ -284,7 +284,7 @@ int ip_compare(const char * ip1, const char * ip2)
 
         /* Are terms different, and is there no mask? */
         if (ip1_terms[i] != ip2_terms[i] && i != mask_pos)
-            return FALSE;
+            return 0;
 
         /* If we do have a mask, then we only compare this term, and not anything beyond */
         else if (i == mask_pos)
@@ -311,7 +311,7 @@ int ip_compare(const char * ip1, const char * ip2)
                         !(ip2_terms[i] / 100) ||
                         ip1_terms[i] % 10 != ip2_terms[i] % 10 ||
                         (ip1_terms[i] / 10) % 10 != (ip2_terms[i] / 10) % 10)
-                        return FALSE;
+                        return 0;
                     break;
 
                 case MASK_TENS:
@@ -323,7 +323,7 @@ int ip_compare(const char * ip1, const char * ip2)
                         !(ip2_terms[i] / 10) ||
                         ip1_terms[i] / 100 != ip2_terms[i] / 100 ||
                         ip1_terms[i] % 10 != ip2_terms[i] % 10)
-                        return FALSE;
+                        return 0;
                     break;
 
                 case MASK_ONES:
@@ -333,19 +333,19 @@ int ip_compare(const char * ip1, const char * ip2)
                     /* Tests: 100s terms match and tens terms match */
                     if (ip1_terms[i] / 100 != ip2_terms[i] / 100 ||
                         ip1_terms[i] / 10 != ip2_terms[i] / 10)
-                        return FALSE;
+                        return 0;
                     break;
             }
 
             /* We don't compare any more terms past the first mask,
              * so 123.*.123.123 will match 123.9.9.9
              */
-            return TRUE;
+            return 1;
         }
     }
 
     /* No masks found, and all individual IP terms matched */
-    return TRUE;
+    return 1;
 }
 
 objectlink_t *find_players_on_ip(char *ipmask)

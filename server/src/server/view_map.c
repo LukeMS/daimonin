@@ -86,7 +86,7 @@ static inline void copy_lastmap(NewSocket *ns, int dx, int dy)
 void draw_client_map(player_t *pl)
 {
     object_t *who  = pl->ob;
-    int       redraw_below = FALSE;
+    int       redraw_below = 0;
 
     /* IF player is just joining the game, he isn't on a map,
     * If so, don't try to send them a map.  All will
@@ -106,13 +106,13 @@ void draw_client_map(player_t *pl)
             pl->map_update_cmd = MAP_UPDATE_CMD_NEW;
             memset(&(pl->socket.lastmap), 0, sizeof(view_map_t));
             pl->last_update = who->map;
-            redraw_below=TRUE;
+            redraw_below=1;
         }
         else /* because tile_map can never != 0 if pl->last_update is NULL, tile_map always valid here */
         {
             pl->map_update_cmd = MAP_UPDATE_CMD_CONNECTED;
             pl->map_update_tile = tile_map;
-            redraw_below=TRUE;
+            redraw_below=1;
             /* be here means, we have moved to a known, connected map related to our last position!
              * lets calculate the offsets to our last position,
              * which is: pl->last_update - pos: map_tile_x,map_tile_y
@@ -169,7 +169,7 @@ void draw_client_map(player_t *pl)
             if(pl->map_tile_x != who->x || pl->map_tile_y != who->y)
             {
                 copy_lastmap(&pl->socket, who->x-pl->map_tile_x, who->y-pl->map_tile_y);
-                redraw_below=TRUE;
+                redraw_below=1;
             }
     }
 

@@ -3851,7 +3851,7 @@ static int GameObject_AddMoneyEx(lua_State *L)
 {
     lua_object   *self;
     char          buf[MEDIUM_BUF];
-    int           c, s, g, m, flag=FALSE;
+    int           c, s, g, m, flag=0;
     moneyblock_t  money;
     object_t       *loot;
 
@@ -3869,17 +3869,17 @@ static int GameObject_AddMoneyEx(lua_State *L)
     if(m)
     {
         sprintf(strchr(buf, '\0'), " %d %s", m, "mithril");
-        flag = TRUE;
+        flag = 1;
     }
     if(g)
     {
         sprintf(strchr(buf, '\0'), "%s %d %s", flag?" and ":"", g,"gold");
-        flag = TRUE;
+        flag = 1;
     }
     if(s)
     {
         sprintf(strchr(buf, '\0'), "%s %d %s", flag?" and ":"", s, "silver");
-        flag = TRUE;
+        flag = 1;
     }
     if(c)
         sprintf(strchr(buf, '\0'), "%s %d %s", flag?" and ":"", c, "copper");

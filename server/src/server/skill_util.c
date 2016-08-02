@@ -896,16 +896,16 @@ void set_action_time(object_t *op, float t)
 int check_skill_action_time(object_t *op, object_t *skill)
 {
     if(!skill)
-        return FALSE;
+        return 0;
 
     if (CONTR(op)->ob->weapon_speed_left > 0.0f)
     {
         /* update the value for the client */
         CONTR(op)->action_timer = (int) (CONTR(op)->ob->weapon_speed_left / pticks_second / WEAPON_SWING_TIME * 1000.0f);
-        return FALSE;
+        return 0;
     }
 
-    return TRUE;
+    return 1;
 }
 
 /* TODO: The functions below are unused (and unlikely to ever be used?) so

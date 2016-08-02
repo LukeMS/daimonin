@@ -152,7 +152,7 @@ char * describe_item(const object_t *const op)
 {
     object_t     *tmp,
                *next;
-    int         attr, val, more_info = 0, id_true = FALSE;
+    int         attr, val, more_info = 0, id_true = 0;
     char        buf[MEDIUM_BUF];
     static char retbuf[LARGE_BUF*3];
 
@@ -256,7 +256,7 @@ char * describe_item(const object_t *const op)
     else /* here we handle items... */
     {
         if (QUERY_FLAG(op, FLAG_IDENTIFIED) || QUERY_FLAG(op, FLAG_BEEN_APPLIED) || !need_identify(op))
-            id_true = TRUE; /* we only need calculate this one time */
+            id_true = 1; /* we only need calculate this one time */
 
         if (op->item_level)
         {
@@ -729,26 +729,26 @@ void set_traped_flag(object_t *op)
 }
 
 /* We don't want allow to put a magical container inside another
- * magical container. This function returns FALSE when op can be
- * put in env of TRUE when both are magical.
+ * magical container. This function returns 0 when op can be
+ * put in env of 1 when both are magical.
  */
 int check_magical_container(const object_t *op, const object_t *env)
 {
     /* is op a magical container? */
     if(!op || op->type != CONTAINER || op->weapon_speed == 1.0f)
     {
-        return FALSE;
+        return 0;
     }
 
     for(;env;env = env->env)
     {
         if (env->type == CONTAINER && env->weapon_speed != 1.0f)
         {
-            return TRUE;
+            return 1;
         }
     }
 
-    return FALSE;
+    return 0;
 }
 
 /* pick_up() is called when who attempts to pick up nrof * what. If where is

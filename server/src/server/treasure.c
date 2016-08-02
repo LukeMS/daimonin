@@ -635,7 +635,7 @@ static inline void parse_tlist_parm(tlist_tweak *tweak, char *parm)
                 tweak->c_arch.material = atoi(parm+1);
                 break;
             case 'I': /* (i)dentified */
-                tweak->identified = TRUE;
+                tweak->identified = 1;
                 break;
             case 'c': /* (c)reated: material quality*/
                 tweak->c_arch.material_quality = atoi(parm+1);
@@ -650,7 +650,7 @@ static inline void parse_tlist_parm(tlist_tweak *tweak, char *parm)
                 tweak->c_arch.quality_range = atoi(parm+1);
                 break;
             case 'B': /* (B)reak list generation if this tlist generates something */
-                tweak->break_list = TRUE;
+                tweak->break_list = 1;
                 break;
             default:
                 LOG(llevBug,"\nBUG ::TLIST PARSE: invalid tlist paramter: %s\n", STRING_SAFE(parm));
@@ -738,8 +738,8 @@ objectlink_t * link_treasurelists(char *liststring, uint32 flags)
                         tweak->artifact_chance = ART_CHANCE_UNSET;
                         tweak->style = T_STYLE_UNSET;
                         tweak->difficulty = 0;
-                        tweak->identified = FALSE;
-                        tweak->break_list = FALSE;
+                        tweak->identified = 0;
+                        tweak->break_list = 0;
                         tweak->magic = T_MAGIC_UNSET;
                         tweak->magic_chance = T_MAGIC_CHANCE_UNSET;
                         tweak->drop_chance = 0;
@@ -760,7 +760,7 @@ objectlink_t * link_treasurelists(char *liststring, uint32 flags)
 }
 
 /* unlink a treasure list.
- * if flag is set to TRUE, ignore (delete) the OBJLNK_FLAG_STATIC flag
+ * if flag is set to 1, ignore (delete) the OBJLNK_FLAG_STATIC flag
  */
 void unlink_treasurelists(objectlink_t *list, int flag)
 {
@@ -937,7 +937,7 @@ void create_treasure_list(struct objectlink_t *t, object_t *op, int flag, int di
 int create_treasure(treasurelist *t, object_t *op, int flag, int difficulty, int t_style, int a_chance,
         int magic, int magic_chance, int tries, struct _change_arch *arch_change)
 {
-    int ret = FALSE;
+    int ret = 0;
 
     if (tries++ > 100)
     {
@@ -974,7 +974,7 @@ int create_treasure(treasurelist *t, object_t *op, int flag, int difficulty, int
 int create_all_treasures(treasure *t, object_t *op, int flag, int difficulty, int t_style, int a_chance,
                           int magic, int magic_chance, int tries, struct _change_arch *change_arch)
 {
-    int     ret = FALSE;
+    int     ret = 0;
     object_t *tmp;
 
     /*  LOG(llevNoLog,"-CAT-: %s (%d)\n", STRING_SAFE(t->name),change_arch?t->change_arch.material_quality:9999); */
@@ -1002,7 +1002,7 @@ int create_all_treasures(treasure *t, object_t *op, int flag, int difficulty, in
             if (QUERY_FLAG(&t->item->clone, FLAG_SYS_OBJECT) ||
                 !(flag & GT_INVISIBLE))
             {
-                ret = TRUE; /* we have generated an item! */
+                ret = 1; /* we have generated an item! */
                 if (t->item->clone.type != TYPE_WEALTH)
                 {
                     /*LOG(llevNoLog,"*CAT*: %s (%d)\n", t->item->clone.name,change_arch?t->change_arch.material_quality:9999); */
@@ -1076,7 +1076,7 @@ int create_all_treasures(treasure *t, object_t *op, int flag, int difficulty, in
 int create_one_treasure(treasurelist *tl, object_t *op, int flag, int difficulty, int t_style, int a_chance,
                          int magic, int magic_chance,int tries,struct _change_arch *change_arch)
 {
-    int         ret = FALSE, value, diff_tries = 0;
+    int         ret = 0, value, diff_tries = 0;
     treasure   *t;
     object_t     *tmp;
 
@@ -1163,7 +1163,7 @@ int create_one_treasure(treasurelist *tl, object_t *op, int flag, int difficulty
         (QUERY_FLAG(&t->item->clone, FLAG_SYS_OBJECT) ||
          flag != GT_INVISIBLE))
     {
-        ret = TRUE;
+        ret = 1;
         if (t->item->clone.type != TYPE_WEALTH)
         {
             /*LOG(llevNoLog,"*COT*: %s (%d)\n", t->item->clone.name,change_arch?t->change_arch.material_quality:9999); */

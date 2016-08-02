@@ -154,7 +154,7 @@ static int pre_process_command(NewSocket *nsock) // use this for debugging
             }
         }
 
-        return TRUE;
+        return 1;
     }
     else if(cmd <= CLIENT_CMD_ADDME)
     {
@@ -172,7 +172,7 @@ static int pre_process_command(NewSocket *nsock) // use this for debugging
             else if(cmd == CLIENT_CMD_ADDME)
                 cs_cmd_addme(pre_copy_cmd_data(buf), buf->toread, nsock);
         }
-        return TRUE;
+        return 1;
     }
     else if(cmd <= CLIENT_CMD_MOVE) /* move changes will invoke command stack manipulations */
     {
@@ -182,7 +182,7 @@ static int pre_process_command(NewSocket *nsock) // use this for debugging
             if(nsock->status >= Ns_Login && nsock->status < Ns_Playing)
             {
                 cs_cmd_face(pre_copy_cmd_data(buf), buf->toread, nsock);
-                return TRUE;
+                return 1;
             }
         }
 
@@ -190,7 +190,7 @@ static int pre_process_command(NewSocket *nsock) // use this for debugging
 
         /*
         //      command_move(pre_copy_cmd_data(buf), buf->toread, nsock);
-        //    return TRUE;
+        //    return 1;
         if(flag)
         {
         // TEST: we test here our binary commands.
@@ -245,7 +245,7 @@ static int pre_process_command(NewSocket *nsock) // use this for debugging
         cmdptr->buf[0], STRING_SAFE(ns->ip_host));
         return_poolchunk(cmdptr, cmdptr->pool);
         ns->status = Ns_Dead;
-        return TRUE;
+        return 1;
         }
 
         return_poolchunk(cmdptr, cmdptr->pool);
@@ -254,7 +254,7 @@ static int pre_process_command(NewSocket *nsock) // use this for debugging
         */
     }
 
-    return FALSE; /* nothing to do, ignore us */
+    return 0; /* nothing to do, ignore us */
 }
 
 //static inline int socket_prepare_commands(NewSocket *ns)
@@ -270,7 +270,7 @@ static int socket_prepare_commands(NewSocket *ns) // use this for debugging
         if(ns->status >= Ns_Zombie)
         {
             rb->len = rb->pos = 0;
-            return TRUE;
+            return 1;
         }
 
         if(rb->toread) /* we have already a cmd in the readbuf and wait for the data tail? */
@@ -283,7 +283,7 @@ static int socket_prepare_commands(NewSocket *ns) // use this for debugging
                 LOG(llevDebug,"BOGUS CLIENT DATA: Invalid command from socket %d: %d\n", ns->fd, rb->cmd);
                 rb->len = rb->pos = 0;
                 ns->status = Ns_Dead;
-                return TRUE;
+                return 1;
             }
 
 #ifdef DEBUG_PROCESS_QUEUE
@@ -305,7 +305,7 @@ static int socket_prepare_commands(NewSocket *ns) // use this for debugging
                 {
                     /* 2 bytes after the command tells us about the data length - check they are there */
                     if(rb->len < 3) /* cmd + 2 bytes length */
-                        return FALSE; /* we have to wait */
+                        return 0; /* we have to wait */
 
                     /* our 2 length bytes can appear in 3 states in our round robin buffer */
                     if(rb->pos+1 >= MAXSOCKBUF_IN) /* both bytes are beyond the border */
@@ -329,7 +329,7 @@ static int socket_prepare_commands(NewSocket *ns) // use this for debugging
                     LOG(llevDebug,"BOGUS CLIENT DATA: Invalid command (%d)length from socket %d: %d\n", rb->cmd, ns->fd, toread);
                     rb->len = rb->pos = 0;
                     ns->status = Ns_Dead;
-                    return TRUE;
+                    return 1;
                 }
 
                 /* Ok... now we have a valid command with a valid length
@@ -355,7 +355,7 @@ static int socket_prepare_commands(NewSocket *ns) // use this for debugging
 
         /* HERE and ONLY HERE we check the right length */
         if (toread > rb->len) /* for single command toread is 0 and always valid */
-            return FALSE; /* we have to wait */
+            return 0; /* we have to wait */
 
         /* we have a full command!
          * Now we process the command right out of the buffer in real time.
@@ -377,7 +377,7 @@ static int socket_prepare_commands(NewSocket *ns) // use this for debugging
                 ns->inactive_when = ROUND_TAG + INACTIVE_SOCKET * pticks_second; // reset idle counter
                 socket_info.nconns--;
                 ns->status = Ns_Avail;
-                return TRUE; /* leave this instance, the copied socket in the player will go */
+                return 1; /* leave this instance, the copied socket in the player will go */
             }
             rb->toread = 0; /* sanity setting */
             continue; /* ok, command is processed... try to fetch the next one */
@@ -388,7 +388,7 @@ static int socket_prepare_commands(NewSocket *ns) // use this for debugging
             LOG(llevDebug,"BOGUS CLIENT DATA: Invalid command (%d)for NOT Ns_Playing state (%d - %d) from socket %d: %d\n", rb->cmd, Ns_Playing, ns->status, ns->fd, toread);
             rb->len = rb->pos = 0;
             ns->status = Ns_Dead;
-            return TRUE;
+            return 1;
         }
 
         rb->toread = 0; /* turn off the cmd cache marker - we must do it after pre_process_command()! */
@@ -447,7 +447,7 @@ static int socket_prepare_commands(NewSocket *ns) // use this for debugging
         command_buffer_enqueue(ns, cmdptr);
     };
 
-    return FALSE;
+    return 0;
 }
 
 
@@ -470,7 +470,7 @@ void remove_ns_dead_player(player_t *pl)
         /* remove player from party */
         if ((pl->group_status & GROUP_STATUS_GROUP))
         {
-            party_remove_member(pl, TRUE);
+            party_remove_member(pl, 1);
         }
 
         /* TODO: Use channels. */
@@ -523,7 +523,7 @@ void remove_ns_dead_player(player_t *pl)
 /* lets check 2 things:
  * a.) mass connection from one IP
  * b.) or is the ip (range) banned
- * return TRUE means banned, FALSE is ok.
+ * return 1 means banned, 0 is ok.
  */
 static int check_ip_ban(NewSocket *sock, char *ip)
 {
@@ -546,7 +546,7 @@ static int check_ip_ban(NewSocket *sock, char *ip)
         {
             LOG(llevDebug, "login_allow-failed: IP don't match login_ip:%s\n", settings.login_ip);
             sock->status = Ns_Dead;
-            return FALSE;
+            return 0;
         }
         else
             LOG(llevDebug, "login_allow-OK: IP match login_ip:%s\n", settings.login_ip);
@@ -571,7 +571,7 @@ static int check_ip_ban(NewSocket *sock, char *ip)
 
     /* we first check our ban list. Perhaps this IP is on it */
     if(check_banned(sock, NULL, NULL, ip))
-        return FALSE; /* *IF* banned, we have turned the socket to a Ns_Zombie... */
+        return 0; /* *IF* banned, we have turned the socket to a Ns_Zombie... */
 
     /* now check the players we have */
     count = 0;
@@ -618,7 +618,7 @@ static int check_ip_ban(NewSocket *sock, char *ip)
         }
     }
 
-    return FALSE;
+    return 0;
 }
 
 /* This checks the sockets for input and exceptions, does the right thing.  A

@@ -58,11 +58,11 @@ int mob_can_see_obj(object_t *op, object_t *obj, struct mob_known_obj *known_obj
 
     /* Quick answer if possible */
     if (known_obj && known_obj->last_seen == ROUND_TAG)
-        return TRUE;
+        return 1;
 
     /* Pets can always see their owners */
     if (get_owner(op) == obj)
-        return TRUE;
+        return 1;
 
     /* Try using cache */
     if (cached_op_tag == op->count && cached_obj_tag == obj->count &&
@@ -73,16 +73,16 @@ int mob_can_see_obj(object_t *op, object_t *obj, struct mob_known_obj *known_obj
     if (IS_GMASTER_STEALTH(obj) ||
         IS_GMASTER_INVIS(obj))
     {
-        return FALSE;
+        return 0;
     }
 
     /* Invisibility */
     if (IS_NORMAL_INVIS_TO(obj, op))
-        return FALSE;
+        return 0;
 
     /* Legal position? */
     if(! obj->map)
-        return FALSE;
+        return 0;
 
     aggro_range = op->stats.Wis; /* wis is basic sensing range */
 
@@ -107,14 +107,14 @@ int mob_can_see_obj(object_t *op, object_t *obj, struct mob_known_obj *known_obj
         rv_p = &rv;
 
     if (rv_p == NULL)
-        cached_result = FALSE;
+        cached_result = 0;
     else if ((int) rv_p->distance > (QUERY_FLAG(obj, FLAG_STEALTH) ? stealth_range : aggro_range))
-        cached_result = FALSE;
+        cached_result = 0;
     else
     {
         /* LOS test is _only_ done when we first register a new object,
          * otherwise it is too easy to escape monsters by hiding. */
-        cached_result = TRUE;
+        cached_result = 1;
     }
 
     cached_op_tag = op->count;
@@ -2361,14 +2361,14 @@ int ai_melee_attack_enemy(object_t *op, struct mob_behaviour_param *params)
      || QUERY_FLAG(op, FLAG_UNAGGRESSIVE)
      || op->weapon_speed_left > 0
      || op->map == NULL)
-        return FALSE;
+        return 0;
 
     /* TODO: choose another enemy if this fails */
     if (!(rv = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE)))
-        return FALSE;
+        return 0;
     if (!RV_TEST_MELEE(*rv) ||
         !mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
-        return FALSE;
+        return 0;
 
     //    LOG(llevDebug,"ai_melee_attack_enemy(): '%s' -> '%s'\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(op->enemy));
 
@@ -2382,7 +2382,7 @@ int ai_melee_attack_enemy(object_t *op, struct mob_behaviour_param *params)
     if (QUERY_FLAG(op, FLAG_RUN_AWAY))
         rv->part->stats.wc += 10;
 
-    return TRUE;
+    return 1;
 }
 
 int ai_bow_attack_enemy(object_t *op, struct mob_behaviour_param *params)
@@ -2554,12 +2554,12 @@ static int monster_cast_spell(object_t *op, object_t *part, int dir, object_t *t
     {
         LOG(llevDebug, "monster_cast_spell(): Can't find spell #%d for mob %s (%s) (%d,%d)\n", sp_type,
             STRING_OBJ_NAME(op), STRING_MAP_NAME(op->map), op->x, op->y);
-        return FALSE;
+        return 0;
     }
 
     sp_cost = SP_level_spellpoint_cost(op, op, sp_type);
     if (op->stats.sp < sp_cost)
-        return FALSE;
+        return 0;
 
     ability = (spell_item->type == ABILITY && QUERY_FLAG(spell_item, FLAG_IS_MAGICAL));
 
@@ -2604,7 +2604,7 @@ static int monster_cast_spell(object_t *op, object_t *part, int dir, object_t *t
 
     op->speed_left-=2;/* hack: see bow behaviour! */
 
-    return TRUE;
+    return 1;
 }
 
 int ai_spell_attack_enemy(object_t *op, struct mob_behaviour_param *params)
@@ -2620,16 +2620,16 @@ int ai_spell_attack_enemy(object_t *op, struct mob_behaviour_param *params)
      // || op->weapon_speed_left > 0
      || op->last_grace > 0
      || op->map == NULL)
-        return FALSE;
+        return 0;
 
     /* TODO: choose another target if this or next test fails */
     if (!(rv = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE)))
-        return FALSE;
+        return 0;
     /* TODO: also check distance and LOS */
     /* TODO: should really check type of spell (area or missile) */
     if (!RV_TEST_MISSILE_APPROX(*rv) ||
         !mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
-        return FALSE;
+        return 0;
 
     //    LOG(llevDebug,"ai_spell_attack_enemy(): '%s' -> '%s'\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(op->enemy));
 
@@ -2677,7 +2677,7 @@ int ai_heal_friend(object_t *op, struct mob_behaviour_param *params)
      || op->weapon_speed_left > 0
      || op->last_grace > 0
      || op->map == NULL)
-        return FALSE;
+        return 0;
 
     /* TODO: shouldn't do this every tick. It think setting up a
      * bitmap of known spells at mob creation should be enough
@@ -2708,7 +2708,7 @@ int ai_heal_friend(object_t *op, struct mob_behaviour_param *params)
     }
 
     if(heal == NULL &&  cure_poison == NULL && cure_disease == NULL)
-        return FALSE;
+        return 0;
 
     /* TODO: actually support curing. For that I need an efficient method
      * to see if a mob is poisoned or diseased */
@@ -2742,7 +2742,7 @@ int ai_heal_friend(object_t *op, struct mob_behaviour_param *params)
     if(spell && target)
         return monster_cast_spell(op, op, 0, target, spell, spell->stats.sp);
     else
-        return FALSE;
+        return 0;
 }
 
 

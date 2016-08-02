@@ -915,13 +915,13 @@ void material_attack_damage(object_t *op, int num, int chance, int base)
 {
     object_t *item;
     player_t *pl;
-    int r, i, flag_fix = FALSE;
+    int r, i, flag_fix = 0;
 
     if(op->type != PLAYER || !(pl = CONTR(op)))
         return;
 
     /*ndi(NDI_UNIQUE, 0, op, "num: %d chance:%d base:%d", num,chance,base);*/
-    flag_fix = FALSE;
+    flag_fix = 0;
     while(num--)
     {
 
@@ -1019,7 +1019,7 @@ void material_attack_damage(object_t *op, int num, int chance, int base)
 #endif
         }
 
-        flag_fix = TRUE;
+        flag_fix = 1;
     }
 
     if(flag_fix)

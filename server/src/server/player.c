@@ -113,7 +113,7 @@ void free_player(player_t *pl)
 
         /* remove player from party */
         if(pl->group_status & GROUP_STATUS_GROUP)
-            party_remove_member(pl, TRUE);
+            party_remove_member(pl, 1);
 
         activelist_remove(pl->ob);
         if (!QUERY_FLAG(pl->ob, FLAG_REMOVED))
@@ -310,8 +310,8 @@ void flee_player(object_t *op)
  * invoked for example by confusion.
  * In the past, firing was included in this function, i removed it now from
  * it and added some senseful return values.
- * if flag is TRUE, the function will do a step/walk and call move_ob(),
- * if FALSE (used from fire/range code), the function will return with status.
+ * if flag is 1, the function will do a step/walk and call move_ob(),
+ * if 0 (used from fire/range code), the function will return with status.
  * Return values:
  * -1 = doing the move failed (rotted, paralyzed...)
  * 0-x = move will go in that direction

@@ -746,12 +746,12 @@ static int Map_ActivateConnection(lua_State *L)
         objectlink_t *oblp;
         int       flag;
 
-        for (oblp = WHERE->buttons, flag = FALSE; oblp;
+        for (oblp = WHERE->buttons, flag = 0; oblp;
              oblp = oblp->next)
         {
             if (oblp->value == connection)
             {
-                flag = TRUE;
+                flag = 1;
                 break;
             }
         }

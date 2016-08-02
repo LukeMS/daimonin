@@ -421,7 +421,7 @@ static int CreateObject(object_t *op, char *params, CreateMode_t mode)
     int        nrof = 1,
                magic = 0, set_magic = 0,
                i,
-               allow_nrof_set = FALSE;
+               allow_nrof_set = 0;
     char      *cp = params,
                str[MEDIUM_BUF],
               *start,
@@ -504,7 +504,7 @@ static int CreateObject(object_t *op, char *params, CreateMode_t mode)
 
     // Does the arch definition allow direct set of nrof?
     if (at->clone.nrof)
-       allow_nrof_set = TRUE;
+       allow_nrof_set = 1;
 
     /* Now, start to create the object ...
      * If the base arch definition allows direct set of nrof, we only run
@@ -657,10 +657,10 @@ static int CheckAttributeValue(char *var, char *val, CreateMode_t mode)
     int i;
 
     if (!strcmp(var, "name"))
-        return TRUE; // Everyone can do this
+        return 1; // Everyone can do this
 
     if (!strcmp(var, "title"))
-        return TRUE; // Everyone can do this
+        return 1; // Everyone can do this
 
     if (!strcmp(var, "level"))
     {
@@ -669,8 +669,8 @@ static int CheckAttributeValue(char *var, char *val, CreateMode_t mode)
             i = MAX(1, MIN(i, 127));  // Apply some sensible limits to i
             sprintf(val, "%d", i);    // and put i back into val, incase i was just changed
 
-            if (mode == CREATE) return TRUE;
-            if (mode == SPAWN) return TRUE;
+            if (mode == CREATE) return 1;
+            if (mode == SPAWN) return 1;
         }
     }
 
@@ -681,8 +681,8 @@ static int CheckAttributeValue(char *var, char *val, CreateMode_t mode)
             i = MAX(1, MIN(i, 200));
             sprintf(val, "%d", i);
 
-            if (mode == CREATE) return TRUE;
-            if (mode == SPAWN) return TRUE;
+            if (mode == CREATE) return 1;
+            if (mode == SPAWN) return 1;
         }
     }
 
@@ -695,16 +695,16 @@ static int CheckAttributeValue(char *var, char *val, CreateMode_t mode)
             i = MAX(-100, MIN(i, 100));
             sprintf(val, "%d", i);
 
-            if (mode == CREATE) return TRUE;
-            if (mode == SPAWN) return TRUE;
+            if (mode == CREATE) return 1;
+            if (mode == SPAWN) return 1;
         }
     }
 
     // Anything else can be set by Create command
     // Note:  We don't do this check first, as we wanted to do the checks on valid level, etc.
-    if (mode == CREATE) return TRUE;
+    if (mode == CREATE) return 1;
 
-    return FALSE;
+    return 0;
 }
 
 /* List all the available object names; helps player when using /create
@@ -1671,7 +1671,7 @@ static int BanAdd(object_t *op, ENUM_BAN_TYPE ban_type, char *str, int s)
     {
         unsigned char  ip_terms[16];
         int            mask_pos[2];
-        int            allowed = TRUE;
+        int            allowed = 1;
         objectlink_t    *ip_list,
                       *ol;
         player_t        *pl = NULL;
@@ -1690,15 +1690,15 @@ static int BanAdd(object_t *op, ENUM_BAN_TYPE ban_type, char *str, int s)
             if (CONTR(op)->gmaster_mode & GMASTER_MODE_SA)
             {
                 /* This only works for IPv4 !! */
-                if (mask_pos[0] < 14) allowed = FALSE;
+                if (mask_pos[0] < 14) allowed = 0;
             }
             else if (CONTR(op)->gmaster_mode & GMASTER_MODE_GM)
             {
-                if (mask_pos[0] < 15) allowed = FALSE;
+                if (mask_pos[0] < 15) allowed = 0;
             }
             else
             {
-                allowed = FALSE;
+                allowed = 0;
             }
 
             if (!allowed)
@@ -1742,7 +1742,7 @@ static int BanAddToBanList(object_t *op, ENUM_BAN_TYPE ban_type, char *str, int 
     int  tmp;
 
     // First, remove the existing entry, if it exists (might not!)
-    tmp = BanRemoveFromBanList(op, ban_type, str, TRUE);
+    tmp = BanRemoveFromBanList(op, ban_type, str, 1);
     if ((tmp == COMMANDS_RTN_VAL_SYNTAX) || (tmp == COMMANDS_RTN_VAL_ERROR))
         return tmp;
 
@@ -1785,7 +1785,7 @@ static int BanRemove(object_t *op, ENUM_BAN_TYPE ban_type, char *str)
 {
     int tmp;
 
-    tmp = BanRemoveFromBanList(op, ban_type, str, FALSE);
+    tmp = BanRemoveFromBanList(op, ban_type, str, 0);
 
     if (tmp == COMMANDS_RTN_VAL_OK)
     {

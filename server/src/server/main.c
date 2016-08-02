@@ -404,7 +404,7 @@ static void process_map_events(map_t *map)
         else if (op->weapon_speed_left <= 0 &&
             op->type == MONSTER)
         {
-            move_monster(op, FALSE); /* false = only weapon action */
+            move_monster(op, 0); /* false = only weapon action */
         }
 
 
@@ -588,7 +588,7 @@ void clean_tmp_files(int flag)
 void cleanup_without_exit(void)
 {
     LOG(llevDebug, "Cleanup called.  freeing data.\n");
-    clean_tmp_files(TRUE);
+    clean_tmp_files(1);
     write_book_archive();
     write_tadclock();   /* lets just write the clock here */
     save_ban_file();
@@ -993,7 +993,7 @@ static void traverse_player_stats(char* start_dir)
                     FREE_AND_COPY_HASH(pl->ob->name, entry->d_name);
                     entry->d_name[fptr-entry->d_name] = '.';
                     chdir(base_cwd);
-                    check_login(pl->ob, FALSE);
+                    check_login(pl->ob, 0);
                     /* player is now loaded, do something with it - after it, release player & object_t */
 
                     /* ........... */

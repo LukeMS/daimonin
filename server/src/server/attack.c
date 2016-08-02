@@ -1609,7 +1609,7 @@ void slow_player(object_t *op, object_t *hitter, int dam)
 {
     static archetype_t  *at  = NULL;
     object_t     *tmp;
-    int        max_slow = FALSE;
+    int        max_slow = 0;
 
     if (!at)
     {
@@ -1633,7 +1633,7 @@ void slow_player(object_t *op, object_t *hitter, int dam)
         tmp->last_heal += dam; /* increase the "slowness" factor by dam% */
         if(tmp->last_heal>70)
         {
-            max_slow = TRUE;
+            max_slow = 1;
             tmp->last_heal = 70;
         }
     }
@@ -1664,7 +1664,7 @@ void fear_player(object_t *op, object_t *hitter, int dam)
 {
     static archetype_t  *at  = NULL;
     object_t     *tmp;
-    int        max_slow = FALSE;
+    int        max_slow = 0;
 
     if (!at)
     {
@@ -1710,7 +1710,7 @@ void snare_player(object_t *op, object_t *hitter, int dam)
 {
     static archetype_t  *at  = NULL;
     object_t     *tmp;
-    int        max_slow = FALSE;
+    int        max_slow = 0;
 
     if (!at)
     {
@@ -1734,7 +1734,7 @@ void snare_player(object_t *op, object_t *hitter, int dam)
         if(tmp->last_heal+dam>100)
         {
             if(tmp->last_heal<100)
-                max_slow = TRUE;
+                max_slow = 1;
             tmp->last_heal = 100;
         }
         else

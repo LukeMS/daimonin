@@ -612,14 +612,14 @@ static int PushLiving(object_t *who, sint8 dir, object_t *pusher)
 int missile_reflection_adjust(object_t *op, int flag)
 {
     if (!op->stats.maxgrace) /* no more direction/reflection! */
-        return FALSE;
+        return 0;
 
     op->stats.maxgrace--;
     /* restore the "how long we can fly" counter */
     if (!flag)
         op->last_sp = op->stats.grace;
 
-    return TRUE; /* go on with reflection/direction */
+    return 1; /* go on with reflection/direction */
 }
 
 /* All this really is is a glorified remove_object that also updates
@@ -813,7 +813,7 @@ sint8 enter_map_by_name(object_t *who, shstr_t *path_sh, shstr_t *orig_path_sh, 
         if (orig_path_sh &&
             (mflags & MAP_STATUS_INSTANCE))
         {
-            if (check_path(path_sh, FALSE) == -1) /* file don't exist */
+            if (check_path(path_sh, 0) == -1) /* file don't exist */
             {
                 /* for non player just return with NULL...
                  * for player override with his bind point now */
@@ -913,7 +913,7 @@ sint8 enter_map_by_name(object_t *who, shstr_t *path_sh, shstr_t *orig_path_sh, 
 * root (caller) map. If the exit don't change explicit the map type (normal, unique, instance...)
 * the type is the same as the map where the exit object is part off (or always "normal" when
 * there is no root map.
-* RETURN: TRUE: we have loaded and entered a map. FALSE: we failed to enter
+* RETURN: 1: we have loaded and entered a map. 0: we failed to enter
 * MT-2006 */
 sint8 enter_map_by_exit(object_t *who, object_t *exit_ob)
 {
