@@ -412,9 +412,9 @@ sint32 add_exp(object_t *op, int exp, int skill_nr, int cap)
 
     /* AdjustExp has adjust the skill and all skillgroup and player exp */
     /* now lets check for level up in all categories */
-    AdjustLevel(op, skill, TRUE);
-    AdjustLevel(op, skillgroup, TRUE);
-    AdjustLevel(op, NULL, TRUE);
+    AdjustLevel(op, skill, 1);
+    AdjustLevel(op, skillgroup, 1);
+    AdjustLevel(op, NULL, 1);
 
     /* reset the player skillgroup to NULL */
     /* I let this in but because we use single skill exp and skill nr now,
@@ -709,7 +709,7 @@ void apply_death_exp_penalty(object_t *op)
             if (loss_exp > 0)
             {
                 AdjustExp(op, tmp, -loss_exp, 1);
-                AdjustLevel(op, tmp, FALSE);
+                AdjustLevel(op, tmp, 0);
             }
         }
     }
@@ -717,9 +717,9 @@ void apply_death_exp_penalty(object_t *op)
     FOREACH_OBJECT_IN_OBJECT(tmp, op, next)
     {
         if (tmp->type == TYPE_SKILLGROUP && tmp->stats.exp)
-            AdjustLevel(op, tmp, FALSE); /* adjust exp objects levels */
+            AdjustLevel(op, tmp, 0); /* adjust exp objects levels */
     }
-    AdjustLevel(op, NULL, FALSE);        /* and at last adjust the player level */
+    AdjustLevel(op, NULL, 0);        /* and at last adjust the player level */
 }
 
 /* i reworked this...

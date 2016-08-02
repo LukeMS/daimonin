@@ -71,13 +71,13 @@ int command_channel(object_t *ob, char *params)
     {
         if ((mode=='-') && (params[0]==0)) /* temp-on-off without leaving */
         {
-            CONTR(ob)->channels_on=FALSE;
+            CONTR(ob)->channels_on=0;
             ndi(NDI_UNIQUE, 0, ob, "You have all Channels temporally disabled");
             return 0;
         }
         if ((mode=='+') && (params[0]==0)) /* temp-on-off without leaving */
         {
-            CONTR(ob)->channels_on=TRUE;
+            CONTR(ob)->channels_on=1;
             ndi(NDI_UNIQUE, 0, ob, "You listen to all your channels again.");
             return 0;
         }
@@ -94,14 +94,14 @@ int command_channel(object_t *ob, char *params)
                 if (!compare_gmaster_mode(channel->gmaster_mode,
                                           CONTR(ob)->gmaster_mode) ||
 /* Method stub for later to implement clan system
- * This function should return TRUE if the player is in that clan.
+ * This function should return 1 if the player is in that clan.
  * channel->clan will be some sort of pointer to the clan info...
  */
 //                  !is_player_in_clan(channel->clan) ||
                     (!(CONTR(ob)->gmaster_mode & (GMASTER_MODE_SA | GMASTER_MODE_GM | GMASTER_MODE_VOL)) &&
                      ob->level < channel->enter_lvl))
                         continue;
-                if((pl_channel=findPlayerChannelFromName(CONTR(ob),CONTR(ob), channel->name, TRUE)))
+                if((pl_channel=findPlayerChannelFromName(CONTR(ob),CONTR(ob), channel->name, 1)))
                     ndi(NDI_UNIQUE|channel->color, 0, ob, "*(%d) [%c] %s", channel->pl_count, pl_channel->shortcut, channel->name);
                 else
                     ndi(NDI_UNIQUE|channel->color, 0, ob, "   (%d) [%c] %s", channel->pl_count, channel->shortcut, channel->name);
@@ -123,7 +123,7 @@ int command_channel(object_t *ob, char *params)
     pl_channel=getPlChannelFromPlayerShortcut(CONTR(ob),channelname); /* first we try to get the channel over the players shortcut */
     if (!pl_channel)
     {   /* All the error messages are handled here in this function, should eventually splittet */
-        pl_channel=findPlayerChannelFromName(CONTR(ob),CONTR(ob), channelname, FALSE);
+        pl_channel=findPlayerChannelFromName(CONTR(ob),CONTR(ob), channelname, 0);
     }
     if (!pl_channel)
     {
@@ -344,7 +344,7 @@ void addPlayerToChannel(player_t *pl, char *name, char *params)
     channel=getChannelFromGlobalShortcut(pl, name);
     if (!channel) /* No channel with that (default)-shortcut, or no shortcut at all given */
     {             /* We have to find the channel by name, and also make sure its unique */
-        channel=findGlobalChannelFromName(pl, name, FALSE); /* error message and non-unique channel name handled in the function, TODO: move Messages outside this function */
+        channel=findGlobalChannelFromName(pl, name, 0); /* error message and non-unique channel name handled in the function, TODO: move Messages outside this function */
         if (!channel)
         {
             return;
@@ -507,7 +507,7 @@ struct channels *getChannelFromGlobalShortcut(player_t *pl, char *name)
                 if (!compare_gmaster_mode(channel->gmaster_mode,
                                        pl->gmaster_mode) ||
 /* Method stub for later to implement clan system
- * This function should return TRUE if the player is in that clan.
+ * This function should return 1 if the player is in that clan.
  * channel->clan will be some sort of pointer to the clan info...
  */
 //                  !is_player_in_clan(channel->clan) ||
@@ -616,16 +616,16 @@ int channelname_ok(char *cp)
     char *tmp=cp;
 
     if(*cp==' ') /* we start with a whitespace? in this case we don't trim - kick*/
-        return FALSE;
+        return 0;
 
     for(;*cp!='\0';cp++)
     {
         if(!((*cp>='a'&&*cp<='z')||(*cp>='A'&&*cp<='Z')||(*cp>='0'&&*cp<='9'))&&*cp!='.'&&*cp!='_')
-            return FALSE;
+            return 0;
     }
     if(!strcasecmp(tmp,"on") || !strcasecmp(tmp,"off") || !strcasecmp(tmp,"allow") || !strcasecmp(tmp,"channel") || !strcasecmp(tmp,"group"))
-        return FALSE;
-    return TRUE;
+        return 0;
+    return 1;
 }
 /**
  * Here we try to find a matching channel in the players channellist
@@ -831,7 +831,7 @@ void loginAddPlayerToChannel(player_t *pl, char *channelname, char shortcut, uns
     /* first lets check if the channel still exists
      * channelname must be an exact match, not that player logs out, with channel
      * 'foo' on, later the channel gets closed/deleted, a new channel 'foobar' exitst
-     * and player is at login added to this FALSE one
+     * and player is at login added to this 0 one
      */
      struct channels *channel;
      struct player_channel *cpl;
@@ -1186,7 +1186,7 @@ void kickPlayerFromChannel(struct player_channel *cpl, char *params)
         return;
     }
 
-    kick=findPlayerChannelFromName(pl, cpl->pl, cpl->channel->name, TRUE);
+    kick=findPlayerChannelFromName(pl, cpl->pl, cpl->channel->name, 1);
     sprintf(buf, "You were kicked from channel %s by %s.", cpl->channel->name, cpl->pl->ob->name);
     removeChannelFromPlayer(pl, kick, buf);
     ndi(NDI_UNIQUE, 0, cpl->pl->ob, "You kicked player %s from channel %s.",pl->ob->name, cpl->channel->name);
@@ -1321,7 +1321,7 @@ int check_channel_mute(struct player_channel *cpl)
                 ndi( NDI_UNIQUE, 0, cpl->pl->ob, "You are still muted for %d second(s).", (int)(tmp?tmp:1));
                 cpl->pl->mute_msg_count = pticks+MUTE_MSG_FREQ;
             }
-            return FALSE;
+            return 0;
         }
     }
     /* now we check for the channel itself... */
@@ -1338,7 +1338,7 @@ int check_channel_mute(struct player_channel *cpl)
                 ndi( NDI_UNIQUE, 0, cpl->pl->ob, "You are still muted for %d second(s) on this channel.", (int)(tmp?tmp:1));
                 cpl->mute_msg_count = pticks+MUTE_MSG_FREQ;
             }
-            return FALSE;
+            return 0;
         }
     }
     else /* no old mute - lets check for new*/
@@ -1355,23 +1355,23 @@ int check_channel_mute(struct player_channel *cpl)
             {
                 ndi( NDI_UNIQUE, 0, cpl->pl->ob, "Please wait 2 seconds between messages on the same channel.");
                 cpl->mute_flags |= MUTE_FLAG_SHOUT;
-                return FALSE;
+                return 0;
             }
             else if(!(cpl->mute_flags & MUTE_FLAG_SHOUT_WARNING)) /* first & last warning */
             {
                 ndi( NDI_UNIQUE|NDI_ORANGE, 0, cpl->pl->ob, "Auto-Mute Warning: Please wait 2 seconds!");
                 cpl->mute_flags |= MUTE_FLAG_SHOUT_WARNING;
-                return FALSE;
+                return 0;
             }
             else /* mute him */
             {
                 ndi( NDI_UNIQUE|NDI_RED, 0, cpl->pl->ob, "Auto-Mute: Don't spam! You are muted for %d seconds!",(int)(MUTE_AUTO_NORMAL/(1000000/MAX_TIME)));
                 cpl->mute_counter = pticks+MUTE_AUTO_NORMAL;
-                return FALSE;
+                return 0;
             }
         }
     }
-    return TRUE;
+    return 1;
 }
 
 void modify_channel_params(struct player_channel *cpl, char *params)

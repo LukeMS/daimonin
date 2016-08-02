@@ -87,7 +87,7 @@ int pathfinder_queue_enqueue(object_t *op)
     /* Queue full? */
     if (pathfinder_queue_last == pathfinder_queue_first - 1
      || (pathfinder_queue_first == 0 && pathfinder_queue_last == PATHFINDER_QUEUE_SIZE - 1))
-        return FALSE;
+        return 0;
 
     pathfinder_queue[pathfinder_queue_last].op = op;
     pathfinder_queue[pathfinder_queue_last].op_count = op->count;
@@ -95,7 +95,7 @@ int pathfinder_queue_enqueue(object_t *op)
     if (++ pathfinder_queue_last >= PATHFINDER_QUEUE_SIZE)
         pathfinder_queue_last = 0;
 
-    return TRUE;
+    return 1;
 }
 
 /* Get the first waypoint from the queue (or NULL if empty) */
@@ -556,8 +556,8 @@ path_node * find_path(object_t *op, map_t *map1, int x1, int y1, map_t *map2, in
 
 /* Find untraversed neighbours of the node and add to the open_list
  *
- * Returns FALSE if we ran into a limit of any kind and cannot continue,
- * or TRUE if everything was ok. */
+ * Returns 0 if we ran into a limit of any kind and cannot continue,
+ * or 1 if everything was ok. */
 static int FindNeighbours(path_node *node, path_node **open_list,
     path_node **closed_list, path_node *start, path_node *goal, object_t *op,
     uint32 id)
@@ -607,14 +607,14 @@ static int FindNeighbours(path_node *node, path_node **open_list,
 
                     if (new_node->heuristic == HEURISTIC_ERROR)
                     {
-                        return FALSE;
+                        return 0;
                     }
 
                     insert_priority_node(new_node, open_list);
                 }
                 else
                 {
-                    return FALSE;
+                    return 0;
                 }
             }
 
@@ -625,5 +625,5 @@ static int FindNeighbours(path_node *node, path_node **open_list,
         }
     }
 
-    return TRUE;
+    return 1;
 }

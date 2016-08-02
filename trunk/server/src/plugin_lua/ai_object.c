@@ -277,7 +277,7 @@ static int AI_Knows(lua_State *L)
 
     lua_pushboolean(L,
             find_known_obj(self->data.object, obj->data.object) ?
-            TRUE : FALSE);
+            1 : 0);
 
     return 1;
 }
@@ -316,7 +316,7 @@ static int AI_UsesDistanceAttack(lua_State *L)
 
     if(!(info = find_known_obj(self->data.object, obj->data.object)))
     {
-        lua_pushboolean(L, FALSE);
+        lua_pushboolean(L, 0);
         return 1;
     }
 

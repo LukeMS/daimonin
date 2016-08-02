@@ -281,14 +281,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define SQR(x) ((x)*(x))
 #endif
 
-#ifndef TRUE
-#define TRUE 1
-#endif
-
-#ifndef FALSE
-#define FALSE 0
-#endif
-
 #ifdef HAVE_STRICMP
 #define strcasecmp(_s1_,_s2_) stricmp(_s1_,_s2_)
 #endif
@@ -976,8 +968,8 @@ struct settings_t
 {
     int                             max_cons_from_one_ip; /* Maximum number of concurrent connections from a single IP address, default = 2 */
     int                             player_races;       /* number of player race arches in client_settings */
-    int                             mutelevel;          /* default FALSE - if TRUE player < level 2 can't shout */
-    int                             login_allow;        /* if set to FALSE, login_ip is checked */
+    int                             mutelevel;          /* default 0 - if 1 player < level 2 can't shout */
+    int                             login_allow;        /* if set to 0, login_ip is checked */
     char                           *login_ip;           /* ip for login_allow */
     char                           *tlogfilename;       /* tlogfile to use */
     char                           *clogfilename;       /* clogfile to use */

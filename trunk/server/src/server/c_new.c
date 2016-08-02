@@ -37,7 +37,7 @@
 int command_run(object_t *op, char *params)
 {
     CONTR(op)->run_on = 1;
-    move_player(op, params ? atoi(params) : 0, TRUE);
+    move_player(op, params ? atoi(params) : 0, 1);
 
     return 0;
 }

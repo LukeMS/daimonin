@@ -474,17 +474,17 @@ static inline int in_group_exp_range(object_t *victim, object_t *hitter, object_
     if(QUERY_FLAG(victim,FLAG_REMOVED) )
     {
         LOG(llevDebug,"in_group_exp_range(): victim %s is removed!\n", STRING_OBJ_NAME(victim));
-        return FALSE;
+        return 0;
     }
     if(hitter && QUERY_FLAG(hitter,FLAG_REMOVED) ) /* secure... */
     {
         LOG(llevDebug,"in_group_exp_range(): hitter %s is removed!\n", STRING_OBJ_NAME(hitter));
-        return FALSE;
+        return 0;
     }
     if(QUERY_FLAG(member,FLAG_REMOVED) ) /* secure... */
     {
         LOG(llevDebug,"in_group_exp_range(): member %s is removed!\n", STRING_OBJ_NAME(member));
-        return FALSE;
+        return 0;
     }
 
     /* quick check the easiest cases */
@@ -493,7 +493,7 @@ static inline int in_group_exp_range(object_t *victim, object_t *hitter, object_
 #ifdef DEBUG_AGGRO
         LOG(llevNoLog,"->%s on same map as victim/hitter!\n", STRING_OBJ_NAME(member));
 #endif
-        return TRUE;
+        return 1;
     }
 
 
@@ -504,7 +504,7 @@ static inline int in_group_exp_range(object_t *victim, object_t *hitter, object_
 #ifdef DEBUG_AGGRO
             LOG(llevNoLog,"->%s on attached map from victim!\n", STRING_OBJ_NAME(member));
 #endif
-            return TRUE;
+            return 1;
         }
     }
 
@@ -517,7 +517,7 @@ static inline int in_group_exp_range(object_t *victim, object_t *hitter, object_
 #ifdef DEBUG_AGGRO
                     LOG(llevNoLog,"->%s on attached map from hitter!\n", STRING_OBJ_NAME(member));
 #endif
-                    return TRUE;
+                    return 1;
             }
         }
     }
@@ -528,7 +528,7 @@ static inline int in_group_exp_range(object_t *victim, object_t *hitter, object_
 
     /* don't give this group member quest items from victim */
     CONTR(member)->group_status |= GROUP_STATUS_NOQUEST;
-    return FALSE;
+    return 0;
 }
 
 
@@ -608,7 +608,7 @@ static inline int aggro_exp_group(object_t *victim, object_t *aggro)
                 check_kill_quest_event(tmp, victim);
         }
 
-        return FALSE;
+        return 0;
     }
 
     exp /= CONTR(leader)->group_nrof;
@@ -644,7 +644,7 @@ static inline int aggro_exp_group(object_t *victim, object_t *aggro)
 
     }
 
-    return TRUE;
+    return 1;
 #ifdef DEBUG_AGGRO
     LOG(llevNoLog,"\n" );
 #endif
@@ -791,7 +791,7 @@ object_t *aggro_calculate_exp(object_t *victim, object_t *slayer)
 #endif
 
     /* be sure not to drop items */
-    if(ret == FALSE)
+    if(ret == 0)
         SET_FLAG(victim, FLAG_NO_DROP);
 
     return highest_hitter->enemy; /* used to create the corpse bounty */

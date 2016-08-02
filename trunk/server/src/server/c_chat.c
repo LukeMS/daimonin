@@ -85,7 +85,7 @@ static char * cleanup_chat_string(char *ustring)
 static int check_mute(object_t *op, int mode)
 {
     if(op->type != PLAYER || CONTR(op)==NULL)
-        return TRUE;
+        return 1;
 
     /* players less than settings.shout_lvl cannot shout due to spam problems.
      * VOLs, GMs, and SAs are exempt. */
@@ -96,7 +96,7 @@ static int check_mute(object_t *op, int mode)
         ndi(NDI_UNIQUE | NDI_ORANGE, 0, op, "You need to be level %d or higher for shout/tell!",
                       settings.mutelevel);
 
-        return FALSE;
+        return 0;
     }
 
     if(CONTR(op)->mute_counter)
@@ -112,7 +112,7 @@ static int check_mute(object_t *op, int mode)
                 ndi( NDI_UNIQUE, 0, op, "You are still muted for %d second(s).", (int)(tmp?tmp:1));
                 CONTR(op)->mute_msg_count = pticks+MUTE_MSG_FREQ;
             }
-            return FALSE;
+            return 0;
         }
     }
     else /* no old mute - lets check for new*/
@@ -131,19 +131,19 @@ static int check_mute(object_t *op, int mode)
                 {
                     ndi( NDI_UNIQUE, 0, op, "Please wait 2 seconds between shout like commands.");
                     CONTR(op)->mute_flags |= MUTE_FLAG_SHOUT;
-                    return FALSE;
+                    return 0;
                 }
                 else if(!(CONTR(op)->mute_flags & MUTE_FLAG_SHOUT_WARNING)) /* first & last warning */
                 {
                     ndi( NDI_UNIQUE|NDI_ORANGE, 0, op, "Auto-Mute Warning: Please wait 2 seconds!");
                     CONTR(op)->mute_flags |= MUTE_FLAG_SHOUT_WARNING;
-                    return FALSE;
+                    return 0;
                 }
                 else /* mute him */
                 {
                     ndi( NDI_UNIQUE|NDI_RED, 0, op, "Auto-Mute: Don't spam! You are muted for %d seconds!",(int)(MUTE_AUTO_NORMAL/(1000000/MAX_TIME)));
                     CONTR(op)->mute_counter = pticks+MUTE_AUTO_NORMAL;
-                    return FALSE;
+                    return 0;
                 }
             }
         }
@@ -161,25 +161,25 @@ static int check_mute(object_t *op, int mode)
                 {
                     ndi( NDI_UNIQUE, 0, op, "Please wait 2 seconds between say like commands.");
                     CONTR(op)->mute_flags |= MUTE_FLAG_SAY;
-                    return FALSE;
+                    return 0;
                 }
                 else if(!(CONTR(op)->mute_flags & MUTE_FLAG_SAY_WARNING)) /* first & last warning */
                 {
                     ndi( NDI_UNIQUE|NDI_ORANGE, 0, op, "Auto-Mute Warning: Please wait 2 seconds!");
                     CONTR(op)->mute_flags |= MUTE_FLAG_SAY_WARNING;
-                    return FALSE;
+                    return 0;
                 }
                 else /* mute him */
                 {
                     ndi( NDI_UNIQUE|NDI_RED, 0, op, "Auto-Mute: Don't spam! You are muted for %d seconds!",(int)(MUTE_AUTO_NORMAL/(1000000/MAX_TIME)));
                     CONTR(op)->mute_counter = pticks+MUTE_AUTO_NORMAL;
-                    return FALSE;
+                    return 0;
                 }
             }
         }
     }
 
-    return TRUE;
+    return 1;
 }
 
 

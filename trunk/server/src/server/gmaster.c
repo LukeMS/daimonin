@@ -527,7 +527,7 @@ void write_gmaster_file(void)
     fclose(fp);
 }
 
-/* Returns TRUE if p has sufficient gmaster_mode to access t, FALSE if not. */
+/* Returns 1 if p has sufficient gmaster_mode to access t, 0 if not. */
 int compare_gmaster_mode(int t, int p)
 {
     /* If t is GMASTER_MODE_NO, automatic success. */

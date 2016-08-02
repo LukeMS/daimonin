@@ -31,7 +31,7 @@ int player_save(object_t *op)
     FILE   *fp;
     char    filename[MEDIUM_BUF], tmpfilename[MAXPATHLEN], backupfile[MEDIUM_BUF]="";
     player_t *pl  = CONTR(op);
-    int     tmp, have_file = TRUE, i;
+    int     tmp, have_file = 1, i;
     object_t *force;
     int drain_level = 0;
     Account *ac;
@@ -50,7 +50,7 @@ int player_save(object_t *op)
     /* if the file already is there, we don't must create the dirs but do backups */
     if (access(filename, F_OK) != 0)
     {
-        have_file = FALSE;
+        have_file = 0;
         make_path_to_file(filename);
     }
 
@@ -310,7 +310,7 @@ static player_t *get_player_struct(void)
     p->p_ver = PLAYER_FILE_VERSION_DEFAULT;
 
 #ifdef USE_CHANNELS
-    p->channels_on=TRUE;
+    p->channels_on=1;
 #endif
 
     return p;
@@ -333,7 +333,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     object_t     *tmp, *tmp2;
     int         mode_id = GMASTER_MODE_NO;
 #ifdef USE_CHANNELS
-    int     with_channels = FALSE;
+    int     with_channels = 0;
     int     channelcount=0;
     /* we limit channels in save file for now to 256 entrys */
     char    chantemp[256][MEDIUM_BUF];
@@ -514,7 +514,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
             pl->channels_on=value;
         else if (!strcmp(buf,"channels2"))
         {
-            with_channels = TRUE;
+            with_channels = 1;
             channelcount=value;
             for (i=1; (i<= value) && (i<256); i++)
             {

@@ -65,8 +65,8 @@ static FaceSets facesets[MAX_FACE_SETS];
 int is_valid_faceset(int fsn)
 {
     if (fsn >= 0 && fsn < MAX_FACE_SETS && facesets[fsn].prefix)
-        return TRUE;
-    return FALSE;
+        return 1;
+    return 0;
 }
 
 void free_socket_images()

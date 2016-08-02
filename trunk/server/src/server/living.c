@@ -775,12 +775,12 @@ static inline int set_player_equipment(player_t *pl, object_t *optr, int num)
         esrv_update_item(UPD_FLAGS, optr);
 #endif
         LOG(llevDebug,"FIX_PLAYER BUG: Item %s for player %s on place %d is already set!\n", STRING_OBJ_NAME(optr), STRING_OBJ_NAME(pl->ob), num);
-        return FALSE;
+        return 0;
     }
 
     pl->equipment[num] = optr;
 
-    return TRUE;
+    return 1;
 }
 
 /* calculate speed through carrying, weight & encumbrance for fix_player() and fix_player_weight()

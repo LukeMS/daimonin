@@ -116,15 +116,15 @@ static void init_artifacts(FILE *fp)
         if (!strncmp(cp, "Allowed", 7))
         {
             art = get_empty_artifact();
-            editor_flag = FALSE;
+            editor_flag = 0;
             nrofartifacts++;
-            none_flag = FALSE;
+            none_flag = 0;
             cp+=8;
             if (!strcasecmp(cp, "all"))
                 continue;
             if (!strcasecmp(cp, "none"))
             {
-                none_flag = TRUE;
+                none_flag = 1;
                 continue;
             }
             do
@@ -158,7 +158,7 @@ static void init_artifacts(FILE *fp)
         }
         else if (!strncmp(cp, "Object", 6)) /* all text after Object is now like a arch file until a end comes */
         {
-            if(editor_flag == FALSE)
+            if(editor_flag == 0)
                 LOG(llevError, "ERROR: Init_Artifacts: Artifact %s (%s) has no 'editor x:...' line!\n", STRING_SAFE(art->name),STRING_SAFE(art->def_at_name));
 
             if (!art->name)
@@ -237,11 +237,11 @@ static void init_artifacts(FILE *fp)
             /* now handle the <Allowed none> in the artifact to create
              * unique items or add them to the given type list.
              */
-            al = find_artifactlist(none_flag == FALSE ? parse_obj->type : -1);
+            al = find_artifactlist(none_flag == 0 ? parse_obj->type : -1);
             if (al == NULL)
             {
                 al = get_empty_artifactlist();
-                al->type = none_flag == FALSE ? parse_obj->type : -1;
+                al->type = none_flag == 0 ? parse_obj->type : -1;
                 al->next = first_artifactlist;
                 first_artifactlist = al;
                 /* init the quick jump table */
@@ -254,7 +254,7 @@ static void init_artifacts(FILE *fp)
         }
         else if (!strncmp(cp, "editor", 6))
         {
-            editor_flag = TRUE;
+            editor_flag = 1;
             if(!strncmp(cp+7,"2:",2)) /* mask only */
                 /* Do nothing */;
             else if(!strcmp(cp+7,"0") || !strncmp(cp+7,"1:",2) || !strncmp(cp+7,"3:",2)) /* use def arch def_at */
@@ -306,7 +306,7 @@ void second_artifact_pass(FILE *fp)
             /* now copy from real arch the stuff from above to our "fake" arches */
             at->clone.other_arch = other->clone.other_arch;
             if (at->clone.randomitems)
-                unlink_treasurelists(at->clone.randomitems, FALSE);
+                unlink_treasurelists(at->clone.randomitems, 0);
             at->clone.randomitems = other->clone.randomitems;
             if (at->clone.randomitems && (at->clone.randomitems->flags & OBJLNK_FLAG_REF))
                 at->clone.randomitems->ref_count++;
@@ -321,7 +321,7 @@ void second_artifact_pass(FILE *fp)
         else if (at && !strcmp("randomitems", variable))
         {
             if (at->clone.randomitems)
-                unlink_treasurelists(at->clone.randomitems, TRUE);
+                unlink_treasurelists(at->clone.randomitems, 1);
             at->clone.randomitems = link_treasurelists(argument, OBJLNK_FLAG_STATIC);
         }
     }

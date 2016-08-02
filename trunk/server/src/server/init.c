@@ -32,7 +32,7 @@ struct settings_t settings    =
     2,                      /* default max connections from single ip address */
     0,                      /* will be set from create_client_settings() */
     0,                      /* mute level = if set players below this level can't shout*/
-    TRUE,                   /* login_allow */
+    1,                   /* login_allow */
     "",                     /* login_ip */
     "",                     /* tlogfile to use */
     "",                     /* clogfile to use */
@@ -325,17 +325,17 @@ static void load_settings()
             has_val = 0;
         }
 
-        /* default value of settings.login_allow is TRUE.
-         * if set to FALSE, settings.login_ip is checked against
+        /* default value of settings.login_allow is 1.
+         * if set to 0, settings.login_ip is checked against
          * the login IP. If they match, login_allow is ignored.
          * This allows to setup admin login when testing a installed server.
          */
         if (!strcasecmp(buf, "login_allow"))
         {
             if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true"))
-                settings.login_allow = TRUE;
+                settings.login_allow = 1;
             else
-                settings.login_allow = FALSE;
+                settings.login_allow = 0;
         }
         else if (!strcasecmp(buf, "login_ip"))
         {
@@ -346,11 +346,11 @@ static void load_settings()
         {
             if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true"))
             {
-                settings.meta_on = TRUE;
+                settings.meta_on = 1;
             }
             else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false"))
             {
-                settings.meta_on = FALSE;
+                settings.meta_on = 0;
             }
             else
             {
@@ -1055,7 +1055,7 @@ void fatal_signal(int make_core, int close_sockets, uint8 status)
          * this line
          */
         /* kick_player(NULL); */
-        clean_tmp_files(FALSE);
+        clean_tmp_files(0);
         write_book_archive();
         write_tadclock();   /* lets just write the clock here */
         save_ban_file();

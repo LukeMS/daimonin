@@ -3896,7 +3896,7 @@ void msp_update(map_t *m, msp_t *mspace, sint16 x, sint16 y)
  * can move 1 space to the left, we don't want its own area
  * to block it from moving there.
  * If <map> is NULL, <x> and <y> are taken as offsets, else absolute values.
- * Returns TRUE if the space is blocked by something other than the
+ * Returns 1 if the space is blocked by something other than the
  * monster. */
 uint32 msp_blocked(object_t *what, map_t *m, sint16 x, sint16 y)
 {

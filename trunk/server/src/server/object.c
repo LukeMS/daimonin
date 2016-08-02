@@ -3485,14 +3485,14 @@ void fix_buff_stats(object_t *item)
 
     if (buffs == 0)
     {
-        item->buffed = FALSE;
+        item->buffed = 0;
     }
 }
 
 /*
  * See if the item will exceed its buff limit when we add a buff.
  * This takes buff->nrof and op->max_buffs into account. Returns
- * FALSE when the object cannot accept this buff, TRUE when it can.
+ * 0 when the object cannot accept this buff, 1 when it can.
  * This does not take into account if the object has already taken
  * this buff.
  */
@@ -3506,7 +3506,7 @@ uint8 check_buff_limit(object_t *op, int nr)
     // -1 always means this item can never be buffed.
     if (op->max_buffs == -1)
     {
-        return FALSE;
+        return 0;
     }
 
     // Max buffs not specified so use qua/con instead.
@@ -3537,10 +3537,10 @@ uint8 check_buff_limit(object_t *op, int nr)
 
     if (buffs + nr > real_max)
     {
-        return FALSE;
+        return 0;
     }
 
-    return TRUE;
+    return 1;
 
 }
 
@@ -3637,7 +3637,7 @@ int add_item_buff(object_t *item, object_t *buff, short just_checking)
          * instead of oldbuff so that we can just merge the changes instead
          * of unmerging all and then remerging all.
          */
-        item->buffed = TRUE;
+        item->buffed = 1;
         fix_buff_stats(item);
     }
 

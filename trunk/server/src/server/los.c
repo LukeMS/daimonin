@@ -313,7 +313,7 @@ void los_update(player_t *pl)
  * @param op the looking object
  * @param obj the object to look for
  * @param rv pre-calculated rv from op to obj
- * @return TRUE if there's an unblocked line of sight from op to obj, FALSE otherwise
+ * @return 1 if there's an unblocked line of sight from op to obj, 0 otherwise
  */
 int obj_in_line_of_sight(object_t *op, object_t *obj, rv_t *rv)
 {
@@ -343,7 +343,7 @@ int obj_in_line_of_sight(object_t *op, object_t *obj, rv_t *rv)
            y == obj->y)
         {
 //            LOG(llevDebug, "  can see!\n");
-            return TRUE;
+            return 1;
         }
 
         msp = MSP_GET2(m, x, y);
@@ -356,14 +356,14 @@ int obj_in_line_of_sight(object_t *op, object_t *obj, rv_t *rv)
               !mob_can_see_obj(op, obj, NULL))))
         {
 //            LOG(llevDebug, "  blocked!\n");
-            return FALSE;
+            return 0;
         }
 
         BRESENHAM_STEP(x, y, fraction, stepx, stepy, dx2, dy2);
     }
 /*
     LOG(llevDebug, "  out of range!\n");
-    return FALSE;*/
+    return 0;*/
 }
 
 /* los_find_target() attempts to find the next appropriate target in player's

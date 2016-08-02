@@ -1217,7 +1217,7 @@ int cast_spell(object_t *op, object_t *caster, int dir, int type, int ability, S
             dir = 0;
         }
     }
-    else if (find_target_for_spell(op, caster, &target, dir, spells[type].flags) == FALSE)
+    else if (find_target_for_spell(op, caster, &target, dir, spells[type].flags) == 0)
     {
         /* little trick - if we fail we set target== NULL - thats mark its "yourself" */
         if (pl)
@@ -2826,7 +2826,7 @@ int find_target_for_spell(object_t *op, object_t *item, object_t **target, int d
     *target = NULL; /* default target is - nothing! */
 
     if (flags & SPELL_DESC_DIRECTION) /* we cast something on the map... no target */
-        return TRUE;
+        return 1;
 
     if (op->type == PLAYER) /* a player has invoked this spell */
     {
@@ -2834,7 +2834,7 @@ int find_target_for_spell(object_t *op, object_t *item, object_t **target, int d
         if ((flags & SPELL_DESC_SELF) && !(flags & (SPELL_DESC_ENEMY | SPELL_DESC_FRIENDLY)))
         {
             *target = op; /* self ... and no other tests */
-            return TRUE;
+            return 1;
         }
 
         tmp = CONTR(op)->target_ob;
@@ -2846,7 +2846,7 @@ int find_target_for_spell(object_t *op, object_t *item, object_t **target, int d
             if (flags & SPELL_DESC_SELF) /* can we cast this on self? */
             {
                 *target = op; /* right, we are target */
-                return TRUE;
+                return 1;
             }
         }
         else /* we have a target and its not self */
@@ -2857,7 +2857,7 @@ int find_target_for_spell(object_t *op, object_t *item, object_t **target, int d
                 if (get_friendship(op, tmp) > FRIENDSHIP_ATTACK)
                 {
                     *target = tmp;
-                    return TRUE;
+                    return 1;
                 }
             }
 
@@ -2867,7 +2867,7 @@ int find_target_for_spell(object_t *op, object_t *item, object_t **target, int d
                 if (get_friendship(op, tmp) < FRIENDSHIP_HELP)
                 {
                     *target = tmp;
-                    return TRUE;
+                    return 1;
                 }
             }
 
@@ -2875,7 +2875,7 @@ int find_target_for_spell(object_t *op, object_t *item, object_t **target, int d
             if (flags & SPELL_DESC_SELF)
             {
                 *target = op;
-                return TRUE;
+                return 1;
             }
         }
     }
@@ -2893,11 +2893,11 @@ int find_target_for_spell(object_t *op, object_t *item, object_t **target, int d
         if (op->enemy && OBJECT_ACTIVE(op->enemy) && op->enemy->count == op->enemy_count)
         {
             *target = op->enemy;
-            return TRUE;
+            return 1;
         }
     }
 
-    return FALSE; /* invalid target/spell or whatever */
+    return 0; /* invalid target/spell or whatever */
 }
 
 int reduction_dir[OVERLAY_7X7][3] =

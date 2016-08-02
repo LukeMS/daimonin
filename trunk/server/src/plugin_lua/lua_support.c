@@ -685,7 +685,7 @@ int gc(struct lua_State *L)
 /* Default object validator, always returns true */
 static int default_object_validator(lua_object *obj)
 {
-    return (obj) ? TRUE : FALSE;
+    return (obj) ? 1 : 0;
 }
 
 /* Set up new class data in the registry */

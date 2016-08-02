@@ -303,7 +303,7 @@ int command_party_leave(object_t *pl, char *params)
     party_message(0,NDI_YELLOW, 0, activator->group_leader, pl, "%s left the group.",
         QUERY_SHORT_NAME(pl, NULL));
     ndi(NDI_YELLOW, 0,pl, "You left the group.");
-    party_remove_member(CONTR(pl), FALSE);
+    party_remove_member(CONTR(pl), 0);
 
     return 0;
 }
@@ -343,7 +343,7 @@ int command_party_remove(object_t *pl, char *params)
     party_message(0, NDI_YELLOW, 0, pl, target->ob, "%s was removed from the group.",
         QUERY_SHORT_NAME(target->ob, NULL));
     ndi(NDI_YELLOW, 0, target->ob, "You were removed from the group.");
-    party_remove_member(target, FALSE);
+    party_remove_member(target, 0);
 
     return 0;
 }

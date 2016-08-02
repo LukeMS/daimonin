@@ -1070,7 +1070,7 @@ char * mon_desc(object_t *mon)
     static char retbuf[HUGE_BUF];
 
     sprintf(retbuf, "<t t=\"%s\">", mon->name);
-    strcat(retbuf, examine(NULL, mon, FALSE));
+    strcat(retbuf, examine(NULL, mon, 0));
 
     return retbuf;
 }

@@ -396,7 +396,7 @@ static int do_move_monster(object_t *op, int dir, uint16 forbidden)
         if (!(forbidden & (1 << dir)) &&
             move_ob(op, dir, NULL) == MOVE_RETURN_SUCCESS)
         {
-            return TRUE;
+            return 1;
         }
 
         m = (RANDOM() & 2) ? 1 : -1;          /* Try left or right first? */
@@ -411,7 +411,7 @@ static int do_move_monster(object_t *op, int dir, uint16 forbidden)
             (!(forbidden & (1 << absdir(dir - m * 2))) &&
              move_ob(op, absdir(dir - m * 2), NULL) == MOVE_RETURN_SUCCESS))
         {
-            return TRUE;
+            return 1;
         }
     }
 
@@ -423,11 +423,11 @@ static int do_move_monster(object_t *op, int dir, uint16 forbidden)
          *
          * -- Smacky 20140803 */
         (void)move_ob(op, 0, NULL);
-        return TRUE;
+        return 1;
     }
 
     /* Couldn't move at all nor stand still... */
-    return FALSE;
+    return 0;
 }
 /*
  * Mob stats related
@@ -601,10 +601,10 @@ object_t *get_next_waypoint(object_t *op, object_t *wp)
 inline int ai_obj_can_move(object_t *obj)
 {
     if(obj->map == NULL || obj->env != NULL)
-        return FALSE;
+        return 0;
     if(QUERY_FLAG(obj,FLAG_STAND_STILL) || QUERY_FLAG(obj,FLAG_ROOTED))
-        return FALSE;
-    return TRUE;
+        return 0;
+    return 1;
 }
 
 
@@ -643,7 +643,7 @@ int move_monster(object_t *op, int mode)
     old_speed_factor = MOB_DATA(op)->move_speed_factor;
 
     /* we only have a valid weapon swing - no move */
-    if(mode == FALSE)
+    if(mode == 0)
         goto jump_move_monster_action;
 
     MOB_DATA(op)->move_speed_factor = 2;
@@ -738,7 +738,7 @@ int move_monster(object_t *op, int mode)
 
     /*
      * Other mutually exclusive action commands
-     * First to return TRUE disables the rest
+     * First to return 1 disables the rest
      * TODO: some monsters can do multiple attacks? make the number of iterations here a parameter
      * TODO: either shuffle these randomly or use some sort of priority system
      * TODO: maybe separate into two parts: decision (gives an action and a priority) and

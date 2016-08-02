@@ -2378,7 +2378,7 @@ void turn_on_light(object_t *op)
 {
     msp_t *msp = (op->map) ? MSP_KNOWN(op) : NULL;
     object_t *op_old;
-    int     tricky_flag = FALSE; /* to delay insertion of object - or it simple remerge! */
+    int     tricky_flag = 0; /* to delay insertion of object - or it simple remerge! */
 
     /* simple case for map light sources */
     if(op->type == LIGHT_SOURCE)
@@ -2418,7 +2418,7 @@ void turn_on_light(object_t *op)
             update_object(op, UP_OBJ_FACE);
 #endif
 
-        tricky_flag = TRUE;
+        tricky_flag = 1;
         op = one;
     }
 
