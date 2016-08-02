@@ -263,26 +263,6 @@ CommArray_s CommandsSA[] =
     {"d_hash",       command_sstable,           0.0f, 1, CHANNEL_NAME_SA},
     {"check_fd",     command_check_fd,          0.0f, 1, CHANNEL_NAME_SA},
     {"malloc",       command_malloc,            0.0f, 1, CHANNEL_NAME_SA},
-
-    /* old, outdated or disabled commands */
-    /*
-    {"listen", command_listen,    0.0}, // our channel system should work different
-    {"get", command_take,     1.0},
-    {"apply",         command_apply,          1.0f, 1}, // should be variable
-    {"examine", command_examine,  0.5}, // should work in direction
-    {"statistics", command_statistics,    0.0}, // will be send to client later in status
-    {"archs", command_archs, 0.0},
-    {"debug", command_debug,0.0},
-    {"fix_me", command_fix_me,   0.0},
-    {"free", command_free,0.0},
-    {"logs", command_logs,   0.0},
-    {"patch", command_patch,0.0},
-    {"resistances", command_resistances, 0.0},
-    {"remove", command_remove,0.0},
-    {"set_god", command_setgod, 0.0},
-    {"spellreset", command_spell_reset,0.0},
-    {"style_info", command_style_map_info, 0.0},
-    */
 };
 
 /* sort the commands for faster access */

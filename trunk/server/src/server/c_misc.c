@@ -35,13 +35,6 @@ static char *PrintMspTerrain(uint32 flags);
  * who, etc.
  */
 
-/* now redundant function */
-int command_spell_reset(object_t *op, char *params)
-{
-    /*init_spell_param(); */
-    return 0;
-}
-
 /* '/motd' displays the MOTD. GMs and SAs can also set the MOTD:
  *   '/motd default' restores the server-set MOTD (actually deletes the
  *   GMASTER-set one).
@@ -836,31 +829,6 @@ int command_time(object_t *op, char *params)
     return COMMANDS_RTN_VAL_OK;
 }
 
-int command_archs(object_t *op, char *params)
-{
-    arch_info(op);
-
-    return 0;
-}
-
-int command_debug(object_t *op, char *params)
-{
-    int i;
-
-    if (params == NULL || !sscanf(params, "%d", &i))
-    {
-        ndi(NDI_UNIQUE, 0, op, "Global debug level is %d.", settings.debug);
-
-        return 0;
-    }
-
-    settings.debug = (log_t)FABS(i);
-    ndi(NDI_UNIQUE, 0, op, "Set debug level to %d.", i);
-
-    return 0;
-}
-
-
 /*
  * Those dumps should be just one dump with good parser
  */
@@ -1019,93 +987,6 @@ void bug_report(char *reportstring)
      */
 }
 
-int command_listen(object_t *op, char *params)
-{
-    int i;
-
-    if (params == NULL || !sscanf(params, "%d", &i))
-        return 1;
-
-    CONTR(op)->listening = (char) i;
-    ndi(NDI_UNIQUE, 0, op, "Your verbosity level is now %d.",
-                         i);
-
-    return 0;
-}
-
-/* Prints out some useful information for the character.  Everything we print
- * out can be determined by the docs, so we aren't revealing anything extra -
- * rather, we are making it convenient to find the values.  params have
- * no meaning here.
- */
-int command_statistics(object_t *pl, char *params)
-{
-    if (pl->type != PLAYER || !CONTR(pl))
-        return 0;
-
-    ndi(NDI_UNIQUE, 0, pl, "  Experience: %d", pl->stats.exp);
-    ndi(NDI_UNIQUE, 0, pl, "  Next Level: %d", GET_LEVEL_EXP(pl->level + 1));
-    ndi(NDI_UNIQUE, 0, pl, "\nStat       Nat/Real/Max");
-
-    ndi(NDI_UNIQUE, 0, pl, "Str         %2d/ %3d/%3d", CONTR(pl)->orig_stats.Str, pl->stats.Str,
-                         20 + pl->arch->clone.stats.Str);
-    ndi(NDI_UNIQUE, 0, pl, "Dex         %2d/ %3d/%3d", CONTR(pl)->orig_stats.Dex, pl->stats.Dex,
-                         20 + pl->arch->clone.stats.Dex);
-    ndi(NDI_UNIQUE, 0, pl, "Con         %2d/ %3d/%3d", CONTR(pl)->orig_stats.Con, pl->stats.Con,
-                         20 + pl->arch->clone.stats.Con);
-    ndi(NDI_UNIQUE, 0, pl, "Int         %2d/ %3d/%3d", CONTR(pl)->orig_stats.Int, pl->stats.Int,
-                         20 + pl->arch->clone.stats.Int);
-    ndi(NDI_UNIQUE, 0, pl, "Wis         %2d/ %3d/%3d", CONTR(pl)->orig_stats.Wis, pl->stats.Wis,
-                         20 + pl->arch->clone.stats.Wis);
-    ndi(NDI_UNIQUE, 0, pl, "Pow         %2d/ %3d/%3d", CONTR(pl)->orig_stats.Pow, pl->stats.Pow,
-                         20 + pl->arch->clone.stats.Pow);
-    ndi(NDI_UNIQUE, 0, pl, "Cha         %2d/ %3d/%3d", CONTR(pl)->orig_stats.Cha, pl->stats.Cha,
-                         20 + pl->arch->clone.stats.Cha);
-
-    /* Can't think of anything else to print right now */
-    return 0;
-}
-
-int command_fix_me(object_t *op, char *params)
-{
-    FIX_PLAYER(op ,"command fix_me");
-
-    return 0;
-}
-
-
-int command_logs(object_t *op, char *params)
-{
-    int first;
-
-    first = 1;
-
-    if (first)
-    {
-        ndi(NDI_UNIQUE, 0, op, "Nobody is currently logging kills.");
-    }
-
-    return 0;
-}
-
-int command_resistances(object_t *op, char *params)
-{
-    int i;
-
-    if (!op)
-        return 0;
-
-    for (i = 0; i < NROFATTACKS; i++)
-    {
-        if (i == ATNR_INTERNAL)
-            continue;
-
-        ndi(NDI_UNIQUE, 0, op, "%-20s %+5d",
-            attack_name[i].name, op->resist[i]);
-    }
-
-    return 0;
-}
 /*
  * Actual commands.
  * Those should be in small separate files (c_object.c, c_wiz.c, cmove.c,...)

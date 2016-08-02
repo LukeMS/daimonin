@@ -197,7 +197,6 @@ int                         command_cringe(object_t *op, char *params);
 int                         command_think(object_t *op, char *params);
 int                         command_me(object_t *op, char *params);
 /* c_misc.c */
-int                         command_spell_reset(object_t *op, char *params);
 int                         command_motd(object_t *op, char *params);
 int                         command_bug(object_t *op, char *params);
 void                        malloc_info(object_t *op);
@@ -207,8 +206,6 @@ int                         command_mapinfo(object_t *op, char *params);
 int                         command_mspinfo(object_t *op, char *params);
 int                         command_sstable(object_t *op, char *params);
 int                         command_time(object_t *op, char *params);
-int                         command_archs(object_t *op, char *params);
-int                         command_debug(object_t *op, char *params);
 int                         command_dumpbelowfull(object_t *op, char *params);
 int                         command_dumpbelow(object_t *op, char *params);
 int                         command_dumpallobjects(object_t *op, char *params);
@@ -221,11 +218,6 @@ int                         command_dumpmap(object_t *op, char *params);
 int                         command_dumpallmaps(object_t *op, char *params);
 #endif
 void                        bug_report(char *reportstring);
-int                         command_listen(object_t *op, char *params);
-int                         command_statistics(object_t *pl, char *params);
-int                         command_fix_me(object_t *op, char *params);
-int                         command_logs(object_t *op, char *params);
-int                         command_resistances(object_t *op, char *params);
 int                         command_resting(object_t *op, char *params);
 int                         command_help(object_t *op, char *params);
 int                         command_privacy(object_t *op, char *params);
@@ -266,7 +258,6 @@ float                       fire_magic_tool(object_t *owner, object_t *op, int d
 int                         command_cast_spell(object_t *op, char *params);
 /* c_wiz.c */
 int                         command_connections(object_t *op, char *params);
-int                         command_setgod(object_t *op, char *params);
 int                         command_kick(object_t *op, char *params);
 int                         command_reboot(object_t *op, char *params);
 int                         command_goto(object_t *op, char *params);
@@ -279,9 +270,6 @@ int                         command_summon(object_t *op, char *params);
 int                         command_teleport(object_t *op, char *params);
 int                         command_inventory(object_t *op, char *params);
 int                         command_dump(object_t *op, char *params);
-int                         command_patch(object_t *op, char *params);
-int                         command_remove(object_t *op, char *params);
-int                         command_free(object_t *op, char *params);
 int                         command_setskill(object_t *op, char *params);
 int                         command_addexp(object_t *op, char *params);
 int                         command_serverspeed(object_t *op, char *params);
