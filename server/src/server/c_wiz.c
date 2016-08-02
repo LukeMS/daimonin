@@ -64,56 +64,6 @@ static object_t * find_object(int i)
     return NULL;
 }
 
-/* Sets the god for some objects.  params should contain two values -
- * first the object to change, followed by the god to change it to.
- */
-int command_setgod(object_t *op, char *params)
-{
-    object_t *ob;
-    char   *str;
-
-    if (!params || !(str = strchr(params, ' ')))
-        return 1;
-
-    /* kill the space, and set string to the next param */
-    *str++ = '\0';
-
-    if (!(ob = find_object(atol(params))))
-    {
-        ndi(NDI_UNIQUE, 0, op, "Set whose god - can not find object %s?",
-                             params);
-
-        return 0;
-    }
-
-    /* Perhaps this is overly restrictive?  Should we perhaps be able
-     * to rebless altars and the like?
-     */
-    if (ob->type != PLAYER)
-    {
-        ndi(NDI_UNIQUE, 0, op, "%s is not a player - can not change its god",
-                             ob->name);
-
-        return 0;
-    }
-
-    if (!change_skill(ob, SK_DIVINE_PRAYERS))
-    {
-        return 0;
-    }
-
-    if (find_god(str) == NULL)
-    {
-        ndi(NDI_UNIQUE, 0, op, "No such god %s.", str);
-
-        return 0;
-    }
-
-    become_follower(ob, find_god(str));
-
-    return 0;
-}
-
 int command_kick(object_t *op, char *params)
 {
     player_t     *pl;
@@ -1090,77 +1040,6 @@ int command_dump(object_t *op, char *params)
     ndi(NDI_UNIQUE, 0, op, "%s", errmsg);
 
     return COMMANDS_RTN_VAL_OK_SILENT;
-}
-
-int command_patch(object_t *op, char *params)
-{
-    int     i;
-    char   *arg, *arg2;
-    object_t *tmp;
-
-    tmp = NULL;
-
-    if (params)
-    {
-        // TODO - find_object() is not yet implemented, so will always return NULL
-        // Manual file only shows /patch me, until this is done
-        // Actually, man file not written, 'cos I don't know what this does - TW
-        if (!strncmp(params, "me", 2))
-            tmp = op;
-        else if (sscanf(params, "%d", &i))
-            tmp = find_object(i);
-    }
-
-    if (!tmp)
-        return COMMANDS_RTN_VAL_SYNTAX;
-
-    arg = strchr(params, ' ');
-
-    if (!arg)
-        return COMMANDS_RTN_VAL_SYNTAX;
-
-    if ((arg2 = strchr(++arg, ' ')))
-        arg2++;
-
-    if (set_variable(tmp, arg) == -1)
-        ndi(NDI_UNIQUE, 0, op, "Unknown variable %s",
-                             arg);
-    else
-        ndi(NDI_UNIQUE, 0, op, "(%s#%d)->%s=%s",
-                             tmp->name, tmp->count, arg, arg2);
-
-    return COMMANDS_RTN_VAL_OK;
-}
-
-int command_remove(object_t *op, char *params)
-{
-    int     i;
-    object_t *tmp;
-
-    if (!params ||
-        !sscanf(params, "%d", &i) ||
-        !(tmp = find_object(i)))
-        return COMMANDS_RTN_VAL_SYNTAX;
-
-    remove_ob(tmp);
-    move_check_off(tmp, NULL, MOVE_FLAG_VANISHED);
-
-    return COMMANDS_RTN_VAL_OK;
-}
-
-int command_free(object_t *op, char *params)
-{
-    int     i;
-    object_t *tmp;
-
-    if (!params ||
-        !sscanf(params, "%d", &i) ||
-        !(tmp = find_object(i)))
-        return COMMANDS_RTN_VAL_SYNTAX;
-
-    /* free_object(tmp); TODO: remove me*/
-
-    return COMMANDS_RTN_VAL_OK;
 }
 
 static int AddExp(object_t *op, char *params, const char *command)
