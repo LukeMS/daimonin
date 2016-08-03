@@ -54,21 +54,116 @@
 #include <sys/types.h>
 #include <process.h>
 
+/* FIXME: This appears to be for the benefit of MSVC. I think for various
+ * 'reasons' many ANSI and unix-equivalent identifiers are prefixed with _
+ * under (at least some versions of) VC. The non-_ identifier may or may not
+ * exist too. But that wasn't even consistent usage in the server code. So I'm
+ * not entirely sure of the reasoning but whatever, we define non-_ identifiers
+ * here, when they don't exist already and then use these proper names in the
+ * source.
+ *
+ * -- Smacky 20160803 */
+#ifndef fstat
+#   define fstat(__a, __b) _fstat(__a, __b)
+#endif
+
+#ifndef stat
+#   define stat _stat
+#endif
+
+#ifndef isatty
+#    define isatty(__a) _isatty(__a)
+#endif
+
+#ifndef fileno
+#    define fileno(__a) _fileno(__a)
+#endif
+
+#if ! defined inline
+#   define inline __inline
+#endif
+
+#if ! defined unlink
+#   define unlink(__a) _unlink(__a)
+#endif
+
+#if ! defined mkdir
+#   define mkdir(__a, __b) _mkdir(__a)
+#endif
+
+#if ! defined getpid
+#   define getpid() _getpid()
+#endif
+
+//#if ! defined popen
+//#   define popen(__a, __b) _popen(__a, __b)
+//#endif
+//
+//#if ! defined pclose
+//#   define pclose(__a) _pclose(__a)
+//#endif
+
+#if ! defined strdup
+#   define strdup(__a) _strdup(__a)
+#endif
+
+#if ! defined stricmp
+#   define stricmp(__a, __b) _stricmp(__a, __b)
+#endif
+
+#if ! defined strnicmp
+#   define strnicmp(__a, __b, __c) _strnicmp(__a, __b, __c)
+#endif
+
+#if ! defined getcwd
+#   define getcwd(__a, __b) _getcwd(__a, __b)
+#endif
+
+#if ! defined chdir
+#   define chdir(__a) _chdir(__a)
+#endif
+
+#if ! defined access
+#   define access(__a, __b) _access(__a, __b)
+#endif
+
+#if ! defined R_OK
+#   define R_OK 6
+#endif
+
+#if ! defined F_OK
+#   define F_OK 6
+#endif
+
+#if ! defined chmod
+#   define chmod(__a, __b) _chmod(__a, __b)
+#endif
+
+#if ! defined umask
+#   define umask(__a) _umask(__a)
+#endif
+
+#if ! defined snprintf
+#   define snprintf _snprintf
+#endif
+
+#if ! defined strcasecmp
+#   define strcasecmp(__a, __b) _stricmp(__a, __b)
+#endif
+
+#if ! defined strncasecmp
+#   define strncasecmp(__a, __b, __c) _strnicmp(__a, __b, __c)
+#endif
+
+#if ! defined atoll
+#   define atoll  _atoi64
+#endif
+
 #ifndef MINGW
 #define __STDC__ 1      /* odd too: CF want this, but don't include it */
 /* before the standard includes */
 #endif
 
-#ifndef HAVE_SNPRINTF
-#define HAVE_SNPRINTF 1
-#define snprintf _snprintf
-#endif
-
-/* include all needed autoconfig.h defines */
-#define HAVE_STRICMP
-#define HAVE_STRNICMP
-
-#define HAVE_SRAND
 #ifndef HAVE_FCNTL_H
 #define HAVE_FCNTL_H
 #endif
@@ -80,29 +175,6 @@
 
 #ifndef MSG_DONTWAIT
 #define MSG_DONTWAIT 0
-#endif
-
-/* Many defines to redirect unix functions or fake standard unix values */
-#define inline __inline
-#define unlink(__a) _unlink(__a)
-#define mkdir(__a, __b) _mkdir(__a)
-#define getpid() _getpid()
-#define popen(__a, __b) _popen(__a, __b)
-#define pclose(__a) _pclose(__a)
-#define strdup(__a) _strdup(__a)
-#define stricmp(__a, __b) _stricmp(__a, __b)
-#define strnicmp(__a, __b, __c) _strnicmp(__a, __b, __c)
-#define getcwd(__a, __b) _getcwd(__a, __b)
-#define chdir(__a) _chdir(__a)
-#define access(__a, __b) _access(__a, __b)
-#define chmod(__a, __b) _chmod(__a, __b)
-#define hypot(__a, __b) _hypot(__a, __b)
-#define umask(__a) _umask(__a)
-
-#ifndef MINGW
-#define fileno(__a) _fileno(__a)
-#define R_OK 6      /* for __access() */
-#define F_OK 6
 #endif
 
 #define PREFIXDIR ""
@@ -135,11 +207,6 @@
 #endif
 
 #define YY_NEVER_INTERACTIVE 1
-
-/* define 64bit handling */
-#ifndef atoll
-#define atoll    _atoi64
-#endif
 
 /* struct dirent - same as Unix */
 typedef struct dirent

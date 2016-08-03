@@ -279,51 +279,51 @@ long strtol_local(str, ptr, base)
   return (neg ? val : -val);
 }
 
-/* This seems to be lacking on some system */
-#if defined(HAVE_STRNICMP)
-#else
-#if !defined(HAVE_STRNCASECMP)
-int strncasecmp(char *s1, char *s2, int n)
-{
-  register int c1, c2;
-
-  while (*s1 && *s2 && n) {
-    c1 = tolower(*s1);
-    c2 = tolower(*s2);
-    if (c1 != c2)
-      return (c1 - c2);
-    s1++;
-    s2++;
-    n--;
-  }
-  if (!n)
-    return(0);
-  return (int) (*s1 - *s2);
-}
-#endif
-#endif
-
-#if defined(HAVE_STRICMP)
-#else
-#if !defined(HAVE_STRCASECMP)
-int strcasecmp(char *s1, char*s2)
-{
-  register int c1, c2;
-
-  while (*s1 && *s2) {
-    c1 = tolower(*s1);
-    c2 = tolower(*s2);
-    if (c1 != c2)
-      return (c1 - c2);
-    s1++;
-    s2++;
-  }
-  if (*s1=='\0' && *s2=='\0')
-    return 0;
-  return (int) (*s1 - *s2);
-}
-#endif
-#endif
+///* This seems to be lacking on some system */
+//#if defined(HAVE_STRNICMP)
+//#else
+//#if !defined(HAVE_STRNCASECMP)
+//int strncasecmp(char *s1, char *s2, int n)
+//{
+//  register int c1, c2;
+//
+//  while (*s1 && *s2 && n) {
+//    c1 = tolower(*s1);
+//    c2 = tolower(*s2);
+//    if (c1 != c2)
+//      return (c1 - c2);
+//    s1++;
+//    s2++;
+//    n--;
+//  }
+//  if (!n)
+//    return(0);
+//  return (int) (*s1 - *s2);
+//}
+//#endif
+//#endif
+//
+//#if defined(HAVE_STRICMP)
+//#else
+//#if !defined(HAVE_STRCASECMP)
+//int strcasecmp(char *s1, char*s2)
+//{
+//  register int c1, c2;
+//
+//  while (*s1 && *s2) {
+//    c1 = tolower(*s1);
+//    c2 = tolower(*s2);
+//    if (c1 != c2)
+//      return (c1 - c2);
+//    s1++;
+//    s2++;
+//  }
+//  if (*s1=='\0' && *s2=='\0')
+//    return 0;
+//  return (int) (*s1 - *s2);
+//}
+//#endif
+//#endif
 
 /* This takes an err number and returns a string with a description of
  * the error.
