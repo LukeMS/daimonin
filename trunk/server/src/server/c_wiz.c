@@ -1338,9 +1338,9 @@ int command_resetmap(object_t *op, char *params)
  */
 int command_check_fd(object_t *op, char *params)
 {
-    struct _stat buf;
-    int          handle_max,
-                 fh;
+    struct stat buf;
+    int         handle_max,
+                fh;
 
     handle_max = (socket_info.max_filedescriptor < 100) ? 100 :
                  socket_info.max_filedescriptor;
@@ -1354,14 +1354,14 @@ int command_check_fd(object_t *op, char *params)
     for (fh = 0; fh <= handle_max; fh++)
     {
         /* Check if statistics are valid: */
-        if (!_fstat(fh, &buf))
+        if (!fstat(fh, &buf))
         {
             /* no ttyname() under windows... well,
                      * debugging fh's is always more clever on linux.
                      */
 #ifdef WIN32
             LOG(llevSystem, "FH %d ::(%d) size     : %ld\n",
-                fh, _isatty(fh), buf.st_size);
+                fh, isatty(fh), buf.st_size);
 #else
             player_t *pp;
             char   *name1 = NULL;
@@ -1373,7 +1373,7 @@ int command_check_fd(object_t *op, char *params)
                     break;
             }
 
-            name1 = ttyname(_isatty(fh));
+            name1 = ttyname(isatty(fh));
 
             LOG(llevSystem, "FH %d ::(%s) (%s) size: %ld\n",
                 fh, (name1) ? name1 : "><",

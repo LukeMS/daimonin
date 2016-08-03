@@ -281,14 +281,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define SQR(x) ((x)*(x))
 #endif
 
-#ifdef HAVE_STRICMP
-#define strcasecmp(_s1_,_s2_) stricmp(_s1_,_s2_)
-#endif
-
-#ifdef HAVE_STRNICMP
-#define strncasecmp(_s1_,_s2_,_nrof_) strnicmp(_s1_,_s2_,_nrof_)
-#endif
-
 #ifndef WIN32 /* ---win32 we define this stuff in win32.h */
 #if HAVE_DIRENT_H
 # include <dirent.h>
@@ -443,23 +435,6 @@ typedef struct view_map_t        view_map_t;
 typedef struct view_msp_t        view_msp_t;
 
 #endif /* ifndef  __TYPEDEFS_H */
-
-/* porting stuff for file handle function names. */
-#ifndef _fstat
-#define _fstat(__x,__y) fstat(__x,__y)
-#endif
-#ifndef _stat
-#define _stat stat
-#endif
-
-#ifndef WIN32
-#ifndef _isatty
-#define _isatty(__x) isatty(__x)
-#endif
-#ifndef _fileno
-#define _fileno(__x) fileno(__x)
-#endif
-#endif
 
 /* mallocs _P_ to size _S_, logging OOM or initialising to 0. */
 #undef MALLOC
