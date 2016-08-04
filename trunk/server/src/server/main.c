@@ -442,7 +442,7 @@ static void process_map_events(map_t *map)
         }
 
         if (op->speed_left <= 0)
-            op->speed_left += FABS(op->speed);
+            op->speed_left += ABS(op->speed);
     }
     next_active_object = NULL;
 }

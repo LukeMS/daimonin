@@ -932,7 +932,7 @@ void move_player_mover(object_t *op)
                  * is cleared, otherwise the player will get stuck in
                  * place.  This can happen if the player used a spell to
                  * get to this space. */
-                this->speed_left = -FABS(this->speed);
+                this->speed_left = -ABS(this->speed);
                 move_player(this, dir, 1);
             }
             else
@@ -946,7 +946,7 @@ void move_player_mover(object_t *op)
             if (!op->stats.maxsp && op->attacktype)
                 op->stats.maxsp = 2;
             if (op->attacktype)
-                this->speed_left = -FABS(op->stats.maxsp * this->speed / op->speed);
+                this->speed_left = -ABS(op->stats.maxsp * this->speed / op->speed);
              */
         }
     }

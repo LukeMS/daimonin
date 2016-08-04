@@ -1071,7 +1071,7 @@ void update_ob_speed(object_t *op)
     if (arch_init || op->type == SPAWN_POINT_MOB)
         return;
 
-    if (FABS(op->speed) > MIN_ACTIVE_SPEED)
+    if (ABS(op->speed) > MIN_ACTIVE_SPEED)
         activelist_insert_inline(op);
     else
         activelist_remove_inline(op);

@@ -368,7 +368,7 @@ int cast_heal(object_t *op, int level, object_t *target, int spell_type)
 
     if (success)
     {
-        op->speed_left = -FABS(op->speed) * 3;
+        op->speed_left = -ABS(op->speed) * 3;
     }
 
     if (insert_spell_effect(spells[spell_type].archname, target->map, target->x, target->y))
@@ -2091,7 +2091,7 @@ void move_fired_arch(object_t *op)
 //    if ((op = insert_ob_in_map(op, op->map, op, 0)) == NULL)
 //        return 1;
 //
-//    op->speed_left = -FABS(op->speed) * 5; /* Freeze them for a short while */
+//    op->speed_left = -ABS(op->speed) * 5; /* Freeze them for a short while */
 //    return 1;
 //}
 //
@@ -2893,7 +2893,7 @@ void move_fired_arch(object_t *op)
 //        for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
 //                cancellation(tmp);
 //    }
-//    else/* Nullify this object. */ if (FABS(op->magic) <= (random_roll(0, 5)))
+//    else/* Nullify this object. */ if (ABS(op->magic) <= (random_roll(0, 5)))
 //    {
 //        op->magic = 0;
 //        CLEAR_FLAG(op, FLAG_IS_MAGICAL);

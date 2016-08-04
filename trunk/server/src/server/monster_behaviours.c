@@ -2378,7 +2378,7 @@ int ai_melee_attack_enemy(object_t *op, struct mob_behaviour_param *params)
     if (QUERY_FLAG(op, FLAG_RUN_AWAY))
         rv->part->stats.wc -= 10;
     skill_attack(op->enemy, rv->part, 0, NULL);
-    op->weapon_speed_left += FABS(op->weapon_speed);
+    op->weapon_speed_left += ABS(op->weapon_speed);
     if (QUERY_FLAG(op, FLAG_RUN_AWAY))
         rv->part->stats.wc += 10;
 
@@ -2472,7 +2472,7 @@ int ai_bow_attack_enemy(object_t *op, struct mob_behaviour_param *params)
         return 0;
     }
 
-    op->weapon_speed_left += FABS(op->weapon_speed);
+    op->weapon_speed_left += ABS(op->weapon_speed);
 
     /* hack: without this, a monster with a bow is invinsible by a non range monster
      * with same speed. It simply runs away, can't be catched but will range kill
@@ -2577,7 +2577,7 @@ static int monster_cast_spell(object_t *op, object_t *part, int dir, object_t *t
     /* If we cast a spell, only use up casting_time speed.
      * outdated. we want use the casting delay counter above now! (MT-07.2005)
      */
-    //op->speed_left += (float) 1.0 - (float) sp->time / (float) 20.0 * (float) FABS(op->speed);
+    //op->speed_left += (float) 1.0 - (float) sp->time / (float) 20.0 * (float) ABS(op->speed);
 
     op->stats.sp -= sp_cost;
 

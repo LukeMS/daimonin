@@ -215,9 +215,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define LARGE_BUF     1024
 #define HUGE_BUF      4096 /* Used for messages - some can be quite long */
 
-/* Decstations have trouble with fabs()... */
-#define FABS(x) ((x)<0?-(x):(x))
-
 #define SOCKET_BUFLEN 4096 /* Max length a packet could be */
 
 #define MAX_ANIMATIONS      256
@@ -565,8 +562,6 @@ while (0)
           tpr_a.tv_sec -= tpr_n; \
         } \
         tpr_d = (double)(tpr_b.tv_sec - tpr_a.tv_sec) + (double)(tpr_b.tv_usec - tpr_a.tv_usec) / 1000000.0;
-
-#define POW2(x) ((x) * (x))
 
 /* Various exit codes. While there does not seem to be a real standard for
  * these things, I have adopted the accepted bash usage. The essnce of this is

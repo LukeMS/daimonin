@@ -2802,7 +2802,7 @@ void drain_rod_charge(object_t *rod)
 
 void fix_rod_speed(object_t *rod)
 {
-    rod->speed = (FABS(rod->arch->clone.speed) * rod->stats.hp) / (float) rod->stats.maxhp;
+    rod->speed = (ABS(rod->arch->clone.speed) * rod->stats.hp) / (float) rod->stats.maxhp;
     if (rod->speed < 0.02f)
         rod->speed = 0.02f;
     update_ob_speed(rod);

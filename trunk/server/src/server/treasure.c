@@ -1642,7 +1642,7 @@ int set_ring_bonus(object_t *op, int bonus, int level)
         case 2:
         {
         //resist
-              int b = 5 + FABS( bonus),val,resist = RANDOM() % (num_resist_table - 4 + off);
+              int b = 5 + ABS( bonus),val,resist = RANDOM() % (num_resist_table - 4 + off);
 
               /* Roughly generate a bonus between 100 and 35 (depending on the bonus) */
               val = 10 + RANDOM() % b + RANDOM() % b + RANDOM() % b + RANDOM() % b;

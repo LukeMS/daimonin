@@ -220,9 +220,9 @@ char * describe_item(const object_t *const op)
             }
         }
 
-        if (FABS(op->speed) > MIN_ACTIVE_SPEED)
+        if (ABS(op->speed) > MIN_ACTIVE_SPEED)
         {
-            switch ((int) ((FABS(op->speed)) * 15))
+            switch ((int) ((ABS(op->speed)) * 15))
             {
                 case 0:
                   strcat(retbuf, "(very slow)");

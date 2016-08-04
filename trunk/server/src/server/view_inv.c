@@ -594,7 +594,7 @@ static char *PrepareData(_server_client_cmd cmd, uint16 flags, player_t *pl,
                 }
                 else
                 {
-                    float speed = FABS(op->speed);
+                    float speed = ABS(op->speed);
 
                     if (speed < 0.001)
                     {

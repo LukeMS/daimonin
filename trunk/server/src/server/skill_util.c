@@ -875,7 +875,7 @@ void set_action_time(object_t *op, float t)
     if (op->type != PLAYER)
         return;
 
-    CONTR(op)->ob->weapon_speed_left += FABS(t);
+    CONTR(op)->ob->weapon_speed_left += ABS(t);
 
     /* update the value for the client */
     CONTR(op)->action_timer = (int) (CONTR(op)->ob->weapon_speed_left / pticks_second / WEAPON_SWING_TIME * 1000.0f);
