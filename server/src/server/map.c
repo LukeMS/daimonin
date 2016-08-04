@@ -585,7 +585,7 @@ map_t *map_save(map_t *m)
         {
             FREE_AND_NULL_PTR(m->tmpname);
             tempnam_local_ext(settings.tmpdir, NULL, filename);
-            MALLOC2(m->tmpname, filename);
+            MALLOC_STRING(m->tmpname, filename);
         }
         else
         {
@@ -3156,7 +3156,7 @@ void read_map_log(void)
         FREE_AND_COPY_HASH(m->path, buf);
         cp1 = strchr(cp, ':');
         *cp1++ = '\0';
-        MALLOC2(m->tmpname, cp);
+        MALLOC_STRING(m->tmpname, cp);
 
         /* Lock is left over from the lock items - we just toss it now.
          * We use it twice - second one is from encounter, but as we

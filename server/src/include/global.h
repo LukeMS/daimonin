@@ -259,25 +259,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#ifndef MIN
-#define MIN(x,y) ((x)<(y)?(x):(y))
-#endif
-#ifndef MAX
-#define MAX(x,y) ((x)>(y)?(x):(y))
-#endif
-#ifndef SGN
-#define SGN(x) ((x)>0?1:((x)<0?-1:0))
-#endif
-#ifndef CLAMP
-#define CLAMP(x, lo, hi) ((x)>(hi)?(hi):((x)<(lo)?(lo):(x)))
-#endif
-#ifndef ABS
-#define ABS(x) ((x)<0?-(x):(x))
-#endif
-#ifndef SQR
-#define SQR(x) ((x)*(x))
-#endif
-
 #ifndef WIN32 /* ---win32 we define this stuff in win32.h */
 #if HAVE_DIRENT_H
 # include <dirent.h>
@@ -295,6 +276,77 @@ error - Your ANSI C compiler should be defining __STDC__;
 #  include <ndir.h>
 # endif
 #endif
+#endif
+
+/* ABS() outputs the absolute value of its input. */
+#define ABS(__a) \
+    ((__a) < 0 ? -(__a) : (__a))
+
+/* SGN outputs the sign of its input. */
+#define SGN(__a) \
+    ((__a) > 0 ? 1 : ((__a) < 0 ? -1 : 0))
+
+/* SQR() outputs its input multiplied by itself. */
+#define SQR(__a) \
+    ((__a) * (__a))
+
+/* MIN() outputs the minimum value of its inputs. */
+#define MIN(__a, __b) \
+    ((__a) < (__b) ? (__a) : (__b))
+
+/* MAX() outputs the maximum value of its inputs. */
+#define MAX(__a, __b) \
+    ((__a) > (__b) ? (__a) : (__b))
+
+/* CLAMP() outputs __c if __a is more than, __b if __a is less than, or __a
+ * otherwise. */
+#define CLAMP(__a, __b, __c) \
+    ((__a) > (__c) ? (__c) : ((__a) < (__b) ? (__b) : (__a)))
+
+/* MALLOC() mallocs __a to size __b, logging a fatal OOM or initializing to
+ * 0. */
+// Seems Visual C++ cannot handle this style.
+//#define MALLOC(__a, __b) \
+//    ((!((__a) = malloc((__b)))) ? LOG(llevError, "%s %d: Out of memory!\n", __FILE__, __LINE__) : memset((__a), 0, (__b)))
+#define MALLOC(__a, __b) \
+    if (!((__a) = malloc((__b)))) \
+    { \
+        LOG(llevError, "%s %d: Out of memory!\n", __FILE__, __LINE__); \
+    } \
+    else \
+    { \
+        memset((__a), 0, (__b)); \
+    }
+
+/* MALLOC_STRING() mallocs __a to size strlen(__b) + 1, logging a fatal OOM or
+ * initializing to the string array __b. */
+// Seems Visual C++ cannot handle this style.
+//#define MALLOC_STRING(__a, __b) \
+//    ((!((__a) = malloc(strlen((__b)) + 1))) ? LOG(llevError, "%s %d: Out of memory!\n", __FILE__, __LINE__) : sprintf((__a), "%s", (__b)))
+#define MALLOC_STRING(__a, __b) \
+    if (!((__a) = malloc(strlen((__b)) + 1))) \
+    { \
+        LOG(llevError, "%s %d: Out of memory!\n", __FILE__, __LINE__); \
+    } \
+    else \
+    { \
+        sprintf((__a), "%s", (__b)); \
+    }
+
+/* FREE() frees __a and sets it to NULL. */
+#define FREE(__a) \
+    free((__a)); \
+    (__a) = NULL;
+
+/* GETTIMEOFDAY() is simply a wrapper for the gettimeofday() library function
+ * which apparently may tske one or two arguments depending on
+ * implementation. */
+#ifdef GETTIMEOFDAY_TWO_ARGS
+#   define GETTIMEOFDAY(__a) \
+        gettimeofday((__a), NULL);
+#else
+#   define GETTIMEOFDAY(__a) \
+        gettimeofday((__a));
 #endif
 
 /* Here we typedef *all* the data types used in the non-3rd party server code.
@@ -433,71 +485,8 @@ typedef struct view_msp_t        view_msp_t;
 
 #endif /* ifndef  __TYPEDEFS_H */
 
-/* mallocs _P_ to size _S_, logging OOM or initialising to 0. */
-#undef MALLOC
-#if 0 // Seems Visual C++ cannot handle this style.
-#define MALLOC(_P_, _S_) \
-((!((_P_) = malloc((_S_)))) ? \
-LOG(llevBug, "BUG:: %s %d: Out of memory!\n", __FILE__, __LINE__) : \
-memset((_P_), 0, (_S_)))
-#else
-#define MALLOC(_P_, _S_) \
-if (!((_P_) = malloc((_S_)))) \
-{ \
-    LOG(llevBug, "BUG:: %s %d: Out of memory!\n", __FILE__, __LINE__); \
-} \
-else \
-{ \
-    memset((_P_), 0, (_S_)); \
-}
-#endif
-
-/* mallocs _P_ to size strlen(_S_) + 1, logging OOM or initialising to
- * sprintf(_P_, "%s", _S_). */
-#undef MALLOC2
-#if 0 // Seems Visual C++ cannot handle this style.
-#define MALLOC2(_P_, _S_) \
-((!((_P_) = malloc(strlen((_S_)) + 1))) ? \
-LOG(llevBug, "BUG:: %s %d: Out of memory!\n", __FILE__, __LINE__) : \
-sprintf((_P_), "%s", (_S_)))
-#else
-#define MALLOC2(_P_, _S_) \
-if (!((_P_) = malloc(strlen((_S_)) + 1))) \
-{ \
-    LOG(llevBug, "BUG:: %s %d: Out of memory!\n", __FILE__, __LINE__); \
-} \
-else \
-{ \
-    sprintf((_P_), "%s", (_S_)); \
-}
-#endif
-
-/* frees _P_ and sets it to NULL. */
-#undef FREE
-#define FREE(_P_) \
-do \
-{ \
-    free((_P_)); \
-    (_P_) = NULL; \
-} \
-while (0)
-
 #ifndef MAXPATHLEN
 #define MAXPATHLEN 256
-#endif
-
-/* 0.94.1 - change to GETTIMEOFDAY macro - SNI systems only one one option.
- * rather than have complex #ifdefs throughout the file, lets just figure
- * it out once, here at the top.
- * Have no idea if that is the right symbol to check on for NetBSD,
- * but NetBSD does use 2 params.
- * Move this to global.h from time.c since its also used in arch.c
- */
-
-#ifdef GETTIMEOFDAY_TWO_ARGS
-#define GETTIMEOFDAY(last_time) gettimeofday(last_time, NULL);
-#else
-#define GETTIMEOFDAY(last_time) gettimeofday(last_time);
 #endif
 
 /* The TPR_*() macros are for timing code execution (TPR stands for Time Per
