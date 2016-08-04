@@ -830,7 +830,7 @@ void move_apply(object_t *const trap_obj, object_t *const victim, object_t *cons
           /*
            if (trap->attacktype && (trap->level || victim->type!=PLAYER)) {
           if (!trap->stats.maxsp) trap->stats.maxsp=2;
-          victim->speed_left = -FABS(trap->stats.maxsp*victim->speed/trap->speed);
+          victim->speed_left = -ABS(trap->stats.maxsp*victim->speed/trap->speed);
           if (victim->speed_left<-50.0) victim->speed_left=-50.0;
            }
           */

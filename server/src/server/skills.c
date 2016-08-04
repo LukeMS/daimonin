@@ -240,7 +240,7 @@ int do_skill_attack(object_t *tmp, object_t *op, char *string)
     /* set the skill delay from the attack so we can't use other skills during the cooldown time */
     if (op->type == PLAYER)
     {
-        ticks = FABS(CONTR(op)->ob->weapon_speed);
+        ticks = ABS(CONTR(op)->ob->weapon_speed);
         LOG(llevDebug, "AC-melee: %2.2f\n", ticks);
         set_action_time(op, ticks);
     }

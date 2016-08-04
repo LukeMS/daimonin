@@ -109,7 +109,7 @@ void ndi(const int flags, const int pri, const object_t *const who, const char *
             (!(_E2_) || \
              (_O_) != (_E2_)) && \
             ((_D_) == MAP_INFO_ALL || \
-             POW2((_O_)->x - (_X_)) + POW2((_O_)->y - (_Y_)) <= (_D_))) \
+             SQR((_O_)->x - (_X_)) + POW2((_O_)->y - (_Y_)) <= (_D_))) \
         { \
             SOCKBUF_ADD_TO_SOCKET(&CONTR((_O_))->socket, (_SB_)); \
         } \
@@ -165,7 +165,7 @@ void ndi_map(const int flags, msp_t *msp, const int dist, const  object_t *const
         return;
     }
 
-    d = POW2(dist);
+    d = SQR(dist);
     CHECKPLAYERS(this, except1, except2, m, x, y, d, sb);
 
     if ((m2 = m->tiling.tile_map[TILING_DIRECTION_NORTH]) &&

@@ -463,7 +463,7 @@ static inline void regenerate_stats(object_t *op)
     /* generate sp, if applicable */
     if (op->stats.Pow && op->stats.sp < op->stats.maxsp)
     {
-        op->last_sp += (int) ((float) (8 * op->stats.Pow) / FABS(op->speed));
+        op->last_sp += (int) ((float) (8 * op->stats.Pow) / ABS(op->speed));
         op->stats.sp += op->last_sp / 128;  /* causes Pow/16 sp/tick */
         op->last_sp %= 128;
         if (op->stats.sp > op->stats.maxsp)

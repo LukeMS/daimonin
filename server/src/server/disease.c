@@ -429,7 +429,7 @@ int do_symptoms(object_t *disease)
         {
             int dam = disease->stats.dam;
             /* reduce the damage, on average, 50%, and making things random. */
-            dam = random_roll(1, FABS(dam));
+            dam = random_roll(1, ABS(dam));
             if (disease->stats.dam < 0)
                 dam = -dam;
             new_symptom->stats.dam = dam;
