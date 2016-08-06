@@ -341,6 +341,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 /* GETTIMEOFDAY() is simply a wrapper for the gettimeofday() library function
  * which apparently may tske one or two arguments depending on
  * implementation. */
+/* Seems that the second argument is obsolete anyway, but currently it is
+ * defined under Linux and our Windows implementation also allows for it. */
 #ifdef GETTIMEOFDAY_TWO_ARGS
 #   define GETTIMEOFDAY(__a) \
         gettimeofday((__a), NULL);
