@@ -450,19 +450,10 @@ static void process_map_events(map_t *map)
 void process_events()
 {
     map_t *map;
+
 #if defined TIME_PROCESS_EVENTS
-    /* This is instrumentation code that shows how the speedup to this function
-     * was measured. It can easily be moved to the old version too, but if you
-     * want to run it you also need the inlined function "add_time" from common/time.c */
-    /* Note: I'll remove these blocks soon. Gecko - 20050522 */
-    static int callcount = 0;
-    static struct timeval cumulative;
-    struct timeval start, end;
-    double t;
-
-    gettimeofday(&start, NULL);
+    TPR_START();
 #endif
-
     process_players1(NULL);
     /* Preprocess step: move all objects in inserted_active_objects
      * into their real activelists */
@@ -536,18 +527,7 @@ void process_events()
     process_players2(NULL);
 
 #if defined TIME_PROCESS_EVENTS
-    gettimeofday(&end, NULL);
-    start.tv_sec = -start.tv_sec;
-    start.tv_usec = -start.tv_usec;
-    add_time(&cumulative, &start, &cumulative);
-    add_time(&cumulative, &end, &cumulative);
-    if((++callcount) % 100 == 0) {
-        t = (double)(cumulative.tv_sec + cumulative.tv_usec / 1000000.0f) / callcount;
-        LOG(llevDebug, "%d calls, %d.%06d s (%f s/call)\n", callcount, cumulative.tv_sec, cumulative.tv_usec, t);
-        callcount = 0;
-        cumulative.tv_usec = 0;
-        cumulative.tv_sec = 0;
-    }
+    TPR_STOP("Process events");
 #endif /* TIME PROCESS EVENTS */
 }
 
