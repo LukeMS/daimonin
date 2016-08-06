@@ -28,23 +28,62 @@
 #include <malloc.h>
 #include <mmsystem.h>
 
+// FIXME: Is this from some outdated implementation?
+//struct itimerval
+//{
+//    struct timeval  it_interval;    /* next value */
+//    struct timeval  it_value;   /* current value */
+//};
+//
+//#define ITIMER_REAL    0        /*generates sigalrm */
+//#define ITIMER_VIRTUAL 1        /*generates sigvtalrm */
+//#define ITIMER_VIRT    1        /*generates sigvtalrm */
+//#define ITIMER_PROF    2        /*generates sigprof */
 
-struct itimerval
-{
-    struct timeval  it_interval;    /* next value */
-    struct timeval  it_value;   /* current value */
-};
-
-
-#define ITIMER_REAL    0        /*generates sigalrm */
-#define ITIMER_VIRTUAL 1        /*generates sigvtalrm */
-#define ITIMER_VIRT    1        /*generates sigvtalrm */
-#define ITIMER_PROF    2        /*generates sigprof */
-
-
-/* Functions to capsule or serve linux style function
- * for Windows Visual C++
-*/
+#if 0
+//int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info)
+//{
+//    static DWORD    time_t0, time_delta, mm_t0;
+//    static int      t_initialized   = 0;
+//    DWORD           mm_t, delta_t;
+//
+//    if (!t_initialized)
+//    {
+//        time_t0 = time(NULL);
+//        time_delta = 0;
+//        mm_t0 = timeGetTime();
+//        t_initialized = 1;
+//    }
+//
+//    if (time_Info != NULL)
+//    {
+//        mm_t = timeGetTime();
+//
+//        if (mm_t < mm_t0)
+//            delta_t = (0xffffffff - mm_t0) + mm_t + 1;
+//        else
+//            delta_t = mm_t - mm_t0;
+//        mm_t0 = mm_t;
+//
+//        time_delta += delta_t;
+//        if (time_delta >= 1000)
+//        {
+//            time_t0 += time_delta / 1000;
+//            time_delta = time_delta % 1000;
+//        }
+//        time_Info->tv_sec = time_t0;
+//        time_Info->tv_usec = time_delta * 1000;
+//    }
+//
+//    if (timezone_Info != NULL)
+//    {
+//        _tzset();
+//        timezone_Info->tz_minuteswest = _timezone;
+//        timezone_Info->tz_dsttime = _daylight;
+//    }
+//    return 0;
+//}
+#else
 int gettimeofday( struct timeval* tv,struct timezone *timezone_Info)
 {
     FILETIME    time;
@@ -73,51 +112,7 @@ int gettimeofday( struct timeval* tv,struct timezone *timezone_Info)
     }
     return 0;
 }
-
-/*
-int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info)
-{
-    static DWORD    time_t0, time_delta, mm_t0;
-    static int      t_initialized   = 0;
-    DWORD           mm_t, delta_t;
-
-    if (!t_initialized)
-    {
-        time_t0 = time(NULL);
-        time_delta = 0;
-        mm_t0 = timeGetTime();
-        t_initialized = 1;
-    }
-
-    if (time_Info != NULL)
-    {
-        mm_t = timeGetTime();
-
-        if (mm_t < mm_t0)
-            delta_t = (0xffffffff - mm_t0) + mm_t + 1;
-        else
-            delta_t = mm_t - mm_t0;
-        mm_t0 = mm_t;
-
-        time_delta += delta_t;
-        if (time_delta >= 1000)
-        {
-            time_t0 += time_delta / 1000;
-            time_delta = time_delta % 1000;
-        }
-        time_Info->tv_sec = time_t0;
-        time_Info->tv_usec = time_delta * 1000;
-    }
-
-    if (timezone_Info != NULL)
-    {
-        _tzset();
-        timezone_Info->tz_minuteswest = _timezone;
-        timezone_Info->tz_dsttime = _daylight;
-    }
-    return 0;
-}
-*/
+#endif
 
 DIR * opendir(const char *dir)
 {
