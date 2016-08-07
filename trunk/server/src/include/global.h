@@ -649,8 +649,6 @@ typedef struct view_msp_t        view_msp_t;
 #define NUM_ANIMATIONS(ob) (animations[ob->animation_id].num_animations)
 #define NUM_FACINGS(ob) (animations[ob->animation_id].facings)
 
-#define FREE_AND_NULL_PTR(_xyz_) {if(_xyz_){free(_xyz_); _xyz_=NULL; }}
-
 /* use *only* these macros to access the global hash table!
  * Note: there is a 2nd hash table for the arch list - thats a static
  * list BUT the arch names are inserted in the global hash too - so every
