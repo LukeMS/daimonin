@@ -441,8 +441,7 @@ void initialize_socket_buffer_broadcast(sockbuf_struct *sockbuf)
 /* destructor called from mempool */
 void free_socket_buffer_dynamic(sockbuf_struct* sb)
 {
-	if(sb->buf)
-		FREE_AND_NULL_PTR(sb->buf);
+	FREE(sb->buf);
 	sb->queued = 0;
 }
 

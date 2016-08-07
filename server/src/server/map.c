@@ -583,7 +583,7 @@ map_t *map_save(map_t *m)
         if (!m->tmpname ||
             access(m->tmpname, F_OK) ==-1 )
         {
-            FREE_AND_NULL_PTR(m->tmpname);
+            FREE(m->tmpname);
             tempnam_local_ext(settings.tmpdir, NULL, filename);
             MALLOC_STRING(m->tmpname, filename);
         }
@@ -900,8 +900,8 @@ static void FreeMap(map_t *m)
     }
 #endif
 
-    FREE_AND_NULL_PTR(m->spaces);
-    FREE_AND_NULL_PTR(m->bitmap);
+    FREE(m->spaces);
+    FREE(m->bitmap);
 
     /* Delete the backlinks in other tiled maps to our map */
     for (i = 0; i < TILING_DIRECTION_NROF; i++)
