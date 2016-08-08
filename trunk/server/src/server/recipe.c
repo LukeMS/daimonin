@@ -717,12 +717,12 @@ void free_all_recipes()
         {
             next = formula->next;
 
-            FREE_AND_CLEAR_HASH2(formula->arch_name);
-            FREE_AND_CLEAR_HASH2(formula->title);
+            FREE_AND_CLEAR_HASH(formula->arch_name);
+            FREE_AND_CLEAR_HASH(formula->title);
             for (lchar = formula->ingred; lchar; lchar = charnext)
             {
                 charnext = lchar->next;
-                FREE_AND_CLEAR_HASH2(lchar->name);
+                FREE_AND_CLEAR_HASH(lchar->name);
                 free(lchar);
             }
             free(formula);

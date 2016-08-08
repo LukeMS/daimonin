@@ -1843,9 +1843,9 @@ void free_all_readable()
         for (title1 = tlist->first_book; title1; title1 = titlenext)
         {
             titlenext = title1->next;
-            FREE_AND_CLEAR_HASH2(title1->name);
-            FREE_AND_CLEAR_HASH2(title1->authour);
-            FREE_AND_CLEAR_HASH2(title1->archname);
+            FREE_AND_CLEAR_HASH(title1->name);
+            FREE_AND_CLEAR_HASH(title1->authour);
+            FREE_AND_CLEAR_HASH(title1->archname);
             free(title1);
         }
         free(tlist);
@@ -1853,7 +1853,7 @@ void free_all_readable()
     for (lmsg = first_msg; lmsg; lmsg = nextmsg)
     {
         nextmsg = lmsg->next;
-        FREE_AND_CLEAR_HASH2(lmsg->name);
+        FREE_AND_CLEAR_HASH(lmsg->name);
         free(lmsg);
     }
 

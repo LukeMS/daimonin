@@ -288,7 +288,7 @@ void spring_trap(object_t *trap, object_t *victim)
     trap->type = MISC_OBJECT;  /* make the trap impotent */
     CLEAR_FLAG(trap, FLAG_FLY_ON);
     CLEAR_FLAG(trap, FLAG_WALK_ON);
-    FREE_AND_CLEAR_HASH2(trap->msg);
+    FREE_AND_CLEAR_HASH(trap->msg);
     trap->stats.food = 20;  /* make it stick around until its spells are gone */
     SET_FLAG(trap, FLAG_IS_USED_UP);    /* ok, let the trap wear off */
     trap->speed = trap->speed_left = 1.0f;
@@ -322,7 +322,7 @@ void spring_trap(object_t *trap, object_t *victim)
         trap->type = MISC_OBJECT;  /* make the trap impotent */
         CLEAR_FLAG(trap, FLAG_FLY_ON);
         CLEAR_FLAG(trap, FLAG_WALK_ON);
-        FREE_AND_CLEAR_HASH2(trap->msg);
+        FREE_AND_CLEAR_HASH(trap->msg);
         trap->stats.food = 20;  /* make it stick around until its spells are gone */
         SET_FLAG(trap, FLAG_IS_USED_UP);
         trap->speed = trap->speed_left = 1.0f;

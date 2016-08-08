@@ -1493,7 +1493,7 @@ int process_object(object_t *op)
              * here perhaps. */
             if (op->slaying)
             {
-                FREE_AND_CLEAR_HASH2(op->slaying);
+                FREE_AND_CLEAR_HASH(op->slaying);
                 op->stats.food = op->arch->clone.stats.food;
                 remove_ob(op);                       /* another lame way to update view of players... */
                 insert_ob_in_map(op, op->map, NULL, INS_NO_WALK_ON);

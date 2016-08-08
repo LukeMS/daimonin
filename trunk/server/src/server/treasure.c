@@ -2198,11 +2198,11 @@ void free_treasurestruct(treasure *t)
         free_treasurestruct(t->next_yes);
     if (t->next_no)
         free_treasurestruct(t->next_no);
-    FREE_AND_CLEAR_HASH2(t->name);
-    FREE_AND_CLEAR_HASH2(t->change_arch.name);
-    FREE_AND_CLEAR_HASH2(t->change_arch.race);
-    FREE_AND_CLEAR_HASH2(t->change_arch.slaying);
-    FREE_AND_CLEAR_HASH2(t->change_arch.title);
+    FREE_AND_CLEAR_HASH(t->name);
+    FREE_AND_CLEAR_HASH(t->change_arch.name);
+    FREE_AND_CLEAR_HASH(t->change_arch.race);
+    FREE_AND_CLEAR_HASH(t->change_arch.slaying);
+    FREE_AND_CLEAR_HASH(t->change_arch.title);
     free(t);
 }
 
@@ -2215,7 +2215,7 @@ void free_all_treasures()
     for (tl = first_treasurelist; tl != NULL; tl = next)
     {
         next = tl->next;
-        FREE_AND_CLEAR_HASH2(tl->listname);
+        FREE_AND_CLEAR_HASH(tl->listname);
         if (tl->items)
             free_treasurestruct(tl->items);
         free(tl);
