@@ -784,11 +784,11 @@ int command_time(object_t *op, char *params)
                 {
                     ndi(NDI_UNIQUE, 0, op, "%s is not a valid parameter!",
                         token_sh);
-                    FREE_ONLY_HASH(token_sh);
+                    FREE_AND_CLEAR_HASH(token_sh);
                     return COMMANDS_RTN_VAL_SYNTAX;
                 }
 
-                FREE_ONLY_HASH(token_sh);
+                FREE_AND_CLEAR_HASH(token_sh);
             }
         }
     }

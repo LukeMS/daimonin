@@ -294,8 +294,8 @@ static int Map_ReadyInheritedMap(lua_State *L)
                                   WHERE->reference);
     }
 
-    FREE_ONLY_HASH(orig_path_sh);
-    FREE_ONLY_HASH(path_sh);
+    FREE_AND_CLEAR_HASH(orig_path_sh);
+    FREE_AND_CLEAR_HASH(path_sh);
     push_object(L, &Map, m);
 
     return 1;

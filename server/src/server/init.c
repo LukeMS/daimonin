@@ -167,7 +167,7 @@ static void FreeStrings(size_t nrof, shstr_t **ptr)
 
     for(; i >= 0; i--)
     {
-        FREE_ONLY_HASH(ptr[i]);
+        FREE_AND_CLEAR_HASH(ptr[i]);
     }
 }
 
@@ -818,7 +818,7 @@ void free_racelists()
     for (list = first_race; list; list = next)
     {
         next = list->next;
-        FREE_ONLY_HASH(list->name);
+        FREE_AND_CLEAR_HASH(list->name);
 
         for (tmp = list->member; tmp; tmp = tmp->next)
         {

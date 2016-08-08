@@ -822,8 +822,8 @@ static int GameObject_ReadyUniqueMap(lua_State *L)
                                   WHO->name);
     }
 
-    FREE_ONLY_HASH(path_sh);
-    FREE_ONLY_HASH(orig_path_sh);
+    FREE_AND_CLEAR_HASH(path_sh);
+    FREE_AND_CLEAR_HASH(orig_path_sh);
     push_object(L, &Map, m);
 
     return 1;
@@ -921,8 +921,8 @@ static int GameObject_StartNewInstance(lua_State *L)
         push_object(L, &Map, m);
     }
 
-    FREE_ONLY_HASH(orig_path_sh);
-    FREE_ONLY_HASH(path_sh);
+    FREE_AND_CLEAR_HASH(orig_path_sh);
+    FREE_AND_CLEAR_HASH(path_sh);
 
     return 1;
 }
@@ -940,7 +940,7 @@ static sint8 DoInstance(player_t *pl, const char *path)
         r = 0;
     }
 
-    FREE_ONLY_HASH(path_sh);
+    FREE_AND_CLEAR_HASH(path_sh);
 
     return r;
 }
@@ -1644,7 +1644,7 @@ static int GameObject_SetGod(lua_State *L)
         (PlugHooks[HOOK_BECOMEFOLLOWER]) (&CFP2);
     free(CFR);
 
-    FREE_ONLY_HASH(prayname);
+    FREE_AND_CLEAR_HASH(prayname);
 
     return 0;
 }

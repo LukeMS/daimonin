@@ -782,7 +782,7 @@ void unlink_treasurelists(objectlink_t *list, int flag)
         /*LOG(llevNoLog,"freed listpat: %s\n",list->objlink.tl->listname); */
         if(list->parmlink.tl_tweak)
         {
-            FREE_ONLY_HASH(list->parmlink.tl_tweak->name);
+            FREE_AND_CLEAR_HASH(list->parmlink.tl_tweak->name);
             return_poolchunk(list->parmlink.tl_tweak, pool_tlist_tweak);
         }
         return_poolchunk(list, pool_objectlink);

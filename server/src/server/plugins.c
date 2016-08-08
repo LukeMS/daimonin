@@ -506,8 +506,8 @@ void removeOnePlugin(const char *id)
     if (PlugList[plid].removefunc != NULL)
         PlugList[plid].removefunc(NULL);
 
-    FREE_ONLY_HASH(PlugList[plid].id);
-    FREE_ONLY_HASH(PlugList[plid].fullname);
+    FREE_AND_CLEAR_HASH(PlugList[plid].id);
+    FREE_AND_CLEAR_HASH(PlugList[plid].fullname);
 
     /* We unload the library... */
     FreeLibrary(PlugList[plid].libptr);
@@ -583,8 +583,8 @@ void removeOnePlugin(const char *id)
     if (PlugList[plid].removefunc != NULL)
         PlugList[plid].removefunc(NULL);
 
-    FREE_ONLY_HASH(PlugList[plid].id);
-    FREE_ONLY_HASH(PlugList[plid].fullname);
+    FREE_AND_CLEAR_HASH(PlugList[plid].id);
+    FREE_AND_CLEAR_HASH(PlugList[plid].fullname);
 
     /* We unload the library... */
     dlclose(PlugList[plid].libptr);
