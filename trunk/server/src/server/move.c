@@ -1127,7 +1127,7 @@ sint8 enter_map_by_exit(object_t *who, object_t *exit_ob)
     }
 
     m = ready_map_name(exit_ob->race, exit_ob->slaying, mstatus, reference);
-    FREE_ONLY_HASH(reference);
+    FREE_AND_CLEAR_HASH(reference);
 
     if (!m)
     {

@@ -1259,8 +1259,8 @@ map_t *ready_inherited_map(map_t *orig_map, shstr_t *new_map_path)
                              normalized_path,
                              MAP_STATUS_TYPE(orig_map->status),
                              orig_map->reference);
-    FREE_ONLY_HASH(normalized_path);
-    FREE_ONLY_HASH(new_path);
+    FREE_AND_CLEAR_HASH(normalized_path);
+    FREE_AND_CLEAR_HASH(new_path);
 
     return new_map;
 }
@@ -1564,7 +1564,7 @@ static map_t *LoadTemporaryMap(map_t *m)
         FREE_AND_ADD_REF_HASH(orig_path_sh, m->orig_path);
         delete_map(m);
         m = LoadMap(NULL, orig_path_sh, MAP_STATUS_MULTI, NULL);
-        FREE_ONLY_HASH(orig_path_sh);
+        FREE_AND_CLEAR_HASH(orig_path_sh);
     }
     else
     {
@@ -3498,9 +3498,9 @@ void map_check_in_memory(map_t *m)
                         }
 
                         /* Tidy up. */
-                        FREE_ONLY_HASH(path_sh);
-                        FREE_ONLY_HASH(orig_path_sh);
-                        FREE_ONLY_HASH(reference_sh);
+                        FREE_AND_CLEAR_HASH(path_sh);
+                        FREE_AND_CLEAR_HASH(orig_path_sh);
+                        FREE_AND_CLEAR_HASH(reference_sh);
                     }
                     else
                     {

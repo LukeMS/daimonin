@@ -213,12 +213,12 @@ void remove_ban_entry(struct objectlink_t *entry)
         free(entry->objlink.ban->ip); // TODO - can't this bit of code go below in the last 'else' ??
     if(entry->objlink.ban->name)
     {
-        FREE_ONLY_HASH(entry->objlink.ban->name);
+        FREE_AND_CLEAR_HASH(entry->objlink.ban->name);
         objectlink_unlink(&ban_list_player, NULL, entry);
     }
     else if(entry->objlink.ban->account)
     {
-        FREE_ONLY_HASH(entry->objlink.ban->account);
+        FREE_AND_CLEAR_HASH(entry->objlink.ban->account);
         objectlink_unlink(&ban_list_account, NULL, entry);
     }
     else

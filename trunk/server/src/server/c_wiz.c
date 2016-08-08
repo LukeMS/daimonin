@@ -323,8 +323,8 @@ int command_goto(object_t *op, char *params)
         path_sh = create_unique_path_sh(other->ob->name, orig_path_sh);
         flags = MAP_STATUS_UNIQUE;
         m = ready_map_name(path_sh, orig_path_sh, flags, op->name);
-        FREE_ONLY_HASH(orig_path_sh);
-        FREE_ONLY_HASH(path_sh);
+        FREE_AND_CLEAR_HASH(orig_path_sh);
+        FREE_AND_CLEAR_HASH(path_sh);
 
         if (!m)
         {
@@ -375,8 +375,8 @@ int command_goto(object_t *op, char *params)
         if (path_sh)
         {
             m = ready_map_name(path_sh, orig_path_sh, flags, op->name);
-            FREE_ONLY_HASH(orig_path_sh);
-            FREE_ONLY_HASH(path_sh);
+            FREE_AND_CLEAR_HASH(orig_path_sh);
+            FREE_AND_CLEAR_HASH(path_sh);
         }
 
         if (!m)
@@ -395,8 +395,8 @@ int command_goto(object_t *op, char *params)
 
     msp = MSP_RAW(m, x, y);
     (void)enter_map(op, msp, NULL, OVERLAY_FORCE | OVERLAY_FIRST_AVAILABLE | OVERLAY_FIXED, 0);
-    FREE_ONLY_HASH(orig_path_sh);
-    FREE_ONLY_HASH(path_sh);
+    FREE_AND_CLEAR_HASH(orig_path_sh);
+    FREE_AND_CLEAR_HASH(path_sh);
     return COMMANDS_RTN_VAL_OK_SILENT;
 }
 
@@ -1309,7 +1309,7 @@ int command_resetmap(object_t *op, char *params)
     }
 
     m = map_is_in_memory(path_sh);
-    FREE_ONLY_HASH(path_sh);
+    FREE_AND_CLEAR_HASH(path_sh);
 
     if (!m)
     {
@@ -2536,7 +2536,7 @@ int command_password(object_t *op, char *params)
         pl->account_name != name_sh)
     {
         ndi(NDI_UNIQUE, 0, op, "You can only change the password of your own account!");
-        FREE_ONLY_HASH(name_sh);
+        FREE_AND_CLEAR_HASH(name_sh);
 
         return COMMANDS_RTN_VAL_ERROR;
     }
@@ -2545,7 +2545,7 @@ int command_password(object_t *op, char *params)
     if (!(fp_old = fopen(fname_old, "r")))
     {
         NDI_LOG(llevBug, NDI_UNIQUE, 0, op, "Could not open account file '%s' for reading!", fname_old);
-        FREE_ONLY_HASH(name_sh);
+        FREE_AND_CLEAR_HASH(name_sh);
 
         return COMMANDS_RTN_VAL_ERROR;
     }
@@ -2556,7 +2556,7 @@ int command_password(object_t *op, char *params)
     if (!(fp_new = fopen(fname_new, "w")))
     {
         NDI_LOG(llevBug, NDI_UNIQUE, 0, op, "Could not open account file '%s' for writing!", fname_new);
-        FREE_ONLY_HASH(name_sh);
+        FREE_AND_CLEAR_HASH(name_sh);
         fclose(fp_old);
 
         return COMMANDS_RTN_VAL_ERROR;
@@ -2574,7 +2574,7 @@ int command_password(object_t *op, char *params)
                 strcmp(buf + 4, pwd_old))
             {
                 ndi(NDI_UNIQUE, 0, op, "The old password you specified is incorrect!");
-                FREE_ONLY_HASH(name_sh);
+                FREE_AND_CLEAR_HASH(name_sh);
                 fclose(fp_old);
                 fclose(fp_new);
                 remove(fname_new);
@@ -2619,7 +2619,7 @@ int command_password(object_t *op, char *params)
     }
 
     pl = CONTR(op);
-    FREE_ONLY_HASH(name_sh);
+    FREE_AND_CLEAR_HASH(name_sh);
     ndi(NDI_UNIQUE, 0, op, "OK!");
 
     /* Never log anyone's pwd, but do log who changed it to the GM channel. */

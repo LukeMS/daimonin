@@ -814,7 +814,7 @@ static int Game_ReadyMap(lua_State *L)
         m = hooks->ready_map_name(NULL, orig_path_sh, MAP_STATUS_MULTI, NULL);
     }
 
-    FREE_ONLY_HASH(orig_path_sh);
+    FREE_AND_CLEAR_HASH(orig_path_sh);
     push_object(L, &Map, m);
 
     return 1;
@@ -935,7 +935,7 @@ static int Game_LocateBeacon(lua_State *L)
 
     FREE_AND_COPY_HASH(id_s, id);
     foundob = hooks->locate_beacon(id_s);
-    FREE_ONLY_HASH(id_s);
+    FREE_AND_CLEAR_HASH(id_s);
 
     return push_object(L, &GameObject, foundob);
 }

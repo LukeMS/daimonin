@@ -1325,11 +1325,17 @@ void free_object_data(object_t *ob, int free_static_data)
             case DEAD_OBJECT:
               /* Players are changed into DEAD_OBJECTs when they logout */
               return_poolchunk(ob->custom_attrset, pool_player);
+              ob->custom_attrset = NULL;
               break;
 
             case MONSTER:
               return_poolchunk(ob->custom_attrset, pool_mob_data);
+              ob->custom_attrset = NULL;
               break;
+
+            case TYPE_QUEST_UPDATE: // since r7336 a string, so avoid default
+            ob->custom_attrset = NULL;
+            break;
 
             case TYPE_BEACON:
               {
@@ -1355,18 +1361,15 @@ void free_object_data(object_t *ob, int free_static_data)
                   }
 #endif
 
-                  FREE_ONLY_HASH(ob->custom_attrset);
+                  FREE_AND_CLEAR_HASH(ob->custom_attrset);
               }
               break;
-
-            case TYPE_QUEST_UPDATE: // since r7336 a string, so avoid default
-            break;
 
             default:
               LOG(llevBug, "BUG: destroy_object() custom attrset found in unsupported object %s (type %d)\n",
                   STRING_OBJ_NAME(ob), ob->type);
+              ob->custom_attrset = NULL;
         }
-        ob->custom_attrset = NULL;
     }
 
     FREE_AND_CLEAR_HASH(ob->name);
