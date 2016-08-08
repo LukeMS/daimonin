@@ -663,9 +663,6 @@ typedef struct view_msp_t        view_msp_t;
 
 #define casting_level(__caster_, __spell_type_) SK_level(__caster_)
 
-/* special macro with no {} ! if() FREE_AND_CLEAR_HASH2 will FAIL! */
-#define FREE_AND_CLEAR_HASH2(_nv_) if(_nv_){free_string_shared(_nv_);_nv_ =NULL;}
-
 #define LINK_SPAWN_ENEMY        0x01
 
 #define SPAWN_RANDOM_RANGE     10000

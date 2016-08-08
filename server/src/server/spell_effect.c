@@ -3711,8 +3711,8 @@ void move_fired_arch(object_t *op)
 //        }
 //    }
 //    memcpy(tmp->resist, god->resist, sizeof(tmp->resist));
-//    FREE_AND_CLEAR_HASH2(tmp->race);
-//    FREE_AND_CLEAR_HASH2(tmp->slaying);
+//    FREE_AND_CLEAR_HASH(tmp->race);
+//    FREE_AND_CLEAR_HASH(tmp->slaying);
 //    if (god->race)
 //        FREE_AND_COPY_HASH(tmp->race, god->race);
 //    if (god->slaying)

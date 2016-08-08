@@ -713,8 +713,8 @@ static void free_charlinks(shstr_linked_t *lc)
 
 static void free_artifact(artifact *at)
 {
-    FREE_AND_CLEAR_HASH2(at->name);
-    FREE_AND_CLEAR_HASH2(at->def_at.name);
+    FREE_AND_CLEAR_HASH(at->name);
+    FREE_AND_CLEAR_HASH(at->def_at.name);
     if (at->next)
         free_artifact(at->next);
     if (at->allowed)
@@ -723,11 +723,11 @@ static void free_artifact(artifact *at)
         free(at->parse_text);
     if(at->flags&ARTIFACT_FLAG_HAS_DEF_ARCH)
     {
-        FREE_AND_CLEAR_HASH2(at->def_at.clone.name);
-        FREE_AND_CLEAR_HASH2(at->def_at.clone.race);
-        FREE_AND_CLEAR_HASH2(at->def_at.clone.slaying);
-        FREE_AND_CLEAR_HASH2(at->def_at.clone.msg);
-        FREE_AND_CLEAR_HASH2(at->def_at.clone.title);
+        FREE_AND_CLEAR_HASH(at->def_at.clone.name);
+        FREE_AND_CLEAR_HASH(at->def_at.clone.race);
+        FREE_AND_CLEAR_HASH(at->def_at.clone.slaying);
+        FREE_AND_CLEAR_HASH(at->def_at.clone.msg);
+        FREE_AND_CLEAR_HASH(at->def_at.clone.title);
     }
     free(at);
 }

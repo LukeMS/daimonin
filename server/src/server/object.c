@@ -981,11 +981,11 @@ static void Copy(object_t *from, object_t *to)
         unlink_treasurelists(to->randomitems, 0);
     }
 
-    FREE_AND_CLEAR_HASH2(to->name);
-    FREE_AND_CLEAR_HASH2(to->title);
-    FREE_AND_CLEAR_HASH2(to->race);
-    FREE_AND_CLEAR_HASH2(to->slaying);
-    FREE_AND_CLEAR_HASH2(to->msg);
+    FREE_AND_CLEAR_HASH(to->name);
+    FREE_AND_CLEAR_HASH(to->title);
+    FREE_AND_CLEAR_HASH(to->race);
+    FREE_AND_CLEAR_HASH(to->slaying);
+    FREE_AND_CLEAR_HASH(to->msg);
     (void)memcpy((void *)((char *)to + offsetof(object_t, name)),
         (void *)((char *)from + offsetof(object_t, name)),
         sizeof(object_t) - offsetof(object_t, name));
@@ -1369,11 +1369,11 @@ void free_object_data(object_t *ob, int free_static_data)
         ob->custom_attrset = NULL;
     }
 
-    FREE_AND_CLEAR_HASH2(ob->name);
-    FREE_AND_CLEAR_HASH2(ob->title);
-    FREE_AND_CLEAR_HASH2(ob->race);
-    FREE_AND_CLEAR_HASH2(ob->slaying);
-    FREE_AND_CLEAR_HASH2(ob->msg);
+    FREE_AND_CLEAR_HASH(ob->name);
+    FREE_AND_CLEAR_HASH(ob->title);
+    FREE_AND_CLEAR_HASH(ob->race);
+    FREE_AND_CLEAR_HASH(ob->slaying);
+    FREE_AND_CLEAR_HASH(ob->msg);
 }
 
 /* destroy and delete recursive the inventory of an destroyed object. */

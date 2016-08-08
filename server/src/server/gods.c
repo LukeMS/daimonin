@@ -274,7 +274,7 @@
 //        new_draw_info(NDI_UNIQUE, 0, op, "%s's blessing is withdrawn from you.", skillgroup->title);
 //        CLEAR_FLAG(skillgroup, FLAG_APPLIED);
 //        change_abil(op, skillgroup);
-//        FREE_AND_CLEAR_HASH2(skillgroup->title);
+//        FREE_AND_CLEAR_HASH(skillgroup->title);
 //    }
 //
 //    /* now change to the new gods attributes to skillgroup */
@@ -950,7 +950,7 @@
 //    /*
 //    if (spellop->attacktype & AT_GODPOWER)
 //    {
-//        FREE_AND_CLEAR_HASH2(spellop->slaying);
+//        FREE_AND_CLEAR_HASH(spellop->slaying);
 //        if (!caster_is_spell)
 //        {
 //            FREE_AND_COPY_HASH(spellop->slaying, god->slaying);
@@ -1227,7 +1227,7 @@ void become_follower(object_t *op, object_t *new_god)
         ndi(NDI_UNIQUE, 0, op, "%s's blessing is withdrawn from you.", skillgroup->title);
         CLEAR_FLAG(skillgroup, FLAG_APPLIED);
         change_abil(op, skillgroup);
-        FREE_AND_CLEAR_HASH2(skillgroup->title);
+        FREE_AND_CLEAR_HASH(skillgroup->title);
     }
 
     /* now change to the new gods attributes to skillgroup */

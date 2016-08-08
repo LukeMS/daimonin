@@ -924,7 +924,7 @@ addme_login_msg player_create(NewSocket *ns, player_t **pl_ret, char *name, int 
 
     /* some more sanity settings */
     SET_ANIMATION(op, 4 * (NUM_ANIMATIONS(op) / NUM_FACINGS(op))); /* So player faces south */
-    FREE_AND_CLEAR_HASH2(op->msg);
+    FREE_AND_CLEAR_HASH(op->msg);
     op->carrying = sum_weight(op);
 
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);

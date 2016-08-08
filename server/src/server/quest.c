@@ -625,7 +625,7 @@ int update_quest(object_t *trigger, uint8 subtype, object_t *info, char *text, c
     {
         if (!info->race)
         {
-            FREE_AND_CLEAR_HASH2(ob->race);
+            FREE_AND_CLEAR_HASH(ob->race);
         }
         else
         {
@@ -644,7 +644,7 @@ int update_quest(object_t *trigger, uint8 subtype, object_t *info, char *text, c
 
         if (!info->title)
         {
-            FREE_AND_CLEAR_HASH2(ob->title);
+            FREE_AND_CLEAR_HASH(ob->title);
         }
         else
         {
@@ -653,7 +653,7 @@ int update_quest(object_t *trigger, uint8 subtype, object_t *info, char *text, c
 
         if (!info->slaying)
         {
-            FREE_AND_CLEAR_HASH2(ob->slaying);
+            FREE_AND_CLEAR_HASH(ob->slaying);
         }
         else
         {
