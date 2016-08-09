@@ -136,7 +136,7 @@ void request_new_path(object_t *op)
 }
 
 /* Get the next (valid) mob that have requested a path is requested */
-object_t * get_next_requested_path()
+object_t *get_next_requested_path(void)
 {
     object_t *op;
     tag_t   count;
