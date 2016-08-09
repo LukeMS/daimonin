@@ -615,16 +615,6 @@ int                         cftimer_create(int id, long delay, object_t *ob, int
 int                         cftimer_destroy(int id);
 int                         cftimer_find_free_id(void);
 /* pathfinder.c */
-int                         pathfinder_queue_enqueue(object_t *waypoint);
-object_t                     *pathfinder_queue_dequeue(tag_t *count);
-void                        request_new_path(object_t *waypoint);
-object_t                     *get_next_requested_path(void);
-struct path_segment        *encode_path(path_node *path, struct path_segment **last_segment);
-int                         get_path_next(const char *buf, sint16 *off, const char **mappath, map_t **map, int *x,
-                                          int *y);
-path_node                  *compress_path(path_node *path);
-float                       distance_heuristic(path_node *start, path_node *current, path_node *goal, object_t *op1, object_t *op2);
-path_node                  *find_path(object_t *op, map_t *map1, int x1, int y1, map_t *map2, int x2, int y2);
 /* swamp.c */
 extern object_t *sparkly_create(archetype_t *at, object_t *who, sint16 t, sint16 nr, uint8 stype);
 extern void      sparkly_move(object_t *effect);

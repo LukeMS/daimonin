@@ -26,6 +26,9 @@
 #ifndef __PATHFINDER_H
 #define __PATHFINDER_H
 
+/* Uncomment this to enable more intelligent use of CPU time for path finding */
+#define LEFTOVER_CPU_FOR_PATHFINDING
+
 typedef struct astar_node
 {
     struct astar_node  *next;    /* Next node in linked list */
@@ -49,20 +52,13 @@ struct path_segment
     sint16               y;
 };
 
-extern void     return_poolchunk_array_real(void *, uint32, struct mempool *);
-extern void     free_string_shared(const char *str);
-
-static inline void free_path(struct path_segment *p)
-{
-    for (; p; p = p->next)
-    {
-        free_string_shared(p->map);
-        return_poolchunk(p, pool_path_segment);
-        /* assumes poolchunk is still valid */
-    }
-}
-
-/* Uncomment this to enable more intelligent use of CPU time for path finding */
-#define LEFTOVER_CPU_FOR_PATHFINDING
+extern int                  pathfinder_queue_enqueue(object_t *waypoint);
+extern object_t            *pathfinder_queue_dequeue(tag_t *count);
+extern struct path_segment *encode_path(path_node *path, struct path_segment **last_segment);
+extern int                  get_path_next(const char *buf, sint16 *off, const char **mappath, map_t **map, int *x, int *y);
+extern path_node           *compress_path(path_node *path);
+extern float                distance_heuristic(path_node *start, path_node *current, path_node *goal, object_t *op1, object_t *op2);
+extern path_node           *find_path(object_t *op, map_t *map1, int x1, int y1, map_t *map2, int x2, int y2);
+extern void                 free_path(struct path_segment *p);
 
 #endif /* ifndef __PATHFINDER_H */
