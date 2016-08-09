@@ -54,6 +54,8 @@ struct path_segment
 
 extern int                  pathfinder_queue_enqueue(object_t *waypoint);
 extern object_t            *pathfinder_queue_dequeue(tag_t *count);
+extern void                 request_new_path(object_t *op);
+extern object_t            *get_next_requested_path(void);
 extern struct path_segment *encode_path(path_node *path, struct path_segment **last_segment);
 extern int                  get_path_next(const char *buf, sint16 *off, const char **mappath, map_t **map, int *x, int *y);
 extern path_node           *compress_path(path_node *path);
