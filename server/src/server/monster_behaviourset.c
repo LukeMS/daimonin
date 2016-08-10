@@ -128,8 +128,7 @@ void cleanup_mob_data(struct mobdata *data)
 {
     struct mob_known_obj       *tmp;
 
-    if (data->pathfinding.path)
-        free_path(data->pathfinding.path);
+    PATHFINDER_FREE_PATH(data->pathfinding.path);
     FREE_AND_CLEAR_HASH(data->pathfinding.goal_map);
     FREE_AND_CLEAR_HASH(data->pathfinding.target_map);
 

@@ -628,7 +628,7 @@ static int FindNeighbours(path_node *node, path_node **open_list,
     return 1;
 }
 
-void free_path(struct path_segment *p)
+void pathfinder_free_path(struct path_segment *p)
 {
     for (; p; p = p->next)
     {

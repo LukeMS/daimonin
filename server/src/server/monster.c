@@ -100,8 +100,7 @@ static int calc_direction_towards(object_t *op, object_t *target, msp_t *msp)
               pf->target_x != x ||
               pf->target_y != y)))
         {
-            free_path(pf->path);
-            pf->path = NULL;
+            PATHFINDER_FREE_PATH(pf->path);
         }
     }
 
@@ -156,9 +155,7 @@ static int calc_direction_towards(object_t *op, object_t *target, msp_t *msp)
                 STRING_MAP_PATH(path_map), STRING_SAFE(pf->path->map), pf->path->x, pf->path->y);
 
         /* Discard invalid path. This will force a new path request later */
-        free_path(pf->path);
-        pf->path = NULL;
-
+        PATHFINDER_FREE_PATH(pf->path);
         return 0;
     }
 
@@ -247,8 +244,7 @@ static int calc_direction_towards_object(object_t *op, object_t *target)
                 STRING_MAP_PATH(op->map), STRING_SAFE(MOB_PATHDATA(op)->goal_map));
 
             /* Request new path */
-            free_path(MOB_PATHDATA(op)->path);
-            MOB_PATHDATA(op)->path = NULL;
+            PATHFINDER_FREE_PATH(MOB_PATHDATA(op)->path);
         }
         else if ((goal_msp = MSP_GET2(goal_m, goal_x, goal_y)) &&
                  RV_GET_OBJ_TO_MSP(target, goal_msp, &rv_goal, RV_DIAGONAL_DISTANCE) &&
@@ -262,8 +258,7 @@ static int calc_direction_towards_object(object_t *op, object_t *target)
                 LOG(llevDebug, "calc_direction_towards_object(): %s's target '%s' has moved\n", STRING_OBJ_NAME(op),
                     STRING_OBJ_NAME(target));
 #endif
-                free_path(MOB_PATHDATA(op)->path);
-                MOB_PATHDATA(op)->path = NULL;
+                PATHFINDER_FREE_PATH(MOB_PATHDATA(op)->path);
             }
         }
     }
@@ -936,8 +931,7 @@ void object_accept_path(object_t *op)
         }
 #endif
         /* Free any old precomputed path */
-        if (MOB_PATHDATA(op)->path)
-            free_path(MOB_PATHDATA(op)->path);
+        PATHFINDER_FREE_PATH(MOB_PATHDATA(op)->path);
 
         /* And store the new one */
         MOB_PATHDATA(op)->path = encode_path(path, NULL);
