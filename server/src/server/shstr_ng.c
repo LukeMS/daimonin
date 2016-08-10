@@ -328,6 +328,14 @@ void free_string_shared(shstr_t *str)
 {
     struct shared_string  *ss;
 
+    /* Lets not make a big song and dance when passed NULL. Means freeing an
+     * already free'd (and NULL'd) shstr is valid (if poiintless), a la free()
+     * for malloc'd pointers. */
+    if (!str)
+    {
+        return;
+    }
+
     /* we check str is in the hash table - if not, something
      * is VERY wrong here. We can also be sure, that SS(str) is
      * a safe operation - except we really messed something
