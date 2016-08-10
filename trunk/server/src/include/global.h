@@ -334,6 +334,16 @@ error - Your ANSI C compiler should be defining __STDC__;
     }
 
 /* FREE() frees __a and sets it to NULL. */
+/* NOTE: This is generally the case with most *FREE*() macros: they call
+ * *free*() and then assign NULL to the pointer. This iw because the functions
+ * themselves do not reassign the pointer. After all, perhaps you want to
+ * reallocate it immediately. Often the pointer is being freed as part of a
+ * deallocation of a larger structure in which case NULLing each component is
+ * not rreally necessary. Or at server shutdown all the allocated memory is
+ * freed but we don't then care that the pointers are now garbage. Still, the
+ * bigger issue is that referring to an unreassigned freed pointer will crash
+ * the program. So although sometimes circumstances make it a bit redundant, do
+ * it by default. */
 #define FREE(__a) \
     free((__a)); \
     (__a) = NULL;
