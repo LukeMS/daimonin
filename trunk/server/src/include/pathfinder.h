@@ -52,6 +52,11 @@ struct path_segment
     sint16               y;
 };
 
+/* PATHFINDER_FREE_PATH() frees and assigns NULL to its input. */
+#define PATHFINDER_FREE_PATH(__a) \
+    pathfinder_free_path((__a)); \
+    (__a) = NULL;
+
 extern int                  pathfinder_queue_enqueue(object_t *waypoint);
 extern object_t            *pathfinder_queue_dequeue(tag_t *count);
 extern void                 request_new_path(object_t *op);
@@ -61,6 +66,6 @@ extern int                  get_path_next(const char *buf, sint16 *off, const ch
 extern path_node           *compress_path(path_node *path);
 extern float                distance_heuristic(path_node *start, path_node *current, path_node *goal, object_t *op1, object_t *op2);
 extern path_node           *find_path(object_t *op, map_t *map1, int x1, int y1, map_t *map2, int x2, int y2);
-extern void                 free_path(struct path_segment *p);
+extern void                 pathfinder_free_path(struct path_segment *p);
 
 #endif /* ifndef __PATHFINDER_H */
