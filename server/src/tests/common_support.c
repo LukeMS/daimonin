@@ -171,7 +171,7 @@ int memleak_detected()
     int i, k, mempool_leak = 0;
 
     cleanup_without_exit();
-    ss_get_totals(&entries2, &refs2, &links2);
+    shstr_get_totals(&entries2, &refs2, &links2);
 
     for(i=0; i<nrof_mempools; i++)
         for (k = 0; k < MEMPOOL_NROF_FREELISTS; k++)
@@ -195,7 +195,7 @@ int memleak_detected()
     if(0 != entries2)
     {
         LOG(llevDebug, "Some string(s) not freed (diff = %d)\n", entries2);
-        ss_dump_table(SS_DUMP_TOTALS);
+        shstr_dump_table(SHSTR_DUMP_TOTALS);
         return -1;
     }
 
@@ -204,7 +204,7 @@ int memleak_detected()
     if(0 != refs2)
     {
         LOG(llevDebug, "Some string(s) not dereferenced (diff = %d)\n", refs2);
-        ss_dump_table(SS_DUMP_TOTALS);
+        shstr_dump_table(SHSTR_DUMP_TOTALS);
         return -1;
     }
 

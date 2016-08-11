@@ -47,7 +47,7 @@ static void teardown()
 START_TEST (shstr_t_init)
 {
     int entries, refs, links;
-    ss_get_totals(&entries, &refs, &links);
+    shstr_get_totals(&entries, &refs, &links);
     fail_unless(entries == 0 && refs == 0 && links == 0, "hashtable not empty");
 }
 END_TEST
@@ -60,14 +60,14 @@ START_TEST (shstr_t_add_string)
 
     a = add_string("hello");
     b = add_string("world");
-    ss_get_totals(&entries, &refs, &links);
+    shstr_get_totals(&entries, &refs, &links);
     fail_unless(entries == 2 && refs == 2, "Insertion failed");
     fail_unless(strcmp(a, "hello") == 0, "String was modified");
     fail_unless(strcmp(b, "world") == 0, "String was modified");
 
     a = add_string("hello");
     b = add_string("world");
-    ss_get_totals(&entries, &refs, &links);
+    shstr_get_totals(&entries, &refs, &links);
     fail_unless(entries == 2 && refs == 4, "Strings are not shared");
     fail_unless(strcmp(a, "hello") == 0, "String was modified");
     fail_unless(strcmp(b, "world") == 0, "String was modified");
@@ -82,14 +82,14 @@ START_TEST (shstr_t_add_lstring)
 
     a = add_lstring("hello foobar", 5);
     b = add_lstring("world snafu", 5);
-    ss_get_totals(&entries, &refs, &links);
+    shstr_get_totals(&entries, &refs, &links);
     fail_unless(entries == 2 && refs == 2, "Insertion failed");
     fail_unless(strcmp(a, "hello") == 0, "String was modified");
     fail_unless(strcmp(b, "world") == 0, "String was modified");
 
     a = add_lstring("hello foobar", 5);
     b = add_lstring("world snafu", 5);
-    ss_get_totals(&entries, &refs, &links);
+    shstr_get_totals(&entries, &refs, &links);
     fail_unless(entries == 2 && refs == 4, "Strings are not shared (%d!=2 || %d!=4)", entries, refs);
     fail_unless(strcmp(a, "hello") == 0, "String was modified");
     fail_unless(strcmp(b, "world") == 0, "String was modified");
@@ -139,7 +139,7 @@ START_TEST (shstr_t_add_refcount)
     b = add_refcount(b);
     fail_unless(query_refcount(a) == 2, "String refcount mismatches");
     fail_unless(query_refcount(b) == 2, "String refcount mismatches");
-    ss_get_totals(&entries, &refs, &links);
+    shstr_get_totals(&entries, &refs, &links);
     fail_unless(entries == 2 && refs == 4, "Strings are not shared");
 }
 END_TEST
@@ -154,15 +154,15 @@ START_TEST (shstr_t_free_string_shared)
     b = add_string("world");
     a = add_string("hello");
 
-    ss_get_totals(&entries, &refs, &links);
+    shstr_get_totals(&entries, &refs, &links);
     fail_unless(entries == 2 && refs == 3, "Strings are not shared");
 
     free_string_shared(a);
-    ss_get_totals(&entries, &refs, &links);
+    shstr_get_totals(&entries, &refs, &links);
     fail_unless(entries == 2 && refs == 2, "Strings are not unrefed");
 
     free_string_shared(b);
-    ss_get_totals(&entries, &refs, &links);
+    shstr_get_totals(&entries, &refs, &links);
     fail_unless(entries == 1 && refs == 1, "Strings are not unrefed");
 
     fail_if(find_string("world"), "String still findable");

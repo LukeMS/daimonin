@@ -30,15 +30,15 @@
  * This will add some inc/dec counter to the hash table.
  * small & very small cpu use
  */
-#define SS_STATISTICS
+#define SHSTR_STATISTICS
 
 /* SS(string) will return the address of the shared_string struct which
  * contains "string".
  */
 #define SS(x) ((struct shared_string *) ((x) - offsetof(struct shared_string, string)))
 
-#ifndef SS_DUMP_TOTALS
-#define SS_DUMP_TOTALS  1
+#ifndef SHSTR_DUMP_TOTALS
+#define SHSTR_DUMP_TOTALS  1
 #endif
 
 /* So far only used when dealing with artifacts.

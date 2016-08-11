@@ -775,7 +775,7 @@ typedef enum
 extern sint16 brightness[MAX_DARKNESS + 1];
 
 /* define from shstr.h - hash table dump */
-#define SS_DUMP_TOTALS       1
+#define SHSTR_DUMP_TOTALS       1
 
 /* The FOREACH macros provide a convenient and understandable way to write a
  * code block which steps through each object in a given context.
