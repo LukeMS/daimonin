@@ -695,15 +695,15 @@ int command_sstable(object_t *op, char *params)
 
     /* any paramter: dump whole table to the logfile */
     if (params && *params != 0)
-        flags = SS_DUMP_TOTALS;
+        flags = SHSTR_DUMP_TOTALS;
 
     LOG(llevSystem, "HASH TABLE DUMP\n");
-    ss_dump_statistics(errmsg);
+    shstr_dump_statistics(errmsg);
     if (errmsg[0] != '\0')
     {
         ndi(NDI_UNIQUE, 0, op, "%s", errmsg);
     }
-    tmp = ss_dump_table(flags);
+    tmp = shstr_dump_table(flags);
     ndi(NDI_UNIQUE, 0, op, "%s", tmp);
 
     return 0;

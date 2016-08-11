@@ -34,7 +34,7 @@
 
 #include "global.h"
 
-#ifdef SS_STATISTICS
+#ifdef SHSTR_STATISTICS
 static struct statistics
 {
     int                     calls;
@@ -44,9 +44,9 @@ static struct statistics
     int                     linked;
 } ladd_stats, add_stats, add_ref_stats, free_stats, find_stats, hash_stats;
 #define GATHER(n) (++n)
-#else /* !SS_STATISTICS */
+#else /* !SHSTR_STATISTICS */
 #define GATHER(n)
-#endif /* SS_STATISTICS */
+#endif /* SHSTR_STATISTICS */
 
 /* define this will make the hash table more secure but
  * also somewhat slower - if no problems happens after
@@ -68,7 +68,7 @@ static hashtable *shared_strings;
 #define SHSTR_INITIAL_TABLE_SIZE 8192
 
 /* Wrappers for statistics gathering */
-#ifdef SS_STATISTICS
+#ifdef SHSTR_STATISTICS
 static struct statistics *s_stats;
 static int stats_string_key_equals(const hashtable_const_key_t key1, const hashtable_const_key_t key2)
 {
@@ -90,7 +90,7 @@ static hashtable_size_t stats_string_hash(const hashtable_const_key_t key)
 void init_hash_table(void)
 {
     shared_strings = string_hashtable_new(SHSTR_INITIAL_TABLE_SIZE);
-#ifdef SS_STATISTICS
+#ifdef SHSTR_STATISTICS
     shared_strings->hash = stats_string_hash;
     shared_strings->equals = stats_string_key_equals;
 #endif
@@ -199,7 +199,7 @@ shstr_t *add_lstring(const char *str, int n)
     }
 
     /* Restore hashing functions */
-#ifdef SS_STATISTICS
+#ifdef SHSTR_STATISTICS
     shared_strings->hash = stats_string_hash;
     shared_strings->equals = stats_string_key_equals;
 #else
@@ -234,7 +234,7 @@ shstr_t *add_string(const char *str)
         return NULL;
     }
 
-#ifdef SS_STATISTICS
+#ifdef SHSTR_STATISTICS
     s_stats = &add_stats;
 #endif
 
@@ -282,7 +282,7 @@ const char *find_string(const char *str)
     GATHER(find_stats.calls);
     GATHER(find_stats.search);
 
-#ifdef SS_STATISTICS
+#ifdef SHSTR_STATISTICS
     s_stats = &find_stats;
 #endif
 
@@ -356,7 +356,7 @@ void free_string_shared(shstr_t *str)
     ss = SS(str);
     --ss->refcount;
     if (ss->refcount == 0) {
-#ifdef SS_STATISTICS
+#ifdef SHSTR_STATISTICS
         s_stats = &free_stats;
 #endif
         GATHER(free_stats.search);
@@ -371,18 +371,18 @@ void free_string_shared(shstr_t *str)
 
 /*
  * Description:
- *      The routines will gather statistics if SS_STATISTICS is defined.
+ *      The routines will gather statistics if SHSTR_STATISTICS is defined.
  *      A call to this function will cause the statistics to be dumped
  *      into the string msg, which must be large.
  * Return values:
  *      pointer to msg
  */
-char * ss_dump_statistics(char *msg)
+char * shstr_dump_statistics(char *msg)
 {
     char    line[126];
     msg[0] = '\0';
 
-#ifdef SS_STATISTICS
+#ifdef SHSTR_STATISTICS
     sprintf(msg, "%-13s   %6s %6s %6s %6s %6s\n", "hashtable  :", "calls", "hashed", "strcmp", "search", "linked");
     sprintf(line, "%-13s %6d %6d %6d %6d %6d\n", "add_string:", add_stats.calls, add_stats.hashed, add_stats.strcmps,
             add_stats.search, add_stats.linked);
@@ -404,7 +404,7 @@ char * ss_dump_statistics(char *msg)
     return msg;
 }
 
-static void ss_find_totals(int *entries, int *refs, int *links, int what)
+static void shstr_find_totals(int *entries, int *refs, int *links, int what)
 {
     hashtable_iterator_t i;
 
@@ -422,7 +422,7 @@ static void ss_find_totals(int *entries, int *refs, int *links, int what)
 
         *refs += ss->refcount;
         *links += probes;
-        if(what & SS_DUMP_TOTALS)
+        if(what & SHSTR_DUMP_TOTALS)
             LOG(llevSystem, "%4d -- %4d refs '%s' (%d probes)\n", (int)i, (int)(ss->refcount), ss->string, probes);
     }
 }
@@ -437,24 +437,24 @@ static void ss_find_totals(int *entries, int *refs, int *links, int what)
  * A "links" value much larger than "entries" indicates a too small
  * table size and/or a bad hashing function.
  */
-void ss_get_totals(int *entries, int *refs, int *links)
+void shstr_get_totals(int *entries, int *refs, int *links)
 {
-    ss_find_totals(entries, refs, links, 0);
+    shstr_find_totals(entries, refs, links, 0);
 }
 
 /*
  * Description:
- *      If (what & SS_DUMP_TOTALS) return a string which
+ *      If (what & SHSTR_DUMP_TOTALS) return a string which
  *      says how many entries etc. there are in the table.
  * Return values:
  *      - a string or NULL
  */
-char * ss_dump_table(int what)
+char * shstr_dump_table(int what)
 {
     static char totals[80];
     int         entries = 0, refs = 0, links = 0;
 
-    ss_find_totals(&entries, &refs, &links, what);
+    shstr_find_totals(&entries, &refs, &links, what);
 
     sprintf(totals, "%d entries, %d refs, %d links.", entries, refs, links);
 

@@ -87,7 +87,7 @@ START_TEST (object_strings)
     int entries2, refs2, links2;
     int nrof_refs;
 
-    ss_get_totals(&entries1, &refs1, &links1);
+    shstr_get_totals(&entries1, &refs1, &links1);
 
     FREE_AND_COPY_HASH(obj->name, "qwerty1234");
     FREE_AND_COPY_HASH(obj->title, "qwerty1234");
@@ -95,7 +95,7 @@ START_TEST (object_strings)
     FREE_AND_COPY_HASH(obj->slaying, "qwerty1234");
     FREE_AND_COPY_HASH(obj->msg, "qwerty1234");
     nrof_refs = query_refcount(obj->name);
-    ss_get_totals(&entries2, &refs2, &links2);
+    shstr_get_totals(&entries2, &refs2, &links2);
 
     fail_unless(nrof_refs == 5, "Test setup failed");
     fail_unless(entries2 == entries1 + 1, "Test setup failed");
@@ -103,7 +103,7 @@ START_TEST (object_strings)
 
     object_gc();
 
-    ss_get_totals(&entries2, &refs2, &links2);
+    shstr_get_totals(&entries2, &refs2, &links2);
     fail_unless(entries2 == entries1, "String not freed");
     fail_unless(refs2 == refs1, "String not dereferenced");
 }

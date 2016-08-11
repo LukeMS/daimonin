@@ -180,9 +180,9 @@ extern int              query_refcount(const char *str);
 extern const char      *find_string(const char *str);
 extern const char      *add_refcount(const char *str);
 extern void             free_string_shared(const char *str);
-extern char            *ss_dump_statistics(char *msg);
-extern char            *ss_dump_table(int what);
-extern void             ss_get_totals(int *entries, int *refs, int *links);
+extern char            *shstr_dump_statistics(char *msg);
+extern char            *shstr_dump_table(int what);
+extern void             shstr_get_totals(int *entries, int *refs, int *links);
 /* treasure.c */
 extern void             load_treasures(void);
 extern treasurelist    *find_treasurelist(const char *name);
