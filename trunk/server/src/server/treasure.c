@@ -557,7 +557,7 @@ static treasure * get_empty_treasure(void)
  */
 treasurelist * find_treasurelist(const char *name)
 {
-    const char     *tmp = find_string(name);
+    const char     *tmp = shstr_find(name);
     treasurelist   *tl;
 
     /* Special cases - randomitems of none is to override default.  If
@@ -689,7 +689,7 @@ objectlink_t * link_treasurelists(char *liststring, uint32 flags)
         if ((parm = strchr(liststring, '&')))
             *parm = 0;
 
-        if (!(name = find_string(liststring)))
+        if (!(name = shstr_find(liststring)))
         {
             /* no treasure list name in hash table = no treasure list with that name */
             LOG(llevInfo, "BUG: link_treasurelists(): Treasurelist >%s< not found\n", liststring);
@@ -734,7 +734,7 @@ objectlink_t * link_treasurelists(char *liststring, uint32 flags)
 
                         /* save the tname with paramter. don't patch, save the whole name */
                         *parm = '&';
-                        tweak->name = add_string(liststring);
+                        tweak->name = shstr_add_string(liststring);
                         tweak->artifact_chance = ART_CHANCE_UNSET;
                         tweak->style = T_STYLE_UNSET;
                         tweak->difficulty = 0;

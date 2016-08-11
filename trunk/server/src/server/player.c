@@ -42,7 +42,7 @@ player_t * find_player(char *plname)
 
     strcpy(name, plname); /* we need to copy it because we access the string */
     transform_player_name_string(name);
-    if (!(name_hash = find_string(name)))
+    if (!(name_hash = shstr_find(name)))
         return NULL;
 
     return find_player_hash(name_hash);
@@ -957,7 +957,7 @@ int command_pvp_stats(object_t *op, char *params)
     // Make sure the specified character is logged in.
     transform_player_name_string(name);
 
-    if (!(name_hash = find_string(name)))
+    if (!(name_hash = shstr_find(name)))
     {
         ndi(NDI_UNIQUE, 0, op, "No such player.");
         return 0;

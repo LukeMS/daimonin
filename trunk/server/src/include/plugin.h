@@ -242,8 +242,6 @@ struct plugin_hooklist
     int (*add_pet)(object_t *, object_t *, int);
     void (*add_quest_containers)(object_t *);
     void (*add_quest_trigger)(object_t *, object_t *);
-    const char *(*add_refcount)(const char *);
-    const char *(*add_string)(const char *);
     void (*adjust_light_source)(msp_t *, int);
     object_t *(*arch_to_object)(archetype_t *);
     /* B */
@@ -278,7 +276,6 @@ struct plugin_hooklist
     artifact *(*find_artifact)(const char *);
     object_t *(*find_next_object)(object_t *, uint8, uint8, object_t *);
     object_t *(*find_skill)(object_t *, int);
-    const char *(*find_string)(const char *);
     int (*FindFace)(const char *, int);
 #ifdef DEBUG_FIX_PLAYER
     void (*fix_player)(object_t *, char *);
@@ -286,7 +283,6 @@ struct plugin_hooklist
     void (*fix_player)(object_t *);
 #endif
     void (*free_mempool)(struct mempool *);
-    void (*free_string_shared)(const char *);
     /* G */
     object_t *(*get_archetype)(const char *);
     int (*get_button_value)(object_t *);
@@ -381,6 +377,10 @@ struct plugin_hooklist
     void (*set_personal_light)(player_t *, int);
     void (*set_quest_status)(object_t *, int, int);
     uint8 (*shop_pay_amount)(sint64, object_t *);
+    shstr_t *(*shstr_add_refcount)(const char *);
+    shstr_t *(*shstr_add_string)(const char *);
+    shstr_t *(*shstr_find)(const char *);
+    void (*shstr_free)(const char *);
     void (*signal_connection)(object_t *, object_t *, object_t *, map_t *);
     void (*spring_trap)(object_t *, object_t *);
     char *(*strdup_local)(const char *);

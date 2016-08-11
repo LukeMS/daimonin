@@ -42,7 +42,7 @@ static void setup()
  * everything is freed after the swapping */
 START_TEST (map_loading)
 {
-    const char *path = add_string("/dev/unit_tests/test_maploader");
+    const char *path = shstr_add_string("/dev/unit_tests/test_maploader");
     map_t *map;
 
 

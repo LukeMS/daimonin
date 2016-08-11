@@ -43,19 +43,19 @@ static void teardown()
 /* Bah, this shouldn't be in this file, perhaps */
 START_TEST (buttons_check_blocked_tile)
 {
-    shstr_t *path = add_string("/dev/unit_tests/test_check_inv");
+    shstr_t *path = shstr_add_string("/dev/unit_tests/test_check_inv");
     map_t *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
 
-    object_t *c1 = locate_beacon(find_string("c2_1"))->env;
-    object_t *c2 = locate_beacon(find_string("c2_2"))->env;
-    object_t *c3 = locate_beacon(find_string("c2_3"))->env;
-    object_t *c4 = locate_beacon(find_string("c2_4"))->env;
-    object_t *c5 = locate_beacon(find_string("c2_5"))->env;
-    object_t *c6 = locate_beacon(find_string("c2_6"))->env;
-    object_t *c7 = locate_beacon(find_string("c2_7"))->env;
-    object_t *c8 = locate_beacon(find_string("c2_8"))->env;
+    object_t *c1 = locate_beacon(shstr_find("c2_1"))->env;
+    object_t *c2 = locate_beacon(shstr_find("c2_2"))->env;
+    object_t *c3 = locate_beacon(shstr_find("c2_3"))->env;
+    object_t *c4 = locate_beacon(shstr_find("c2_4"))->env;
+    object_t *c5 = locate_beacon(shstr_find("c2_5"))->env;
+    object_t *c6 = locate_beacon(shstr_find("c2_6"))->env;
+    object_t *c7 = locate_beacon(shstr_find("c2_7"))->env;
+    object_t *c8 = locate_beacon(shstr_find("c2_8"))->env;
 
-    object_t *sword = locate_beacon(find_string("shortsword"))->env;
+    object_t *sword = locate_beacon(shstr_find("shortsword"))->env;
 
     object_t *cont1 = arch_to_object(find_archetype("chest")); /* "player" with sword */
     object_t *cont2 = arch_to_object(find_archetype("chest")); /* "player" without sword */
@@ -90,13 +90,13 @@ END_TEST
 /* Bah, this shouldn't be in this file, perhaps */
 START_TEST (buttons_move_apply_check_inv)
 {
-    shstr_t *path = add_string("/dev/unit_tests/test_check_inv");
+    shstr_t *path = shstr_add_string("/dev/unit_tests/test_check_inv");
     map_t *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
 
-    object_t *c7 = locate_beacon(find_string("c2_7"))->env;
-    object_t *c8 = locate_beacon(find_string("c2_8"))->env;
+    object_t *c7 = locate_beacon(shstr_find("c2_7"))->env;
+    object_t *c8 = locate_beacon(shstr_find("c2_8"))->env;
 
-    object_t *sword = locate_beacon(find_string("shortsword"))->env;
+    object_t *sword = locate_beacon(shstr_find("shortsword"))->env;
 
     /* Create a fake player (yes, this is dangerous...) */
     object_t *cont1 = arch_to_object(find_archetype("chest")); /* "player" with sword */
@@ -142,21 +142,21 @@ END_TEST
 
 START_TEST (buttons_check_inv_recursive)
 {
-    shstr_t *path = add_string("/dev/unit_tests/test_check_inv");
+    shstr_t *path = shstr_add_string("/dev/unit_tests/test_check_inv");
     map_t *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
 
-    object_t *check1 = locate_beacon(find_string("check1"))->env;
-    object_t *check2 = locate_beacon(find_string("check2"))->env;
-    object_t *check3 = locate_beacon(find_string("check3"))->env;
-    object_t *check4 = locate_beacon(find_string("check4"))->env;
-    object_t *check5 = locate_beacon(find_string("check5"))->env;
-    object_t *check8 = locate_beacon(find_string("check8"))->env;
-    object_t *check9 = locate_beacon(find_string("check9"))->env;
+    object_t *check1 = locate_beacon(shstr_find("check1"))->env;
+    object_t *check2 = locate_beacon(shstr_find("check2"))->env;
+    object_t *check3 = locate_beacon(shstr_find("check3"))->env;
+    object_t *check4 = locate_beacon(shstr_find("check4"))->env;
+    object_t *check5 = locate_beacon(shstr_find("check5"))->env;
+    object_t *check8 = locate_beacon(shstr_find("check8"))->env;
+    object_t *check9 = locate_beacon(shstr_find("check9"))->env;
 
-    object_t *key1 = locate_beacon(find_string("key1"))->env;
-    object_t *key2 = locate_beacon(find_string("key2"))->env;
-    object_t *key3 = locate_beacon(find_string("key3"))->env;
-    object_t *key4 = locate_beacon(find_string("key4"))->env;
+    object_t *key1 = locate_beacon(shstr_find("key1"))->env;
+    object_t *key2 = locate_beacon(shstr_find("key2"))->env;
+    object_t *key3 = locate_beacon(shstr_find("key3"))->env;
+    object_t *key4 = locate_beacon(shstr_find("key4"))->env;
 
     object_t *cont1 = arch_to_object(find_archetype("chest"));
     object_t *cont2 = arch_to_object(find_archetype("chest"));
@@ -209,27 +209,27 @@ END_TEST
 /* Test mapload initialization */
 START_TEST (buttons_check_mapload)
 {
-    shstr_t *path = add_string("/dev/unit_tests/test_connections");
+    shstr_t *path = shstr_add_string("/dev/unit_tests/test_connections");
     map_t *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
 
-    object_t *lever = locate_beacon(find_string("lever"))->env;
+    object_t *lever = locate_beacon(shstr_find("lever"))->env;
 
-    object_t *creator1 = locate_beacon(find_string("creator1"))->env;
-    object_t *creator2 = locate_beacon(find_string("creator2"))->env;
-    object_t *creator3 = locate_beacon(find_string("creator3"))->env;
-    object_t *creator4 = locate_beacon(find_string("creator4"))->env;
-    object_t *creator5 = locate_beacon(find_string("creator5"))->env;
+    object_t *creator1 = locate_beacon(shstr_find("creator1"))->env;
+    object_t *creator2 = locate_beacon(shstr_find("creator2"))->env;
+    object_t *creator3 = locate_beacon(shstr_find("creator3"))->env;
+    object_t *creator4 = locate_beacon(shstr_find("creator4"))->env;
+    object_t *creator5 = locate_beacon(shstr_find("creator5"))->env;
 
-    object_t *fire1a = locate_beacon(find_string("fire1a"))->env;
-    object_t *fire1b = locate_beacon(find_string("fire1b"))->env;
-    object_t *fire2a = locate_beacon(find_string("fire2a"))->env;
-    object_t *fire2b = locate_beacon(find_string("fire2b"))->env;
-    object_t *fire3a = locate_beacon(find_string("fire3a"))->env;
-    object_t *fire3b = locate_beacon(find_string("fire3b"))->env;
-    object_t *fire4a = locate_beacon(find_string("fire4a"))->env;
-    object_t *fire4b = locate_beacon(find_string("fire4b"))->env;
-    object_t *fire5a = locate_beacon(find_string("fire5a"))->env;
-    object_t *fire5b = locate_beacon(find_string("fire5b"))->env;
+    object_t *fire1a = locate_beacon(shstr_find("fire1a"))->env;
+    object_t *fire1b = locate_beacon(shstr_find("fire1b"))->env;
+    object_t *fire2a = locate_beacon(shstr_find("fire2a"))->env;
+    object_t *fire2b = locate_beacon(shstr_find("fire2b"))->env;
+    object_t *fire3a = locate_beacon(shstr_find("fire3a"))->env;
+    object_t *fire3b = locate_beacon(shstr_find("fire3b"))->env;
+    object_t *fire4a = locate_beacon(shstr_find("fire4a"))->env;
+    object_t *fire4b = locate_beacon(shstr_find("fire4b"))->env;
+    object_t *fire5a = locate_beacon(shstr_find("fire5a"))->env;
+    object_t *fire5b = locate_beacon(shstr_find("fire5b"))->env;
 
     /* 1. Make sure nothing is created at mapload */
     fail_if(creator1->above || creator1->below, "creator1 created something");
@@ -275,14 +275,14 @@ END_TEST
 /* Test environment sensors */
 START_TEST (buttons_check_env_sensor)
 {
-    shstr_t *path = add_string("/dev/unit_tests/test_env_sensor");
+    shstr_t *path = shstr_add_string("/dev/unit_tests/test_env_sensor");
     map_t *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
 
-    object_t *lever = locate_beacon(find_string("lever_beacon"))->env; // Lever controlling light3
-    object_t *sensor = locate_beacon(find_string("sensor_beacon"))->env; // Sensor activated by light3
-    object_t *light1 = locate_beacon(find_string("gravelight_beacon"))->env; // applyable light connected to sensor
-    object_t *light2 = locate_beacon(find_string("light_beacon"))->env; // light source connected to sensor
-    object_t *light3 = locate_beacon(find_string("light_beacon_2"))->env;
+    object_t *lever = locate_beacon(shstr_find("lever_beacon"))->env; // Lever controlling light3
+    object_t *sensor = locate_beacon(shstr_find("sensor_beacon"))->env; // Sensor activated by light3
+    object_t *light1 = locate_beacon(shstr_find("gravelight_beacon"))->env; // applyable light connected to sensor
+    object_t *light2 = locate_beacon(shstr_find("light_beacon"))->env; // light source connected to sensor
+    object_t *light3 = locate_beacon(shstr_find("light_beacon_2"))->env;
 
     /* Give the env sensor a chance to sense */
     process_events();
@@ -323,16 +323,16 @@ END_TEST
  */
 START_TEST (buttons_check_pedestal)
 {
-    shstr_t *path = add_string("/dev/unit_tests/test_pedestal");
+    shstr_t *path = shstr_add_string("/dev/unit_tests/test_pedestal");
     map_t *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
 
-    object_t *lever = locate_beacon(find_string("lever"))->env;
-    object_t *pedestal1 = locate_beacon(find_string("visible_pedestal"))->env;
-    object_t *pedestal2 = locate_beacon(find_string("invisible_pedestal"))->env;
-    object_t *pedestal3 = locate_beacon(find_string("sys_invisible_pedestal"))->env;
-    object_t *pedestal4 = locate_beacon(find_string("visible_pedestal_2"))->env;
-    object_t *pedestal5 = locate_beacon(find_string("invisible_pedestal_2"))->env;
-    object_t *pedestal6 = locate_beacon(find_string("sys_invisible_pedestal_2"))->env;
+    object_t *lever = locate_beacon(shstr_find("lever"))->env;
+    object_t *pedestal1 = locate_beacon(shstr_find("visible_pedestal"))->env;
+    object_t *pedestal2 = locate_beacon(shstr_find("invisible_pedestal"))->env;
+    object_t *pedestal3 = locate_beacon(shstr_find("sys_invisible_pedestal"))->env;
+    object_t *pedestal4 = locate_beacon(shstr_find("visible_pedestal_2"))->env;
+    object_t *pedestal5 = locate_beacon(shstr_find("invisible_pedestal_2"))->env;
+    object_t *pedestal6 = locate_beacon(shstr_find("sys_invisible_pedestal_2"))->env;
 
     fail_if(pedestal1->weight_limit, "visible pedestal 1 is triggered");
     fail_if(pedestal2->weight_limit, "invisible pedestal 1 is triggered");
@@ -359,10 +359,10 @@ END_TEST
  */
 START_TEST (buttons_creator_with_mover)
 {
-    shstr_t     *path = add_string("/dev/unit_tests/test_creator");
+    shstr_t     *path = shstr_add_string("/dev/unit_tests/test_creator");
     map_t *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
-    object_t    *lever = locate_beacon(find_string("lever"))->env,
-              *beacon = locate_beacon(find_string("beacon_square")),
+    object_t    *lever = locate_beacon(shstr_find("lever"))->env,
+              *beacon = locate_beacon(shstr_find("beacon_square")),
               *mover;
     MapStruct *msp = MSP_KNOWN(beacon);
 

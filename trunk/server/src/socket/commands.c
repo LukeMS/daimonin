@@ -291,16 +291,16 @@ void init_commands()
     qsort((char *)CommandsMM, CommandsMMSize, sizeof(CommArray_s), compare_A);
     qsort((char *)CommandsSA, CommandsSASize, sizeof(CommArray_s), compare_A);
 
-    subcommands.add = add_string("add");
-    subcommands.cancel = add_string("cancel");
-    subcommands.list = add_string("list");
-    subcommands.remove = add_string("remove");
-    subcommands.verbose = add_string("verbose");
-    subcommands.restart = add_string("restart");
-    subcommands.shutdown = add_string("shutdown");
-    subcommands.showtime = add_string("showtime");
-    subcommands.showdate = add_string("showdate");
-    subcommands.showseason = add_string("showseason");
+    subcommands.add = shstr_add_string("add");
+    subcommands.cancel = shstr_add_string("cancel");
+    subcommands.list = shstr_add_string("list");
+    subcommands.remove = shstr_add_string("remove");
+    subcommands.verbose = shstr_add_string("verbose");
+    subcommands.restart = shstr_add_string("restart");
+    subcommands.shutdown = shstr_add_string("shutdown");
+    subcommands.showtime = shstr_add_string("showtime");
+    subcommands.showdate = shstr_add_string("showdate");
+    subcommands.showseason = shstr_add_string("showseason");
 }
 
 /* Finds cmd if it exists for pl (determined by gmaster_mode).
@@ -1461,7 +1461,7 @@ void cs_cmd_checkname(char *buf, int len, NewSocket *ns)
 
     /* first, check its a already used account name */
     sprintf(filename, "%s/%s/%s/%s/%s.acc", settings.localdir, settings.accountdir, get_subdir(buf), buf, buf);
-    hash_name = add_string(buf);
+    hash_name = shstr_add_string(buf);
     /* perhaps this socket tried twice? delete any previous try */
     FREE_AND_CLEAR_HASH(ns->pl_account.create_name);
 
@@ -1551,7 +1551,7 @@ void cs_cmd_login(char *buf, int len, NewSocket *ns)
         ret = account_create(&ns->pl_account, buf, pass);
     }
 
-    hash_account = add_string(buf); /* generate a hash - used for example when we compare account names */
+    hash_account = shstr_add_string(buf); /* generate a hash - used for example when we compare account names */
 
     if(check_banned(ns, hash_account, NULL, 0))
         ret = ACCOUNT_STATUS_BANNED;
@@ -1613,7 +1613,7 @@ void cs_cmd_addme(char *buf, int len, NewSocket *ns)
         return;
     }
 
-    hash_name = add_string(buf); /* generate a hash - used for example when we compare player names */
+    hash_name = shstr_add_string(buf); /* generate a hash - used for example when we compare player names */
 
     /* lets see the player is banned - if so don't even try to log */
     if (check_banned(ns, NULL, hash_name, 0))
@@ -1725,7 +1725,7 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
     race = GetChar_Buffer(buf);
     gender = GetChar_Buffer(buf);
     skill_nr = GetChar_Buffer(buf);
-    pass = add_string(buf + strlen(buf) + 1);
+    pass = shstr_add_string(buf + strlen(buf) + 1);
 
     if (!player_name_valid(buf))
     {
@@ -1757,7 +1757,7 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
             /* Otherwise it must be old-style and therefore reclaimable. */
             else
             {
-                shstr_t *password = add_string(real_password);
+                shstr_t *password = shstr_add_string(real_password);
 
                 fclose(fp);
 
@@ -1794,7 +1794,7 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
 
                     /* This is basically the business end from cs_cmd_delchar()
                      * below. */
-                    name = add_string(buf);
+                    name = shstr_add_string(buf);
                     ret = account_delete_player(ns, name);
                     FREE_AND_CLEAR_HASH(name);
 
@@ -1908,7 +1908,7 @@ void cs_cmd_delchar(char *buf, int len, NewSocket *ns)
 
     /* name is ok, now try to remove from account and move the player file.
      * account_delete_player() will take care about the flow */
-    name = add_string(buf);
+    name = shstr_add_string(buf);
     ret = account_delete_player(ns, name);
     FREE_AND_CLEAR_HASH(name);
 

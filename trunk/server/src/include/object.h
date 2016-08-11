@@ -146,7 +146,7 @@ struct object_t
      * this count refers the logical object. MT.
      */
 
-    /* These get an extra add_refcount(), after having been copied by memcpy().
+    /* These get an extra shstr_add_refcount(), after having been copied by memcpy().
      * All fields beow this point are automatically copied by memcpy.  If
      * adding something that needs a refcount updated, make sure you modify
      * copy_object to do so.  Everything below here also gets cleared
@@ -325,7 +325,7 @@ struct object_t
      * set every time a freed object is used again
      * this count refers the logical object. MT.
      */
-    /* These get an extra add_refcount(), after having been copied by memcpy().
+    /* These get an extra shstr_add_refcount(), after having been copied by memcpy().
      * All fields beow this point are automatically copied by memcpy.  If
      * adding something that needs a refcount updated, make sure you modify
      * copy_object to do so.  Everything below here also gets cleared

@@ -36,7 +36,7 @@
  * tests can run */
 static void setup()
 {
-    init_hash_table();
+    shstr_init();
 }
 
 static void teardown()
@@ -58,15 +58,15 @@ START_TEST (shstr_t_add_string)
     int entries, refs, links;
     const char *a, *b;
 
-    a = add_string("hello");
-    b = add_string("world");
+    a = shstr_add_string("hello");
+    b = shstr_add_string("world");
     shstr_get_totals(&entries, &refs, &links);
     fail_unless(entries == 2 && refs == 2, "Insertion failed");
     fail_unless(strcmp(a, "hello") == 0, "String was modified");
     fail_unless(strcmp(b, "world") == 0, "String was modified");
 
-    a = add_string("hello");
-    b = add_string("world");
+    a = shstr_add_string("hello");
+    b = shstr_add_string("world");
     shstr_get_totals(&entries, &refs, &links);
     fail_unless(entries == 2 && refs == 4, "Strings are not shared");
     fail_unless(strcmp(a, "hello") == 0, "String was modified");
@@ -74,21 +74,21 @@ START_TEST (shstr_t_add_string)
 }
 END_TEST
 
-/* Test that add_lstring really heeds the length parameter */
+/* Test that shstr_add_lstring really heeds the length parameter */
 START_TEST (shstr_t_add_lstring)
 {
     int entries, refs, links;
     const char *a, *b;
 
-    a = add_lstring("hello foobar", 5);
-    b = add_lstring("world snafu", 5);
+    a = shstr_add_lstring("hello foobar", 5);
+    b = shstr_add_lstring("world snafu", 5);
     shstr_get_totals(&entries, &refs, &links);
     fail_unless(entries == 2 && refs == 2, "Insertion failed");
     fail_unless(strcmp(a, "hello") == 0, "String was modified");
     fail_unless(strcmp(b, "world") == 0, "String was modified");
 
-    a = add_lstring("hello foobar", 5);
-    b = add_lstring("world snafu", 5);
+    a = shstr_add_lstring("hello foobar", 5);
+    b = shstr_add_lstring("world snafu", 5);
     shstr_get_totals(&entries, &refs, &links);
     fail_unless(entries == 2 && refs == 4, "Strings are not shared (%d!=2 || %d!=4)", entries, refs);
     fail_unless(strcmp(a, "hello") == 0, "String was modified");
@@ -96,77 +96,77 @@ START_TEST (shstr_t_add_lstring)
 }
 END_TEST
 
-/* Test that query_refcount works */
+/* Test that shstr_query_refcount works */
 START_TEST (shstr_t_query_refcount)
 {
     const char *a, *b;
 
-    a = add_string("hello");
-    b = add_string("world");
-    fail_unless(query_refcount(a) == 1, "String refcount mismatches");
-    fail_unless(query_refcount(b) == 1, "String refcount mismatches");
+    a = shstr_add_string("hello");
+    b = shstr_add_string("world");
+    fail_unless(shstr_query_refcount(a) == 1, "String refcount mismatches");
+    fail_unless(shstr_query_refcount(b) == 1, "String refcount mismatches");
 
-    a = add_string("hello");
-    b = add_string("world");
-    fail_unless(query_refcount(a) == 2, "String refcount mismatches");
-    fail_unless(query_refcount(b) == 2, "String refcount mismatches");
+    a = shstr_add_string("hello");
+    b = shstr_add_string("world");
+    fail_unless(shstr_query_refcount(a) == 2, "String refcount mismatches");
+    fail_unless(shstr_query_refcount(b) == 2, "String refcount mismatches");
 }
 END_TEST
 
-/* Test that find_string works */
+/* Test that shstr_find works */
 START_TEST (shstr_t_find_string)
 {
     const char *a, *b;
 
-    a = add_string("hello");
-    b = add_string("world");
+    a = shstr_add_string("hello");
+    b = shstr_add_string("world");
 
-    fail_unless(find_string("hello") == a, "find_string failed");
-    fail_unless(find_string("world") == b, "find_string failed");
+    fail_unless(shstr_find("hello") == a, "find_string failed");
+    fail_unless(shstr_find("world") == b, "find_string failed");
 }
 END_TEST
 
-/* Test that add_refcount works */
+/* Test that shstr_add_refcount works */
 START_TEST (shstr_t_add_refcount)
 {
     int entries, refs, links;
     const char *a, *b;
 
-    a = add_string("hello");
-    b = add_string("world");
+    a = shstr_add_string("hello");
+    b = shstr_add_string("world");
 
-    a = add_refcount(a);
-    b = add_refcount(b);
-    fail_unless(query_refcount(a) == 2, "String refcount mismatches");
-    fail_unless(query_refcount(b) == 2, "String refcount mismatches");
+    a = shstr_add_refcount(a);
+    b = shstr_add_refcount(b);
+    fail_unless(shstr_query_refcount(a) == 2, "String refcount mismatches");
+    fail_unless(shstr_query_refcount(b) == 2, "String refcount mismatches");
     shstr_get_totals(&entries, &refs, &links);
     fail_unless(entries == 2 && refs == 4, "Strings are not shared");
 }
 END_TEST
 
-/* Test that free_string_shared works */
+/* Test that shstr_free works */
 START_TEST (shstr_t_free_string_shared)
 {
     int entries, refs, links;
     const char *a, *b;
 
-    a = add_string("hello");
-    b = add_string("world");
-    a = add_string("hello");
+    a = shstr_add_string("hello");
+    b = shstr_add_string("world");
+    a = shstr_add_string("hello");
 
     shstr_get_totals(&entries, &refs, &links);
     fail_unless(entries == 2 && refs == 3, "Strings are not shared");
 
-    free_string_shared(a);
+    shstr_free(a);
     shstr_get_totals(&entries, &refs, &links);
     fail_unless(entries == 2 && refs == 2, "Strings are not unrefed");
 
-    free_string_shared(b);
+    shstr_free(b);
     shstr_get_totals(&entries, &refs, &links);
     fail_unless(entries == 1 && refs == 1, "Strings are not unrefed");
 
-    fail_if(find_string("world"), "String still findable");
-    fail_unless(find_string("hello") != NULL, "String not findable");
+    fail_if(shstr_find("world"), "String still findable");
+    fail_unless(shstr_find("hello") != NULL, "String not findable");
 }
 END_TEST
 
@@ -182,7 +182,7 @@ Suite *shstr_suite(void)
   tcase_add_test(tc_core, shstr_add_string);
   tcase_add_test(tc_core, shstr_add_lstring);
   tcase_add_test(tc_core, shstr_query_refcount);
-  tcase_add_test(tc_core, shstr_find_string);
+  tcase_add_test(tc_core, shstr_find);
   tcase_add_test(tc_core, shstr_add_refcount);
   tcase_add_test(tc_core, shstr_free_string_shared);
 

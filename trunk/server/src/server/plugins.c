@@ -41,8 +41,6 @@ struct plugin_hooklist  hooklist    =
     add_pet,
     add_quest_containers,
     add_quest_trigger,
-    add_refcount,
-    add_string,
     adjust_light_source,
     arch_to_object,
     /* B */
@@ -74,11 +72,9 @@ struct plugin_hooklist  hooklist    =
     find_artifact,
     find_next_object,
     find_skill,
-    find_string,
     FindFace,
     fix_player,
     free_mempool,
-    free_string_shared,
     /* G */
     get_archetype,
     get_button_value,
@@ -164,6 +160,10 @@ struct plugin_hooklist  hooklist    =
     set_personal_light,
     set_quest_status,
     shop_pay_amount,
+    shstr_add_refcount,
+    shstr_add_string,
+    shstr_find,
+    shstr_free,
     signal_connection,
     spring_trap,
     strdup_local,
@@ -439,8 +439,8 @@ void initOnePlugin(const char *pluginfile)
 
         PlugList[PlugNR].initfunc(NULL, &name, &version);
         LOG(llevInfo, "Plugin name: %s, known as %s\n", version, name);
-        PlugList[PlugNR].id = add_string(name);
-        PlugList[PlugNR].fullname = add_string(version);
+        PlugList[PlugNR].id = shstr_add_string(name);
+        PlugList[PlugNR].fullname = shstr_add_string(version);
     }
     PlugList[PlugNR].removefunc = (f_plugin) (GetProcAddress(DLLInstance, "removePlugin"));
     PlugList[PlugNR].hookfunc = (f_plugin) (GetProcAddress(DLLInstance, "registerHook"));
@@ -636,8 +636,8 @@ void initOnePlugin(const char *pluginfile)
 
         PlugList[PlugNR].initfunc(NULL, &name, &version);
         LOG(llevInfo, "    Plugin %s loaded under the name of %s\n", version, name);
-        PlugList[PlugNR].id = add_string(name);
-        PlugList[PlugNR].fullname = add_string(version);
+        PlugList[PlugNR].id = shstr_add_string(name);
+        PlugList[PlugNR].fullname = shstr_add_string(version);
     }
     PlugList[PlugNR].removefunc = (f_plugin) (dlsym(ptr, "removePlugin"));
     PlugList[PlugNR].hookfunc = (f_plugin) (dlsym(ptr, "registerHook"));

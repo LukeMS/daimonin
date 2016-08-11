@@ -103,54 +103,54 @@ static void init_defaults()
  */
 static void init_strings()
 {
-    shstr_cons.undead = add_string("undead");
-    shstr_cons.none = add_string("none"); /* Used in god code */
-    shstr_cons.NONE = add_string("NONE"); /* Used in alchemy code */
-    shstr_cons.quarterstaff = add_string("quarterstaff");
+    shstr_cons.undead = shstr_add_string("undead");
+    shstr_cons.none = shstr_add_string("none"); /* Used in god code */
+    shstr_cons.NONE = shstr_add_string("NONE"); /* Used in alchemy code */
+    shstr_cons.quarterstaff = shstr_add_string("quarterstaff");
 
-    shstr_cons.clawing = add_string("clawing");
-    shstr_cons.town_portal_destination = add_string("Town portal destination");
-    shstr_cons.existing_town_portal = add_string("Existing town portal");
+    shstr_cons.clawing = shstr_add_string("clawing");
+    shstr_cons.town_portal_destination = shstr_add_string("Town portal destination");
+    shstr_cons.existing_town_portal = shstr_add_string("Existing town portal");
 
-    shstr_cons.player = add_string("player");
-    shstr_cons.money = add_string("money");
-    shstr_cons.RANK_FORCE = add_string("RANK_FORCE");
-    shstr_cons.ALIGNMENT_FORCE = add_string("ALIGNMENT_FORCE");
-    shstr_cons.GUILD_FORCE = add_string("GUILD_FORCE");
+    shstr_cons.player = shstr_add_string("player");
+    shstr_cons.money = shstr_add_string("money");
+    shstr_cons.RANK_FORCE = shstr_add_string("RANK_FORCE");
+    shstr_cons.ALIGNMENT_FORCE = shstr_add_string("ALIGNMENT_FORCE");
+    shstr_cons.GUILD_FORCE = shstr_add_string("GUILD_FORCE");
 
-    shstr_cons.stat_strength = add_string("strength");
-    shstr_cons.stat_dexterity = add_string("dexterity");
-    shstr_cons.stat_constitution = add_string("constitution");
-    shstr_cons.stat_intelligence = add_string("intelligence");
-    shstr_cons.stat_wisdom = add_string("wisdom");
-    shstr_cons.stat_power = add_string("power");
-    shstr_cons.stat_charisma = add_string("charisma");
+    shstr_cons.stat_strength = shstr_add_string("strength");
+    shstr_cons.stat_dexterity = shstr_add_string("dexterity");
+    shstr_cons.stat_constitution = shstr_add_string("constitution");
+    shstr_cons.stat_intelligence = shstr_add_string("intelligence");
+    shstr_cons.stat_wisdom = shstr_add_string("wisdom");
+    shstr_cons.stat_power = shstr_add_string("power");
+    shstr_cons.stat_charisma = shstr_add_string("charisma");
 
-    shstr_cons.grace_limit = add_string("grace limit");
-    shstr_cons.restore_grace = add_string("restore grace");
-    shstr_cons.restore_hitpoints = add_string("restore hitpoints");
-    shstr_cons.restore_spellpoints = add_string("restore spellpoints");
-    shstr_cons.heal_spell = add_string("heal spell");
-    shstr_cons.remove_curse = add_string("remove curse");
-    shstr_cons.remove_damnation = add_string("remove damnation");
-    shstr_cons.heal_depletion = add_string("heal depletion");
-    shstr_cons.message = add_string("message");
-    shstr_cons.enchant_weapon = add_string("enchant weapon");
+    shstr_cons.grace_limit = shstr_add_string("grace limit");
+    shstr_cons.restore_grace = shstr_add_string("restore grace");
+    shstr_cons.restore_hitpoints = shstr_add_string("restore hitpoints");
+    shstr_cons.restore_spellpoints = shstr_add_string("restore spellpoints");
+    shstr_cons.heal_spell = shstr_add_string("heal spell");
+    shstr_cons.remove_curse = shstr_add_string("remove curse");
+    shstr_cons.remove_damnation = shstr_add_string("remove damnation");
+    shstr_cons.heal_depletion = shstr_add_string("heal depletion");
+    shstr_cons.message = shstr_add_string("message");
+    shstr_cons.enchant_weapon = shstr_add_string("enchant weapon");
 
-    shstr_cons.Eldath = add_string("Eldath"); /* old and incorrect god */
-    shstr_cons.the_Tabernacle = add_string("the Tabernacle"); /* corrected god */
+    shstr_cons.Eldath = shstr_add_string("Eldath"); /* old and incorrect god */
+    shstr_cons.the_Tabernacle = shstr_add_string("the Tabernacle"); /* corrected god */
 
-    shstr_cons.poisonous_food = add_string("poisonous food");
-    shstr_cons.starvation = add_string("starvation");
-    shstr_cons.drowning = add_string("drowning in a swamp");
+    shstr_cons.poisonous_food = shstr_add_string("poisonous food");
+    shstr_cons.starvation = shstr_add_string("starvation");
+    shstr_cons.drowning = shstr_add_string("drowning in a swamp");
 
-    shstr_cons.emergency_mappath = add_string(EMERGENCY_MAPPATH);
-    shstr_cons.start_mappath = add_string(FALLBACK_START_MAP_PATH);
-    shstr_cons.bind_mappath = add_string(BIND_MAP_MAPPATH);
+    shstr_cons.emergency_mappath = shstr_add_string(EMERGENCY_MAPPATH);
+    shstr_cons.start_mappath = shstr_add_string(FALLBACK_START_MAP_PATH);
+    shstr_cons.bind_mappath = shstr_add_string(BIND_MAP_MAPPATH);
 
-    shstr_cons.nopass = add_string(RECLAIM_NOPASS);
+    shstr_cons.nopass = shstr_add_string(RECLAIM_NOPASS);
 
-    shstr_cons.beacon_default = add_string("beacon");
+    shstr_cons.beacon_default = shstr_add_string("beacon");
 }
 
 void free_strings(void)
@@ -1421,7 +1421,7 @@ void init_lists_and_tables()
 void init_library()
 {
     init_environ();
-    init_hash_table(); /* inits the shstr_t system */
+    shstr_init(); /* inits the shstr_t system */
     init_globals();
     init_mempools();   /* Inits the mempool manager and the object system */
     init_vars();

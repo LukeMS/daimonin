@@ -38,7 +38,7 @@
  * tests can run */
 static void setup()
 {
-    init_hash_table();
+    shstr_init();
 }
 
 /* This basically benchmarks searching and ref increasing */
@@ -50,7 +50,7 @@ START_TEST(shstr_t_benchmark_insert_1)
     timer_start();
     for(i=0; i<benchmark_repetitions; i++) {
         for(j=0; j<num_words; j++) {
-            add_string(words[j]);
+            shstr_add_string(words[j]);
         }
     }
     timer_stop(num_words * benchmark_repetitions);
@@ -66,9 +66,9 @@ START_TEST(shstr_t_benchmark_insert_2)
     timer_start();
     for(i=0; i<benchmark_repetitions; i++) {
         for(j=0; j<num_words; j++) {
-            add_string(words[j]);
+            shstr_add_string(words[j]);
         }
-        init_hash_table(); // Leaks memory like crazy
+        shstr_init(); // Leaks memory like crazy
     }
     timer_stop(num_words * benchmark_repetitions);
 }
@@ -78,16 +78,16 @@ END_TEST
 START_TEST(shstr_t_benchmark_search)
 {
     int i,j;
-    printf("\nBenchmarking %d x %d shstr_t find_string\n", benchmark_repetitions, num_words);
+    printf("\nBenchmarking %d x %d shstr_t shstr_find\n", benchmark_repetitions, num_words);
 
     for(j=0; j<num_words; j++)
-        add_string(words[j]);
+        shstr_add_string(words[j]);
 
     timer_start();
     for(i=0; i<benchmark_repetitions; i++)
     {
         for(j=0; j<num_words; j++)
-            find_string(words[j]);
+            shstr_find(words[j]);
     }
     timer_stop(num_words * benchmark_repetitions);
 }

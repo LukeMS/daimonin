@@ -42,11 +42,11 @@ static void teardown()
 
 START_TEST (simple_teleporter_without_path)
 {
-    shstr_t *path = add_string("/dev/unit_tests/test_teleporter");
+    shstr_t *path = shstr_add_string("/dev/unit_tests/test_teleporter");
     map_t *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
 
-    object_t *lever = locate_beacon(find_string("lever_1"))->env;
-    object_t *apple = locate_beacon(find_string("apple_1"))->env;
+    object_t *lever = locate_beacon(shstr_find("lever_1"))->env;
+    object_t *apple = locate_beacon(shstr_find("apple_1"))->env;
 
     fail_unless(apple->x == 1 && apple->y == 1, "Apple initially in incorrect spot");
     fail_unless(apple->map == map, "Apple initially in incorrect map");
@@ -62,11 +62,11 @@ END_TEST
 
 START_TEST (bad_teleporter_without_path)
 {
-    shstr_t *path = add_string("/dev/unit_tests/test_teleporter");
+    shstr_t *path = shstr_add_string("/dev/unit_tests/test_teleporter");
     map_t *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
 
-    object_t *lever = locate_beacon(find_string("lever_1"))->env;
-    object_t *apple = locate_beacon(find_string("apple_1"))->env;
+    object_t *lever = locate_beacon(shstr_find("lever_1"))->env;
+    object_t *apple = locate_beacon(shstr_find("apple_1"))->env;
     object_t *teleport = apple->below ? apple->below : apple->above;
 
     fail_unless(apple->x == 1 && apple->y == 1, "Apple initially in incorrect spot");
@@ -86,13 +86,13 @@ END_TEST
 
 START_TEST (simple_teleporter_with_path)
 {
-    shstr_t *path = add_string("/dev/unit_tests/test_teleporter");
+    shstr_t *path = shstr_add_string("/dev/unit_tests/test_teleporter");
     map_t *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
-    shstr_t *path2 = add_string("/dev/testmaps/testmap_main");
+    shstr_t *path2 = shstr_add_string("/dev/testmaps/testmap_main");
     map_t *map2 = ready_map_name(path2, path2, MAP_STATUS_MULTI, NULL);
 
-    object_t *lever = locate_beacon(find_string("lever_2"))->env;
-    object_t *apple = locate_beacon(find_string("apple_2"))->env;
+    object_t *lever = locate_beacon(shstr_find("lever_2"))->env;
+    object_t *apple = locate_beacon(shstr_find("apple_2"))->env;
 
     fail_unless(apple->x == 1 && apple->y == 3, "Apple initially in incorrect spot");
     fail_unless(apple->map == map, "Apple initially in incorrect map");

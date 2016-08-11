@@ -812,7 +812,7 @@ object_t *quest_find_name(const object_t *pl, const char *name)
 {
     object_t *tmp,
            *next;
-    shstr_t  *namehash = find_string(name);
+    shstr_t  *namehash = shstr_find(name);
 
     if(!namehash) /* unknown name = no quest known */
         return NULL;

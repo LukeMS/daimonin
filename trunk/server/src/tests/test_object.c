@@ -94,7 +94,7 @@ START_TEST (object_strings)
     FREE_AND_COPY_HASH(obj->race, "qwerty1234");
     FREE_AND_COPY_HASH(obj->slaying, "qwerty1234");
     FREE_AND_COPY_HASH(obj->msg, "qwerty1234");
-    nrof_refs = query_refcount(obj->name);
+    nrof_refs = shstr_query_refcount(obj->name);
     shstr_get_totals(&entries2, &refs2, &links2);
 
     fail_unless(nrof_refs == 5, "Test setup failed");
@@ -116,9 +116,9 @@ END_TEST
 
 START_TEST (object_type_beacon)
 {
-    shstr_t *path = add_string("/dev/testmaps/testmap_plugin");
-    shstr_t *b1_name = add_string("script_tester_beacon_1");
-    shstr_t *b2_name = add_string("script_tester_beacon_2");
+    shstr_t *path = shstr_add_string("/dev/testmaps/testmap_plugin");
+    shstr_t *b1_name = shstr_add_string("script_tester_beacon_1");
+    shstr_t *b2_name = shstr_add_string("script_tester_beacon_2");
 
     map_t *map;
     object_t *beacon1, *beacon2, *lostsoul;
@@ -151,11 +151,11 @@ END_TEST
 
 START_TEST (object_type_check_inv)
 {
-    map_t *map = ready_map_name(NULL, add_string("/dev/unit_tests/test_check_inv"), MAP_STATUS_MULTI, NULL);
+    map_t *map = ready_map_name(NULL, shstr_add_string("/dev/unit_tests/test_check_inv"), MAP_STATUS_MULTI, NULL);
 
-    object_t *check1 = locate_beacon(find_string("check1"))->env;
-    object_t *check2 = locate_beacon(find_string("check2"))->env;
-    object_t *key1 = locate_beacon(find_string("key1"))->env;
+    object_t *check1 = locate_beacon(shstr_find("check1"))->env;
+    object_t *check2 = locate_beacon(shstr_find("check2"))->env;
+    object_t *key1 = locate_beacon(shstr_find("key1"))->env;
     object_t *cont1 = arch_to_object(find_archetype("chest"));
     object_t *cont2 = arch_to_object(find_archetype("chest"));
 

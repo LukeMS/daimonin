@@ -53,4 +53,15 @@ struct shstr_linked_t
     shstr_t *name;
 };
 
+extern void     shstr_init(void);
+extern shstr_t *shstr_add_string(const char *str);
+extern shstr_t *shstr_add_lstring(const char *str, int n);
+extern int      shstr_query_refcount(const char *str);
+extern shstr_t *shstr_find(const char *str);
+extern shstr_t *shstr_add_refcount(const char *str);
+extern void     shstr_free(shstr_t *str);
+extern char    *shstr_dump_statistics(char *msg);
+extern char    *shstr_dump_table(int what);
+extern void     shstr_get_totals(int *entries, int *refs, int *links);
+
 #endif /* ifndef SHSTR_NG_H */

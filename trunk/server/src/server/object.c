@@ -1303,7 +1303,7 @@ void free_object_data(object_t *ob, int free_static_data)
     /* Remove object from the active list */
 //    ob->speed = 0;
 //    update_ob_speed(ob);
-    /*LOG(llevDebug,"FO: a:%s %x >%s< (#%d)\n", ob->arch?(ob->arch->name?ob->arch->name:""):"", ob->name, ob->name?ob->name:"",ob->name?query_refcount(ob->name):0);*/
+    /*LOG(llevDebug,"FO: a:%s %x >%s< (#%d)\n", ob->arch?(ob->arch->name?ob->arch->name:""):"", ob->name, ob->name?ob->name:"",ob->name?shstr_query_refcount(ob->name):0);*/
 
     /* Free attached attrsets */
     if (ob->custom_attrset)
@@ -3196,7 +3196,7 @@ static void beacon_initializer(object_t *op)
     /* Store original name in the attrset, so that a name change doesn't mess
      * things up */
     op->custom_attrset = (void *)op->name;
-    add_refcount(op->name);
+    shstr_add_refcount(op->name);
 
     if (!hashtable_insert(beacon_table, op->custom_attrset, op))
     {

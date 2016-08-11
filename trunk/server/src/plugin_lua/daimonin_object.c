@@ -3220,9 +3220,9 @@ static int GameObject_CheckOneDropQuest(lua_State *L)
         return luaL_error(L, buf);
     }
 
-    name_hash = hooks->find_string(name);
+    name_hash = hooks->shstr_find(name);
     if(title)
-        title_hash = hooks->find_string(title);
+        title_hash = hooks->shstr_find(title);
     else
         title_hash = arch->clone.title;
 

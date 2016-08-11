@@ -1213,14 +1213,14 @@ map_t *ready_inherited_map(map_t *orig_map, shstr_t *new_map_path)
  * -- Smacky 20100311 */
     /* Guesstimate whether the path was already normalized or not (for speed) */
     if(*new_map_path == '/')
-        normalized_path = add_refcount(new_map_path);
+        normalized_path = shstr_add_refcount(new_map_path);
     else
-        normalized_path = add_string(normalize_path(orig_map->path, new_map_path, tmp_path));
+        normalized_path = shstr_add_string(normalize_path(orig_map->path, new_map_path, tmp_path));
 
     /* create the path prefix (./players/.. or ./instance/.. ) for non multi maps */
     if(orig_map->status & (MAP_STATUS_UNIQUE|MAP_STATUS_INSTANCE))
     {
-        new_path = add_string(normalize_path_direct(orig_map->path,
+        new_path = shstr_add_string(normalize_path_direct(orig_map->path,
                     normalized_path, tmp_path));
     }
 #else
@@ -1229,12 +1229,12 @@ map_t *ready_inherited_map(map_t *orig_map, shstr_t *new_map_path)
         /* Guesstimate whether the new map is already loaded */
         if (*new_map_path == '.')
         {
-            normalized_path = add_refcount(new_map_path);
+            normalized_path = shstr_add_refcount(new_map_path);
         }
         else
         {
             (void)normalize_path_direct(orig_map->path, new_map_path, tmp_path);
-            normalized_path = add_string(tmp_path);
+            normalized_path = shstr_add_string(tmp_path);
         }
     }
     else
@@ -1242,13 +1242,13 @@ map_t *ready_inherited_map(map_t *orig_map, shstr_t *new_map_path)
         /* Guesstimate whether the path was already normalized or not (for speed) */
         if (*new_map_path == '/')
         {
-            normalized_path = add_refcount(new_map_path);
+            normalized_path = shstr_add_refcount(new_map_path);
         }
         else
         {
             (void)normalize_path(orig_map->path, new_map_path, tmp_path);
 
-            normalized_path = add_string(tmp_path);
+            normalized_path = shstr_add_string(tmp_path);
         }
     }
 #endif
@@ -1992,7 +1992,7 @@ static int LoadMapHeader(FILE *fp, map_t *m, uint32 flags)
                         STRING_MAP_PATH(m), tile, STRING_SAFE(value));
                 }
 
-                m->tiling.orig_tile_path[tile - 1] = add_string(value);
+                m->tiling.orig_tile_path[tile - 1] = shstr_add_string(value);
             }
         }
         else if (!strncmp(key, "tile_path_", 10))
@@ -2034,7 +2034,7 @@ static int LoadMapHeader(FILE *fp, map_t *m, uint32 flags)
                 if ((flags & MAP_STATUS_ORIGINAL)) /* original map... lets normalize tile_path[] to /maps */
                 {
                     normalize_path(m->orig_path, value, msgbuf);
-                    m->tiling.orig_tile_path[tile - 1] = add_string(msgbuf);
+                    m->tiling.orig_tile_path[tile - 1] = shstr_add_string(msgbuf);
 
                     /* If the specified map does not exist, report this and do
                      * not set the tile_path. */
@@ -2052,16 +2052,16 @@ static int LoadMapHeader(FILE *fp, map_t *m, uint32 flags)
                         normalize_path_direct(m->path,
                                               m->tiling.orig_tile_path[tile - 1],
                                               msgbuf);
-                        path_sh = add_string(msgbuf);
+                        path_sh = shstr_add_string(msgbuf);
                     }
                     else /* for multi maps, orig_path is the same path */
                     {
-                        path_sh = add_refcount(m->tiling.orig_tile_path[tile - 1]);
+                        path_sh = shstr_add_refcount(m->tiling.orig_tile_path[tile - 1]);
                     }
                 }
                 else /* non original map - all the things above was done before - just load */
                 {
-                    path_sh = add_string(value);
+                    path_sh = shstr_add_string(value);
                 }
 
                 /* If the neighbouring map tile has been loaded, set up the map pointers */

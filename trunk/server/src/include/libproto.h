@@ -173,16 +173,6 @@ extern recipelist      *get_random_recipelist(void);
 extern recipe          *get_random_recipe(recipelist *rpl);
 extern void             free_all_recipes(void);
 /* shstr.c */
-extern void             init_hash_table(void);
-extern const char      *add_string(const char *str);
-extern const char      *add_lstring(const char *str, int n);
-extern int              query_refcount(const char *str);
-extern const char      *find_string(const char *str);
-extern const char      *add_refcount(const char *str);
-extern void             free_string_shared(const char *str);
-extern char            *shstr_dump_statistics(char *msg);
-extern char            *shstr_dump_table(int what);
-extern void             shstr_get_totals(int *entries, int *refs, int *links);
 /* treasure.c */
 extern void             load_treasures(void);
 extern treasurelist    *find_treasurelist(const char *name);
