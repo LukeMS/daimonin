@@ -32,13 +32,6 @@
  */
 #define SS_STATISTICS
 
-/* The offsetof macro is part of ANSI C, but many compilers lack it, for
- * example "gcc -ansi"
- */
-#if !defined (offsetof)
-#define offsetof(type, member) (int)&(((type *)0)->member)
-#endif
-
 /* SS(string) will return the address of the shared_string struct which
  * contains "string".
  */
