@@ -722,17 +722,17 @@ MODULEAPI int HandleEvent(CFParm *PParm)
     context->self_tag = context->self ? context->self->count : 0;
     context->other = (object_t *) (PParm->Value[3]);
     context->other_tag = context->other ? context->other->count : 0;
-    context->text = PParm->Value[4] ? hooks->add_string((const char *) (PParm->Value[4])) : NULL;
+    context->text = PParm->Value[4] ? hooks->shstr_add_string((const char *) (PParm->Value[4])) : NULL;
     context->parm1 = PParm->Value[5] ? *(int *) (PParm->Value[5]) : 0;
     context->parm2 = PParm->Value[6] ? *(int *) (PParm->Value[6]) : 0;
     context->parm3 = PParm->Value[7] ? *(int *) (PParm->Value[7]) : 0;
     context->parm4 = PParm->Value[8] ? *(int *) (PParm->Value[8]) : 0;
-    context->options = PParm->Value[10] ? hooks->add_string((const char *) (PParm->Value[10])) : NULL;
+    context->options = PParm->Value[10] ? hooks->shstr_add_string((const char *) (PParm->Value[10])) : NULL;
     context->returnvalue = 0;
 
     /* Try to normalize file name if needed */
     if(((const char *)PParm->Value[9])[0] == '/')
-        context->file = hooks->add_string((const char *) (PParm->Value[9]));
+        context->file = hooks->shstr_add_string((const char *) (PParm->Value[9]));
     else
     {
         /* We need a base path. */
@@ -748,7 +748,7 @@ MODULEAPI int HandleEvent(CFParm *PParm)
             return 0;
         }
         hooks->normalize_path(outermost->map->orig_path, (const char *) (PParm->Value[9]), buf);
-        context->file = hooks->add_string(buf);
+        context->file = hooks->shstr_add_string(buf);
 #ifdef PLUGIN_LUA_DEBUG
         LOG(llevDebug, "LUA: normalized script path: %s\n", context->file);
 #endif

@@ -45,20 +45,20 @@ static void teardown()
  * everything is freed after the swapping */
 START_TEST (treasurelist_memleak)
 {
-    const char *path = add_string("/dev/unit_tests/test_treasurelists");
+    const char *path = shstr_add_string("/dev/unit_tests/test_treasurelists");
     map_t *map;
 
     map = ready_map_name(path, NULL, MAP_STATUS_MULTI, NULL);
 
 /*
-    dump_inventory(locate_beacon(find_string("beacon1"))->env);
-    dump_inventory(locate_beacon(find_string("beacon2"))->env);
-    dump_inventory(locate_beacon(find_string("beacon3"))->env);
-    dump_inventory(locate_beacon(find_string("beacon4"))->env);
-    dump_inventory(locate_beacon(find_string("beacon5"))->env);
-    dump_inventory(locate_beacon(find_string("beacon6"))->env);
-    dump_inventory(locate_beacon(find_string("beacon7"))->env);
-    dump_inventory(locate_beacon(find_string("beacon8"))->env);
+    dump_inventory(locate_beacon(shstr_find("beacon1"))->env);
+    dump_inventory(locate_beacon(shstr_find("beacon2"))->env);
+    dump_inventory(locate_beacon(shstr_find("beacon3"))->env);
+    dump_inventory(locate_beacon(shstr_find("beacon4"))->env);
+    dump_inventory(locate_beacon(shstr_find("beacon5"))->env);
+    dump_inventory(locate_beacon(shstr_find("beacon6"))->env);
+    dump_inventory(locate_beacon(shstr_find("beacon7"))->env);
+    dump_inventory(locate_beacon(shstr_find("beacon8"))->env);
 */
     delete_map(map);
     FREE_AND_CLEAR_HASH(path);

@@ -799,7 +799,7 @@ sint8 enter_map_by_name(object_t *who, shstr_t *path_sh, shstr_t *orig_path_sh, 
         }
         else /* we can just copy orig_path_sh */
         {
-            path_sh = orig_path_sh; /* not a bug: add_refcount() is not needed because we KNOW that the hash string is valid */
+            path_sh = orig_path_sh; /* not a bug: shstr_add_refcount() is not needed because we KNOW that the hash string is valid */
         }
     }
     else
@@ -891,7 +891,7 @@ sint8 enter_map_by_name(object_t *who, shstr_t *path_sh, shstr_t *orig_path_sh, 
 
     if (!orig_path_sh) /* special case - we have identified the map by his dest path_sh from loaded map list */
     {
-        orig_path_sh = add_refcount(m->orig_path);
+        orig_path_sh = shstr_add_refcount(m->orig_path);
         /* because we can't be sure in this case about the map status, we overrule it with the loaded map! */
         mflags = m->status;
     }

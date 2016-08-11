@@ -672,11 +672,11 @@ typedef struct view_msp_t        view_msp_t;
  * list BUT the arch names are inserted in the global hash too - so every
  * archlist name has 2 entries (so you can't always use == for string comparison!)
  */
-#define FREE_AND_COPY_HASH(_sv_,_nv_) { if (_sv_) free_string_shared(_sv_); _sv_=add_string(_nv_); }
-#define FREE_AND_ADD_REF_HASH(_sv_,_nv_) { if (_sv_) free_string_shared(_sv_); _sv_=add_refcount(_nv_); }
-#define FREE_AND_CLEAR_HASH(_nv_) {if(_nv_){free_string_shared(_nv_);_nv_ =NULL;}}
+#define FREE_AND_COPY_HASH(_sv_,_nv_) { if (_sv_) shstr_free(_sv_); _sv_=shstr_add_string(_nv_); }
+#define FREE_AND_ADD_REF_HASH(_sv_,_nv_) { if (_sv_) shstr_free(_sv_); _sv_=shstr_add_refcount(_nv_); }
+#define FREE_AND_CLEAR_HASH(_nv_) {if(_nv_){shstr_free(_nv_);_nv_ =NULL;}}
 
-#define ADD_REF_NOT_NULL_HASH(_nv_) if(_nv_!=NULL)add_refcount(_nv_);
+#define ADD_REF_NOT_NULL_HASH(_nv_) if(_nv_!=NULL)shstr_add_refcount(_nv_);
 
 #define casting_level(__caster_, __spell_type_) SK_level(__caster_)
 

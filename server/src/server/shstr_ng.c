@@ -87,7 +87,7 @@ static hashtable_size_t stats_string_hash(const hashtable_const_key_t key)
  * Initialises the hash-table used by the shared string library.
  */
 
-void init_hash_table(void)
+void shstr_init(void)
 {
     shared_strings = string_hashtable_new(SHSTR_INITIAL_TABLE_SIZE);
 #ifdef SHSTR_STATISTICS
@@ -162,19 +162,19 @@ static hashtable_size_t lstring_hash(const hashtable_const_key_t key)
  *      - pointer to string identical to str
  */
 
-shstr_t *add_lstring(const char *str, int n)
+shstr_t *shstr_add_lstring(const char *str, int n)
 {
     struct shared_string  *ss;
 
     GATHER(ladd_stats.calls);
 
     /* Should really core dump here, since functions should not be calling
-     * add_string with a null parameter.  But this might prevent a few
+     * shstr_add_string with a null parameter.  But this might prevent a few
      * core dumps.
      */
     if (str == NULL)
     {
-        LOG(llevBug, "BUG: add_string(): try to add null string to hash table\n");
+        LOG(llevBug, "BUG: shstr_add_string(): try to add null string to hash table\n");
         return NULL;
     }
 
@@ -218,19 +218,19 @@ shstr_t *add_lstring(const char *str, int n)
  *      - pointer to string identical to str
  */
 
-shstr_t *add_string(const char *str)
+shstr_t *shstr_add_string(const char *str)
 {
     struct shared_string *ss;
 
     GATHER(add_stats.calls);
 
     /* Should really core dump here, since functions should not be calling
-     * add_string with a null parameter.  But this will prevent a few
+     * shstr_add_string with a null parameter.  But this will prevent a few
      * core dumps.
      */
     if (str == NULL)
     {
-        LOG(llevBug, "BUG: add_string(): try to add null string to hash table\n");
+        LOG(llevBug, "BUG: shstr_add_string(): try to add null string to hash table\n");
         return NULL;
     }
 
@@ -257,12 +257,12 @@ shstr_t *add_string(const char *str)
 /*
  * Description:
  *      This will return the refcount of the string str, which *must*
- *      have been returned from a previous add_string().
+ *      have been returned from a previous shstr_add_string().
  * Return values:
  *      - length
  */
 
-int query_refcount(shstr_t *str)
+int shstr_query_refcount(shstr_t *str)
 {
     return SS(str)->refcount;
 }
@@ -275,7 +275,7 @@ int query_refcount(shstr_t *str)
  *      - pointer to identical string or NULL
  */
 
-const char *find_string(const char *str)
+const char *shstr_find(const char *str)
 {
     struct shared_string  *ss;
 
@@ -295,17 +295,17 @@ const char *find_string(const char *str)
 /*
  * Description:
  *      This will increase the refcount of the string str, which *must*
- *      have been returned from a previous add_string().
+ *      have been returned from a previous shstr_add_string().
  * Return values:
  *      - str
  */
-shstr_t * add_refcount(shstr_t* str)
+shstr_t * shstr_add_refcount(shstr_t* str)
 {
 #ifdef SECURE_SHSTR_HASH
-    const char *tmp_str = find_string(str);
+    const char *tmp_str = shstr_find(str);
     if (!str || str != tmp_str)
     {
-        LOG(llevBug, "BUG: add_refcount(shared_string)(): tried to get refcount of an invalid string! >%s<\n", str ? str : ">>NULL<<");
+        LOG(llevBug, "BUG: shstr_add_refcount(shared_string)(): tried to get refcount of an invalid string! >%s<\n", str ? str : ">>NULL<<");
         return NULL;
     }
 #endif
@@ -324,7 +324,7 @@ shstr_t * add_refcount(shstr_t* str)
  *     None
  */
 
-void free_string_shared(shstr_t *str)
+void shstr_free(shstr_t *str)
 {
     struct shared_string  *ss;
 
@@ -343,10 +343,10 @@ void free_string_shared(shstr_t *str)
      * free, wrong or non SS() objects.
      */
 #ifdef SECURE_SHSTR_HASH
-    const char     *tmp_str = find_string(str);
+    const char     *tmp_str = shstr_find(str);
     if (!str || str != tmp_str)
     {
-        LOG(llevBug, "BUG: free_string_shared(): tried to free a invalid string! >%s<\n", str ? str : ">>NULL<<");
+        LOG(llevBug, "BUG: shstr_free(): tried to free a invalid string! >%s<\n", str ? str : ">>NULL<<");
         return;
     }
 #endif
@@ -384,16 +384,16 @@ char * shstr_dump_statistics(char *msg)
 
 #ifdef SHSTR_STATISTICS
     sprintf(msg, "%-13s   %6s %6s %6s %6s %6s\n", "hashtable  :", "calls", "hashed", "strcmp", "search", "linked");
-    sprintf(line, "%-13s %6d %6d %6d %6d %6d\n", "add_string:", add_stats.calls, add_stats.hashed, add_stats.strcmps,
+    sprintf(line, "%-13s %6d %6d %6d %6d %6d\n", "shstr_add_string:", add_stats.calls, add_stats.hashed, add_stats.strcmps,
             add_stats.search, add_stats.linked);
     strcat(msg, line);
     sprintf(line, "%-13s %6d %6d %6d %6d %6d\n", "ladd_string:", ladd_stats.calls, ladd_stats.hashed, ladd_stats.strcmps,
             ladd_stats.search, ladd_stats.linked);
     strcat(msg, line);
-    sprintf(line, "%-13s %6d %6d %6d %6d %6d\n", "find_string:", find_stats.calls, find_stats.hashed,
+    sprintf(line, "%-13s %6d %6d %6d %6d %6d\n", "shstr_find:", find_stats.calls, find_stats.hashed,
             find_stats.strcmps, find_stats.search, find_stats.linked);
     strcat(msg, line);
-    sprintf(line, "%-13s %6d\n", "add_refcount:", add_ref_stats.calls);
+    sprintf(line, "%-13s %6d\n", "shstr_add_refcount:", add_ref_stats.calls);
     strcat(msg, line);
     sprintf(line, "%-13s %6d\n", "free_string:", free_stats.calls);
     strcat(msg, line);

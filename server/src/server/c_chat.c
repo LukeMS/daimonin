@@ -1017,7 +1017,7 @@ static int basic_emote(object_t *op, char *params, int emotion)
         }
         else /* here we handle player & npc emotes with parameter */
         {
-            const char *name_hash   = find_string(params);
+            const char *name_hash   = shstr_find(params);
 
             if (op->type == PLAYER && op->name == name_hash) /* targeting ourself */
             {

@@ -44,10 +44,10 @@ static void teardown()
 /* Test that accessing a nil map doesn't crash server */
 START_TEST (lua_null_map)
 {
-    shstr_t *path = add_string("/dev/unit_tests/test_lua");
+    shstr_t *path = shstr_add_string("/dev/unit_tests/test_lua");
     map_t *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
 
-    object_t *waypoint = locate_beacon(find_string("waypoint"))->env;
+    object_t *waypoint = locate_beacon(shstr_find("waypoint"))->env;
     object_t *cube = waypoint->env;
 
     fail_if(waypoint->map != NULL, "Waypoint _does_ have a map");
@@ -64,10 +64,10 @@ END_TEST
 /* Test some string issues */
 START_TEST (lua_strings_long)
 {
-    shstr_t *path = add_string("/dev/unit_tests/test_lua");
+    shstr_t *path = shstr_add_string("/dev/unit_tests/test_lua");
     map_t *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
 
-    object_t *sign = locate_beacon(find_string("strings"))->env;
+    object_t *sign = locate_beacon(shstr_find("strings"))->env;
 
     /* This will simply crash if there's no overwflow check for long strings */
     int res = trigger_object_plugin_event(EVENT_APPLY, sign, sign, NULL,
@@ -80,10 +80,10 @@ END_TEST
 
 START_TEST (lua_strings_newline)
 {
-    shstr_t *path = add_string("/dev/unit_tests/test_lua");
+    shstr_t *path = shstr_add_string("/dev/unit_tests/test_lua");
     map_t *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
 
-    object_t *sign = locate_beacon(find_string("strings"))->env;
+    object_t *sign = locate_beacon(shstr_find("strings"))->env;
 
     int res = trigger_object_plugin_event(EVENT_APPLY, sign, sign, NULL,
             "newline", NULL, NULL, NULL, 0);
@@ -96,10 +96,10 @@ END_TEST
 
 START_TEST (lua_strings_endmsg)
 {
-    shstr_t *path = add_string("/dev/unit_tests/test_lua");
+    shstr_t *path = shstr_add_string("/dev/unit_tests/test_lua");
     map_t *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
 
-    object_t *sign = locate_beacon(find_string("strings"))->env;
+    object_t *sign = locate_beacon(shstr_find("strings"))->env;
 
     int res = trigger_object_plugin_event(EVENT_APPLY, sign, sign, NULL,
             "endmsg", NULL, NULL, NULL, 0);
@@ -113,10 +113,10 @@ END_TEST
 /** Test that yield works as expected */
 START_TEST (lua_yield)
 {
-    shstr_t *path = add_string("/dev/unit_tests/test_lua");
+    shstr_t *path = shstr_add_string("/dev/unit_tests/test_lua");
     map_t *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
 
-    object_t *sign = locate_beacon(find_string("yield_sign"))->env;
+    object_t *sign = locate_beacon(shstr_find("yield_sign"))->env;
 
     int res = trigger_object_plugin_event(EVENT_APPLY, sign, sign,
             &void_container, NULL, NULL, NULL, NULL, 0);

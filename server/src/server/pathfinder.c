@@ -281,7 +281,7 @@ struct path_segment * encode_path(path_node *path, struct path_segment **last_se
         curr->next = NULL;
         curr->x = tmp->x;
         curr->y = tmp->y;
-        curr->map = add_refcount(tmp->map->orig_path);
+        curr->map = shstr_add_refcount(tmp->map->orig_path);
 
         if (first == NULL)
             first = last = curr;
@@ -632,7 +632,7 @@ void pathfinder_free_path(struct path_segment *p)
 {
     for (; p; p = p->next)
     {
-        free_string_shared(p->map);
+        shstr_free(p->map);
         return_poolchunk(p, pool_path_segment);
         /* assumes poolchunk is still valid */
     }

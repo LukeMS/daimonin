@@ -1225,7 +1225,7 @@ int command_setstat(object_t *op, char *params)
         return COMMANDS_RTN_VAL_ERROR;
     }
 
-    hash_name = add_string(stat_name);
+    hash_name = shstr_add_string(stat_name);
 
     if (v < MIN_STAT ||
         v > MAX_STAT)
@@ -1814,13 +1814,13 @@ static int BanRemoveFromBanList(object_t *op, ENUM_BAN_TYPE ban_type, char *str,
     else if (ban_type == BANTYPE_ACCOUNT)
     {
         transform_account_name_string(str);
-        str_hash = find_string(str); /* we need an shared string to check ban list */
+        str_hash = shstr_find(str); /* we need an shared string to check ban list */
     }
 
     else if (ban_type == BANTYPE_CHAR)
     {
         transform_player_name_string(str);
-        str_hash = find_string(str);
+        str_hash = shstr_find(str);
     }
 
     /* Either search the account, IP or name lists */

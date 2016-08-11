@@ -427,7 +427,7 @@ Account *find_account(char *acname)
 
     strcpy(name, acname); /* we need to copy it because we access the string */
     transform_account_name_string(name);
-    if (!(name_hash = find_string(name)))
+    if (!(name_hash = shstr_find(name)))
         return NULL;
 
     return find_account_hash(name_hash);

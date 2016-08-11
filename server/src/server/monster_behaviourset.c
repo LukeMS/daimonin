@@ -431,8 +431,8 @@ static int parse_stringint_parameter(struct mob_behaviour_param *param, const ch
     char *sep = strchr(value, ':');
     if(sep && sep > value && *(sep+1) != '\0')
     {
-        /* TODO: get rid of add_lstring call. */
-        param->stringvalue = add_lstring(value, sep-value);
+        /* TODO: get rid of shstr_add_lstring call. */
+        param->stringvalue = shstr_add_lstring(value, sep-value);
         param->intvalue = atoi(sep+1);
 //        LOG(llevDebug, "Stringint: %s:%d\n", param->stringvalue, param->intvalue);
         return 0;
@@ -467,7 +467,7 @@ static int check_behaviour_parameters(object_t *op, struct mob_behaviour *behavi
                       behaviour->parameters[i].intvalue = (long) behaviour->declaration->params[i].defaultvalue;
                       break;
                     case AI_STRING_TYPE:
-                      behaviour->parameters[i].stringvalue = add_string(behaviour->declaration->params[i].defaultvalue);
+                      behaviour->parameters[i].stringvalue = shstr_add_string(behaviour->declaration->params[i].defaultvalue);
                       break;
                     case AI_STRINGINT_TYPE:
                       if(parse_stringint_parameter(&behaviour->parameters[i], behaviour->declaration->params[i].defaultvalue))
@@ -573,7 +573,7 @@ static int parse_behaviour_parameters(object_t *op, const char *start, const cha
               break;
 
             case AI_STRING_TYPE:
-              param->stringvalue = add_string(valuebuf);
+              param->stringvalue = shstr_add_string(valuebuf);
               param->flags |= AI_PARAM_PRESENT;
 //              LOG(llevMapbug, "MAPBUG:: Parameter %s for behaviour %s, string value '%s' (%s[%d] @ %s %d %d)!\n",
 //                  namebuf, behaviour->declaration->name, valuebuf,
@@ -650,10 +650,10 @@ static struct mob_behaviour *setup_plugin_behaviour(
         return NULL;
     }
 
-    new_behaviour->parameters[plugin_index].stringvalue = add_string(buf);
+    new_behaviour->parameters[plugin_index].stringvalue = shstr_add_string(buf);
     new_behaviour->parameters[plugin_index].flags |= AI_PARAM_PRESENT;
 
-    new_behaviour->parameters[behaviour_index].stringvalue = add_string(colonpos+1);
+    new_behaviour->parameters[behaviour_index].stringvalue = shstr_add_string(colonpos+1);
     new_behaviour->parameters[behaviour_index].flags |= AI_PARAM_PRESENT;
 
     /* See if there were any parameters */
@@ -661,8 +661,8 @@ static struct mob_behaviour *setup_plugin_behaviour(
         line_end--;
 
     if(tok_end < line_end) {
-        /* TODO: get rid of add_lstring() call */
-        new_behaviour->parameters[options_index].stringvalue = add_lstring(tok_end + 1, line_end - tok_end);
+        /* TODO: get rid of shstr_add_lstring() call */
+        new_behaviour->parameters[options_index].stringvalue = shstr_add_lstring(tok_end + 1, line_end - tok_end);
         new_behaviour->parameters[options_index].flags |= AI_PARAM_PRESENT;
     }
 
@@ -745,7 +745,7 @@ struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object_t 
     }
     behaviourset->prev = behaviourset->next = NULL;
     behaviourset->refcount = 1;
-    behaviourset->definition = add_refcount(conf_text);
+    behaviourset->definition = shstr_add_refcount(conf_text);
     behaviourset->bghash = 0;
     behaviourset->attitudes = NULL;
     behaviourset->attractions = NULL;
