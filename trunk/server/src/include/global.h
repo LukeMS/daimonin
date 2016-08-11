@@ -278,6 +278,14 @@ error - Your ANSI C compiler should be defining __STDC__;
 #endif
 #endif
 
+/* Is this accurate? Old comment: offsetof() is part of ANSI C, but many
+ * compilers lack it, for example "gcc -ansi". */
+/* FIXME: Technically, int should be size_t? */
+#if !defined (offsetof)
+#   define offsetof(type, member) \
+       (int)&(((type *)0)->member)
+#endif
+
 /* ABS() outputs the absolute value of its input. */
 #define ABS(__a) \
     ((__a) < 0 ? -(__a) : (__a))
