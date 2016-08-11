@@ -139,7 +139,7 @@ static inline object_t *add_one_drop_quest_item(object_t *target, object_t *obj)
         CLEAR_FLAG(qt, FLAG_ALIVE);
         OBJECT_FULLY_IDENTIFY(qt);
         /* we are storing the arch name of quest dummy items in race */
-        FREE_AND_COPY_HASH(qt->race, obj->arch->name);
+        SHSTR_FREE_AND_ADD_STRING(qt->race, obj->arch->name);
         insert_ob_in_ob(qt, qc); /* dummy copy in quest container */
         OBJECT_FULLY_IDENTIFY(obj);
     }
@@ -262,7 +262,7 @@ void add_quest_containers(object_t *op)
         pl->quest_one_drop = arch_to_object(archetype_global._quest_container);
         pl->quest_one_drop_count = pl->quest_one_drop->count;
         pl->quest_one_drop->sub_type1 = ST1_QUEST_ONE_DROP;
-        FREE_AND_COPY_HASH(pl->quest_one_drop->name, "QC: onedrops");
+        SHSTR_FREE_AND_ADD_STRING(pl->quest_one_drop->name, "QC: onedrops");
         insert_ob_in_ob(pl->quest_one_drop, op);
     }
 
@@ -272,7 +272,7 @@ void add_quest_containers(object_t *op)
         pl->quests_done = arch_to_object(archetype_global._quest_container);
         pl->quests_done_count = pl->quests_done->count;
         pl->quests_done->sub_type1 = ST1_QUESTS_TYPE_DONE;
-        FREE_AND_COPY_HASH(pl->quests_done->name, "QC: list done");
+        SHSTR_FREE_AND_ADD_STRING(pl->quests_done->name, "QC: list done");
         insert_ob_in_ob(pl->quests_done, op);
     }
 
@@ -281,7 +281,7 @@ void add_quest_containers(object_t *op)
         pl->quests_type_kill = arch_to_object(archetype_global._quest_container);
         pl->quests_type_kill_count = pl->quests_type_kill->count;
         pl->quests_type_kill->sub_type1 = ST1_QUESTS_TYPE_KILL;
-        FREE_AND_COPY_HASH(pl->quests_type_kill->name, "QC: kill");
+        SHSTR_FREE_AND_ADD_STRING(pl->quests_type_kill->name, "QC: kill");
         insert_ob_in_ob(pl->quests_type_kill, op);
     }
 
@@ -290,7 +290,7 @@ void add_quest_containers(object_t *op)
         pl->quests_type_normal = arch_to_object(archetype_global._quest_container);
         pl->quests_type_normal_count = pl->quests_type_normal->count;
         pl->quests_type_normal->sub_type1 = ST1_QUESTS_TYPE_NORMAL;
-        FREE_AND_COPY_HASH(pl->quests_type_normal->name, "QC: normal");
+        SHSTR_FREE_AND_ADD_STRING(pl->quests_type_normal->name, "QC: normal");
         insert_ob_in_ob(pl->quests_type_normal, op);
     }
 }
@@ -616,20 +616,20 @@ int update_quest(object_t *trigger, uint8 subtype, object_t *info, char *text, c
      * would crash) but it's bad practice. */
     if (!info)
     {
-        FREE_AND_CLEAR_HASH(ob->race);
-        FREE_AND_CLEAR_HASH(ob->title);
-        FREE_AND_CLEAR_HASH(ob->slaying);
+        SHSTR_FREE(ob->race);
+        SHSTR_FREE(ob->title);
+        SHSTR_FREE(ob->slaying);
         ob->weight_limit = 0;
     }
     else
     {
         if (!info->race)
         {
-            FREE_AND_CLEAR_HASH(ob->race);
+            SHSTR_FREE(ob->race);
         }
         else
         {
-            FREE_AND_ADD_REF_HASH(ob->race, info->race);
+            SHSTR_FREE_AND_ADD_REF(ob->race, info->race);
         }
 
         if (!info->name)
@@ -639,25 +639,25 @@ int update_quest(object_t *trigger, uint8 subtype, object_t *info, char *text, c
         }
         else
         {
-            FREE_AND_ADD_REF_HASH(ob->name, info->name);
+            SHSTR_FREE_AND_ADD_REF(ob->name, info->name);
         }
 
         if (!info->title)
         {
-            FREE_AND_CLEAR_HASH(ob->title);
+            SHSTR_FREE(ob->title);
         }
         else
         {
-            FREE_AND_ADD_REF_HASH(ob->title, info->title);
+            SHSTR_FREE_AND_ADD_REF(ob->title, info->title);
         }
 
         if (!info->slaying)
         {
-            FREE_AND_CLEAR_HASH(ob->slaying);
+            SHSTR_FREE(ob->slaying);
         }
         else
         {
-            FREE_AND_ADD_REF_HASH(ob->slaying, info->slaying);
+            SHSTR_FREE_AND_ADD_REF(ob->slaying, info->slaying);
         }
 
         ob->weight_limit = info->weight_limit;
@@ -668,7 +668,7 @@ int update_quest(object_t *trigger, uint8 subtype, object_t *info, char *text, c
     m = parent_map(pl->ob);
     get_tad(m->tadnow, m->tadoffset);
     ob->custom_attrset = print_tad(m->tadnow, TAD_SHOWTIME | TAD_SHOWDATE);
-    FREE_AND_COPY_HASH(ob->msg, (text) ? text : vim);
+    SHSTR_FREE_AND_ADD_STRING(ob->msg, (text) ? text : vim);
     insert_ob_in_ob(ob, trigger);
 
     /* Set FLAG_BLIND on trigger to indicate it has an unread update. */

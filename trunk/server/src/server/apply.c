@@ -1152,7 +1152,7 @@ static void ApplySpellbook(object_t *op, object_t *tmp)
             return;
         }
         /* now clear tmp->slaying since we no longer need it */
-        FREE_AND_CLEAR_HASH(tmp->slaying);
+        SHSTR_FREE(tmp->slaying);
     }
 
     /* need a literacy skill to learn spells. Also, having a literacy level

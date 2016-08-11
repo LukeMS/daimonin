@@ -72,7 +72,7 @@ void add_god_to_list(archetype_t *god_arch)
     god = init_godslist();
 
     god->arch = god_arch;
-    FREE_AND_COPY_HASH(god->name, god_arch->clone.name);
+    SHSTR_FREE_AND_ADD_STRING(god->name, god_arch->clone.name);
     if (!first_god)
         god->id = 1;
     else
@@ -109,9 +109,9 @@ int baptize_altar(object_t *op)
         if (op->name == op->arch->clone.name)
         {
             sprintf(buf, "%s of %s", op->name, god->name);
-            FREE_AND_COPY_HASH(op->name, buf);
+            SHSTR_FREE_AND_ADD_STRING(op->name, buf);
         }
-        FREE_AND_COPY_HASH(op->title, god->name);
+        SHSTR_FREE_AND_ADD_STRING(op->title, god->name);
         return 1;
     }
     return 0;
@@ -153,7 +153,7 @@ void free_all_god()
     for (god = first_god; god; god = godnext)
     {
         godnext = god->next;
-        FREE_AND_CLEAR_HASH(god->name);
+        SHSTR_FREE(god->name);
         free(god);
     }
 }

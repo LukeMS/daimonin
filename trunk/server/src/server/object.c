@@ -981,19 +981,19 @@ static void Copy(object_t *from, object_t *to)
         unlink_treasurelists(to->randomitems, 0);
     }
 
-    FREE_AND_CLEAR_HASH(to->name);
-    FREE_AND_CLEAR_HASH(to->title);
-    FREE_AND_CLEAR_HASH(to->race);
-    FREE_AND_CLEAR_HASH(to->slaying);
-    FREE_AND_CLEAR_HASH(to->msg);
+    SHSTR_FREE(to->name);
+    SHSTR_FREE(to->title);
+    SHSTR_FREE(to->race);
+    SHSTR_FREE(to->slaying);
+    SHSTR_FREE(to->msg);
     (void)memcpy((void *)((char *)to + offsetof(object_t, name)),
         (void *)((char *)from + offsetof(object_t, name)),
         sizeof(object_t) - offsetof(object_t, name));
-    ADD_REF_NOT_NULL_HASH(to->name);
-    ADD_REF_NOT_NULL_HASH(to->title);
-    ADD_REF_NOT_NULL_HASH(to->race);
-    ADD_REF_NOT_NULL_HASH(to->slaying);
-    ADD_REF_NOT_NULL_HASH(to->msg);
+    SHSTR_IF_EXISTS_ADD_REF(to->name);
+    SHSTR_IF_EXISTS_ADD_REF(to->title);
+    SHSTR_IF_EXISTS_ADD_REF(to->race);
+    SHSTR_IF_EXISTS_ADD_REF(to->slaying);
+    SHSTR_IF_EXISTS_ADD_REF(to->msg);
 
     if (is_removed)
     {
@@ -1361,7 +1361,7 @@ void free_object_data(object_t *ob, int free_static_data)
                   }
 #endif
 
-                  FREE_AND_CLEAR_HASH(ob->custom_attrset);
+                  SHSTR_FREE(ob->custom_attrset);
               }
               break;
 
@@ -1372,11 +1372,11 @@ void free_object_data(object_t *ob, int free_static_data)
         }
     }
 
-    FREE_AND_CLEAR_HASH(ob->name);
-    FREE_AND_CLEAR_HASH(ob->title);
-    FREE_AND_CLEAR_HASH(ob->race);
-    FREE_AND_CLEAR_HASH(ob->slaying);
-    FREE_AND_CLEAR_HASH(ob->msg);
+    SHSTR_FREE(ob->name);
+    SHSTR_FREE(ob->title);
+    SHSTR_FREE(ob->race);
+    SHSTR_FREE(ob->slaying);
+    SHSTR_FREE(ob->msg);
 }
 
 /* destroy and delete recursive the inventory of an destroyed object. */
@@ -2102,7 +2102,7 @@ static void KillPlayer(player_t *pl, object_t *killer, object_t *killer_owner, c
     {
         thing->level = victim->level;
         sprintf(buf, "%s's gravestone", STRING_OBJ_NAME(victim));
-        FREE_AND_COPY_HASH(thing->name, buf);
+        SHSTR_FREE_AND_ADD_STRING(thing->name, buf);
         m = msp->map;
         get_tad(m->tadnow, m->tadoffset);
         sprintf(buf, "R.I.P. %s\n\nLevel %d %s\n\n%s%s%s.\n\nOn %s",
@@ -2110,7 +2110,7 @@ static void KillPlayer(player_t *pl, object_t *killer, object_t *killer_owner, c
             (int)victim->level, STRING_OBJ_RACE(victim),
             detail, (killer) ? " " : "", (killer) ? QUERY_SHORT_NAME(killer, NULL) : "",
             print_tad(m->tadnow, TAD_SHOWDATE | TAD_LONGFORM));
-        FREE_AND_COPY_HASH(thing->msg, buf);
+        SHSTR_FREE_AND_ADD_STRING(thing->msg, buf);
         i = (uint8)overlay_find_free(msp, thing, 0, OVERLAY_7X7,
             OVERLAY_IGNORE_TERRAIN | OVERLAY_WITHIN_LOS | OVERLAY_FIRST_AVAILABLE);
 
@@ -2196,7 +2196,7 @@ static void KillMonster(object_t *victim, object_t *killer, object_t *killer_own
 
             if (bounty)
             {
-                FREE_AND_ADD_REF_HASH(corpse->slaying, bounty->name);
+                SHSTR_FREE_AND_ADD_REF(corpse->slaying, bounty->name);
 
                 if (pl)
                 {
@@ -2213,7 +2213,7 @@ static void KillMonster(object_t *victim, object_t *killer, object_t *killer_own
             }
             else
             {
-                FREE_AND_CLEAR_HASH(corpse->slaying);
+                SHSTR_FREE(corpse->slaying);
                 corpse->stats.food = 6;
             }
 
@@ -2590,7 +2590,7 @@ object_t *insert_ob_in_map(object_t *const op, map_t *m, object_t *const origina
              op->type == PIT ||
              op->type == TRAPDOOR)
     {
-        FREE_AND_CLEAR_HASH(op->race);
+        SHSTR_FREE(op->race);
     }
 
     /* check walk on/fly on flag if not canceled AND there is some to move on.

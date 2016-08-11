@@ -62,7 +62,7 @@ static void free_behaviourset(struct mob_behaviourset *set)
 /* Destructors for the mm system */
 void cleanup_mob_known_obj(struct mob_known_obj *data)
 {
-    FREE_AND_CLEAR_HASH(data->last_map);
+    SHSTR_FREE(data->last_map);
 }
 
 static inline void cleanup_behaviour_parameters(struct mob_behaviour *behaviour)
@@ -77,11 +77,11 @@ static inline void cleanup_behaviour_parameters(struct mob_behaviour *behaviour)
             /* Return any multiply defined parameters */
             for (param = behaviour->parameters[i].next; param; param = param->next)
             {
-                FREE_AND_CLEAR_HASH(param->stringvalue);
+                SHSTR_FREE(param->stringvalue);
                 return_poolchunk(param, pool_mob_behaviourparam);
             }
 
-            FREE_AND_CLEAR_HASH(behaviour->parameters[i].stringvalue);
+            SHSTR_FREE(behaviour->parameters[i].stringvalue);
         }
         /* Return the base parameter array */
         return_poolarray(behaviour->parameters, behaviour->declaration->nrof_params, pool_mob_behaviourparam);
@@ -104,7 +104,7 @@ void cleanup_behaviourset(struct mob_behaviourset *set)
         //            LOG(llevDebug, "Parsed behaviourset with refcount==0 being freed...\n");
         if (set == parsed_behavioursets)
             parsed_behavioursets = set->next;
-        FREE_AND_CLEAR_HASH(set->definition);
+        SHSTR_FREE(set->definition);
     }
     else
     {
@@ -129,8 +129,8 @@ void cleanup_mob_data(struct mobdata *data)
     struct mob_known_obj       *tmp;
 
     PATHFINDER_FREE_PATH(data->pathfinding.path);
-    FREE_AND_CLEAR_HASH(data->pathfinding.goal_map);
-    FREE_AND_CLEAR_HASH(data->pathfinding.target_map);
+    SHSTR_FREE(data->pathfinding.goal_map);
+    SHSTR_FREE(data->pathfinding.target_map);
 
     for (tmp = data->known_mobs; tmp; tmp = tmp->next)
         return_poolchunk(tmp, pool_mob_knownobj);

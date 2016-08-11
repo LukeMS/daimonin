@@ -158,7 +158,7 @@ static void update_home_position_for_wp_move(object_t *op, int last_movement_dir
         object_t *base = insert_base_info_object(op);
         base->x = op->x;
         base->y = op->y;
-        FREE_AND_ADD_REF_HASH(base->slaying, op->map->orig_path);
+        SHSTR_FREE_AND_ADD_REF(base->slaying, op->map->orig_path);
 //        LOG(llevDebug, "Updating home for '%s'\n", STRING_OBJ_NAME(op));
     }
 }
@@ -981,7 +981,7 @@ void ai_move_towards_owner(object_t *op, struct mob_behaviour_param *params, mov
     /* Update the pet's home position to the owner's current position */
     base->x = op->owner->x;
     base->y = op->owner->y;
-    FREE_AND_ADD_REF_HASH(base->slaying, op->owner->map->orig_path);
+    SHSTR_FREE_AND_ADD_REF(base->slaying, op->owner->map->orig_path);
 }
 
 void ai_move_towards_home(object_t *op, struct mob_behaviour_param *params, move_response *response)
@@ -1524,7 +1524,7 @@ void ai_move_towards_waypoint(object_t *op, struct mob_behaviour_param *params, 
                  * make one if necessary. */
                 if (*wp->slaying != '/')
                 {
-                    FREE_AND_COPY_HASH(wp->slaying,
+                    SHSTR_FREE_AND_ADD_STRING(wp->slaying,
                                        normalize_path(op->map->path,
                                                       wp->slaying, path));
                 }
@@ -1535,7 +1535,7 @@ void ai_move_towards_waypoint(object_t *op, struct mob_behaviour_param *params, 
                 }
 
                 if(destmap && destmap->orig_path != wp->slaying)
-                    FREE_AND_ADD_REF_HASH(wp->slaying, destmap->orig_path);
+                    SHSTR_FREE_AND_ADD_REF(wp->slaying, destmap->orig_path);
             }
             else
                 destmap = op->map;

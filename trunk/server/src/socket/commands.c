@@ -1463,7 +1463,7 @@ void cs_cmd_checkname(char *buf, int len, NewSocket *ns)
     sprintf(filename, "%s/%s/%s/%s/%s.acc", settings.localdir, settings.accountdir, get_subdir(buf), buf, buf);
     hash_name = shstr_add_string(buf);
     /* perhaps this socket tried twice? delete any previous try */
-    FREE_AND_CLEAR_HASH(ns->pl_account.create_name);
+    SHSTR_FREE(ns->pl_account.create_name);
 
     /* lets check the name is in use - we don't must browse the player list, we don't allow
      * to play without the char was created with player file anymore.
@@ -1493,7 +1493,7 @@ void cs_cmd_checkname(char *buf, int len, NewSocket *ns)
     else
     {
         LOG(llevDebug,"Account: account_create(): Account %s already exists!\n", filename);
-        FREE_AND_CLEAR_HASH(hash_name); /* we don't use the hash ref */
+        SHSTR_FREE(hash_name); /* we don't use the hash ref */
     }
 
     account_create_msg(ns, ret);
@@ -1660,7 +1660,7 @@ void cs_cmd_addme(char *buf, int len, NewSocket *ns)
         /*LOG(llevNoLog,"Socket: pl->socket: %x fd:%d :: ns: %x fd:%d\n", &pl->socket, pl->socket.fd, ns, ns->fd);*/
     }
 
-    FREE_AND_CLEAR_HASH(hash_name); /* clear this reference */
+    SHSTR_FREE(hash_name); /* clear this reference */
 
     if (clogfile != tlogfile)
     {
@@ -1796,7 +1796,7 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
                      * below. */
                     name = shstr_add_string(buf);
                     ret = account_delete_player(ns, name);
-                    FREE_AND_CLEAR_HASH(name);
+                    SHSTR_FREE(name);
 
                     if (ret == ACCOUNT_STATUS_EXISTS)
                     {
@@ -1821,7 +1821,7 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
                             ns->ip_host, ns->pl_account.name, buf);
                 }
 
-                FREE_AND_CLEAR_HASH(password);
+                SHSTR_FREE(password);
             }
         }
         else
@@ -1830,7 +1830,7 @@ void cs_cmd_newchar(char *buf, int len, NewSocket *ns)
         }
     }
 
-    FREE_AND_CLEAR_HASH(pass);
+    SHSTR_FREE(pass);
 
     if (ret == ADDME_MSG_OK)
     {
@@ -1910,7 +1910,7 @@ void cs_cmd_delchar(char *buf, int len, NewSocket *ns)
      * account_delete_player() will take care about the flow */
     name = shstr_add_string(buf);
     ret = account_delete_player(ns, name);
-    FREE_AND_CLEAR_HASH(name);
+    SHSTR_FREE(name);
 
     /* no player with that name is part of this account.
      * this is a hack or a nasty sync problem - the client MUST send us a name which is part of account

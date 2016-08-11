@@ -168,11 +168,11 @@ void init_formulae()
         if (!strncmp(cp, "Object", 6))
         {
             formula = get_empty_formula();
-            FREE_AND_COPY_HASH(formula->title, strchr(cp, ' ') + 1);
+            SHSTR_FREE_AND_ADD_STRING(formula->title, strchr(cp, ' ') + 1);
         }
         else if (!strncmp(cp, "keycode", 7))
         {
-            FREE_AND_COPY_HASH(formula->keycode, strchr(cp, ' ') + 1);
+            SHSTR_FREE_AND_ADD_STRING(formula->keycode, strchr(cp, ' ') + 1);
         }
         else if (sscanf(cp, "trans %d", &value))
         {
@@ -198,7 +198,7 @@ void init_formulae()
                 }
                 tmp = (shstr_linked_t *) malloc(sizeof(shstr_linked_t));
                 tmp->name = NULL;
-                FREE_AND_COPY_HASH(tmp->name, cp);
+                SHSTR_FREE_AND_ADD_STRING(tmp->name, cp);
                 tmp->next = formula->ingred;
                 formula->ingred = tmp;
                 /* each ingredient's ASCII value is coadded. Later on this
@@ -224,7 +224,7 @@ void init_formulae()
         }
         else if (!strncmp(cp, "arch", 4))
         {
-            FREE_AND_COPY_HASH(formula->arch_name, strchr(cp, ' ') + 1);
+            SHSTR_FREE_AND_ADD_STRING(formula->arch_name, strchr(cp, ' ') + 1);
             (void) check_recipe(formula);
         }
         else
@@ -717,12 +717,12 @@ void free_all_recipes()
         {
             next = formula->next;
 
-            FREE_AND_CLEAR_HASH(formula->arch_name);
-            FREE_AND_CLEAR_HASH(formula->title);
+            SHSTR_FREE(formula->arch_name);
+            SHSTR_FREE(formula->title);
             for (lchar = formula->ingred; lchar; lchar = charnext)
             {
                 charnext = lchar->next;
-                FREE_AND_CLEAR_HASH(lchar->name);
+                SHSTR_FREE(lchar->name);
                 free(lchar);
             }
             free(formula);

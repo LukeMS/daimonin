@@ -57,7 +57,7 @@ START_TEST (map_loading)
 
     delete_map(map);
     fail_unless(map_is_in_memory(path) == NULL, "Map still loaded");
-    FREE_AND_CLEAR_HASH(path);
+    SHSTR_FREE(path);
 
     fail_if(memleak_detected(), "Memory leak detected");
 }

@@ -422,7 +422,7 @@ static map_t *GetLinkedMap(void)
     /* We insert a dummy sentinel first in the activelist. This simplifies
      * work later */
     map->active_objects = get_object();
-    FREE_AND_COPY_HASH(map->active_objects->name, "<map activelist sentinel>");
+    SHSTR_FREE_AND_ADD_STRING(map->active_objects->name, "<map activelist sentinel>");
 
     /* Avoid gc of the sentinel object_t */
     insert_ob_in_ob(map->active_objects, &void_container);
@@ -920,15 +920,15 @@ static void FreeMap(map_t *m)
             m->tiling.tile_map[i] = NULL;
         }
 
-        FREE_AND_CLEAR_HASH(m->tiling.tile_path[i]);
-        FREE_AND_CLEAR_HASH(m->tiling.orig_tile_path[i]);
+        SHSTR_FREE(m->tiling.tile_path[i]);
+        SHSTR_FREE(m->tiling.orig_tile_path[i]);
     }
 
-    FREE_AND_CLEAR_HASH(m->name);
-    FREE_AND_CLEAR_HASH(m->music);
-    FREE_AND_CLEAR_HASH(m->msg);
-    FREE_AND_CLEAR_HASH(m->rv_cache.path);
-    FREE_AND_CLEAR_HASH(m->reference);
+    SHSTR_FREE(m->name);
+    SHSTR_FREE(m->music);
+    SHSTR_FREE(m->msg);
+    SHSTR_FREE(m->rv_cache.path);
+    SHSTR_FREE(m->reference);
     m->in_memory = MAP_MEMORY_SWAPPED;
     /* Note: m->path, m->orig_path and m->tmppath are freed in delete_map */
 }
@@ -978,8 +978,8 @@ void delete_map(map_t *m)
     remove_ob(m->active_objects);
 
     /* Free our pathnames (we'd like to use it above)*/
-    FREE_AND_CLEAR_HASH(m->path);
-    FREE_AND_CLEAR_HASH(m->orig_path);
+    SHSTR_FREE(m->path);
+    SHSTR_FREE(m->orig_path);
     FREE(m->tmpname);
 
     m->tag = 0; /* Kill any weak references to this map */
@@ -1068,13 +1068,13 @@ shstr_t *create_safe_path_sh(const char *path)
     /* Create our shared string. */
     if(*path == '.')
     {
-        FREE_AND_COPY_HASH(path_sh, path);
+        SHSTR_FREE_AND_ADD_STRING(path_sh, path);
     }
     else
     {
         char buf[MAXPATHLEN];
 
-        FREE_AND_COPY_HASH(path_sh, normalize_path(path, NULL, buf));
+        SHSTR_FREE_AND_ADD_STRING(path_sh, normalize_path(path, NULL, buf));
     }
 
    return path_sh;
@@ -1089,7 +1089,7 @@ shstr_t *create_unique_path_sh(shstr_t *reference, shstr_t *orig_path_sh)
      sprintf(path, "%s/%s/%s/%s/%s",
          settings.localdir, settings.playerdir, get_subdir(reference),
          reference, PathToName(orig_path_sh));
-     FREE_AND_COPY_HASH(path_sh, path);
+     SHSTR_FREE_AND_ADD_STRING(path_sh, path);
 
      return path_sh;
 }
@@ -1139,10 +1139,10 @@ shstr_t *create_instance_path_sh(player_t *pl, shstr_t *orig_path_sh, uint32 fla
         pl->instance_flags = flags;
         pl->instance_id = global_instance_id;
         pl->instance_num = instance_num;
-        FREE_AND_COPY_HASH(pl->instance_name, orig_path_sh);
+        SHSTR_FREE_AND_ADD_STRING(pl->instance_name, orig_path_sh);
     }
 
-    FREE_AND_COPY_HASH(path_sh, path);
+    SHSTR_FREE_AND_ADD_STRING(path_sh, path);
 
     /* Thats the most important part... to guarantee we have the directory!
      * If it's not there, we will run into bad problems when we try to save or
@@ -1259,8 +1259,8 @@ map_t *ready_inherited_map(map_t *orig_map, shstr_t *new_map_path)
                              normalized_path,
                              MAP_STATUS_TYPE(orig_map->status),
                              orig_map->reference);
-    FREE_AND_CLEAR_HASH(normalized_path);
-    FREE_AND_CLEAR_HASH(new_path);
+    SHSTR_FREE(normalized_path);
+    SHSTR_FREE(new_path);
 
     return new_map;
 }
@@ -1439,16 +1439,16 @@ static map_t *LoadMap(shstr_t *path_sh, shstr_t *orig_path_sh, uint32 flags, shs
 
     if (path_sh)
     {
-        FREE_AND_COPY_HASH(m->path, path_sh);
+        SHSTR_FREE_AND_ADD_STRING(m->path, path_sh);
     }
     else
     {
-        FREE_AND_COPY_HASH(m->path, orig_path_sh);
+        SHSTR_FREE_AND_ADD_STRING(m->path, orig_path_sh);
     }
 
     if (orig_path_sh) /* invalid orig_path_sh can happens when we force an explicit load of an unique map! */
     {
-        FREE_AND_COPY_HASH(m->orig_path, orig_path_sh); /* orig_path will be loaded in LoadMapHeader()! */
+        SHSTR_FREE_AND_ADD_STRING(m->orig_path, orig_path_sh); /* orig_path will be loaded in LoadMapHeader()! */
     }
 
     m->map_tag = ++global_map_tag;    /* every map has an unique tag */
@@ -1480,7 +1480,7 @@ static map_t *LoadMap(shstr_t *path_sh, shstr_t *orig_path_sh, uint32 flags, shs
         if (reference)
         {
             LOG(llevInfo, "Reference %s... ", reference);
-            FREE_AND_ADD_REF_HASH(m->reference, reference);
+            SHSTR_FREE_AND_ADD_REF(m->reference, reference);
         }
         else
         {
@@ -1561,10 +1561,10 @@ static map_t *LoadTemporaryMap(map_t *m)
         shstr_t *orig_path_sh = NULL;
 
         LOG(llevInfo, " Fallback to original!\n");
-        FREE_AND_ADD_REF_HASH(orig_path_sh, m->orig_path);
+        SHSTR_FREE_AND_ADD_REF(orig_path_sh, m->orig_path);
         delete_map(m);
         m = LoadMap(NULL, orig_path_sh, MAP_STATUS_MULTI, NULL);
-        FREE_AND_CLEAR_HASH(orig_path_sh);
+        SHSTR_FREE(orig_path_sh);
     }
     else
     {
@@ -1698,12 +1698,12 @@ static int LoadMapHeader(FILE *fp, map_t *m, uint32 flags)
         else if (!strcmp(key, "name"))
         {
             *end = 0;
-            FREE_AND_COPY_HASH(m->name, value);
+            SHSTR_FREE_AND_ADD_STRING(m->name, value);
         }
         else if (!strcmp(key,"background_music"))
         {
             *end = 0;
-            FREE_AND_COPY_HASH(m->music, value);
+            SHSTR_FREE_AND_ADD_STRING(m->music, value);
         }
         else if (!strcmp(key, "msg"))
         {
@@ -1733,7 +1733,7 @@ static int LoadMapHeader(FILE *fp, map_t *m, uint32 flags)
              */
             if (msgbuf[0])
             {
-                FREE_AND_COPY_HASH(m->msg, msgbuf);
+                SHSTR_FREE_AND_ADD_STRING(m->msg, msgbuf);
             }
         }
         /* enter_x is the default x (west-east) entry point. */
@@ -1948,7 +1948,7 @@ static int LoadMapHeader(FILE *fp, map_t *m, uint32 flags)
         else if (!strcmp(key, "reference"))
         {
             *end = 0;
-            FREE_AND_COPY_HASH(m->reference, value);
+            SHSTR_FREE_AND_ADD_STRING(m->reference, value);
 
             if ((flags & MAP_STATUS_ORIGINAL))
             {
@@ -1970,7 +1970,7 @@ static int LoadMapHeader(FILE *fp, map_t *m, uint32 flags)
              * a original source map from /maps. Because EVERY map outside /maps has its orig_path
              * stored in the header, we always have it restored here as needed.
              */
-            FREE_AND_COPY_HASH(m->orig_path, value);
+            SHSTR_FREE_AND_ADD_STRING(m->orig_path, value);
         }
         else if (!strncmp(key, "orig_tile_path_", 15))
         {
@@ -2082,8 +2082,8 @@ static int LoadMapHeader(FILE *fp, map_t *m, uint32 flags)
                                 (neighbour->tiling.orig_tile_path[dest_tile]) ? neighbour->tiling.orig_tile_path[dest_tile] : "(no map)");
 
                         /* Disable map linking */
-                        FREE_AND_CLEAR_HASH(path_sh);
-                        FREE_AND_CLEAR_HASH(m->tiling.orig_tile_path[tile - 1]);
+                        SHSTR_FREE(path_sh);
+                        SHSTR_FREE(m->tiling.orig_tile_path[tile - 1]);
                     }
                     else
                     {
@@ -2414,7 +2414,7 @@ static void LoadObjects(map_t *m, FILE *fp, int mapflags)
                     /* Normalize ->slaying and then rewrite it. This is the
                      * original destination path. */
                     (void)normalize_path(m->orig_path, op->slaying, buf);
-                    FREE_AND_COPY_HASH(op->slaying, buf);
+                    SHSTR_FREE_AND_ADD_STRING(op->slaying, buf);
 
                     /* If it does not exist, shout about it. */
                     if (check_path(buf, 1) == -1)
@@ -2652,7 +2652,7 @@ static void SaveObjects(map_t *m, FILE *fp)
         }
 
         insert_ob_in_ob(floor_g, &void_container); /* Avoid gc */
-        FREE_AND_CLEAR_HASH(floor_g->name);
+        SHSTR_FREE(floor_g->name);
     }
 
     if(!fmask_g)
@@ -3026,7 +3026,7 @@ uint16 map_player_unlink(map_t *m, shstr_t *path_sh)
          * problem isn't analyzed, though. Gecko 20050713 */
         activelist_remove(op);
         remove_ob(op); // changes m->player_first
-        FREE_AND_ADD_REF_HASH(CONTR(op)->temp_removal_map,
+        SHSTR_FREE_AND_ADD_REF(CONTR(op)->temp_removal_map,
                               (path_sh) ? path_sh : m->path);
         num++;
     }
@@ -3077,7 +3077,7 @@ void map_player_link(map_t *m, sint16 x, sint16 y, uint8 flag)
 
             if (relinked)
             {
-                FREE_AND_CLEAR_HASH(pl->temp_removal_map);
+                SHSTR_FREE(pl->temp_removal_map);
                 ndi(NDI_UNIQUE, 0, pl->ob, "You have a distinct feeling of deja vu.");
             }
         }
@@ -3153,7 +3153,7 @@ void read_map_log(void)
          * routines will try to free that pointer. */
         cp = strchr(buf, ':');
         *cp++ = '\0';
-        FREE_AND_COPY_HASH(m->path, buf);
+        SHSTR_FREE_AND_ADD_STRING(m->path, buf);
         cp1 = strchr(cp, ':');
         *cp1++ = '\0';
         MALLOC_STRING(m->tmpname, cp);
@@ -3474,12 +3474,12 @@ void map_check_in_memory(map_t *m)
                         }
 
                         /* Remember a few details so we can reload the map. */
-                        FREE_AND_ADD_REF_HASH(path_sh, this->path);
-                        FREE_AND_ADD_REF_HASH(orig_path_sh, this->orig_path);
+                        SHSTR_FREE_AND_ADD_REF(path_sh, this->path);
+                        SHSTR_FREE_AND_ADD_REF(orig_path_sh, this->orig_path);
 
                         if (this->reference)
                         {
-                            FREE_AND_ADD_REF_HASH(reference_sh, this->reference);
+                            SHSTR_FREE_AND_ADD_REF(reference_sh, this->reference);
                         }
 
                         status = MAP_STATUS_TYPE(this->status);
@@ -3498,9 +3498,9 @@ void map_check_in_memory(map_t *m)
                         }
 
                         /* Tidy up. */
-                        FREE_AND_CLEAR_HASH(path_sh);
-                        FREE_AND_CLEAR_HASH(orig_path_sh);
-                        FREE_AND_CLEAR_HASH(reference_sh);
+                        SHSTR_FREE(path_sh);
+                        SHSTR_FREE(orig_path_sh);
+                        SHSTR_FREE(reference_sh);
                     }
                     else
                     {

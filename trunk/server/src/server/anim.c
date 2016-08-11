@@ -34,7 +34,7 @@ void free_all_anim()
     LOG(llevDebug, "Freeing all animations\n");
     for (i = 0; i <= num_animations; i++)
     {
-        FREE_AND_CLEAR_HASH(animations[i].name);
+        SHSTR_FREE(animations[i].name);
         free(animations[i].faces);
     }
     free(animations);
@@ -61,7 +61,7 @@ void init_anim()
      * order.
      */
     animations[0].name = NULL;
-    FREE_AND_COPY_HASH(animations[0].name, "###none");
+    SHSTR_FREE_AND_ADD_STRING(animations[0].name, "###none");
     animations[0].num_animations = 1;
     animations[0].faces = malloc(sizeof(unsigned short));
     animations[0].faces[0] = 0;
@@ -94,7 +94,7 @@ void init_anim()
                 animations_allocated += 10;
             }
             animations[num_animations].name = NULL;
-            FREE_AND_COPY_HASH(animations[num_animations].name, buf + 5);
+            SHSTR_FREE_AND_ADD_STRING(animations[num_animations].name, buf + 5);
             animations[num_animations].num = num_animations;    /* for bsearch */
             animations[num_animations].facings = 1;
         }

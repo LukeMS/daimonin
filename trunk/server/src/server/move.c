@@ -941,7 +941,7 @@ sint8 enter_map_by_exit(object_t *who, object_t *exit_ob)
     if (exit_ob->slaying != NULL && *(exit_ob->slaying) != '/')
     {
         (void)normalize_path(who->map->orig_path, exit_ob->slaying, path);
-        FREE_AND_COPY_HASH(exit_ob->slaying, path);
+        SHSTR_FREE_AND_ADD_STRING(exit_ob->slaying, path);
     }
 
     /* If the destination path is nonexistent or invalid, we ain't goin'
@@ -1020,12 +1020,12 @@ sint8 enter_map_by_exit(object_t *who, object_t *exit_ob)
      * destination path is the same as the original destination path. */
     else if ((mstatus & (MAP_STATUS_MULTI | MAP_STATUS_STYLE)))
     {
-        FREE_AND_CLEAR_HASH(reference);
+        SHSTR_FREE(reference);
 
         if (!exit_ob->race ||
             exit_ob->env)
         {
-            FREE_AND_ADD_REF_HASH(exit_ob->race, exit_ob->slaying);
+            SHSTR_FREE_AND_ADD_REF(exit_ob->race, exit_ob->slaying);
         }
     }
     /* Uniques and instances are a bit more complex. */
@@ -1037,7 +1037,7 @@ sint8 enter_map_by_exit(object_t *who, object_t *exit_ob)
          * the exit map's ->path and the exit object's ->slaying. */
         if (!exit_ob->last_eat)
         {
-            FREE_AND_ADD_REF_HASH(reference, exit_map->reference);
+            SHSTR_FREE_AND_ADD_REF(reference, exit_map->reference);
 
             if (!exit_ob->race ||
                 exit_ob->env)
@@ -1050,7 +1050,7 @@ sint8 enter_map_by_exit(object_t *who, object_t *exit_ob)
                 * we create now a new path out of it by using the root from ->path.
                 * NOTE: the path to /maps is always part of the unique/instance map name. */
                 (void)normalize_path_direct(exit_map->path, exit_ob->slaying, buf);
-                FREE_AND_COPY_HASH(exit_ob->race, buf);
+                SHSTR_FREE_AND_ADD_STRING(exit_ob->race, buf);
             }
         }
         /* Here we're going from a multiplayer map to a unique/instance. */
@@ -1086,22 +1086,22 @@ sint8 enter_map_by_exit(object_t *who, object_t *exit_ob)
                  * function so here it's just a flag query. */
                 if (QUERY_FLAG(exit_ob, FLAG_IS_EGOBOUND))
                 {
-                    FREE_AND_COPY_HASH(reference, get_ego_item_name(exit_ob));
+                    SHSTR_FREE_AND_ADD_STRING(reference, get_ego_item_name(exit_ob));
                 }
                 /* So the reference is the player's name. */
                 else
                 {
-                    FREE_AND_ADD_REF_HASH(reference, who->name);
+                    SHSTR_FREE_AND_ADD_REF(reference, who->name);
                 }
 
-                FREE_AND_COPY_HASH(exit_ob->race, create_unique_path_sh(reference, exit_ob->slaying));
+                SHSTR_FREE_AND_ADD_STRING(exit_ob->race, create_unique_path_sh(reference, exit_ob->slaying));
             }
             /* For an instance, the destination path is in
              * server/data/instance/ */
             else if ((mstatus & MAP_STATUS_INSTANCE))
             {
                 /* So the reference is the player's name. */
-                FREE_AND_ADD_REF_HASH(reference, who->name);
+                SHSTR_FREE_AND_ADD_REF(reference, who->name);
 
                 /* we give here a player a "temporary" instance directory inside /instance
                  * which is identified by global_instance_num (directory name  = itoa(num)).
@@ -1121,13 +1121,13 @@ sint8 enter_map_by_exit(object_t *who, object_t *exit_ob)
 
                 /* create_instance..() will try to load an old instance, will fallback to
                  * a new one if needed and setup all what need be done to start the instance. */
-                FREE_AND_COPY_HASH(exit_ob->race, create_instance_path_sh(pl, exit_ob->slaying, flags));
+                SHSTR_FREE_AND_ADD_STRING(exit_ob->race, create_instance_path_sh(pl, exit_ob->slaying, flags));
             }
         }
     }
 
     m = ready_map_name(exit_ob->race, exit_ob->slaying, mstatus, reference);
-    FREE_AND_CLEAR_HASH(reference);
+    SHSTR_FREE(reference);
 
     if (!m)
     {

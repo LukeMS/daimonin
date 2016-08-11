@@ -99,7 +99,7 @@ void update_npc_known_obj(struct mob_known_obj *known, int delta_friendship, int
     if(known->obj->map)
     {
         if(known->last_map != known->obj->map->orig_path)
-            FREE_AND_ADD_REF_HASH(known->last_map, known->obj->map->orig_path);
+            SHSTR_FREE_AND_ADD_REF(known->last_map, known->obj->map->orig_path);
         known->last_x = known->obj->x;
         known->last_y = known->obj->y;
     }

@@ -72,7 +72,7 @@ END_TEST
 START_TEST (readable_change_book_memleak)
 {
     object_t * book = arch_to_object(find_archetype("book"));
-    FREE_AND_COPY_HASH(book->msg, "I am a book message");
+    SHSTR_FREE_AND_ADD_STRING(book->msg, "I am a book message");
     change_book(book, 5);
 
     fail_if(memleak_detected(), "_possible_ memory leak detected");

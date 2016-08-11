@@ -970,7 +970,7 @@ static void traverse_player_stats(char* start_dir)
                 {
                     pl->socket.status = Ns_Disabled;
                     entry->d_name[fptr-entry->d_name] = 0;
-                    FREE_AND_COPY_HASH(pl->ob->name, entry->d_name);
+                    SHSTR_FREE_AND_ADD_STRING(pl->ob->name, entry->d_name);
                     entry->d_name[fptr-entry->d_name] = '.';
                     chdir(base_cwd);
                     check_login(pl->ob, 0);

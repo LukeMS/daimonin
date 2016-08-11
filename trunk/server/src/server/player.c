@@ -143,7 +143,7 @@ void free_player(player_t *pl)
         pl->state &= ~ST_PLAYING;
         pl->state |= ST_DEAD;
 		LOG(llevDebug, "FREE_PLAYER(%s) --> ST_DEAD\n", STRING_OBJ_NAME(pl->ob));
-        FREE_AND_COPY_HASH(pl->ob->name, "noname"); /* we neutralize the name - we don't want find this player anymore */
+        SHSTR_FREE_AND_ADD_STRING(pl->ob->name, "noname"); /* we neutralize the name - we don't want find this player anymore */
         insert_ob_in_ob(pl->ob, &void_container); /* Avoid gc of the player object_t */
         return;
     }
@@ -179,13 +179,13 @@ void free_player(player_t *pl)
 void destroy_player_struct(player_t *pl)
 {
     /* clear all hash strings */
-    FREE_AND_CLEAR_HASH(pl->instance_name);
-    FREE_AND_CLEAR_HASH(pl->group_invite_name);
-    FREE_AND_CLEAR_HASH(pl->savebed_map );
-    FREE_AND_CLEAR_HASH(pl->orig_savebed_map);
-    FREE_AND_CLEAR_HASH(pl->maplevel );
-    FREE_AND_CLEAR_HASH(pl->orig_map);
-    FREE_AND_CLEAR_HASH(pl->account_name);
+    SHSTR_FREE(pl->instance_name);
+    SHSTR_FREE(pl->group_invite_name);
+    SHSTR_FREE(pl->savebed_map );
+    SHSTR_FREE(pl->orig_savebed_map);
+    SHSTR_FREE(pl->maplevel );
+    SHSTR_FREE(pl->orig_map);
+    SHSTR_FREE(pl->account_name);
 }
 
 void give_initial_items(object_t *pl, struct objectlink_t *items)
@@ -689,7 +689,7 @@ void reset_instance_data(player_t *pl)
     {
         pl->instance_flags = 0;
         pl->instance_num = MAP_INSTANCE_NUM_INVALID;
-        FREE_AND_CLEAR_HASH(pl->instance_name);
+        SHSTR_FREE(pl->instance_name);
     }
 }
 

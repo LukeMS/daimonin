@@ -379,10 +379,10 @@ static void set_attribute(lua_State *L, lua_object *obj, struct attribute_decl *
           str = lua_tostring(L, -1);
           if (*(char * *) field_ptr != NULL)
           {
-              FREE_AND_CLEAR_HASH(*(char * *) field_ptr);
+              SHSTR_FREE(*(char * *) field_ptr);
           }
           if (str && strcmp(str, ""))
-              FREE_AND_COPY_HASH(*(const char * *) field_ptr, str);
+              SHSTR_FREE_AND_ADD_STRING(*(const char * *) field_ptr, str);
           break;
 
         case FIELDTYPE_UINT8:

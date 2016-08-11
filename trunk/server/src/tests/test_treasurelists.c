@@ -61,7 +61,7 @@ START_TEST (treasurelist_memleak)
     dump_inventory(locate_beacon(shstr_find("beacon8"))->env);
 */
     delete_map(map);
-    FREE_AND_CLEAR_HASH(path);
+    SHSTR_FREE(path);
 
     fail_if(memleak_detected(), "Memory leak detected");
 }

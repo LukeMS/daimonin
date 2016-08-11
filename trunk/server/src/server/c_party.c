@@ -135,7 +135,7 @@ int command_party_invite(object_t *pl, char *params)
                     if(activator->group_status & GROUP_STATUS_INVITE)
                         command_party_deny (pl, NULL); /* automatic /deny */
                     activator->group_mode = GROUP_MODE_INVITE;
-                    FREE_AND_ADD_REF_HASH(activator->group_invite_name, target->ob->name);
+                    SHSTR_FREE_AND_ADD_REF(activator->group_invite_name, target->ob->name);
                     ndi(NDI_UNIQUE, 0,pl, "Group: /invite enabled for player %s.", STRING_SAFE(params));
                 }
             }
@@ -204,7 +204,7 @@ int command_party_invite(object_t *pl, char *params)
     /* remember who has given the invite request so player can give a simple /join or /deny */
     target->group_status = GROUP_STATUS_INVITE;
     if(target->group_mode != GROUP_MODE_INVITE)
-        FREE_AND_ADD_REF_HASH(target->group_invite_name, pl->name);
+        SHSTR_FREE_AND_ADD_REF(target->group_invite_name, pl->name);
     target->group_leader = pl;
     target->group_leader_count = pl->count;
 

@@ -78,7 +78,7 @@ static void init_treasures(FILE *fp)
         if (sscanf(buf, "treasureone %s%[\n\r]", name, dummy) || sscanf(buf, "treasure %s%[\n\r]", name, dummy))
         {
             treasurelist   *tl  = get_empty_treasurelist();
-            FREE_AND_COPY_HASH(tl->listname, name);
+            SHSTR_FREE_AND_ADD_STRING(tl->listname, name);
             /* check for double used list name */
             for (tl_tmp = first_treasurelist; tl_tmp != NULL; tl_tmp = tl_tmp->next)
             {
@@ -372,23 +372,23 @@ static treasure * load_treasure(FILE *fp, int *t_style, int *a_chance)
         else if (sscanf(cp, "list %s", variable))
         {
             start_marker = 1;
-            FREE_AND_COPY_HASH(t->name, variable);
+            SHSTR_FREE_AND_ADD_STRING(t->name, variable);
         }
         else if (sscanf(cp, "name %s", variable))
         {
-            FREE_AND_COPY_HASH(t->change_arch.name, cp + 5);
+            SHSTR_FREE_AND_ADD_STRING(t->change_arch.name, cp + 5);
         }
         else if (sscanf(cp, "race %s", variable))
         {
-            FREE_AND_COPY_HASH(t->change_arch.race, cp + 5);
+            SHSTR_FREE_AND_ADD_STRING(t->change_arch.race, cp + 5);
         }
         else if (sscanf(cp, "title %s", variable))
         {
-            FREE_AND_COPY_HASH(t->change_arch.title, cp + 6);
+            SHSTR_FREE_AND_ADD_STRING(t->change_arch.title, cp + 6);
         }
         else if (sscanf(cp, "slaying %s", variable))
         {
-            FREE_AND_COPY_HASH(t->change_arch.slaying, cp + 8);
+            SHSTR_FREE_AND_ADD_STRING(t->change_arch.slaying, cp + 8);
         }
         else if (sscanf(cp, "face %s", variable))
         {
@@ -782,7 +782,7 @@ void unlink_treasurelists(objectlink_t *list, int flag)
         /*LOG(llevNoLog,"freed listpat: %s\n",list->objlink.tl->listname); */
         if(list->parmlink.tl_tweak)
         {
-            FREE_AND_CLEAR_HASH(list->parmlink.tl_tweak->name);
+            SHSTR_FREE(list->parmlink.tl_tweak->name);
             return_poolchunk(list->parmlink.tl_tweak, pool_tlist_tweak);
         }
         return_poolchunk(list, pool_objectlink);
@@ -1233,16 +1233,16 @@ static void change_treasure(struct _change_arch *ca, object_t *op)
     }
 
     if (ca->name)
-        FREE_AND_COPY_HASH(op->name, ca->name);
+        SHSTR_FREE_AND_ADD_STRING(op->name, ca->name);
 
     if (ca->race)
-        FREE_AND_COPY_HASH(op->race, ca->race);
+        SHSTR_FREE_AND_ADD_STRING(op->race, ca->race);
 
     if (ca->title)
-        FREE_AND_COPY_HASH(op->title, ca->title);
+        SHSTR_FREE_AND_ADD_STRING(op->title, ca->title);
 
     if (ca->slaying)
-        FREE_AND_COPY_HASH(op->slaying, ca->slaying);
+        SHSTR_FREE_AND_ADD_STRING(op->slaying, ca->slaying);
 }
 
 /*
@@ -2032,7 +2032,7 @@ int fix_generated_item(object_t **op_ptr, object_t *creator, int difficulty, int
                   /*if (QUERY_FLAG(creator, FLAG_NO_PICK))
                       SET_FLAG(op, FLAG_NO_PICK);*/
                   if (creator->slaying && !op->slaying) /* for check_inv floors */
-                      FREE_AND_COPY_HASH(op->slaying, creator->slaying);
+                      SHSTR_FREE_AND_ADD_STRING(op->slaying, creator->slaying);
               }
               break;
 
@@ -2118,7 +2118,7 @@ int fix_generated_item(object_t **op_ptr, object_t *creator, int difficulty, int
                   /* get the right race */
                   for (list = first_race; list && tmp; list = list->next, tmp--)
                       ;
-                  FREE_AND_COPY_HASH(op->slaying, list->name);
+                  SHSTR_FREE_AND_ADD_STRING(op->slaying, list->name);
               }
               break;
         }
@@ -2198,11 +2198,11 @@ void free_treasurestruct(treasure *t)
         free_treasurestruct(t->next_yes);
     if (t->next_no)
         free_treasurestruct(t->next_no);
-    FREE_AND_CLEAR_HASH(t->name);
-    FREE_AND_CLEAR_HASH(t->change_arch.name);
-    FREE_AND_CLEAR_HASH(t->change_arch.race);
-    FREE_AND_CLEAR_HASH(t->change_arch.slaying);
-    FREE_AND_CLEAR_HASH(t->change_arch.title);
+    SHSTR_FREE(t->name);
+    SHSTR_FREE(t->change_arch.name);
+    SHSTR_FREE(t->change_arch.race);
+    SHSTR_FREE(t->change_arch.slaying);
+    SHSTR_FREE(t->change_arch.title);
     free(t);
 }
 
@@ -2215,7 +2215,7 @@ void free_all_treasures()
     for (tl = first_treasurelist; tl != NULL; tl = next)
     {
         next = tl->next;
-        FREE_AND_CLEAR_HASH(tl->listname);
+        SHSTR_FREE(tl->listname);
         if (tl->items)
             free_treasurestruct(tl->items);
         free(tl);

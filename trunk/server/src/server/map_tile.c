@@ -141,8 +141,8 @@ static map_t *LoadAndLinkTiledMap(map_t *orig_map, int tile_num)
         LOG(llevMapbug, "MAPBUG: failed to connect map %s with tile no %d (%s).\n",
             STRING_MAP_PATH(orig_map), tile_num,
             STRING_MAP_TILE_PATH(orig_map, tile_num));
-        FREE_AND_CLEAR_HASH(orig_map->tiling.orig_tile_path[tile_num]);
-        FREE_AND_CLEAR_HASH(orig_map->tiling.tile_path[tile_num]);
+        SHSTR_FREE(orig_map->tiling.orig_tile_path[tile_num]);
+        SHSTR_FREE(orig_map->tiling.tile_path[tile_num]);
         m = NULL;
     }
 
@@ -715,7 +715,7 @@ static int RelativeTilePosition(map_t *map1, map_t *map2, rv_t *rv)
                 if (node->map == map2)
                 {
                     /* store info in cache */
-                    FREE_AND_ADD_REF_HASH(map1->rv_cache.path, map2->path);
+                    SHSTR_FREE_AND_ADD_REF(map1->rv_cache.path, map2->path);
                     map1->rv_cache.x = node->dx;
                     map1->rv_cache.y = node->dy;
 

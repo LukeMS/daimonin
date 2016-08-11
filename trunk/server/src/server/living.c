@@ -503,14 +503,14 @@ int change_abil(object_t *op, object_t *tmp)
             success = 1;
             if (applied > 0)
             {
-                FREE_AND_COPY_HASH(op->race, "undead");
+                SHSTR_FREE_AND_ADD_STRING(op->race, "undead");
                 ndi(NDI_UNIQUE | NDI_GREY, 0, op, "Your lifeforce drains away!");
             }
             else
             {
-                FREE_AND_CLEAR_HASH(op->race);
+                SHSTR_FREE(op->race);
                 if (op->arch->clone.race)
-                    FREE_AND_COPY_HASH(op->race, op->arch->clone.race);
+                    SHSTR_FREE_AND_ADD_STRING(op->race, op->arch->clone.race);
                 ndi(NDI_UNIQUE | NDI_WHITE, 0, op, "Your lifeforce returns!");
             }
         }
@@ -1013,7 +1013,7 @@ void fix_player(object_t *op)
 
     pl->gen_sp = pl->gen_grace = pl->gen_hp = 20;
 
-    FREE_AND_CLEAR_HASH(op->slaying);
+    SHSTR_FREE(op->slaying);
 
     /* HOTFIX: we parted refl_xxx from can_refl_xxx */
     CLEAR_FLAG(op, FLAG_REFL_MISSILE);
@@ -1309,7 +1309,7 @@ void fix_player(object_t *op)
 
                       if (tmp->slaying)
                       {
-                          FREE_AND_COPY_HASH(op->slaying, tmp->slaying);
+                          SHSTR_FREE_AND_ADD_STRING(op->slaying, tmp->slaying);
                       }
 
                       ac += tmp->stats.ac;
@@ -1769,7 +1769,7 @@ void fix_player(object_t *op)
             }
 
             if (skill_weapon->slaying != NULL)
-                FREE_AND_COPY_HASH(op->slaying, skill_weapon->slaying);
+                SHSTR_FREE_AND_ADD_STRING(op->slaying, skill_weapon->slaying);
 
             /* now we must add this special skill attack */
             for (i = 0; i < NROFATTACKS; i++)
@@ -2457,11 +2457,11 @@ object_t * insert_base_info_object(object_t *op)
     {
         tmp->x = outermost->x;
         tmp->y = outermost->y;
-        FREE_AND_ADD_REF_HASH(tmp->slaying, outermost->map->path);
+        SHSTR_FREE_AND_ADD_REF(tmp->slaying, outermost->map->path);
     }
     else
     {
-        FREE_AND_CLEAR_HASH(tmp->slaying);
+        SHSTR_FREE(tmp->slaying);
         LOG(llevDebug, "insert_base_info_object(): Can't set up home location for '%s' - not even close to a map.\n", STRING_OBJ_NAME(head));
     }
 

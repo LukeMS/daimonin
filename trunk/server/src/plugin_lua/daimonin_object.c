@@ -822,8 +822,8 @@ static int GameObject_ReadyUniqueMap(lua_State *L)
                                   WHO->name);
     }
 
-    FREE_AND_CLEAR_HASH(path_sh);
-    FREE_AND_CLEAR_HASH(orig_path_sh);
+    SHSTR_FREE(path_sh);
+    SHSTR_FREE(orig_path_sh);
     push_object(L, &Map, m);
 
     return 1;
@@ -921,8 +921,8 @@ static int GameObject_StartNewInstance(lua_State *L)
         push_object(L, &Map, m);
     }
 
-    FREE_AND_CLEAR_HASH(orig_path_sh);
-    FREE_AND_CLEAR_HASH(path_sh);
+    SHSTR_FREE(orig_path_sh);
+    SHSTR_FREE(path_sh);
 
     return 1;
 }
@@ -940,7 +940,7 @@ static sint8 DoInstance(player_t *pl, const char *path)
         r = 0;
     }
 
-    FREE_AND_CLEAR_HASH(path_sh);
+    SHSTR_FREE(path_sh);
 
     return r;
 }
@@ -1626,7 +1626,7 @@ static int GameObject_SetGod(lua_State *L)
     get_lua_args(L, "Os", &self, &txt);
 
     SET_FLAG(WHO, FLAG_FIX_PLAYER);
-    FREE_AND_COPY_HASH(prayname, "praying");
+    SHSTR_FREE_AND_ADD_STRING(prayname, "praying");
 
     CFP1.Value[0] = (void *) (WHO);
     CFP1.Value[1] = (void *) (prayname);
@@ -1644,7 +1644,7 @@ static int GameObject_SetGod(lua_State *L)
         (PlugHooks[HOOK_BECOMEFOLLOWER]) (&CFP2);
     free(CFR);
 
-    FREE_AND_CLEAR_HASH(prayname);
+    SHSTR_FREE(prayname);
 
     return 0;
 }
@@ -1962,7 +1962,7 @@ static int GameObject_Withdraw(lua_State *L)
             }
 
             loot = hooks->create_financial_loot(&money, WHO, MODE_NO_INVENTORY);
-            FREE_AND_COPY_HASH(loot->name, "your withdrawal");
+            SHSTR_FREE_AND_ADD_STRING(loot->name, "your withdrawal");
             (void)hooks->pick_up(WHO, loot, NULL, 1);
             WHAT->value -= total;
             lua_pushboolean(L, 1);
@@ -2306,11 +2306,11 @@ static int GameObject_SetRank(lua_State *L)
         {
             if (strcmp(rank, "Mr") == 0) /* Mr = keyword to clear title and not add it as rank */
             {
-                FREE_AND_CLEAR_HASH(walk->title);
+                SHSTR_FREE(walk->title);
             }
             else
             {
-                FREE_AND_COPY_HASH(walk->title, rank);
+                SHSTR_FREE_AND_ADD_STRING(walk->title, rank);
             }
 
             CONTR(WHO)->socket.ext_title_flag = 1; /* demand update to client */
@@ -2346,7 +2346,7 @@ static int GameObject_SetAlignment(lua_State *L)
             walk->arch == hooks->archetype_global->_alignment_force)
         {
             /* we find the alignment of the player, now change it to new one */
-            FREE_AND_COPY_HASH(walk->title, align);
+            SHSTR_FREE_AND_ADD_STRING(walk->title, align);
 
             CONTR(WHO)->socket.ext_title_flag = 1; /* demand update to client */
             return push_object(L, &GameObject, walk);
@@ -2746,7 +2746,7 @@ static int GameObject_CreatePlayerForce(lua_State *L)
     }
 
     /* setup the force and put it in activator */
-    FREE_AND_COPY_HASH(myob->name, txt);
+    SHSTR_FREE_AND_ADD_STRING(myob->name, txt);
     myob = hooks->insert_ob_in_ob(myob, WHAT);
 
     return push_object(L, &GameObject, myob);
@@ -2794,11 +2794,11 @@ static int GameObject_AddQuest(lua_State *L)
         return luaL_error(L, "object:AddQuest(): Can't find archetype 'quest_trigger'");
 
     /* store name & arch name of the quest obj. so we can id it later */
-    FREE_AND_COPY_HASH(myob->name, name);
+    SHSTR_FREE_AND_ADD_STRING(myob->name, name);
 
     if(msg)
     {
-        FREE_AND_COPY_HASH(myob->msg, msg);
+        SHSTR_FREE_AND_ADD_STRING(myob->msg, msg);
     }
 
     myob->sub_type1 = (uint8)mode;
@@ -2949,34 +2949,34 @@ static int GameObject_AddQuestTarget(lua_State *L)
 
     if(arch && *arch!='\0')
     {
-        FREE_AND_COPY_HASH(myob->race, arch);
+        SHSTR_FREE_AND_ADD_STRING(myob->race, arch);
     }
     else
     {
-        FREE_AND_CLEAR_HASH(myob->race);
+        SHSTR_FREE(myob->race);
     }
 
     if(name && *name!='\0')
     {
-        FREE_AND_COPY_HASH(myob->name, name);
+        SHSTR_FREE_AND_ADD_STRING(myob->name, name);
     }
 
     if(race && *race!='\0')
     {
-        FREE_AND_COPY_HASH(myob->slaying, race);
+        SHSTR_FREE_AND_ADD_STRING(myob->slaying, race);
     }
     else
     {
-        FREE_AND_CLEAR_HASH(myob->slaying);
+        SHSTR_FREE(myob->slaying);
     }
 
     if(title && *&title!='\0')
     {
-        FREE_AND_COPY_HASH(myob->title, title);
+        SHSTR_FREE_AND_ADD_STRING(myob->title, title);
     }
     else
     {
-        FREE_AND_CLEAR_HASH(myob->title);
+        SHSTR_FREE(myob->title);
     }
 
     /* Only mobs >= level count as targets. This is a useful final check to
@@ -3035,11 +3035,11 @@ static int GameObject_AddQuestItem(lua_State *L)
     {
         if(*i_name!='\0')
         {
-            FREE_AND_COPY_HASH(myob->name, i_name);
+            SHSTR_FREE_AND_ADD_STRING(myob->name, i_name);
         }
 //        else
 //        {
-//            FREE_AND_CLEAR_HASH(myob->name);
+//            SHSTR_FREE(myob->name);
 //        }
     }
 
@@ -3047,11 +3047,11 @@ static int GameObject_AddQuestItem(lua_State *L)
     {
         if(*i_title!='\0')
         {
-            FREE_AND_COPY_HASH(myob->title, i_title);
+            SHSTR_FREE_AND_ADD_STRING(myob->title, i_title);
         }
         else
         {
-            FREE_AND_CLEAR_HASH(myob->title);
+            SHSTR_FREE(myob->title);
         }
     }
 
@@ -3252,10 +3252,10 @@ static int GameObject_AddOneDropQuest(lua_State *L)
     get_lua_args(L, "OOs|s", &self, &whatptr, &name, &title);
 
     /* store name & arch name of the quest obj. so we can id it later */
-    FREE_AND_COPY_HASH(WHAT->name, name);
-    FREE_AND_COPY_HASH(WHAT->race, WHAT->arch->name);
+    SHSTR_FREE_AND_ADD_STRING(WHAT->name, name);
+    SHSTR_FREE_AND_ADD_STRING(WHAT->race, WHAT->arch->name);
     if(title)
-        FREE_AND_COPY_HASH(WHAT->title, title);
+        SHSTR_FREE_AND_ADD_STRING(WHAT->title, title);
 
     if(!CONTR(WHO)->quest_one_drop)
         hooks->add_quest_containers(WHO);
@@ -3282,7 +3282,7 @@ static int GameObject_CreatePlayerInfo(lua_State *L)
     myob = hooks->arch_to_object(hooks->archetype_global->_player_info);
 
     /* setup the info and put it in activator */
-    FREE_AND_COPY_HASH(myob->name, txt);
+    SHSTR_FREE_AND_ADD_STRING(myob->name, txt);
     myob = hooks->insert_ob_in_ob(myob, WHAT);
 
     return push_object(L, &GameObject, myob);
@@ -3372,7 +3372,7 @@ static int GameObject_CreateInvisibleInside(lua_State *L)
     (PlugHooks[HOOK_UPDATESPEED]) (&CFP);
 
     /*update_ob_speed(myob); */
-    FREE_AND_COPY_HASH(myob->slaying, txt);
+    SHSTR_FREE_AND_ADD_STRING(myob->slaying, txt);
     myob = hooks->insert_ob_in_ob(myob, WHAT);
 
     return push_object(L, &GameObject, myob);
@@ -3551,8 +3551,8 @@ static int GameObject_SetSaveBed(lua_State *L)
 
     pl = CONTR(WHO);
     m = map->data.map;
-    FREE_AND_ADD_REF_HASH(pl->savebed_map, m->path);
-    FREE_AND_ADD_REF_HASH(pl->orig_savebed_map, m->orig_path);
+    SHSTR_FREE_AND_ADD_REF(pl->savebed_map, m->path);
+    SHSTR_FREE_AND_ADD_REF(pl->orig_savebed_map, m->orig_path);
     pl->bed_status = MAP_STATUS_TYPE(m->status);
     pl->bed_x = x;
     pl->bed_y = y;
@@ -3835,7 +3835,7 @@ static int GameObject_AddMoney(lua_State *L)
     money.silver = s;
     money.copper = c;
     loot = hooks->create_financial_loot(&money, WHO, MODE_NO_INVENTORY);
-    FREE_AND_COPY_HASH(loot->name, "the coins");
+    SHSTR_FREE_AND_ADD_STRING(loot->name, "the coins");
     (void)hooks->pick_up(WHO, loot, NULL, 1);
 
     return 0;
@@ -3862,7 +3862,7 @@ static int GameObject_AddMoneyEx(lua_State *L)
     money.silver = s;
     money.copper = c;
     loot = hooks->create_financial_loot(&money, WHO, MODE_NO_INVENTORY);
-    FREE_AND_COPY_HASH(loot->name, "the coins");
+    SHSTR_FREE_AND_ADD_STRING(loot->name, "the coins");
     (void)hooks->pick_up(WHO, loot, NULL, 1);
     strcpy(buf, "You got");
 

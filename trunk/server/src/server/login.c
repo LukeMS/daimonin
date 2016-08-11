@@ -404,7 +404,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
      */
 
     pl = get_player_struct(); /* will return the struct with safe base values! */
-    FREE_AND_ADD_REF_HASH(pl->account_name, ns->pl_account.name);
+    SHSTR_FREE_AND_ADD_REF(pl->account_name, ns->pl_account.name);
 
     /* we have here the classic problem with fgets():
      * fgets() reads in a string and puts the \0 after the 0x0a.
@@ -461,27 +461,27 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
         else if (!strcmp(buf, "iname"))
         {
             sscanf(bufall, "iname %s", buf );
-            FREE_AND_COPY_HASH(pl->instance_name, buf);
+            SHSTR_FREE_AND_ADD_STRING(pl->instance_name, buf);
         }
         else if (!strcmp(buf, "map"))
         {
             sscanf(bufall, "map %s", buf );
-            FREE_AND_COPY_HASH(pl->maplevel, buf);
+            SHSTR_FREE_AND_ADD_STRING(pl->maplevel, buf);
         }
         else if (!strcmp(buf, "o_map"))
         {
             sscanf(bufall, "o_map %s", buf );
-            FREE_AND_COPY_HASH(pl->orig_map, buf);
+            SHSTR_FREE_AND_ADD_STRING(pl->orig_map, buf);
         }
         else if (!strcmp(buf, "savebed_map"))
         {
             sscanf(bufall, "savebed_map %s", buf );
-            FREE_AND_COPY_HASH(pl->savebed_map, buf);
+            SHSTR_FREE_AND_ADD_STRING(pl->savebed_map, buf);
         }
         else if (!strcmp(buf, "o_bed"))
         {
             sscanf(bufall, "o_bed %s", buf );
-            FREE_AND_COPY_HASH(pl->orig_savebed_map, buf);
+            SHSTR_FREE_AND_ADD_STRING(pl->orig_savebed_map, buf);
         }
         else if (!strcmp(buf, "map_s"))
             pl->status = value;
@@ -593,7 +593,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     }
     else if (!pl->orig_map)
     {
-        FREE_AND_ADD_REF_HASH(pl->orig_map, pl->maplevel);
+        SHSTR_FREE_AND_ADD_REF(pl->orig_map, pl->maplevel);
     }
 
     if (!pl->savebed_map)
@@ -602,7 +602,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     }
     else if (!pl->orig_savebed_map)
     {
-        FREE_AND_ADD_REF_HASH(pl->orig_savebed_map, pl->savebed_map);
+        SHSTR_FREE_AND_ADD_REF(pl->orig_savebed_map, pl->savebed_map);
     }
 
     LOG(llevDebug, "load obj for player: %s\n", name);
@@ -698,7 +698,7 @@ addme_login_msg player_load(NewSocket *ns, const char *name)
     /* enable the player socket by moving the login socket to it */
     /* WARNING: delete this reference by the caller. Its a marker to show the socket is now owned by pl */
     ns->pl = pl;
-    FREE_AND_CLEAR_HASH(ns->pl_account.create_name);
+    SHSTR_FREE(ns->pl_account.create_name);
     memcpy(&pl->socket, ns, sizeof(NewSocket));
     ns->pl_account.name = NULL;
     pl->socket.look_position = 0;
@@ -899,8 +899,8 @@ addme_login_msg player_create(NewSocket *ns, player_t **pl_ret, char *name, int 
     pl->last_save_tick = ROUND_TAG;
 
     /* now we add our custom settings for this new character */
-    FREE_AND_ADD_REF_HASH(pl->account_name, ns->pl_account.name);
-    FREE_AND_COPY_HASH(op->name, name);
+    SHSTR_FREE_AND_ADD_REF(pl->account_name, ns->pl_account.name);
+    SHSTR_FREE_AND_ADD_STRING(op->name, name);
     pl->orig_stats.Str = op->stats.Str = player_template[race].str;
     pl->orig_stats.Dex = op->stats.Dex = player_template[race].dex;
     pl->orig_stats.Con = op->stats.Con = player_template[race].con;
@@ -924,7 +924,7 @@ addme_login_msg player_create(NewSocket *ns, player_t **pl_ret, char *name, int 
 
     /* some more sanity settings */
     SET_ANIMATION(op, 4 * (NUM_ANIMATIONS(op) / NUM_FACINGS(op))); /* So player faces south */
-    FREE_AND_CLEAR_HASH(op->msg);
+    SHSTR_FREE(op->msg);
     op->carrying = sum_weight(op);
 
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);

@@ -97,11 +97,11 @@ object_t *guild_join(player_t *pl, char *name, int s1_group, int s1_value, int s
     {
         if(name)
         {
-            FREE_AND_COPY_HASH(guild->slaying, name);
+            SHSTR_FREE_AND_ADD_STRING(guild->slaying, name);
         }
         else
         {
-            FREE_AND_CLEAR_HASH(guild->slaying);
+            SHSTR_FREE(guild->slaying);
         }
 
         guild->last_eat = s1_group;
@@ -158,7 +158,7 @@ void guild_leave(player_t *pl)
 
     /* neutralize the guild and update the infos */
     /* FIXME: We should just read the guild_force arch defaults here. */
-    FREE_AND_CLEAR_HASH(walk->slaying); /* no name, no guild */
+    SHSTR_FREE(walk->slaying); /* no name, no guild */
     walk->sub_type1 = ST1_GUILD_IN; /* we are "in guild of nothing" - slaying is NULL and the tag */
     /* As this is a default, only give 50% of the exp that you would actually
      * get if you'd really trained those skills -- see aggro.c. Guild members

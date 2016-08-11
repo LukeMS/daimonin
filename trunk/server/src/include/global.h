@@ -667,17 +667,6 @@ typedef struct view_msp_t        view_msp_t;
 #define NUM_ANIMATIONS(ob) (animations[ob->animation_id].num_animations)
 #define NUM_FACINGS(ob) (animations[ob->animation_id].facings)
 
-/* use *only* these macros to access the global hash table!
- * Note: there is a 2nd hash table for the arch list - thats a static
- * list BUT the arch names are inserted in the global hash too - so every
- * archlist name has 2 entries (so you can't always use == for string comparison!)
- */
-#define FREE_AND_COPY_HASH(_sv_,_nv_) { if (_sv_) shstr_free(_sv_); _sv_=shstr_add_string(_nv_); }
-#define FREE_AND_ADD_REF_HASH(_sv_,_nv_) { if (_sv_) shstr_free(_sv_); _sv_=shstr_add_refcount(_nv_); }
-#define FREE_AND_CLEAR_HASH(_nv_) {if(_nv_){shstr_free(_nv_);_nv_ =NULL;}}
-
-#define ADD_REF_NOT_NULL_HASH(_nv_) if(_nv_!=NULL)shstr_add_refcount(_nv_);
-
 #define casting_level(__caster_, __spell_type_) SK_level(__caster_)
 
 #define LINK_SPAWN_ENEMY        0x01

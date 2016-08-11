@@ -743,7 +743,7 @@ int command_time(object_t *op, char *params)
             {
                 shstr_t *token_sh = NULL;
 
-                FREE_AND_COPY_HASH(token_sh, buf);
+                SHSTR_FREE_AND_ADD_STRING(token_sh, buf);
 
                 if (token_sh == subcommands.list)
                 {
@@ -784,11 +784,11 @@ int command_time(object_t *op, char *params)
                 {
                     ndi(NDI_UNIQUE, 0, op, "%s is not a valid parameter!",
                         token_sh);
-                    FREE_AND_CLEAR_HASH(token_sh);
+                    SHSTR_FREE(token_sh);
                     return COMMANDS_RTN_VAL_SYNTAX;
                 }
 
-                FREE_AND_CLEAR_HASH(token_sh);
+                SHSTR_FREE(token_sh);
             }
         }
     }

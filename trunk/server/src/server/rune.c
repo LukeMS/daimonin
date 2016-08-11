@@ -126,7 +126,7 @@ int write_rune(object_t *op, int dir, int inspell, int level, char *runename)
         this->stats.sp = inspell; /* the spell it contains */
 
         sprintf(buf, "You set off a rune of %s", spells[inspell].name);
-        FREE_AND_COPY_HASH(this->msg, buf);
+        SHSTR_FREE_AND_ADD_STRING(this->msg, buf);
         at = NULL;
 
 
@@ -164,7 +164,7 @@ int write_rune(object_t *op, int dir, int inspell, int level, char *runename)
             /* Not totally efficient, but keeps code simpler */
             strcpy(rune, "There is no message\n");
         }
-        FREE_AND_COPY_HASH(this->msg, rune);
+        SHSTR_FREE_AND_ADD_STRING(this->msg, rune);
     }
     if (at)
         this = get_archetype(runename);
@@ -288,7 +288,7 @@ void spring_trap(object_t *trap, object_t *victim)
     trap->type = MISC_OBJECT;  /* make the trap impotent */
     CLEAR_FLAG(trap, FLAG_FLY_ON);
     CLEAR_FLAG(trap, FLAG_WALK_ON);
-    FREE_AND_CLEAR_HASH(trap->msg);
+    SHSTR_FREE(trap->msg);
     trap->stats.food = 20;  /* make it stick around until its spells are gone */
     SET_FLAG(trap, FLAG_IS_USED_UP);    /* ok, let the trap wear off */
     trap->speed = trap->speed_left = 1.0f;
@@ -322,7 +322,7 @@ void spring_trap(object_t *trap, object_t *victim)
         trap->type = MISC_OBJECT;  /* make the trap impotent */
         CLEAR_FLAG(trap, FLAG_FLY_ON);
         CLEAR_FLAG(trap, FLAG_WALK_ON);
-        FREE_AND_CLEAR_HASH(trap->msg);
+        SHSTR_FREE(trap->msg);
         trap->stats.food = 20;  /* make it stick around until its spells are gone */
         SET_FLAG(trap, FLAG_IS_USED_UP);
         trap->speed = trap->speed_left = 1.0f;

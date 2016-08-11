@@ -167,7 +167,7 @@ static void FreeStrings(size_t nrof, shstr_t **ptr)
 
     for(; i >= 0; i--)
     {
-        FREE_AND_CLEAR_HASH(ptr[i]);
+        SHSTR_FREE(ptr[i]);
     }
 }
 
@@ -818,7 +818,7 @@ void free_racelists()
     for (list = first_race; list; list = next)
     {
         next = list->next;
-        FREE_AND_CLEAR_HASH(list->name);
+        SHSTR_FREE(list->name);
 
         for (tmp = list->member; tmp; tmp = tmp->next)
         {
@@ -844,7 +844,7 @@ static void add_to_racelist(const char *race_name, object_t *op)
         race = get_racelist();
         race->next = first_race;
         first_race = race;
-        FREE_AND_COPY_HASH(race->name, race_name);
+        SHSTR_FREE_AND_ADD_STRING(race->name, race_name);
     }
 
     if (race->member->objlink.ob)
@@ -1408,7 +1408,7 @@ void init_lists_and_tables()
 {
     /* Add sentinels to the global activelist */
     active_objects = get_object();
-    FREE_AND_COPY_HASH(active_objects->name, "<global activelist sentinel>");
+    SHSTR_FREE_AND_ADD_STRING(active_objects->name, "<global activelist sentinel>");
     insert_ob_in_ob(active_objects, &void_container); /* Avoid gc of the object_t */
 
     /* Set up object initializers */

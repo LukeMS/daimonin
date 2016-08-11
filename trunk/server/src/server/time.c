@@ -983,8 +983,8 @@ void move_creator(object_t *op)
 
         if (op->slaying)
         {
-            FREE_AND_ADD_REF_HASH(creation->name, op->slaying);
-            FREE_AND_ADD_REF_HASH(creation->title, op->slaying);
+            SHSTR_FREE_AND_ADD_REF(creation->name, op->slaying);
+            SHSTR_FREE_AND_ADD_REF(creation->title, op->slaying);
         }
 
         if(QUERY_FLAG(op, FLAG_ONE_DROP) &&
@@ -1187,7 +1187,7 @@ void move_environment_sensor(object_t *op)
         else
         {
             /* Interval is obviously invalid, drop it */
-            FREE_AND_CLEAR_HASH(op->slaying);
+            SHSTR_FREE(op->slaying);
         }
     }
 
@@ -1433,7 +1433,7 @@ void move_marker(object_t *op)
                 update_ob_speed(current);
 
                 /* put in the lock code */
-                FREE_AND_COPY_HASH(current->slaying, op->slaying);
+                SHSTR_FREE_AND_ADD_STRING(current->slaying, op->slaying);
                 insert_ob_in_ob(current, this);
 
                 if (op->msg)
@@ -1493,7 +1493,7 @@ int process_object(object_t *op)
              * here perhaps. */
             if (op->slaying)
             {
-                FREE_AND_CLEAR_HASH(op->slaying);
+                SHSTR_FREE(op->slaying);
                 op->stats.food = op->arch->clone.stats.food;
                 remove_ob(op);                       /* another lame way to update view of players... */
                 insert_ob_in_map(op, op->map, NULL, INS_NO_WALK_ON);

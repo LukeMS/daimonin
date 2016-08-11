@@ -53,6 +53,34 @@ struct shstr_linked_t
     shstr_t *name;
 };
 
+/* In the following 4 convenience macros __a is a shstr_t * (which may be NULL)
+ * and __b is a (pointer to a) char array or literal string. */
+
+/* SHSTR_FREE_AND_ADD_STRING() frees __a and assigns a pointer to the newly
+ * added string __b to it. */
+#define SHSTR_FREE_AND_ADD_STRING(__a, __b) \
+    shstr_free((__a)); \
+    (__a) = shstr_add_string((__b));
+
+/* SHSTR_FREE_AND_ADD_REF() frees __a and assigns a pointer to the existing
+ * string __b to it, incrementing the refcount for that string. */
+#define SHSTR_FREE_AND_ADD_REF(__a, __b) \
+    shstr_free((__a)); \
+    (__a) = shstr_add_refcount((__b));
+
+/* SHSTR_FREE() frees and assigns NULL to its input. */
+#define SHSTR_FREE(__a) \
+    shstr_free((__a)); \
+    (__a) = NULL;
+
+/* SHSTR_IF_EXISTS_ADD_REF() increments the refcount of __a if this is
+ * non-NULL. */
+#define SHSTR_IF_EXISTS_ADD_REF(__a) \
+    if ((__a)) \
+    { \
+        shstr_add_refcount((__a)); \
+    }
+
 extern void     shstr_init(void);
 extern shstr_t *shstr_add_string(const char *str);
 extern shstr_t *shstr_add_lstring(const char *str, int n);
