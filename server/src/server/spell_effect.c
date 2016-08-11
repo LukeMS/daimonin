@@ -556,7 +556,7 @@ int cast_change_attr(object_t *op, object_t *caster, object_t *target, int dir, 
 //              if (god)
 //              {
 //                  if (god->slaying)
-//                      FREE_AND_COPY_HASH(force->slaying, god->slaying);
+//                      SHSTR_FREE_AND_ADD_STRING(force->slaying, god->slaying);
 //
 //                  /* Only give out good benefits, not bad */
 //                  for (i = 0; i < NROFATTACKS; i++)
@@ -2335,8 +2335,8 @@ void move_fired_arch(object_t *op)
 //    dummy->speed_left = -1;
 //    dummy->type = WORD_OF_RECALL;
 //
-//    FREE_AND_ADD_REF_HASH(dummy->title, CONTR(op)->savebed_map);
-//    FREE_AND_ADD_REF_HASH(EXIT_PATH(dummy), CONTR(op)->orig_savebed_map);
+//    SHSTR_FREE_AND_ADD_REF(dummy->title, CONTR(op)->savebed_map);
+//    SHSTR_FREE_AND_ADD_REF(EXIT_PATH(dummy), CONTR(op)->orig_savebed_map);
 //    EXIT_STATUS(dummy) = CONTR(op)->bed_status;
 //    EXIT_X(dummy) = CONTR(op)->bed_x;
 //    EXIT_Y(dummy) = CONTR(op)->bed_y;
@@ -3616,7 +3616,7 @@ void move_fired_arch(object_t *op)
 //                    else
 //                        sprintf(buf, "%s of %s", head->name, god->name);
 //
-//                    FREE_AND_COPY_HASH(otmp->name, buf);
+//                    SHSTR_FREE_AND_ADD_STRING(otmp->name, buf);
 //                }
 //            }
 //        } /* if monster level is much less than character level */
@@ -3707,16 +3707,16 @@ void move_fired_arch(object_t *op)
 //        for (tmp2 = tmp; tmp2; tmp2 = tmp2->more)
 //        {
 //            sprintf(buf, "%s of %s", spellnum == SP_SUMMON_AVATAR ? "Avatar" : "Servant", god->name);
-//            FREE_AND_COPY_HASH(tmp2->name, buf);
+//            SHSTR_FREE_AND_ADD_STRING(tmp2->name, buf);
 //        }
 //    }
 //    memcpy(tmp->resist, god->resist, sizeof(tmp->resist));
-//    FREE_AND_CLEAR_HASH(tmp->race);
-//    FREE_AND_CLEAR_HASH(tmp->slaying);
+//    SHSTR_FREE(tmp->race);
+//    SHSTR_FREE(tmp->slaying);
 //    if (god->race)
-//        FREE_AND_COPY_HASH(tmp->race, god->race);
+//        SHSTR_FREE_AND_ADD_STRING(tmp->race, god->race);
 //    if (god->slaying)
-//        FREE_AND_COPY_HASH(tmp->slaying, god->slaying);
+//        SHSTR_FREE_AND_ADD_STRING(tmp->slaying, god->slaying);
 //
 //    /*  make experience increase in proportion to the strength of
 //     *  the summoned creature. */
@@ -3850,7 +3850,7 @@ void move_fired_arch(object_t *op)
 //            {
 //                /* If we got here, we are consecrating an altar */
 //                sprintf(buf, "%s of %s", tmp->arch->clone.name, god->name);
-//                FREE_AND_COPY_HASH(tmp->name, buf);
+//                SHSTR_FREE_AND_ADD_STRING(tmp->name, buf);
 //                tmp->level = SK_level(op);
 //                tmp->other_arch = god->arch;
 //                esrv_update_item(UPD_NAME, tmp);
@@ -4142,7 +4142,7 @@ void move_fired_arch(object_t *op)
 //        case SP_ANIMATE_WEAPON:
 //          new_draw_info(NDI_UNIQUE, 0, op, "Your %s flies from your hand and hovers in mid-air!", weapon->name);
 //          sprintf(buf, "animated %s", weapon->name);
-//          FREE_AND_COPY_HASH(tmp->name, buf);
+//          SHSTR_FREE_AND_ADD_STRING(tmp->name, buf);
 //
 //          tmp->face = weapon->face;
 //          tmp->animation_id = weapon->animation_id;

@@ -647,7 +647,7 @@ void identify(object_t *op)
         op->arch)
     {
         /*op->face = op->arch->clone.face; */
-        FREE_AND_ADD_REF_HASH(op->name, op->arch->clone.name);
+        SHSTR_FREE_AND_ADD_REF(op->name, op->arch->clone.name);
     }
     else if (op->type == SPELLBOOK && op->slaying != NULL)
     {
@@ -656,12 +656,12 @@ void identify(object_t *op)
             char    buf[256];
             op->stats.sp = -1;
             sprintf(buf, "Spell formula for %s", op->slaying);
-            FREE_AND_COPY_HASH(op->name, buf);
+            SHSTR_FREE_AND_ADD_STRING(op->name, buf);
         }
         else
         {
             /* clear op->slaying since we no longer need it */
-            FREE_AND_CLEAR_HASH(op->slaying);
+            SHSTR_FREE(op->slaying);
         }
     }
 
@@ -1646,7 +1646,7 @@ object_t *drop_to_floor(object_t *who, object_t *what, uint32 nrof)
                     query_cost_string(what, who, F_SELL, COSTSTRING_FULL));
             }
 
-            FREE_AND_COPY_HASH(loot->name, "your fee");
+            SHSTR_FREE_AND_ADD_STRING(loot->name, "your fee");
             (void)pick_up(who, loot, NULL, 1);
             reinsert = 0;
         }

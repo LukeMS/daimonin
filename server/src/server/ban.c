@@ -186,9 +186,9 @@ struct objectlink_t *add_ban_entry(const char *account, const char *name, char *
     if(ip)
         ol->objlink.ban->ip = strdup_local(ip);
     if(name)
-        FREE_AND_COPY_HASH(ol->objlink.ban->name, name);
+        SHSTR_FREE_AND_ADD_STRING(ol->objlink.ban->name, name);
     if(account)
-        FREE_AND_COPY_HASH(ol->objlink.ban->account, account);
+        SHSTR_FREE_AND_ADD_STRING(ol->objlink.ban->account, account);
 
     LOG(llevNoLog,"Banning: Account: %s / Player: %s / IP: %s for %d seconds (%d sec left).\n", STRING_SAFE(ol->objlink.ban->account),
         STRING_SAFE(ol->objlink.ban->name), STRING_SAFE(ip), ticks/8,ol->objlink.ban->ticks_init==-1?-1:(int)(ol->objlink.ban->ticks-pticks)/8);
@@ -213,12 +213,12 @@ void remove_ban_entry(struct objectlink_t *entry)
         free(entry->objlink.ban->ip); // TODO - can't this bit of code go below in the last 'else' ??
     if(entry->objlink.ban->name)
     {
-        FREE_AND_CLEAR_HASH(entry->objlink.ban->name);
+        SHSTR_FREE(entry->objlink.ban->name);
         objectlink_unlink(&ban_list_player, NULL, entry);
     }
     else if(entry->objlink.ban->account)
     {
-        FREE_AND_CLEAR_HASH(entry->objlink.ban->account);
+        SHSTR_FREE(entry->objlink.ban->account);
         objectlink_unlink(&ban_list_account, NULL, entry);
     }
     else

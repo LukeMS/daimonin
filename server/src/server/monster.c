@@ -125,11 +125,11 @@ static int calc_direction_towards(object_t *op, object_t *target, msp_t *msp)
             if (target)
             {
                 pf->target_count = target->count;
-                FREE_AND_CLEAR_HASH(pf->target_map);
+                SHSTR_FREE(pf->target_map);
             }
             else
             {
-                FREE_AND_ADD_REF_HASH(pf->target_map, map->orig_path);
+                SHSTR_FREE_AND_ADD_REF(pf->target_map, map->orig_path);
                 pf->target_x = x;
                 pf->target_y = y;
             }
@@ -181,12 +181,12 @@ static int calc_direction_towards(object_t *op, object_t *target, msp_t *msp)
         pf->target_obj = target;
         if (target)
         {
-            FREE_AND_CLEAR_HASH(pf->target_map);
+            SHSTR_FREE(pf->target_map);
             pf->target_count = target->count;
         }
         else
         {
-            FREE_AND_ADD_REF_HASH(pf->target_map, map->orig_path);
+            SHSTR_FREE_AND_ADD_REF(pf->target_map, map->orig_path);
             pf->target_x = x;
             pf->target_y = y;
         }
@@ -302,7 +302,7 @@ static int calc_direction_towards_waypoint(object_t *op, object_t *wp)
              * make one if necessary. */
             if (*wp->slaying != '/')
             {
-                FREE_AND_COPY_HASH(wp->slaying, normalize_path(op->map->path, wp->slaying, path));
+                SHSTR_FREE_AND_ADD_STRING(wp->slaying, normalize_path(op->map->path, wp->slaying, path));
             }
 
             if (!(m = map_is_ready(wp->slaying)))
@@ -313,7 +313,7 @@ static int calc_direction_towards_waypoint(object_t *op, object_t *wp)
             if (m &&
                 m->orig_path != wp->slaying)
             {
-                FREE_AND_ADD_REF_HASH(wp->slaying, m->orig_path);
+                SHSTR_FREE_AND_ADD_REF(wp->slaying, m->orig_path);
             }
         }
         else
@@ -837,7 +837,7 @@ void object_accept_path(object_t *op)
                  * make one if necessary. */
                 if (*target->slaying != '/')
                 {
-                    FREE_AND_COPY_HASH(target->slaying, normalize_path(op->map->path, target->slaying, path));
+                    SHSTR_FREE_AND_ADD_STRING(target->slaying, normalize_path(op->map->path, target->slaying, path));
                 }
 
                 if (!(goal_m = map_is_ready(target->slaying)))
@@ -848,7 +848,7 @@ void object_accept_path(object_t *op)
                 if (goal_m &&
                     goal_m->orig_path != target->slaying)
                 {
-                    FREE_AND_ADD_REF_HASH(target->slaying, goal_m->orig_path);
+                    SHSTR_FREE_AND_ADD_REF(target->slaying, goal_m->orig_path);
                 }
             }
             else
@@ -856,7 +856,7 @@ void object_accept_path(object_t *op)
                 goal_m = op->map;
             }
 
-            FREE_AND_CLEAR_HASH(MOB_PATHDATA(op)->goal_map);
+            SHSTR_FREE(MOB_PATHDATA(op)->goal_map);
         }
     }
     else
@@ -889,7 +889,7 @@ void object_accept_path(object_t *op)
         if(goal_m)
         {
             /* Keep track of targets that may move */
-            FREE_AND_ADD_REF_HASH(MOB_PATHDATA(op)->goal_map, goal_m->orig_path);
+            SHSTR_FREE_AND_ADD_REF(MOB_PATHDATA(op)->goal_map, goal_m->orig_path);
             MOB_PATHDATA(op)->goal_x = goal_x;
             MOB_PATHDATA(op)->goal_y = goal_y;
         }

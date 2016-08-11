@@ -89,11 +89,11 @@ START_TEST (object_strings)
 
     shstr_get_totals(&entries1, &refs1, &links1);
 
-    FREE_AND_COPY_HASH(obj->name, "qwerty1234");
-    FREE_AND_COPY_HASH(obj->title, "qwerty1234");
-    FREE_AND_COPY_HASH(obj->race, "qwerty1234");
-    FREE_AND_COPY_HASH(obj->slaying, "qwerty1234");
-    FREE_AND_COPY_HASH(obj->msg, "qwerty1234");
+    SHSTR_FREE_AND_ADD_STRING(obj->name, "qwerty1234");
+    SHSTR_FREE_AND_ADD_STRING(obj->title, "qwerty1234");
+    SHSTR_FREE_AND_ADD_STRING(obj->race, "qwerty1234");
+    SHSTR_FREE_AND_ADD_STRING(obj->slaying, "qwerty1234");
+    SHSTR_FREE_AND_ADD_STRING(obj->msg, "qwerty1234");
     nrof_refs = shstr_query_refcount(obj->name);
     shstr_get_totals(&entries2, &refs2, &links2);
 

@@ -331,7 +331,7 @@ void spawn_point(object_t *op)
      * purpose is to temporarily store the mob's default inventory (that is,
      * the items it is specifically given in a map file, *not* randomitems. */
     loot = arch_to_object(archetype_global._loot_container);
-    FREE_AND_COPY_HASH(loot->name, mob->name);
+    SHSTR_FREE_AND_ADD_STRING(loot->name, mob->name);
     /* Use InsertLoot() to extract the loot into the loot singularity. */
     InsertLoot(op, loot, mob->inv);
     /* This determines in which msp the spawned mob is inserted.

@@ -148,7 +148,7 @@ int command_reboot(object_t *op, char *params)
     /* No subcommand? Default to restart. */
     if (!params)
     {
-        FREE_AND_COPY_HASH(subcommand, subcommands.restart);
+        SHSTR_FREE_AND_ADD_STRING(subcommand, subcommands.restart);
     }
     /* Otherwise we need to make a working copy of params (because we may write
      * to it), and take the first word as the shstr_t subcommand. */
@@ -168,13 +168,13 @@ int command_reboot(object_t *op, char *params)
             }
         }
 
-        FREE_AND_COPY_HASH(subcommand, buf);
+        SHSTR_FREE_AND_ADD_STRING(subcommand, buf);
     }
 
     /* Cancel scheduled reboot. */
     if (subcommand == subcommands.cancel)
     {
-        FREE_AND_CLEAR_HASH(subcommand);
+        SHSTR_FREE(subcommand);
         shutdown_agent(-2, SERVER_EXIT_NORMAL, CONTR(op), NULL);
 
         return COMMANDS_RTN_VAL_OK_SILENT;
@@ -182,7 +182,7 @@ int command_reboot(object_t *op, char *params)
     /* Restart server. */
     else if (subcommand == subcommands.restart)
     {
-        FREE_AND_CLEAR_HASH(subcommand);
+        SHSTR_FREE(subcommand);
 #if defined DAI_DEVELOPMENT_CODE
         time = 15;
 #elif defined DAI_DEVELOPMENT_CONTENT
@@ -211,7 +211,7 @@ int command_reboot(object_t *op, char *params)
     /* Shutdown server. */
     else if (subcommand == subcommands.shutdown)
     {
-        FREE_AND_CLEAR_HASH(subcommand);
+        SHSTR_FREE(subcommand);
 
         /* Shutdown is special so we restrict it further (hopefully to people
          * who can start it up again). */
@@ -236,7 +236,7 @@ int command_reboot(object_t *op, char *params)
     }
 
     /* Unknown subcommand. */
-    FREE_AND_CLEAR_HASH(subcommand);
+    SHSTR_FREE(subcommand);
 
     return COMMANDS_RTN_VAL_SYNTAX;
 }
@@ -323,8 +323,8 @@ int command_goto(object_t *op, char *params)
         path_sh = create_unique_path_sh(other->ob->name, orig_path_sh);
         flags = MAP_STATUS_UNIQUE;
         m = ready_map_name(path_sh, orig_path_sh, flags, op->name);
-        FREE_AND_CLEAR_HASH(orig_path_sh);
-        FREE_AND_CLEAR_HASH(path_sh);
+        SHSTR_FREE(orig_path_sh);
+        SHSTR_FREE(path_sh);
 
         if (!m)
         {
@@ -345,8 +345,8 @@ int command_goto(object_t *op, char *params)
         /* No path: Goto savebed. */
         if (name[0] == '\0')
         {
-            FREE_AND_COPY_HASH(orig_path_sh, CONTR(op)->orig_savebed_map);
-            FREE_AND_COPY_HASH(path_sh, CONTR(op)->savebed_map);
+            SHSTR_FREE_AND_ADD_STRING(orig_path_sh, CONTR(op)->orig_savebed_map);
+            SHSTR_FREE_AND_ADD_STRING(path_sh, CONTR(op)->savebed_map);
             flags = CONTR(op)->bed_status;
             x = CONTR(op)->bed_x;
             y = CONTR(op)->bed_y;
@@ -357,7 +357,7 @@ int command_goto(object_t *op, char *params)
             if (check_path(normalize_path("/", name, buf), 1) != -1)
             {
                 orig_path_sh = create_safe_path_sh(buf);
-                FREE_AND_ADD_REF_HASH(path_sh, orig_path_sh);
+                SHSTR_FREE_AND_ADD_REF(path_sh, orig_path_sh);
                 flags = MAP_STATUS_MULTI;
             }
         }
@@ -367,7 +367,7 @@ int command_goto(object_t *op, char *params)
             if (check_path(normalize_path(CONTR(op)->orig_map, name, buf), 1) != -1)
             {
                 orig_path_sh = create_safe_path_sh(buf);
-                FREE_AND_ADD_REF_HASH(path_sh, orig_path_sh);
+                SHSTR_FREE_AND_ADD_REF(path_sh, orig_path_sh);
                 flags = MAP_STATUS_MULTI;
             }
         }
@@ -375,8 +375,8 @@ int command_goto(object_t *op, char *params)
         if (path_sh)
         {
             m = ready_map_name(path_sh, orig_path_sh, flags, op->name);
-            FREE_AND_CLEAR_HASH(orig_path_sh);
-            FREE_AND_CLEAR_HASH(path_sh);
+            SHSTR_FREE(orig_path_sh);
+            SHSTR_FREE(path_sh);
         }
 
         if (!m)
@@ -395,8 +395,8 @@ int command_goto(object_t *op, char *params)
 
     msp = MSP_RAW(m, x, y);
     (void)enter_map(op, msp, NULL, OVERLAY_FORCE | OVERLAY_FIRST_AVAILABLE | OVERLAY_FIXED, 0);
-    FREE_AND_CLEAR_HASH(orig_path_sh);
-    FREE_AND_CLEAR_HASH(path_sh);
+    SHSTR_FREE(orig_path_sh);
+    SHSTR_FREE(path_sh);
     return COMMANDS_RTN_VAL_OK_SILENT;
 }
 
@@ -1266,12 +1266,12 @@ int command_setstat(object_t *op, char *params)
     else
     {
         ndi(NDI_UNIQUE , 0, op,  "Unrecognised stat!");
-        FREE_AND_CLEAR_HASH(hash_name);
+        SHSTR_FREE(hash_name);
 
         return COMMANDS_RTN_VAL_ERROR;
     }
 
-    FREE_AND_CLEAR_HASH(hash_name);
+    SHSTR_FREE(hash_name);
     ndi(NDI_UNIQUE, 0, op, "%s has been altered.", pl->ob->name);
     FIX_PLAYER(pl->ob, "command setstat");
 
@@ -1301,15 +1301,15 @@ int command_resetmap(object_t *op, char *params)
 
     if (path[0])
     {
-        FREE_AND_COPY_HASH(path_sh, path);
+        SHSTR_FREE_AND_ADD_STRING(path_sh, path);
     }
     else
     {
-        FREE_AND_ADD_REF_HASH(path_sh, op->map->path);
+        SHSTR_FREE_AND_ADD_REF(path_sh, op->map->path);
     }
 
     m = map_is_in_memory(path_sh);
-    FREE_AND_CLEAR_HASH(path_sh);
+    SHSTR_FREE(path_sh);
 
     if (!m)
     {
@@ -2067,7 +2067,7 @@ int command_gmasterfile(object_t *op, char *params)
             cp++;
         }
 
-        FREE_AND_COPY_HASH(subcommand, buf);
+        SHSTR_FREE_AND_ADD_STRING(subcommand, buf);
     }
     /* For this command all subcommands have further parmeters, so no space in
      * params means the player typed nonsense. */
@@ -2079,7 +2079,7 @@ int command_gmasterfile(object_t *op, char *params)
     /* Add an entry. */
     if (subcommand == subcommands.add)
     {
-        FREE_AND_CLEAR_HASH(subcommand);
+        SHSTR_FREE(subcommand);
 
         if (sscanf(cp, "%[^/]/%[^/]/%s", name, host, mode) != 3 ||
             (mode_id = check_gmaster_file_entry(name, host, mode)) == GMASTER_MODE_NO)
@@ -2131,7 +2131,7 @@ int command_gmasterfile(object_t *op, char *params)
     {
         int success = COMMANDS_RTN_VAL_SYNTAX;
 
-        FREE_AND_CLEAR_HASH(subcommand);
+        SHSTR_FREE(subcommand);
 
         // Note - legal for player to type: /gmasterfile list SA VOL
         // to get a list of SAs and VOLs
@@ -2215,7 +2215,7 @@ int command_gmasterfile(object_t *op, char *params)
     /* Remove an entry. */
     else if (subcommand == subcommands.remove)
     {
-        FREE_AND_CLEAR_HASH(subcommand);
+        SHSTR_FREE(subcommand);
 
         if (sscanf(cp, "%[^/]/%[^/]/%s", name, host, mode) != 3 ||
             (mode_id = check_gmaster_file_entry(name, host, mode)) == GMASTER_MODE_NO)
@@ -2257,7 +2257,7 @@ int command_gmasterfile(object_t *op, char *params)
     /* Unknown subcommand. */
     else
     {
-        FREE_AND_CLEAR_HASH(subcommand);
+        SHSTR_FREE(subcommand);
 
         return COMMANDS_RTN_VAL_SYNTAX;
     }
@@ -2530,13 +2530,13 @@ int command_password(object_t *op, char *params)
     }
 
     /* GMs can change any account's pwd, others can only change their own. */
-    FREE_AND_COPY_HASH(name_sh, name);
+    SHSTR_FREE_AND_ADD_STRING(name_sh, name);
 
     if (!(pl->gmaster_mode & GMASTER_MODE_GM) &&
         pl->account_name != name_sh)
     {
         ndi(NDI_UNIQUE, 0, op, "You can only change the password of your own account!");
-        FREE_AND_CLEAR_HASH(name_sh);
+        SHSTR_FREE(name_sh);
 
         return COMMANDS_RTN_VAL_ERROR;
     }
@@ -2545,7 +2545,7 @@ int command_password(object_t *op, char *params)
     if (!(fp_old = fopen(fname_old, "r")))
     {
         NDI_LOG(llevBug, NDI_UNIQUE, 0, op, "Could not open account file '%s' for reading!", fname_old);
-        FREE_AND_CLEAR_HASH(name_sh);
+        SHSTR_FREE(name_sh);
 
         return COMMANDS_RTN_VAL_ERROR;
     }
@@ -2556,7 +2556,7 @@ int command_password(object_t *op, char *params)
     if (!(fp_new = fopen(fname_new, "w")))
     {
         NDI_LOG(llevBug, NDI_UNIQUE, 0, op, "Could not open account file '%s' for writing!", fname_new);
-        FREE_AND_CLEAR_HASH(name_sh);
+        SHSTR_FREE(name_sh);
         fclose(fp_old);
 
         return COMMANDS_RTN_VAL_ERROR;
@@ -2574,7 +2574,7 @@ int command_password(object_t *op, char *params)
                 strcmp(buf + 4, pwd_old))
             {
                 ndi(NDI_UNIQUE, 0, op, "The old password you specified is incorrect!");
-                FREE_AND_CLEAR_HASH(name_sh);
+                SHSTR_FREE(name_sh);
                 fclose(fp_old);
                 fclose(fp_new);
                 remove(fname_new);
@@ -2619,7 +2619,7 @@ int command_password(object_t *op, char *params)
     }
 
     pl = CONTR(op);
-    FREE_AND_CLEAR_HASH(name_sh);
+    SHSTR_FREE(name_sh);
     ndi(NDI_UNIQUE, 0, op, "OK!");
 
     /* Never log anyone's pwd, but do log who changed it to the GM channel. */

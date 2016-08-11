@@ -91,16 +91,21 @@ extern int              cache_ref;
 #define NOT_LEGAL_POINTER ((void *)(0x01))
 
 /* Hooks-based hashed string macros */
-#undef FREE_AND_COPY_HASH
-#undef FREE_AND_ADD_REF_HASH
-#undef FREE_AND_CLEAR_HASH
-#undef ADD_REF_NOT_NULL_HASH
+#undef SHSTR_FREE_AND_ADD_STRING
+#undef SHSTR_FREE_AND_ADD_REF
+#undef SHSTR_FREE
 
-#define FREE_AND_COPY_HASH(_sv_,_nv_) { if (_sv_) hooks->shstr_free(_sv_); _sv_=hooks->shstr_add_string(_nv_); }
-#define FREE_AND_ADD_REF_HASH(_sv_,_nv_) { if (_sv_) hooks->shstr_free(_sv_); _sv_=hooks->shstr_add_refcount(_nv_); }
-#define FREE_AND_CLEAR_HASH(_nv_) {if(_nv_){hooks->shstr_free(_nv_);_nv_ =NULL;}}
+#define SHSTR_FREE_AND_ADD_STRING(__a, __b) \
+    hooks->shstr_free((__a)); \
+    (__a) = hooks->shstr_add_string((__b));
 
-#define ADD_REF_NOT_NULL(_nv_) {if(_nv_!=NULL)shstr_add_refcount(_nv_);}
+#define SHSTR_FREE_AND_ADD_REF(__a, __b) \
+    hooks->shstr_free((__a)); \
+    (__a) = hooks->shstr_add_refcount((__b));
+
+#define SHSTR_FREE(__a) \
+    hooks->shstr_free((__a)); \
+    (__a) = NULL;
 
 /* Hooks-based mempool macros */
 #undef get_poolchunk

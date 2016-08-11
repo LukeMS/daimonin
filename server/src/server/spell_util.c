@@ -1693,7 +1693,7 @@ int cast_spell(object_t *op, object_t *caster, int dir, int type, int ability, S
 //        break;
 //            }
 //            dummy = get_object();
-//            FREE_AND_COPY_HASH(dummy->name, stringarg);
+//            SHSTR_FREE_AND_ADD_STRING(dummy->name, stringarg);
 //            success = cast_raise_dead_spell(op,dir,type, dummy);
 //          }
 //          break;

@@ -274,11 +274,11 @@
 //        new_draw_info(NDI_UNIQUE, 0, op, "%s's blessing is withdrawn from you.", skillgroup->title);
 //        CLEAR_FLAG(skillgroup, FLAG_APPLIED);
 //        change_abil(op, skillgroup);
-//        FREE_AND_CLEAR_HASH(skillgroup->title);
+//        SHSTR_FREE(skillgroup->title);
 //    }
 //
 //    /* now change to the new gods attributes to skillgroup */
-//    FREE_AND_COPY_HASH(skillgroup->title, new_god->name);
+//    SHSTR_FREE_AND_ADD_STRING(skillgroup->title, new_god->name);
 //    skillgroup->path_attuned = new_god->path_attuned;
 //    skillgroup->path_repelled = new_god->path_repelled;
 //    skillgroup->path_denied = new_god->path_denied;
@@ -455,7 +455,7 @@
 //                }
 //                else if (gl->id == godnr)
 //                {
-//                    FREE_AND_COPY_HASH(op->title, gl->name);
+//                    SHSTR_FREE_AND_ADD_STRING(op->title, gl->name);
 //
 //                    break;
 //                }
@@ -555,7 +555,7 @@
 //    if (!weapon->title)
 //    {
 //        sprintf(buf, "of %s", god->name);
-//        FREE_AND_COPY_HASH(weapon->title, buf);
+//        SHSTR_FREE_AND_ADD_STRING(weapon->title, buf);
 //        esrv_update_item(UPD_NAME, weapon);
 //        new_draw_info(NDI_UNIQUE, 0, op, "Your weapon quivers as if struck!");
 //    }
@@ -563,7 +563,7 @@
 //    /* Allow the weapon to slay enemies */
 //    if (!weapon->slaying && god->slaying)
 //    {
-//        FREE_AND_COPY_HASH(weapon->slaying, god->slaying);
+//        SHSTR_FREE_AND_ADD_STRING(weapon->slaying, god->slaying);
 //        new_draw_info(NDI_UNIQUE, 0, op, "Your %s now hungers to slay enemies of your god!", weapon->name);
 //        return 1;
 //    }
@@ -950,13 +950,13 @@
 //    /*
 //    if (spellop->attacktype & AT_GODPOWER)
 //    {
-//        FREE_AND_CLEAR_HASH(spellop->slaying);
+//        SHSTR_FREE(spellop->slaying);
 //        if (!caster_is_spell)
 //        {
-//            FREE_AND_COPY_HASH(spellop->slaying, god->slaying);
+//            SHSTR_FREE_AND_ADD_STRING(spellop->slaying, god->slaying);
 //        }
 //        else if (caster->slaying)
-//            FREE_AND_COPY_HASH(spellop->slaying, caster->slaying);
+//            SHSTR_FREE_AND_ADD_STRING(spellop->slaying, caster->slaying);
 //    }
 //    */
 //
@@ -969,12 +969,12 @@
 //    /*
 //    if (spellop->attacktype & AT_GODPOWER)
 //    {
-//        FREE_AND_COPY_HASH(spellop->title, god->name);
+//        SHSTR_FREE_AND_ADD_STRING(spellop->title, god->name);
 //        if (spellop->title)
 //        {
 //            char    buf[MEDIUM_BUF];
 //            sprintf(buf, "%s of %s", spellop->name, spellop->title);
-//            FREE_AND_COPY_HASH(spellop->name, buf);
+//            SHSTR_FREE_AND_ADD_STRING(spellop->name, buf);
 //        }
 //    }
 //    */
@@ -1074,7 +1074,7 @@ const char *determine_god(object_t *op)
                 }
                 else if (gl->id == godnr)
                 {
-                    FREE_AND_COPY_HASH(op->title, gl->name);
+                    SHSTR_FREE_AND_ADD_STRING(op->title, gl->name);
 
                     break;
                 }
@@ -1227,11 +1227,11 @@ void become_follower(object_t *op, object_t *new_god)
         ndi(NDI_UNIQUE, 0, op, "%s's blessing is withdrawn from you.", skillgroup->title);
         CLEAR_FLAG(skillgroup, FLAG_APPLIED);
         change_abil(op, skillgroup);
-        FREE_AND_CLEAR_HASH(skillgroup->title);
+        SHSTR_FREE(skillgroup->title);
     }
 
     /* now change to the new gods attributes to skillgroup */
-    FREE_AND_COPY_HASH(skillgroup->title, new_god->name);
+    SHSTR_FREE_AND_ADD_STRING(skillgroup->title, new_god->name);
     skillgroup->path_attuned = new_god->path_attuned;
     skillgroup->path_repelled = new_god->path_repelled;
     skillgroup->path_denied = new_god->path_denied;

@@ -270,7 +270,7 @@ static int Map_ReadyInheritedMap(lua_State *L)
     {
         char path[MAXPATHLEN];
 
-        FREE_AND_COPY_HASH(path_sh, hooks->normalize_path_direct(WHERE->path,
+        SHSTR_FREE_AND_ADD_STRING(path_sh, hooks->normalize_path_direct(WHERE->path,
                            orig_path_sh, path));
     }
 
@@ -294,8 +294,8 @@ static int Map_ReadyInheritedMap(lua_State *L)
                                   WHERE->reference);
     }
 
-    FREE_AND_CLEAR_HASH(orig_path_sh);
-    FREE_AND_CLEAR_HASH(path_sh);
+    SHSTR_FREE(orig_path_sh);
+    SHSTR_FREE(path_sh);
     push_object(L, &Map, m);
 
     return 1;

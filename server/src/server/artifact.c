@@ -136,7 +136,7 @@ static void init_artifacts(FILE *fp)
                     *(next++) = '\0';
                 tmp = (shstr_linked_t *) malloc(sizeof(shstr_linked_t));
                 tmp->name = NULL;
-                FREE_AND_COPY_HASH(tmp->name, cp);
+                SHSTR_FREE_AND_ADD_STRING(tmp->name, cp);
                 tmp->next = art->allowed;
                 art->allowed = tmp;
             }
@@ -150,11 +150,11 @@ static void init_artifacts(FILE *fp)
             art->difficulty = (uint8) value;
         else if (!strncmp(cp, "artifact", 8))
         {
-            FREE_AND_COPY_HASH(art->name, cp + 9);
+            SHSTR_FREE_AND_ADD_STRING(art->name, cp + 9);
         }
         else if (!strncmp(cp, "def_arch", 8)) /* chain a default arch to this treasure */
         {
-            FREE_AND_COPY_HASH(art->def_at_name, cp + 9); /* store the def archetype name (real base arch) */
+            SHSTR_FREE_AND_ADD_STRING(art->def_at_name, cp + 9); /* store the def archetype name (real base arch) */
         }
         else if (!strncmp(cp, "Object", 6)) /* all text after Object is now like a arch file until a end comes */
         {
@@ -180,11 +180,11 @@ static void init_artifacts(FILE *fp)
                     LOG(llevError, "ERROR: Init_Artifacts: Can't find def_arch %s.\n", art->def_at_name);
                 memcpy(&art->def_at, atemp, sizeof(archetype_t)); /* copy the default arch */
                 art->def_at.base_clone = &atemp->clone;
-                ADD_REF_NOT_NULL_HASH(art->def_at.clone.name);
-                ADD_REF_NOT_NULL_HASH(art->def_at.clone.title);
-                ADD_REF_NOT_NULL_HASH(art->def_at.clone.race);
-                ADD_REF_NOT_NULL_HASH(art->def_at.clone.slaying);
-                ADD_REF_NOT_NULL_HASH(art->def_at.clone.msg);
+                SHSTR_IF_EXISTS_ADD_REF(art->def_at.clone.name);
+                SHSTR_IF_EXISTS_ADD_REF(art->def_at.clone.title);
+                SHSTR_IF_EXISTS_ADD_REF(art->def_at.clone.race);
+                SHSTR_IF_EXISTS_ADD_REF(art->def_at.clone.slaying);
+                SHSTR_IF_EXISTS_ADD_REF(art->def_at.clone.msg);
                 art->def_at.clone.arch = &art->def_at;
                 parse_obj = &art->def_at.clone;
             }
@@ -228,7 +228,7 @@ static void init_artifacts(FILE *fp)
             memcpy(art->parse_text, buf_text, lcount);
 
             if(art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH)
-                FREE_AND_COPY_HASH(art->def_at.name, art->name); /* finally, change the archetype name of
+                SHSTR_FREE_AND_ADD_STRING(art->def_at.name, art->name); /* finally, change the archetype name of
                                                                   * our fake arch to the fake arch name.
                                                                   * without it, treasures will get the
                                                                   * original arch, not this (hm, this
@@ -706,15 +706,15 @@ static void free_charlinks(shstr_linked_t *lc)
     for(tmp = lc; tmp; tmp = next)
     {
         next = tmp->next;
-        FREE_AND_CLEAR_HASH(tmp->name);;
+        SHSTR_FREE(tmp->name);;
         free(tmp);
     }
 }
 
 static void free_artifact(artifact *at)
 {
-    FREE_AND_CLEAR_HASH(at->name);
-    FREE_AND_CLEAR_HASH(at->def_at.name);
+    SHSTR_FREE(at->name);
+    SHSTR_FREE(at->def_at.name);
     if (at->next)
         free_artifact(at->next);
     if (at->allowed)
@@ -723,11 +723,11 @@ static void free_artifact(artifact *at)
         free(at->parse_text);
     if(at->flags&ARTIFACT_FLAG_HAS_DEF_ARCH)
     {
-        FREE_AND_CLEAR_HASH(at->def_at.clone.name);
-        FREE_AND_CLEAR_HASH(at->def_at.clone.race);
-        FREE_AND_CLEAR_HASH(at->def_at.clone.slaying);
-        FREE_AND_CLEAR_HASH(at->def_at.clone.msg);
-        FREE_AND_CLEAR_HASH(at->def_at.clone.title);
+        SHSTR_FREE(at->def_at.clone.name);
+        SHSTR_FREE(at->def_at.clone.race);
+        SHSTR_FREE(at->def_at.clone.slaying);
+        SHSTR_FREE(at->def_at.clone.msg);
+        SHSTR_FREE(at->def_at.clone.title);
     }
     free(at);
 }

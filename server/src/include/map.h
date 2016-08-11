@@ -339,8 +339,8 @@ enum map_memory_t
 /* MAP_SET_PLAYER_MAP_INFO_DEFAULT() sets the map info fields in _PL_'s player
  * structure to default values. */
 #define MAP_SET_PLAYER_MAP_INFO_DEFAULT(_PL_) \
-    FREE_AND_ADD_REF_HASH((_PL_)->maplevel, shstr_cons.start_mappath); \
-    FREE_AND_ADD_REF_HASH((_PL_)->orig_map, shstr_cons.start_mappath); \
+    SHSTR_FREE_AND_ADD_REF((_PL_)->maplevel, shstr_cons.start_mappath); \
+    SHSTR_FREE_AND_ADD_REF((_PL_)->orig_map, shstr_cons.start_mappath); \
     (_PL_)->status = FALLBACK_START_MAP_STATUS; \
     (_PL_)->map_x = FALLBACK_START_MAP_X; \
     (_PL_)->map_y = FALLBACK_START_MAP_Y;
@@ -348,8 +348,8 @@ enum map_memory_t
 /* MAP_SET_PLAYER_MAP_INFO_CURRENT() sets the map info fields in _PL_'s player
  * structure to the current map's values. */
 #define MAP_SET_PLAYER_MAP_INFO_CURRENT(_PL_) \
-    FREE_AND_ADD_REF_HASH((_PL_)->maplevel, (_PL_)->ob->map->path); \
-    FREE_AND_ADD_REF_HASH((_PL_)->orig_map, (_PL_)->ob->map->orig_path); \
+    SHSTR_FREE_AND_ADD_REF((_PL_)->maplevel, (_PL_)->ob->map->path); \
+    SHSTR_FREE_AND_ADD_REF((_PL_)->orig_map, (_PL_)->ob->map->orig_path); \
     (_PL_)->status = (_PL_)->ob->map->status; \
     (_PL_)->map_x = (_PL_)->ob->x; \
     (_PL_)->map_y = (_PL_)->ob->y;
@@ -357,8 +357,8 @@ enum map_memory_t
 /* MAP_SET_PLAYER_BED_INFO_DEFAULT() sets the bed info fields in _PL_'s player
  * structure to default values. */
 #define MAP_SET_PLAYER_BED_INFO_DEFAULT(_PL_) \
-    FREE_AND_ADD_REF_HASH((_PL_)->savebed_map, shstr_cons.bind_mappath); \
-    FREE_AND_ADD_REF_HASH((_PL_)->orig_savebed_map, shstr_cons.bind_mappath); \
+    SHSTR_FREE_AND_ADD_REF((_PL_)->savebed_map, shstr_cons.bind_mappath); \
+    SHSTR_FREE_AND_ADD_REF((_PL_)->orig_savebed_map, shstr_cons.bind_mappath); \
     (_PL_)->bed_status = BIND_MAP_STATUS; \
     (_PL_)->bed_x = BIND_MAP_X; \
     (_PL_)->bed_y = BIND_MAP_Y;
@@ -366,8 +366,8 @@ enum map_memory_t
 /* MAP_SET_PLAYER_BED_INFO_CURRENT() sets the bed info fields in _PL_'s player
  * structure to the current map's values. */
 #define MAP_SET_PLAYER_BED_INFO_CURRENT(_PL_) \
-    FREE_AND_ADD_REF_HASH((_PL_)->savebed_map, (_PL_)->ob->map->path); \
-    FREE_AND_ADD_REF_HASH((_PL_)->orig_savebed_map, (_PL_)->ob->map->orig_path); \
+    SHSTR_FREE_AND_ADD_REF((_PL_)->savebed_map, (_PL_)->ob->map->path); \
+    SHSTR_FREE_AND_ADD_REF((_PL_)->orig_savebed_map, (_PL_)->ob->map->orig_path); \
     (_PL_)->bed_status = (_PL_)->ob->map->status; \
     (_PL_)->bed_x = (_PL_)->ob->x; \
     (_PL_)->bed_y = (_PL_)->ob->y;

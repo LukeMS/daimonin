@@ -475,7 +475,7 @@ static void init_msgfile(void)
                     LOG(llevDebug, "  %s", msgbuf);
                 }
                 tmp->name = NULL;
-                FREE_AND_COPY_HASH(tmp->name, msgbuf);
+                SHSTR_FREE_AND_ADD_STRING(tmp->name, msgbuf);
                 tmp->next = first_msg;
                 first_msg = tmp;
                 nrofmsg++;
@@ -544,18 +544,18 @@ static void init_book_archive(void)
             if (!strncmp(cp, "title", 4))
             {
                 book = get_empty_book();        /* init new book entry */
-                FREE_AND_COPY_HASH(book->name, strchr(cp, ' ') + 1);
+                SHSTR_FREE_AND_ADD_STRING(book->name, strchr(cp, ' ') + 1);
                 type = -1;
                 nroftitle++;
                 continue;
             }
             if (!strncmp(cp, "authour", 4))
             {
-                FREE_AND_COPY_HASH(book->authour, strchr(cp, ' ') + 1);
+                SHSTR_FREE_AND_ADD_STRING(book->authour, strchr(cp, ' ') + 1);
             }
             if (!strncmp(cp, "arch", 4))
             {
-                FREE_AND_COPY_HASH(book->archname, strchr(cp, ' ') + 1);
+                SHSTR_FREE_AND_ADD_STRING(book->archname, strchr(cp, ' ') + 1);
             }
             else if (sscanf(cp, "level %d", &value))
             {
@@ -753,7 +753,7 @@ static void new_text_name(object_t *book, int msgtype)
           }
           break;
     }
-    FREE_AND_COPY_HASH(book->name, name);
+    SHSTR_FREE_AND_ADD_STRING(book->name, name);
 }
 
 /* add_book_author()
@@ -802,7 +802,7 @@ static void add_author(object_t *op, int msgtype)
     }
 
     sprintf(title, "of %s", name);
-    FREE_AND_COPY_HASH(op->title, title);
+    SHSTR_FREE_AND_ADD_STRING(op->title, title);
 }
 
 /* unique_book() - check to see if the book title/msg is unique. We
@@ -842,11 +842,11 @@ static void add_book_to_list(object_t *book, int msgtype)
     }
 
     t = get_empty_book();
-    FREE_AND_COPY_HASH(t->name, book->name);
-    FREE_AND_COPY_HASH(t->authour, book->title);
+    SHSTR_FREE_AND_ADD_STRING(t->name, book->name);
+    SHSTR_FREE_AND_ADD_STRING(t->authour, book->title);
     t->size = strlen(book->msg);
     t->msg_index = strtoint(book->msg);
-    FREE_AND_COPY_HASH(t->archname, book->arch->name);
+    SHSTR_FREE_AND_ADD_STRING(t->archname, book->arch->name);
     t->level = book->level;
 
     t->next = tl->first_book;
@@ -897,12 +897,12 @@ void change_book(object_t *book, int msgtype)
                   /* alter book properties */
                   if ((tmpbook = get_archetype(t->archname)) != NULL)
                   {
-                      FREE_AND_COPY_HASH(tmpbook->msg, book->msg);
+                      SHSTR_FREE_AND_ADD_STRING(tmpbook->msg, book->msg);
                       copy_object(tmpbook, book);
                   }
 
-                  FREE_AND_COPY_HASH(book->title, t->authour);
-                  FREE_AND_COPY_HASH(book->name, t->name);
+                  SHSTR_FREE_AND_ADD_STRING(book->title, t->authour);
+                  SHSTR_FREE_AND_ADD_STRING(book->name, t->name);
                   book->level = t->level;
               }
               /* Don't have any default title, so lets make up a new one */
@@ -964,10 +964,10 @@ void change_book(object_t *book, int msgtype)
                           numb, maxnames);
 #endif
                       /* restore old book properties here */
-                      FREE_AND_CLEAR_HASH(book->name);
-                      FREE_AND_CLEAR_HASH(book->title);
+                      SHSTR_FREE(book->name);
+                      SHSTR_FREE(book->title);
                       if (old_title != NULL)
-                          FREE_AND_COPY_HASH(book->title, old_title);
+                          SHSTR_FREE_AND_ADD_STRING(book->title, old_title);
                       /* Lets give the book a description to individualize it some */
                       if (RANDOM() % 4)
                       {
@@ -975,11 +975,11 @@ void change_book(object_t *book, int msgtype)
 
                           sprintf(buf, "%s %s",
                                   book_descrpt[RANDOM() % nbr], old_name);
-                          FREE_AND_COPY_HASH(book->name, buf);
+                          SHSTR_FREE_AND_ADD_STRING(book->name, buf);
                       }
                       else
                       {
-                          FREE_AND_COPY_HASH(book->name, old_name);
+                          SHSTR_FREE_AND_ADD_STRING(book->name, old_name);
                       }
                   }
                   else if (book->title && strlen(book->msg) > 5)
@@ -1012,7 +1012,7 @@ void change_book(object_t *book, int msgtype)
                   level = nbr - 1;
               strcpy(name, mage_book_name[level]);
           }
-          FREE_AND_COPY_HASH(book->name, name);
+          SHSTR_FREE_AND_ADD_STRING(book->name, name);
           break;
         default:
           LOG(llevBug, "BUG: change_book_name() called w/ illegal obj type.\n");
@@ -1390,7 +1390,7 @@ void make_formula_book(object_t *book, int level)
 
     if (fl->total_chance == 0)
     {
-        FREE_AND_COPY_HASH(book->msg, " *indecipherable text*\n");
+        SHSTR_FREE_AND_ADD_STRING(book->msg, " *indecipherable text*\n");
         new_text_name(book, 4);
         add_author(book, 4);
         return;
@@ -1410,7 +1410,7 @@ void make_formula_book(object_t *book, int level)
 
     if (!formula)
     {
-        FREE_AND_COPY_HASH(book->msg, " *indecipherable text*\n");
+        SHSTR_FREE_AND_ADD_STRING(book->msg, " *indecipherable text*\n");
         new_text_name(book, 4);
         add_author(book, 4);
     }
@@ -1471,8 +1471,8 @@ void make_formula_book(object_t *book, int level)
             }
         }
         /* Lets name the book something meaningful ! */
-        FREE_AND_COPY_HASH(book->name, title);
-        FREE_AND_CLEAR_HASH(book->title);
+        SHSTR_FREE_AND_ADD_STRING(book->name, title);
+        SHSTR_FREE(book->title);
 
         /* ingredients to make it */
         if (formula->ingred != NULL)
@@ -1489,7 +1489,7 @@ void make_formula_book(object_t *book, int level)
             LOG(llevBug, "BUG: formula_msg() no ingredient list for object %s of %s", op_name, formula->title);
         if (retbuf[strlen(retbuf) - 1] != '\n')
             strcat(retbuf, "\n");
-        FREE_AND_COPY_HASH(book->msg, retbuf);
+        SHSTR_FREE_AND_ADD_STRING(book->msg, retbuf);
     }
 }
 #endif
@@ -1815,7 +1815,7 @@ goto_2ndtry:
     strcat(msgbuf, "\n");   /* safety -- we get ugly map saves/crashes w/o this */
     if (strlen(msgbuf) > 1)
     {
-        FREE_AND_COPY_HASH(book->msg, msgbuf);
+        SHSTR_FREE_AND_ADD_STRING(book->msg, msgbuf);
         /* lets give the "book" a new name, which may be a compound word */
         change_book(book, msg_type);
     }
@@ -1843,9 +1843,9 @@ void free_all_readable()
         for (title1 = tlist->first_book; title1; title1 = titlenext)
         {
             titlenext = title1->next;
-            FREE_AND_CLEAR_HASH(title1->name);
-            FREE_AND_CLEAR_HASH(title1->authour);
-            FREE_AND_CLEAR_HASH(title1->archname);
+            SHSTR_FREE(title1->name);
+            SHSTR_FREE(title1->authour);
+            SHSTR_FREE(title1->archname);
             free(title1);
         }
         free(tlist);
@@ -1853,7 +1853,7 @@ void free_all_readable()
     for (lmsg = first_msg; lmsg; lmsg = nextmsg)
     {
         nextmsg = lmsg->next;
-        FREE_AND_CLEAR_HASH(lmsg->name);
+        SHSTR_FREE(lmsg->name);
         free(lmsg);
     }
 

@@ -326,7 +326,7 @@ uint8 shop_pay_amount(sint64 amount, object_t *op)
 
         (void)enumerate_coins(ABS(amount), &money);
         loot = create_financial_loot(&money, op, MODE_NO_INVENTORY);
-        FREE_AND_COPY_HASH(loot->name, "your change");
+        SHSTR_FREE_AND_ADD_STRING(loot->name, "your change");
         (void)pick_up(op, loot, NULL, 1);
     }
 

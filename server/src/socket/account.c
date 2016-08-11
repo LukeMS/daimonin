@@ -28,8 +28,8 @@ void account_clear(Account *ac)
     int i;
 
     ac->pwd[0] = 0;
-    FREE_AND_CLEAR_HASH(ac->name);
-    FREE_AND_CLEAR_HASH(ac->create_name); /* sanity freeing .. should not needed */
+    SHSTR_FREE(ac->name);
+    SHSTR_FREE(ac->create_name); /* sanity freeing .. should not needed */
     ac->nrof_chars = 0;
 
     for(i=0;i<ACCOUNT_MAX_PLAYER;i++)
@@ -237,7 +237,7 @@ account_status account_load(Account *ac, char *name, char *pass)
 
     /* finally remember our account name */
     if(ret == ACCOUNT_STATUS_OK)
-        FREE_AND_COPY_HASH(ac->name, name);
+        SHSTR_FREE_AND_ADD_STRING(ac->name, name);
 
     return ret;
 }

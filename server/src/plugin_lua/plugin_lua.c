@@ -374,9 +374,9 @@ void terminate_lua_context(struct lua_context *context)
     luaL_unref(global_state, LUA_REGISTRYINDEX, context->threadidx);
     context->tag = 0;
 
-    FREE_AND_CLEAR_HASH(context->text);
-    FREE_AND_CLEAR_HASH(context->file);
-    FREE_AND_CLEAR_HASH(context->options);
+    SHSTR_FREE(context->text);
+    SHSTR_FREE(context->file);
+    SHSTR_FREE(context->options);
 
     return_poolchunk(context, pool_luacontext);
 }

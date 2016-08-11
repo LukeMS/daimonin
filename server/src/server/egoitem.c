@@ -82,6 +82,6 @@ void create_ego_item(object_t *ob, const char *name, int mode)
     SET_FLAG(ob, FLAG_IS_EGOBOUND);
 
     sprintf(buf, "%s's %s", name, ob->name);
-    FREE_AND_COPY_HASH(ob->name, buf);
+    SHSTR_FREE_AND_ADD_STRING(ob->name, buf);
 }
 

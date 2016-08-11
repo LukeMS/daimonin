@@ -239,7 +239,7 @@ void free_all_archs()
             next = at->more;
         else
             next = at->next;
-        FREE_AND_CLEAR_HASH(at->name);
+        SHSTR_FREE(at->name);
 
         if(at->clone.inv)
             LOG(llevDebug, "free_all_archs(): archetype clone %s has inv %s\n", STRING_OBJ_NAME(&at->clone), STRING_OBJ_NAME(at->clone.inv));
@@ -527,8 +527,8 @@ object_t * create_singularity(const char *name)
 {
     object_t *op = arch_to_object(archetype_global._empty_archetype);
 
-    FREE_AND_COPY_HASH(op->name, name);
-    FREE_AND_COPY_HASH(op->title, " (singularity)");
+    SHSTR_FREE_AND_ADD_STRING(op->name, name);
+    SHSTR_FREE_AND_ADD_STRING(op->title, " (singularity)");
 
     /* Remove them automatically - good for player inventory */
     /* FIXME: Or is it that simple? This also means that ->inv will be
