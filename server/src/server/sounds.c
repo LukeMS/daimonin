@@ -188,7 +188,7 @@ void play_sound_player_only(player_t *pl, int soundnum, int soundtype, int x, in
 #define CHECKPLAYERS(_O_, _M_, _X_, _Y_, _N_, _T_) \
     for ((_O_) = (_M_)->player_first; (_O_); (_O_) = CONTR((_O_))->map_above) \
     { \
-        if (SQR((_O_)->x - (_X_)) + POW2((_O_)->y - (_Y_)) <= MAX_SOUND_DISTANCE_SQUARED) \
+        if (SQR((_O_)->x - (_X_)) + SQR((_O_)->y - (_Y_)) <= MAX_SOUND_DISTANCE_SQUARED) \
         { \
             play_sound_player_only(CONTR((_O_)), (_N_), (_T_), (_X_) - (_O_)->x, (_Y_) - (_O_)->y); \
         } \

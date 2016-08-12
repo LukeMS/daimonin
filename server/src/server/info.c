@@ -109,7 +109,7 @@ void ndi(const int flags, const int pri, const object_t *const who, const char *
             (!(_E2_) || \
              (_O_) != (_E2_)) && \
             ((_D_) == MAP_INFO_ALL || \
-             SQR((_O_)->x - (_X_)) + POW2((_O_)->y - (_Y_)) <= (_D_))) \
+             SQR((_O_)->x - (_X_)) + SQR((_O_)->y - (_Y_)) <= (_D_))) \
         { \
             SOCKBUF_ADD_TO_SOCKET(&CONTR((_O_))->socket, (_SB_)); \
         } \
