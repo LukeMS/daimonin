@@ -1233,16 +1233,24 @@ static void change_treasure(struct _change_arch *ca, object_t *op)
     }
 
     if (ca->name)
+    {
         SHSTR_FREE_AND_ADD_STRING(op->name, ca->name);
+    }
 
     if (ca->race)
+    {
         SHSTR_FREE_AND_ADD_STRING(op->race, ca->race);
+    }
 
     if (ca->title)
+    {
         SHSTR_FREE_AND_ADD_STRING(op->title, ca->title);
+    }
 
     if (ca->slaying)
+    {
         SHSTR_FREE_AND_ADD_STRING(op->slaying, ca->slaying);
+    }
 }
 
 /*
@@ -2032,7 +2040,9 @@ int fix_generated_item(object_t **op_ptr, object_t *creator, int difficulty, int
                   /*if (QUERY_FLAG(creator, FLAG_NO_PICK))
                       SET_FLAG(op, FLAG_NO_PICK);*/
                   if (creator->slaying && !op->slaying) /* for check_inv floors */
+                  {
                       SHSTR_FREE_AND_ADD_STRING(op->slaying, creator->slaying);
+                  }
               }
               break;
 
