@@ -335,7 +335,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -743,7 +742,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -796,7 +794,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_female 1
 is_neutral 1
 terrain_flag 1
@@ -846,7 +843,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_female 1
 is_neutral 1
 unaggressive 1
@@ -897,7 +893,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 1
@@ -1011,7 +1006,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -1762,7 +1756,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_female 1
 is_good 1
 terrain_flag 1
@@ -1843,7 +1836,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -1900,7 +1892,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -2081,7 +2072,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_female 1
 is_neutral 1
 terrain_flag 1
@@ -2252,7 +2242,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_female 1
 is_neutral 1
 terrain_flag 1
@@ -2345,7 +2334,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -2396,7 +2384,6 @@ terrain_flag 1
 mpart_id 3
 mpart_nr 1
 x 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -2408,7 +2395,6 @@ terrain_flag 1
 mpart_id 3
 mpart_nr 2
 y 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -2421,7 +2407,6 @@ mpart_id 3
 mpart_nr 3
 y 1
 x 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -2575,7 +2560,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_open_door 1
@@ -2658,7 +2642,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_use_weapon 1
@@ -2712,7 +2695,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_use_weapon 1
@@ -2766,7 +2748,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_use_weapon 1
@@ -3086,7 +3067,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -4347,7 +4327,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_female 1
 is_neutral 1
 terrain_flag 1
@@ -5252,7 +5231,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_female 1
 is_neutral 1
 terrain_flag 1
@@ -5302,7 +5280,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_female 1
 is_neutral 1
 terrain_flag 1
@@ -6125,7 +6102,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_female 1
 is_good 1
 terrain_flag 1
@@ -6342,7 +6318,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_female 1
 is_neutral 1
 terrain_flag 1
@@ -6394,7 +6369,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_female 1
 is_good 1
 terrain_flag 1
@@ -6447,7 +6421,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_female 1
 is_good 1
 terrain_flag 1
@@ -6500,7 +6473,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -6553,7 +6525,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -7643,7 +7614,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_female 1
 is_neutral 1
 terrain_flag 1
@@ -7707,7 +7677,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 3
@@ -8087,7 +8056,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_use_weapon 1
@@ -8260,7 +8228,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -8362,7 +8329,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_female 1
 is_good 1
 terrain_flag 1
@@ -8411,7 +8377,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_female 1
 is_good 1
 terrain_flag 1
@@ -8570,7 +8535,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_female 1
 is_neutral 1
 terrain_flag 1
@@ -8660,7 +8624,6 @@ item_level 255
 glow_radius 2
 corpse 1
 alive 1
-monster 1
 is_evil 1
 terrain_flag 1
 can_open_door 1
@@ -8718,7 +8681,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -8770,7 +8732,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -8822,7 +8783,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -8874,7 +8834,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -8951,7 +8910,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -9002,7 +8960,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -9323,7 +9280,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -9515,7 +9471,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 friendly 1
@@ -9566,7 +9521,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 1
@@ -9887,7 +9841,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -9943,7 +9896,6 @@ terrain_flag 1
 mpart_id 3
 mpart_nr 1
 x 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -9955,7 +9907,6 @@ terrain_flag 1
 mpart_id 3
 mpart_nr 2
 y 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -9968,7 +9919,6 @@ mpart_id 3
 mpart_nr 3
 y 1
 x 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -9988,7 +9938,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -10044,7 +9993,6 @@ terrain_flag 1
 mpart_id 3
 mpart_nr 1
 x 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -10056,7 +10004,6 @@ terrain_flag 1
 mpart_id 3
 mpart_nr 2
 y 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -10069,7 +10016,6 @@ mpart_id 3
 mpart_nr 3
 y 1
 x 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -10111,7 +10057,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -10167,7 +10112,6 @@ terrain_flag 1
 mpart_id 3
 mpart_nr 1
 x 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -10179,7 +10123,6 @@ terrain_flag 1
 mpart_id 3
 mpart_nr 2
 y 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -10192,7 +10135,6 @@ mpart_id 3
 mpart_nr 3
 y 1
 x 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -10234,7 +10176,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -10289,7 +10230,6 @@ terrain_flag 1
 mpart_id 3
 mpart_nr 1
 x 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -10301,7 +10241,6 @@ terrain_flag 1
 mpart_id 3
 mpart_nr 2
 y 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -10314,7 +10253,6 @@ mpart_id 3
 mpart_nr 3
 y 1
 x 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -10527,7 +10465,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 undead 1
@@ -10580,7 +10517,6 @@ terrain_flag 1
 mpart_id 3
 mpart_nr 1
 x 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -10592,7 +10528,6 @@ terrain_flag 1
 mpart_id 3
 mpart_nr 2
 y 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -10605,7 +10540,6 @@ mpart_id 3
 mpart_nr 3
 y 1
 x 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -10624,7 +10558,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 2
@@ -10845,7 +10778,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -10899,7 +10831,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -10952,7 +10883,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -11005,7 +10935,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -11058,7 +10987,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -11124,7 +11052,6 @@ item_level 255
 glow_radius 2
 corpse 1
 alive 1
-monster 1
 is_evil 1
 terrain_flag 1
 can_open_door 1
@@ -11258,7 +11185,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -11353,7 +11279,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -11758,7 +11683,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_evil 1
 terrain_flag 1
 can_see_in_dark 1
@@ -11910,7 +11834,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 friendly 1
@@ -12005,7 +11928,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -12375,7 +12297,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_female 1
 is_good 1
 terrain_flag 1
@@ -12428,7 +12349,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_female 1
 is_good 1
 terrain_flag 1
@@ -16456,7 +16376,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 3
@@ -16751,7 +16670,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 1
@@ -17639,7 +17557,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -17909,7 +17826,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -17965,7 +17881,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -18021,7 +17936,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -18077,7 +17991,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -18130,7 +18043,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -18401,7 +18313,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -18454,7 +18365,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -18655,7 +18565,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_open_door 1
@@ -18706,7 +18615,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_open_door 1
@@ -19920,7 +19828,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_use_weapon 1
@@ -19984,7 +19891,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -20042,7 +19948,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -20125,7 +20030,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -20183,7 +20087,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -20683,7 +20586,6 @@ item_level 255
 glow_radius 3
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -20978,7 +20880,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -21032,7 +20933,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -21171,7 +21071,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_female 1
 is_neutral 1
 terrain_flag 1
@@ -21237,7 +21136,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_use_weapon 1
@@ -21599,7 +21497,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_open_door 1
@@ -21817,7 +21714,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_use_weapon 1
@@ -21872,7 +21768,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_use_weapon 1
@@ -21926,7 +21821,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_use_weapon 1
@@ -21981,7 +21875,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_use_weapon 1
@@ -22036,7 +21929,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_use_weapon 1
@@ -22319,7 +22211,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -22376,7 +22267,6 @@ item_level 255
 mpart_id 3
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 1
@@ -22594,7 +22484,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -22647,7 +22536,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -22700,7 +22588,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -22753,7 +22640,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -22806,7 +22692,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -22890,7 +22775,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -23482,7 +23366,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 1
@@ -23532,7 +23415,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_open_door 1
@@ -24208,7 +24090,6 @@ item_level 255
 glow_radius 2
 corpse 1
 alive 1
-monster 1
 is_evil 1
 terrain_flag 1
 can_open_door 1
@@ -24266,7 +24147,6 @@ item_level 255
 glow_radius 2
 corpse 1
 alive 1
-monster 1
 is_evil 1
 terrain_flag 1
 can_open_door 1
@@ -25384,7 +25264,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -25463,7 +25342,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_evil 1
 terrain_flag 1
 can_open_door 1
@@ -25712,7 +25590,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -26180,7 +26057,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -26345,7 +26221,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -26413,7 +26288,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 1
@@ -26567,7 +26441,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_evil 1
 terrain_flag 1
 can_see_in_dark 1
@@ -26615,7 +26488,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 1
@@ -26791,7 +26663,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 3
@@ -26881,7 +26752,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -27031,7 +26901,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_female 1
 terrain_flag 1
 can_open_door 1
@@ -27169,7 +27038,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -27220,7 +27088,6 @@ terrain_flag 1
 mpart_id 3
 mpart_nr 1
 x 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -27232,7 +27099,6 @@ terrain_flag 1
 mpart_id 3
 mpart_nr 2
 y 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -27245,7 +27111,6 @@ mpart_id 3
 mpart_nr 3
 y 1
 x 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -27264,7 +27129,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -27441,7 +27305,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -27494,7 +27357,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -27546,7 +27408,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -27599,7 +27460,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -27652,7 +27512,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -27705,7 +27564,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -27759,7 +27617,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -27813,7 +27670,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -27865,7 +27721,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -27969,7 +27824,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -28021,7 +27875,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 1
@@ -28072,7 +27925,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 1
@@ -28447,7 +28299,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 1
@@ -28519,7 +28370,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 terrain_flag 1
 can_open_door 1
@@ -28647,7 +28497,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -28914,7 +28763,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_female 1
 is_neutral 1
 terrain_flag 1
@@ -30031,7 +29879,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_female 1
 terrain_flag 1
 can_open_door 1
@@ -30089,7 +29936,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_female 1
 terrain_flag 1
 can_open_door 1
@@ -30147,7 +29993,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_female 1
 terrain_flag 1
 can_open_door 1
@@ -30205,7 +30050,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_female 1
 terrain_flag 1
 can_open_door 1
@@ -31297,7 +31141,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -31358,7 +31201,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -31419,7 +31261,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -31544,7 +31385,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_use_weapon 1
@@ -31599,7 +31439,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_use_weapon 1
@@ -31654,7 +31493,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_use_weapon 1
@@ -31709,7 +31547,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_use_weapon 1
@@ -31764,7 +31601,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_use_weapon 1
@@ -31918,7 +31754,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_female 1
 is_good 1
 terrain_flag 1
@@ -32041,7 +31876,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_evil 1
 terrain_flag 1
 can_see_in_dark 1
@@ -32161,7 +31995,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -32330,7 +32163,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -32445,7 +32277,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 1
@@ -32495,7 +32326,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 1
@@ -32545,7 +32375,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 1
@@ -32595,7 +32424,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 1
@@ -32645,7 +32473,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_female 1
 is_neutral 1
 terrain_flag 1
@@ -34023,7 +33850,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 1
@@ -34778,7 +34604,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -34918,7 +34743,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 1
@@ -35207,7 +35031,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -35530,7 +35353,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -36422,7 +36244,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_female 1
 terrain_flag 1
 can_open_door 1
@@ -36887,7 +36708,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_evil 1
 terrain_flag 1
 can_open_door 1
@@ -36940,7 +36760,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_evil 1
 terrain_flag 1
 can_open_door 1
@@ -36993,7 +36812,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_evil 1
 terrain_flag 1
 can_open_door 1
@@ -37047,7 +36865,6 @@ item_level 255
 glow_radius 2
 corpse 1
 alive 1
-monster 1
 is_evil 1
 terrain_flag 1
 can_open_door 1
@@ -37104,7 +36921,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_evil 1
 terrain_flag 1
 can_open_door 1
@@ -38429,7 +38245,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 1
@@ -38487,7 +38302,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_use_weapon 1
@@ -38541,7 +38355,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_use_weapon 1
@@ -38731,7 +38544,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_female 1
 is_neutral 1
 terrain_flag 1
@@ -38880,7 +38692,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -38937,7 +38748,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_female 1
 is_neutral 1
 terrain_flag 1
@@ -39475,7 +39285,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_open_door 1
@@ -39522,7 +39331,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_open_door 1
@@ -40053,7 +39861,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_neutral 1
 terrain_flag 1
 can_open_door 1
@@ -40189,7 +39996,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 1
@@ -40252,7 +40058,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 1
@@ -41533,7 +41338,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_good 1
 path_attuned 32
 path_repelled 256
@@ -41894,7 +41698,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -42364,7 +42167,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_female 1
 terrain_flag 1
 can_open_door 1
@@ -42884,7 +42686,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -42937,7 +42738,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_female 1
 is_good 1
 terrain_flag 1
@@ -42989,7 +42789,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_evil 1
 terrain_flag 1
 can_open_door 1
@@ -43039,7 +42838,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_evil 1
 terrain_flag 1
 can_open_door 1
@@ -43901,7 +43699,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -43954,7 +43751,6 @@ terrain_flag 1
 mpart_id 3
 mpart_nr 1
 x 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -43966,7 +43762,6 @@ terrain_flag 1
 mpart_id 3
 mpart_nr 2
 y 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -43979,7 +43774,6 @@ mpart_id 3
 mpart_nr 3
 y 1
 x 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -44043,7 +43837,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -44099,7 +43892,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_evil 1
 terrain_flag 1
@@ -49322,7 +49114,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_female 1
 is_neutral 1
 terrain_flag 1
@@ -49946,7 +49737,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -50144,7 +49934,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -50203,7 +49992,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_male 1
 is_good 1
 terrain_flag 1
@@ -50382,7 +50170,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 1
@@ -50433,7 +50220,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_female 1
 is_good 1
 terrain_flag 1
@@ -50514,7 +50300,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 1
@@ -50565,7 +50350,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_female 1
 is_neutral 1
 terrain_flag 1
@@ -50615,7 +50399,6 @@ terrain_flag 1
 mpart_id 3
 mpart_nr 1
 x 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -50627,7 +50410,6 @@ terrain_flag 1
 mpart_id 3
 mpart_nr 2
 y 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -50640,7 +50422,6 @@ mpart_id 3
 mpart_nr 3
 y 1
 x 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -50659,7 +50440,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_evil 1
 terrain_flag 1
 can_open_door 1
@@ -50750,7 +50530,6 @@ item_level 255
 mpart_id 3
 corpse 1
 alive 1
-monster 1
 is_male 1
 is_neutral 1
 terrain_flag 1
@@ -50800,7 +50579,6 @@ terrain_flag 1
 mpart_id 3
 mpart_nr 1
 x 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -50812,7 +50590,6 @@ terrain_flag 1
 mpart_id 3
 mpart_nr 2
 y 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -50825,7 +50602,6 @@ mpart_id 3
 mpart_nr 3
 y 1
 x 1
-monster 1
 alive 1
 no_pick 1
 end
@@ -51073,7 +50849,6 @@ item_race 255
 item_level 255
 corpse 1
 alive 1
-monster 1
 is_evil 1
 terrain_flag 1
 can_open_door 1

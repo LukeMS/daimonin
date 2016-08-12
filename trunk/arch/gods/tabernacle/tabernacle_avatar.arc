@@ -10,7 +10,6 @@ item_level 255
 corpse 1
 friendly 1
 alive 1
-monster 1
 is_good 1
 path_attuned 32
 path_repelled 256
