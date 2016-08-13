@@ -26,11 +26,6 @@
 #ifndef __SHSTR_NG_H
 #define __SHSTR_NG_H
 
-/* SS(string) will return the address of the shared_string struct which
- * contains "string".
- */
-#define SS(x) ((struct shared_string *) ((x) - offsetof(struct shared_string, string)))
-
 /* So far only used when dealing with artifacts.
  * (now used by alchemy and other code too. Nov 95 b.t).
  * This is used in readable.c, recipe.c and treasure.c .
