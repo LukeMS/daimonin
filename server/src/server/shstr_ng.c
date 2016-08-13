@@ -63,10 +63,6 @@ struct shared_string {
 /* Our hashtable of shared strings */
 static hashtable *shared_strings;
 
-/* Initial number of buckets in the hashtable.
- * (Not very relevant, since it can grow) */
-#define SHSTR_INITIAL_TABLE_SIZE 8192
-
 /* Wrappers for statistics gathering */
 #ifdef SHSTR_STATISTICS
 static struct statistics *s_stats;
@@ -89,7 +85,8 @@ static hashtable_size_t stats_string_hash(const hashtable_const_key_t key)
 
 void shstr_init(void)
 {
-    shared_strings = string_hashtable_new(SHSTR_INITIAL_TABLE_SIZE);
+    /* This is the initial number of buckets in the hashtable. */
+    shared_strings = string_hashtable_new(8192);
 #ifdef SHSTR_STATISTICS
     shared_strings->hash = stats_string_hash;
     shared_strings->equals = stats_string_key_equals;
