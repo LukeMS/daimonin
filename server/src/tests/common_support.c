@@ -195,7 +195,6 @@ int memleak_detected()
     if(0 != entries2)
     {
         LOG(llevDebug, "Some string(s) not freed (diff = %d)\n", entries2);
-        shstr_dump_table(SHSTR_DUMP_TOTALS);
         return -1;
     }
 
@@ -204,7 +203,6 @@ int memleak_detected()
     if(0 != refs2)
     {
         LOG(llevDebug, "Some string(s) not dereferenced (diff = %d)\n", refs2);
-        shstr_dump_table(SHSTR_DUMP_TOTALS);
         return -1;
     }
 

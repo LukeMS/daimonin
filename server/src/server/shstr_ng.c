@@ -34,7 +34,6 @@
 
 #include "global.h"
 
-#ifdef SHSTR_STATISTICS
 static struct statistics
 {
     int                     calls;
@@ -43,22 +42,11 @@ static struct statistics
     int                     search;
     int                     linked;
 } ladd_stats, add_stats, add_ref_stats, free_stats, find_stats, hash_stats;
-#define GATHER(n) (++n)
-#else /* !SHSTR_STATISTICS */
-#define GATHER(n)
-#endif /* SHSTR_STATISTICS */
 
-struct shared_string {
-    uint32 refcount;
-    shstr_t string[0];    /* Area for storing the actual string */
-};
-
-/* Our hashtable of shared strings */
-static hashtable *shared_strings;
-
-/* Wrappers for statistics gathering */
-#ifdef SHSTR_STATISTICS
 static struct statistics *s_stats;
+
+#define GATHER(n) (++n)
+
 static int stats_string_key_equals(const hashtable_const_key_t key1, const hashtable_const_key_t key2)
 {
     GATHER(s_stats->strcmps);
@@ -70,7 +58,14 @@ static hashtable_size_t stats_string_hash(const hashtable_const_key_t key)
     GATHER(s_stats->hashed);
     return string_hash(key);
 }
-#endif
+
+struct shared_string {
+    uint32 refcount;
+    shstr_t string[0];    /* Area for storing the actual string */
+};
+
+/* Our hashtable of shared strings */
+static hashtable *shared_strings;
 
 /*
  * Initialises the hash-table used by the shared string library.
@@ -80,10 +75,8 @@ void shstr_init(void)
 {
     /* This is the initial number of buckets in the hashtable. */
     shared_strings = string_hashtable_new(8192);
-#ifdef SHSTR_STATISTICS
     shared_strings->hash = stats_string_hash;
     shared_strings->equals = stats_string_key_equals;
-#endif
 }
 
 /*
@@ -189,13 +182,8 @@ shstr_t *shstr_add_lstring(const char *str, int n)
     }
 
     /* Restore hashing functions */
-#ifdef SHSTR_STATISTICS
     shared_strings->hash = stats_string_hash;
     shared_strings->equals = stats_string_key_equals;
-#else
-    shared_strings->hash = string_hash;
-    shared_strings->equals = string_key_equals;
-#endif
 
     return ss->string;
 }
@@ -224,10 +212,7 @@ shstr_t *shstr_add_string(const char *str)
         return NULL;
     }
 
-#ifdef SHSTR_STATISTICS
     s_stats = &add_stats;
-#endif
-
     GATHER(add_stats.search);
 
     /* Unfortunately, this means two probes in the case of
@@ -271,10 +256,7 @@ const char *shstr_find(const char *str)
 
     GATHER(find_stats.calls);
     GATHER(find_stats.search);
-
-#ifdef SHSTR_STATISTICS
     s_stats = &find_stats;
-#endif
 
     if((ss = hashtable_find(shared_strings, str)))
         return ss->string;
@@ -346,9 +328,7 @@ void shstr_free(shstr_t *str)
     ss = SS(str);
     --ss->refcount;
     if (ss->refcount == 0) {
-#ifdef SHSTR_STATISTICS
         s_stats = &free_stats;
-#endif
         GATHER(free_stats.search);
         hashtable_erase(shared_strings, str);
         free(ss);
@@ -359,42 +339,17 @@ void shstr_free(shstr_t *str)
     */
 }
 
-/*
- * Description:
- *      The routines will gather statistics if SHSTR_STATISTICS is defined.
- *      A call to this function will cause the statistics to be dumped
- *      into the string msg, which must be large.
- * Return values:
- *      pointer to msg
+/** Returns the number of unique string entries,
+ * the total number of references used and the total number
+ * of links in the hash table.
+ *
+ * A large "refs" number indicates either that the memory savings
+ * of shared strings are good, or a reference leak.
+ *
+ * A "links" value much larger than "entries" indicates a too small
+ * table size and/or a bad hashing function.
  */
-char * shstr_dump_statistics(char *msg)
-{
-    char    line[126];
-    msg[0] = '\0';
-
-#ifdef SHSTR_STATISTICS
-    sprintf(msg, "%-13s   %6s %6s %6s %6s %6s\n", "hashtable  :", "calls", "hashed", "strcmp", "search", "linked");
-    sprintf(line, "%-13s %6d %6d %6d %6d %6d\n", "shstr_add_string:", add_stats.calls, add_stats.hashed, add_stats.strcmps,
-            add_stats.search, add_stats.linked);
-    strcat(msg, line);
-    sprintf(line, "%-13s %6d %6d %6d %6d %6d\n", "ladd_string:", ladd_stats.calls, ladd_stats.hashed, ladd_stats.strcmps,
-            ladd_stats.search, ladd_stats.linked);
-    strcat(msg, line);
-    sprintf(line, "%-13s %6d %6d %6d %6d %6d\n", "shstr_find:", find_stats.calls, find_stats.hashed,
-            find_stats.strcmps, find_stats.search, find_stats.linked);
-    strcat(msg, line);
-    sprintf(line, "%-13s %6d\n", "shstr_add_refcount:", add_ref_stats.calls);
-    strcat(msg, line);
-    sprintf(line, "%-13s %6d\n", "free_string:", free_stats.calls);
-    strcat(msg, line);
-    sprintf(line, "%-13s %6d", "hashstr:", hash_stats.calls);
-    strcat(msg, line);
-#endif
-
-    return msg;
-}
-
-static void shstr_find_totals(int *entries, int *refs, int *links, int what)
+void shstr_get_totals(int *entries, int *refs, int *links)
 {
     hashtable_iterator_t i;
 
@@ -412,41 +367,34 @@ static void shstr_find_totals(int *entries, int *refs, int *links, int what)
 
         *refs += ss->refcount;
         *links += probes;
-        if(what & SHSTR_DUMP_TOTALS)
-            LOG(llevSystem, "%4d -- %4d refs '%s' (%d probes)\n", (int)i, (int)(ss->refcount), ss->string, probes);
     }
 }
 
-/** Returns the number of unique string entries,
- * the total number of references used and the total number
- * of links in the hash table.
+/* shstr_command_dump() logs some statistics about the current shstr usage. */
+/* TODO: I'm not convinced this is particularly useful. I think the original
+ * author just liked statistics. Still, here it is. Also, what's the deal with
+ * shstr_get_totals()? Is this not just a way of totting up the entire hash
+ * table, as opposed to the statistics struct which keeps running counts? Might
+ * remove it.
  *
- * A large "refs" number indicates either that the memory savings
- * of shared strings are good, or a reference leak.
- *
- * A "links" value much larger than "entries" indicates a too small
- * table size and/or a bad hashing function.
- */
-void shstr_get_totals(int *entries, int *refs, int *links)
+ * -- Smacky 20160812 */
+int shstr_command_dump(object_t *op, char *params)
 {
-    shstr_find_totals(entries, refs, links, 0);
-}
+    char buf[LARGE_BUF];
+    int  entries = 0,
+         refs = 0,
+         links = 0;
 
-/*
- * Description:
- *      If (what & SHSTR_DUMP_TOTALS) return a string which
- *      says how many entries etc. there are in the table.
- * Return values:
- *      - a string or NULL
- */
-char * shstr_dump_table(int what)
-{
-    static char totals[80];
-    int         entries = 0, refs = 0, links = 0;
-
-    shstr_find_totals(&entries, &refs, &links, what);
-
-    sprintf(totals, "%d entries, %d refs, %d links.", entries, refs, links);
-
-    return totals;
+    shstr_get_totals(&entries, &refs, &links);
+    ndi(NDI_UNIQUE, 0, op, "Shared string statistics dumped to logs!");
+    LOG(llevInfo, "SHSTR STATISTICS DUMP\n");
+    LOG(llevInfo, "        CALLS  HASHED STRCMP SEARCH LINKED\n");
+    LOG(llevInfo, " ADD  : %6d %6d %6d %6d %6d\n", add_stats.calls, add_stats.hashed, add_stats.strcmps, add_stats.search, add_stats.linked);
+    LOG(llevInfo, " LADD : %6d %6d %6d %6d %6d\n", ladd_stats.calls, ladd_stats.hashed, ladd_stats.strcmps, ladd_stats.search, ladd_stats.linked);
+    LOG(llevInfo, " FIND : %6d %6d %6d %6d %6d\n", find_stats.calls, find_stats.hashed, find_stats.strcmps, find_stats.search, find_stats.linked);
+    LOG(llevInfo, " REF  : %6d\n", add_ref_stats.calls);
+    LOG(llevInfo, " FREE : %6d\n", free_stats.calls);
+    LOG(llevInfo, " HASH : %6d\n", hash_stats.calls);
+    LOG(llevInfo, "[ %d entries ] [ %d refs ] [ %d links ]", entries, refs, links);
+    return COMMANDS_RTN_VAL_OK_SILENT;
 }
