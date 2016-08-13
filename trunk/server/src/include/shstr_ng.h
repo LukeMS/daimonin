@@ -74,9 +74,9 @@ struct shstr_linked_t
 extern void     shstr_init(void);
 extern shstr_t *shstr_add_string(const char *str);
 extern shstr_t *shstr_add_lstring(const char *str, int n);
+extern shstr_t *shstr_add_refcount(const char *str);
 extern int      shstr_query_refcount(const char *str);
 extern shstr_t *shstr_find(const char *str);
-extern shstr_t *shstr_add_refcount(const char *str);
 extern void     shstr_free(shstr_t *str);
 extern void     shstr_get_totals(int *entries, int *refs, int *links);
 extern int      shstr_command_dump(object_t *op, char *params);
