@@ -170,7 +170,7 @@ struct mobdata
 
     struct mob_known_obj       *known_mobs;    /**< List of recently detected mobs */
     struct mob_known_obj       *known_objs;    /**< List of recently detected objects */
-    hashtable                  *known_objs_ht; /**< another view of known_objs. @note can be NULL */
+    hashtable_t                *known_objs_ht; /**< another view of known_objs. @note can be NULL */
 
     struct mob_known_obj       *owner, *enemy; /**< Important other mobs */
 

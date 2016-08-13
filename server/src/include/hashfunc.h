@@ -33,8 +33,8 @@
 
 uint32 generic_hash (const char * data, uint32 len);
 
-hashtable *string_hashtable_new(hashtable_size_t num_buckets);
-hashtable *pointer_hashtable_new(hashtable_size_t num_buckets);
+hashtable_t *string_hashtable_new(hashtable_size_t num_buckets);
+hashtable_t *pointer_hashtable_new(hashtable_size_t num_buckets);
 
 hashtable_size_t string_hash(const hashtable_const_key_t key);
 int string_key_equals(const hashtable_const_key_t key1, const hashtable_const_key_t key2);

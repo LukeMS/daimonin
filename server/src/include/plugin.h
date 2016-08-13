@@ -249,7 +249,7 @@ struct plugin_hooklist
     int (*cast_spell)(object_t *, object_t *, int, int, int, SpellTypeFrom,
                       char *);
     sint8 (*check_path)(const char *, uint8);
-    void (*clear_mob_knowns)(object_t *, struct mob_known_obj **, hashtable *);
+    void (*clear_mob_knowns)(object_t *, struct mob_known_obj **, hashtable_t *);
     object_t *(*clone_object)(object_t *, uint8);
     int (*command_combat)(object_t *, char *);
     int (*command_target)(object_t *, char *);
@@ -299,17 +299,17 @@ struct plugin_hooklist
     void (*guild_leave)(player_t *);
     void (*gui_npc)(object_t *, uint8, const char *);
     /* H */
-    void (*hashtable_clear)(hashtable *);
-    void (*hashtable_delete)(hashtable *);
-    int (*hashtable_erase)(hashtable *const, const hashtable_const_key_t);
-    hashtable_value_t (*hashtable_find)(const hashtable *const,
+    void (*hashtable_clear)(hashtable_t *);
+    void (*hashtable_delete)(hashtable_t *);
+    int (*hashtable_erase)(hashtable_t *const, const hashtable_const_key_t);
+    hashtable_value_t (*hashtable_find)(const hashtable_t *const,
                                         const hashtable_const_key_t);
-    int (*hashtable_insert)(hashtable *const, const hashtable_const_key_t,
+    int (*hashtable_insert)(hashtable_t *const, const hashtable_const_key_t,
                             const hashtable_value_t);
-    hashtable_iterator_t (*hashtable_iterator)(const hashtable *const);
-    hashtable_iterator_t (*hashtable_iterator_next)(const hashtable *const,
+    hashtable_iterator_t (*hashtable_iterator)(const hashtable_t *const);
+    hashtable_iterator_t (*hashtable_iterator_next)(const hashtable_t *const,
                                                     hashtable_iterator_t);
-    hashtable *(*hashtable_new)(hashtable_size_t (*hash_func)(const hashtable_const_key_t),
+    hashtable_t *(*hashtable_new)(hashtable_size_t (*hash_func)(const hashtable_const_key_t),
                                 int (*equals_func)(const hashtable_const_key_t,
                                 const hashtable_const_key_t),
                                 hashtable_const_key_t, hashtable_const_key_t,

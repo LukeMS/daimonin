@@ -268,7 +268,7 @@ uint32 generic_hash (const char *k, uint32 length)
 #endif
 
 /* Convenience function to get a hash table with string keys */
-hashtable *string_hashtable_new(hashtable_size_t num_buckets)
+hashtable_t *string_hashtable_new(hashtable_size_t num_buckets)
 {
    return hashtable_new(string_hash, string_key_equals, HASH_EMPTY_KEY, HASH_DELETED_KEY, num_buckets);
 }
@@ -374,7 +374,7 @@ int int64_key_equals(const hashtable_const_key_t key1, const hashtable_const_key
 }
 
 /* Convenience function to get a hash table with pointer keys */
-hashtable *pointer_hashtable_new(hashtable_size_t num_buckets)
+hashtable_t *pointer_hashtable_new(hashtable_size_t num_buckets)
 {
     static int empty = 0, deleted = 0; /* Anchors for deleted/empty keys */
 

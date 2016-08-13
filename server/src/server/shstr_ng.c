@@ -80,7 +80,7 @@ struct shared_string {
 #endif
 
 /* Our hashtable of shared strings */
-static hashtable *shared_strings;
+static hashtable_t *shared_strings;
 
 /*
  * Allocates and initialises a new shared_string structure,

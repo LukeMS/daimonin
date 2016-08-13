@@ -25,7 +25,7 @@
 
 #include <global.h>
 
-static hashtable *art_table;
+static hashtable_t *art_table;
 
 /* quick table to access artifact list for types */
 static artifactlist *art_type_table[ARCH_MAX_TYPES];

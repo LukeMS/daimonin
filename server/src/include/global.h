@@ -488,6 +488,7 @@ typedef int tiling_direction_t;
 typedef struct archetype_t       archetype_t;
 typedef struct attack_name_t     attack_name_t;
 typedef struct ban_t             ban_t;
+typedef struct hashtable_t       hashtable_t;
 typedef struct living_t          living_t;
 typedef struct map_t             map_t;
 typedef struct mob_pathfinding_t mob_pathfinding_t;
@@ -1156,7 +1157,7 @@ EXTERN New_Face                *blank_face, *next_item_face, *prev_item_face, *n
 EXTERN NewSocket               *init_sockets;
 
 /* hashtable of beacons */
-EXTERN hashtable               *beacon_table;
+EXTERN hashtable_t               *beacon_table;
 
 /* include some global project headers */
 #include "plugin.h"
