@@ -36,11 +36,11 @@
 
 static struct statistics
 {
-    int                     calls;
-    int                     hashed;
-    int                     strcmps;
-    int                     search;
-    int                     linked;
+    int calls;
+    int hashed;
+    int strcmps;
+    int search;
+    int linked;
 } ladd_stats, add_stats, add_ref_stats, free_stats, find_stats, hash_stats;
 
 static struct statistics *s_stats;
@@ -66,18 +66,6 @@ struct shared_string {
 
 /* Our hashtable of shared strings */
 static hashtable *shared_strings;
-
-/*
- * Initialises the hash-table used by the shared string library.
- */
-
-void shstr_init(void)
-{
-    /* This is the initial number of buckets in the hashtable. */
-    shared_strings = string_hashtable_new(8192);
-    shared_strings->hash = stats_string_hash;
-    shared_strings->equals = stats_string_key_equals;
-}
 
 /*
  * Allocates and initialises a new shared_string structure,
@@ -132,6 +120,59 @@ static hashtable_size_t lstring_hash(const hashtable_const_key_t key)
 {
     GATHER(ladd_stats.hashed);
     return generic_hash(key, key == s_newstring ? s_newstringlength : (int)strlen(key));
+}
+
+/*
+ * Initialises the hash-table used by the shared string library.
+ */
+
+void shstr_init(void)
+{
+    /* This is the initial number of buckets in the hashtable. */
+    shared_strings = string_hashtable_new(8192);
+    shared_strings->hash = stats_string_hash;
+    shared_strings->equals = stats_string_key_equals;
+}
+
+/*
+ * Description:
+ *      This will add 'str' to the hash table. If there's no entry for this
+ *      string, a copy will be allocated, and a pointer to that is returned.
+ * Return values:
+ *      - pointer to string identical to str
+ */
+
+shstr_t *shstr_add_string(const char *str)
+{
+    struct shared_string *ss;
+
+    GATHER(add_stats.calls);
+
+    /* Should really core dump here, since functions should not be calling
+     * shstr_add_string with a null parameter.  But this will prevent a few
+     * core dumps.
+     */
+    if (str == NULL)
+    {
+        LOG(llevBug, "BUG: shstr_add_string(): try to add null string to hash table\n");
+        return NULL;
+    }
+
+    s_stats = &add_stats;
+    GATHER(add_stats.search);
+
+    /* Unfortunately, this means two probes in the case of
+     * strings that weren't in the hashtable already. */
+    if((ss = hashtable_find(shared_strings, str)))
+    {
+        ss->refcount++;
+    } else {
+        GATHER(add_stats.search);
+        ss = new_shared_string(str, strlen(str));
+        hashtable_insert(shared_strings, ss->string, ss);
+    }
+
+    return ss->string;
 }
 
 /*
@@ -190,43 +231,26 @@ shstr_t *shstr_add_lstring(const char *str, int n)
 
 /*
  * Description:
- *      This will add 'str' to the hash table. If there's no entry for this
- *      string, a copy will be allocated, and a pointer to that is returned.
+ *      This will increase the refcount of the string str, which *must*
+ *      have been returned from a previous shstr_add_string().
  * Return values:
- *      - pointer to string identical to str
+ *      - str
  */
-
-shstr_t *shstr_add_string(const char *str)
+shstr_t * shstr_add_refcount(shstr_t* str)
 {
-    struct shared_string *ss;
-
-    GATHER(add_stats.calls);
-
-    /* Should really core dump here, since functions should not be calling
-     * shstr_add_string with a null parameter.  But this will prevent a few
-     * core dumps.
-     */
-    if (str == NULL)
+#ifdef DEBUG_SHSTR
+    const char *tmp_str = shstr_find(str);
+    if (!str || str != tmp_str)
     {
-        LOG(llevBug, "BUG: shstr_add_string(): try to add null string to hash table\n");
+        LOG(llevBug, "BUG: shstr_add_refcount(shared_string)(): tried to get refcount of an invalid string! >%s<\n", str ? str : ">>NULL<<");
         return NULL;
     }
+#endif
 
-    s_stats = &add_stats;
-    GATHER(add_stats.search);
-
-    /* Unfortunately, this means two probes in the case of
-     * strings that weren't in the hashtable already. */
-    if((ss = hashtable_find(shared_strings, str)))
-    {
-        ss->refcount++;
-    } else {
-        GATHER(add_stats.search);
-        ss = new_shared_string(str, strlen(str));
-        hashtable_insert(shared_strings, ss->string, ss);
-    }
-
-    return ss->string;
+    GATHER(add_ref_stats.calls);
+    ++(SS(str)->refcount);
+    /*LOG(llevDebug,"SS: >%s< #%d addref\n", str,SS(str)->refcount);*/
+    return str;
 }
 
 /*
@@ -262,30 +286,6 @@ const char *shstr_find(const char *str)
         return ss->string;
     else
         return NULL;
-}
-
-/*
- * Description:
- *      This will increase the refcount of the string str, which *must*
- *      have been returned from a previous shstr_add_string().
- * Return values:
- *      - str
- */
-shstr_t * shstr_add_refcount(shstr_t* str)
-{
-#ifdef DEBUG_SHSTR
-    const char *tmp_str = shstr_find(str);
-    if (!str || str != tmp_str)
-    {
-        LOG(llevBug, "BUG: shstr_add_refcount(shared_string)(): tried to get refcount of an invalid string! >%s<\n", str ? str : ">>NULL<<");
-        return NULL;
-    }
-#endif
-
-    GATHER(add_ref_stats.calls);
-    ++(SS(str)->refcount);
-    /*LOG(llevDebug,"SS: >%s< #%d addref\n", str,SS(str)->refcount);*/
-    return str;
 }
 
 /*
@@ -359,11 +359,11 @@ void shstr_get_totals(int *entries, int *refs, int *links)
     *links = 0;
 
     for (i = hashtable_iterator(shared_strings);
-            i != hashtable_iterator_end(shared_strings);
-            i = hashtable_iterator_next(shared_strings, i))
+        i != hashtable_iterator_end(shared_strings);
+        i = hashtable_iterator_next(shared_strings, i))
     {
         struct shared_string *ss = hashtable_iterator_value(shared_strings, i);
-        int probes = hashtable_num_probes_needed(shared_strings, ss->string);
+        int                   probes = hashtable_num_probes_needed(shared_strings, ss->string);
 
         *refs += ss->refcount;
         *links += probes;
