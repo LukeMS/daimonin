@@ -175,6 +175,8 @@
 
 //#define USE_OLD_UPDATE
 
+// #define DEBUG_SHSTR
+
 #endif /* ifdef DAI_DEVELOPMENT_CODE */
 
 #ifdef DEBUG_FIX_PLAYER

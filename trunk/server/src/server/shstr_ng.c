@@ -48,13 +48,6 @@ static struct statistics
 #define GATHER(n)
 #endif /* SHSTR_STATISTICS */
 
-/* define this will make the hash table more secure but
- * also somewhat slower - if no problems happens after
- * some testings (no bug messages from this module)
- * then this define should be disabled
- */
-// #define SECURE_SHSTR_HASH
-
 struct shared_string {
     uint32 refcount;
     shstr_t string[0];    /* Area for storing the actual string */
@@ -298,7 +291,7 @@ const char *shstr_find(const char *str)
  */
 shstr_t * shstr_add_refcount(shstr_t* str)
 {
-#ifdef SECURE_SHSTR_HASH
+#ifdef DEBUG_SHSTR
     const char *tmp_str = shstr_find(str);
     if (!str || str != tmp_str)
     {
@@ -339,7 +332,7 @@ void shstr_free(shstr_t *str)
      * strange up inside the hash table. This will check for
      * free, wrong or non SS() objects.
      */
-#ifdef SECURE_SHSTR_HASH
+#ifdef DEBUG_SHSTR
     const char     *tmp_str = shstr_find(str);
     if (!str || str != tmp_str)
     {
