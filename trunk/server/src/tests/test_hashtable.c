@@ -37,7 +37,7 @@ START_TEST(hashtable_basic_operations)
     char **ptr;
     char *strings1[] = { "hello", "world", "this", "is", "working", NULL };
 
-    hashtable *ht = string_hashtable_new(32);
+    hashtable_t *ht = string_hashtable_new(32);
 
     for(ptr = strings1; *ptr; ptr++)
         hashtable_insert(ht, *ptr, *ptr);
@@ -65,7 +65,7 @@ START_TEST(hashtable_shrinkage)
 {
     int j;
     int maxbuckets;
-    hashtable *ht = string_hashtable_new(32);
+    hashtable_t *ht = string_hashtable_new(32);
 
     for(j=0; j<num_words; j++) {
         hashtable_insert(ht, words[j], words[j]);
@@ -103,7 +103,7 @@ END_TEST
 START_TEST (hashtable_iterators)
 {
     int j;
-    hashtable *ht = string_hashtable_new(32);
+    hashtable_t *ht = string_hashtable_new(32);
     hashtable_iterator_t i;
     int count = 0;
 
@@ -134,7 +134,7 @@ END_TEST
 
 START_TEST (hashtable_efficiency)
 {
-    hashtable *ht = string_hashtable_new(32);
+    hashtable_t *ht = string_hashtable_new(32);
     int j, probesum= 0;
 
     for(j=0; j<num_words; j++)

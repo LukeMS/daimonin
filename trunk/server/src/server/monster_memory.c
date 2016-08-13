@@ -36,7 +36,7 @@ extern int get_npc_object_attraction(object_t *op, object_t *other);
 extern int get_npc_attitude(object_t *op, object_t *other);
 
 /** Purge a single object from list of known mobs/objects */
-static inline void remove_mob_known(struct mob_known_obj *tmp, struct mob_known_obj **first, hashtable *ht)
+static inline void remove_mob_known(struct mob_known_obj *tmp, struct mob_known_obj **first, hashtable_t *ht)
 {
     if (tmp->next)
         tmp->next->prev = tmp->prev;
@@ -53,7 +53,7 @@ static inline void remove_mob_known(struct mob_known_obj *tmp, struct mob_known_
 }
 
 /** Purge invalid and old objects from list of known mobs/objects */
-void cleanup_mob_knowns(object_t *op, struct mob_known_obj **first, hashtable *ht)
+void cleanup_mob_knowns(object_t *op, struct mob_known_obj **first, hashtable_t *ht)
 {
     struct mob_known_obj   *tmp;
     for (tmp = *first; tmp; tmp = tmp->next)
@@ -70,7 +70,7 @@ void cleanup_mob_knowns(object_t *op, struct mob_known_obj **first, hashtable *h
 }
 
 /** Completely clear list of known mobs or objects */
-void clear_mob_knowns(object_t *op, struct mob_known_obj **first, hashtable *ht)
+void clear_mob_knowns(object_t *op, struct mob_known_obj **first, hashtable_t *ht)
 {
     struct mob_known_obj   *tmp;
     /* TODO: can be optimized (clear hashtable, return all chunks, set list

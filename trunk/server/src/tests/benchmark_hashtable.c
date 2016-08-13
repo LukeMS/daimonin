@@ -66,7 +66,7 @@ END_TEST
 START_TEST(benchmark_hashtable_insert)
 {
    int i,j;
-   hashtable *ht = string_hashtable_new(32);
+   hashtable_t *ht = string_hashtable_new(32);
 
    printf("\nBenchmarking %d x %d hashtable insertions\n", benchmark_repetitions, num_words);
 
@@ -83,7 +83,7 @@ END_TEST
 START_TEST (benchmark_hashtable_insert_erase)
 {
    int i,j;
-   hashtable *ht;
+   hashtable_t *ht;
 
    printf("\nBenchmarking %d x %d hashtable insertions, erasing after every repetition\n", benchmark_repetitions, num_words);
 
@@ -105,7 +105,7 @@ END_TEST
 START_TEST (benchmark_hashtable_find)
 {
    int i,j;
-   hashtable *ht = string_hashtable_new(32);
+   hashtable_t *ht = string_hashtable_new(32);
 
    printf("\nBenchmarking %d x %d hashtable finds\n", benchmark_repetitions, num_words);
 
@@ -134,7 +134,7 @@ END_TEST
 START_TEST (benchmark_hashtable_iterate)
 {
    int i,j = 0;
-   hashtable *ht = string_hashtable_new(32);
+   hashtable_t *ht = string_hashtable_new(32);
    hashtable_iterator_t curr;
 
    printf("\nBenchmarking %d x %d string hashtable iterator iterations\n", benchmark_repetitions, num_words);
@@ -162,7 +162,7 @@ END_TEST
 START_TEST (benchmark_hashtable_iterate_2)
 {
    int i,j = 0;
-   hashtable *ht = pointer_hashtable_new(32);
+   hashtable_t *ht = pointer_hashtable_new(32);
    hashtable_iterator_t curr;
 
    printf("\nBenchmarking %d x %d pointer hashtable iterator iterations\n", benchmark_repetitions, num_words);
@@ -233,7 +233,7 @@ START_TEST (benchmark_hashtable_sizes)
     for(power = 3; (1 << power) < num_words; power++)
     {
         int i,j = 0;
-        hashtable *ht = string_hashtable_new(8);
+        hashtable_t *ht = string_hashtable_new(8);
 
         // Populate the hashtable
         for(j=0; j<(1<<power); j++) {
@@ -315,7 +315,7 @@ START_TEST (benchmark_hashtable_sizes_2)
     for(power = 3; (1 << power) < num_words; power++)
     {
         int i,j = 0;
-        hashtable *ht = pointer_hashtable_new(8);
+        hashtable_t *ht = pointer_hashtable_new(8);
 
         // Populate the hashtable
         for(j=0; j<(1<<power); j++) {

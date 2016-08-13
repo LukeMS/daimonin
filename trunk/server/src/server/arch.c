@@ -28,7 +28,7 @@
 /* IF set, does a little timing on the archetype load. */
 #define TIME_ARCH_LOAD 0
 
-static hashtable *arch_table;
+static hashtable_t *arch_table;
 
 _archetype_global archetype_global;
 
