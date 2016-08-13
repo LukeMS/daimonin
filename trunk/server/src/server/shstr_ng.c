@@ -64,6 +64,21 @@ struct shared_string {
     shstr_t string[0];    /* Area for storing the actual string */
 };
 
+/* SS() outputs the address of its input.
+ *
+ * By default it is assumed the input is a valid shared string which means the
+ * output is always non-NULL. When DEBUG_SHSTR is defined, first check that
+ * the input really is valid, if not log a BUG and output NULL. */
+#if defined DEBUG_SHSTR
+#   define SS(__a) \
+        (((__a) != shstr_find((__a)) && \
+          LOG(llevBug, "BUG:: %s %d: Invalid shstr: %s!\n", __FILE__, __LINE__, STRING_SAFE((__a)))) ? \
+         NULL : ((struct shared_string *)((__a) - offsetof(struct shared_string, string))))
+#else
+#   define SS(__a) \
+        ((struct shared_string *)((__a) - offsetof(struct shared_string, string)))
+#endif
+
 /* Our hashtable of shared strings */
 static hashtable *shared_strings;
 
@@ -225,7 +240,6 @@ shstr_t *shstr_add_lstring(const char *str, int n)
     /* Restore hashing functions */
     shared_strings->hash = stats_string_hash;
     shared_strings->equals = stats_string_key_equals;
-
     return ss->string;
 }
 
@@ -238,18 +252,17 @@ shstr_t *shstr_add_lstring(const char *str, int n)
  */
 shstr_t * shstr_add_refcount(shstr_t* str)
 {
-#ifdef DEBUG_SHSTR
-    const char *tmp_str = shstr_find(str);
-    if (!str || str != tmp_str)
+    struct shared_string  *ss;
+
+    if (!str ||
+        !(ss = SS(str)))
     {
-        LOG(llevBug, "BUG: shstr_add_refcount(shared_string)(): tried to get refcount of an invalid string! >%s<\n", str ? str : ">>NULL<<");
         return NULL;
     }
-#endif
 
     GATHER(add_ref_stats.calls);
-    ++(SS(str)->refcount);
-    /*LOG(llevDebug,"SS: >%s< #%d addref\n", str,SS(str)->refcount);*/
+    ++(ss->refcount);
+    /*LOG(llevDebug,"SS: >%s< #%d addref\n", str,ss->refcount);*/
     return str;
 }
 
@@ -263,7 +276,15 @@ shstr_t * shstr_add_refcount(shstr_t* str)
 
 int shstr_query_refcount(shstr_t *str)
 {
-    return SS(str)->refcount;
+    struct shared_string  *ss;
+
+    if (!str ||
+        !(ss = SS(str)))
+    {
+        return 0;
+    }
+
+    return ss->refcount;
 }
 
 /*
@@ -274,7 +295,7 @@ int shstr_query_refcount(shstr_t *str)
  *      - pointer to identical string or NULL
  */
 
-const char *shstr_find(const char *str)
+shstr_t *shstr_find(const char *str)
 {
     struct shared_string  *ss;
 
@@ -301,33 +322,19 @@ void shstr_free(shstr_t *str)
     struct shared_string  *ss;
 
     /* Lets not make a big song and dance when passed NULL. Means freeing an
-     * already free'd (and NULL'd) shstr is valid (if poiintless), a la free()
+     * already free'd (and NULL'd) shstr is valid (if pointless), a la free()
      * for malloc'd pointers. */
-    if (!str)
+    if (!str ||
+        !(ss = SS(str)))
     {
         return;
     }
-
-    /* we check str is in the hash table - if not, something
-     * is VERY wrong here. We can also be sure, that SS(str) is
-     * a safe operation - except we really messed something
-     * strange up inside the hash table. This will check for
-     * free, wrong or non SS() objects.
-     */
-#ifdef DEBUG_SHSTR
-    const char     *tmp_str = shstr_find(str);
-    if (!str || str != tmp_str)
-    {
-        LOG(llevBug, "BUG: shstr_free(): tried to free a invalid string! >%s<\n", str ? str : ">>NULL<<");
-        return;
-    }
-#endif
 
     GATHER(free_stats.calls);
-
-    ss = SS(str);
     --ss->refcount;
-    if (ss->refcount == 0) {
+
+    if (ss->refcount == 0)
+    {
         s_stats = &free_stats;
         GATHER(free_stats.search);
         hashtable_erase(shared_strings, str);
@@ -354,7 +361,6 @@ void shstr_get_totals(int *entries, int *refs, int *links)
     hashtable_iterator_t i;
 
     *entries = hashtable_size((void *)shared_strings);
-
     *refs = 0;
     *links = 0;
 
