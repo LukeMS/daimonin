@@ -260,7 +260,7 @@ CommArray_s CommandsSA[] =
     {"d_objects",    command_dumpallobjects,    0.0f, 1, CHANNEL_NAME_SA},
     {"d_belowfull",  command_dumpbelowfull,     0.0f, 1, CHANNEL_NAME_SA},
     {"d_below",      command_dumpbelow,         0.0f, 1, CHANNEL_NAME_SA},
-    {"d_hash",       command_sstable,           0.0f, 1, CHANNEL_NAME_SA},
+    {"d_shstr",      shstr_command_dump,        0.0f, 1, CHANNEL_NAME_SA},
     {"check_fd",     command_check_fd,          0.0f, 1, CHANNEL_NAME_SA},
     {"malloc",       command_malloc,            0.0f, 1, CHANNEL_NAME_SA},
 };

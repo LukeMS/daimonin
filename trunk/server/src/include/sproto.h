@@ -204,7 +204,6 @@ int                         command_who(object_t *op, char *params);
 int                         command_malloc(object_t *op, char *params);
 int                         command_mapinfo(object_t *op, char *params);
 int                         command_mspinfo(object_t *op, char *params);
-int                         command_sstable(object_t *op, char *params);
 int                         command_time(object_t *op, char *params);
 int                         command_dumpbelowfull(object_t *op, char *params);
 int                         command_dumpbelow(object_t *op, char *params);

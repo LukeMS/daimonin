@@ -26,20 +26,10 @@
 #ifndef __SHSTR_NG_H
 #define __SHSTR_NG_H
 
-/* enable module statistic.
- * This will add some inc/dec counter to the hash table.
- * small & very small cpu use
- */
-#define SHSTR_STATISTICS
-
 /* SS(string) will return the address of the shared_string struct which
  * contains "string".
  */
 #define SS(x) ((struct shared_string *) ((x) - offsetof(struct shared_string, string)))
-
-#ifndef SHSTR_DUMP_TOTALS
-#define SHSTR_DUMP_TOTALS  1
-#endif
 
 /* So far only used when dealing with artifacts.
  * (now used by alchemy and other code too. Nov 95 b.t).
@@ -88,8 +78,7 @@ extern int      shstr_query_refcount(const char *str);
 extern shstr_t *shstr_find(const char *str);
 extern shstr_t *shstr_add_refcount(const char *str);
 extern void     shstr_free(shstr_t *str);
-extern char    *shstr_dump_statistics(char *msg);
-extern char    *shstr_dump_table(int what);
 extern void     shstr_get_totals(int *entries, int *refs, int *links);
+extern int      shstr_command_dump(object_t *op, char *params);
 
 #endif /* ifndef SHSTR_NG_H */

@@ -688,27 +688,6 @@ static char *PrintMspTerrain(uint32 flags)
     return buf;
 }
 
-int command_sstable(object_t *op, char *params)
-{
-    int     flags   = 0;
-    char   *tmp;
-
-    /* any paramter: dump whole table to the logfile */
-    if (params && *params != 0)
-        flags = SHSTR_DUMP_TOTALS;
-
-    LOG(llevSystem, "HASH TABLE DUMP\n");
-    shstr_dump_statistics(errmsg);
-    if (errmsg[0] != '\0')
-    {
-        ndi(NDI_UNIQUE, 0, op, "%s", errmsg);
-    }
-    tmp = shstr_dump_table(flags);
-    ndi(NDI_UNIQUE, 0, op, "%s", tmp);
-
-    return 0;
-}
-
 /* Writes the current tad to op.
  * Eventually this command will also update the client's clock. */
 int command_time(object_t *op, char *params)
