@@ -48,13 +48,13 @@
     }
 
 /* static functions */
-static treasure        *load_treasure(FILE *fp, int *t_style, int *a_chance);
+static treasure_t        *load_treasure(FILE *fp, int *t_style, int *a_chance);
 static void             change_treasure(struct _change_arch *ca, object_t *op); /* overrule default values */
-static treasurelist    *get_empty_treasurelist(void);
-static treasure        *get_empty_treasure(void);
+static treasurelist_t    *get_empty_treasurelist(void);
+static treasure_t        *get_empty_treasure(void);
 static inline void      set_material_real(object_t *op, struct _change_arch *change_arch);
 static void             create_money_table(void);
-static void             postparse_treasurelist(treasure *t, treasurelist *tl);
+static void             postparse_treasurelist(treasure_t *t, treasurelist_t *tl);
 
 /*
  * Opens LIBDIR/treasure and reads all treasure-declarations from it.
@@ -63,10 +63,10 @@ static void             postparse_treasurelist(treasure *t, treasurelist *tl);
 
 static void init_treasures(FILE *fp)
 {
-    static treasurelist    *previous = NULL; /* important, we call this now recursive */
+    static treasurelist_t    *previous = NULL; /* important, we call this now recursive */
     char                    buf[MEDIUM_BUF], name[MEDIUM_BUF];
-    treasurelist           *tl_tmp;
-    treasure               *t;
+    treasurelist_t           *tl_tmp;
+    treasure_t               *t;
     int                     t_style, a_chance;
     char                    dummy[10];
 
@@ -77,7 +77,7 @@ static void init_treasures(FILE *fp)
             continue;
         if (sscanf(buf, "treasureone %s%[\n\r]", name, dummy) || sscanf(buf, "treasure %s%[\n\r]", name, dummy))
         {
-            treasurelist   *tl  = get_empty_treasurelist();
+            treasurelist_t   *tl  = get_empty_treasurelist();
             SHSTR_FREE_AND_ADD_STRING(tl->listname, name);
             /* check for double used list name */
             for (tl_tmp = first_treasurelist; tl_tmp != NULL; tl_tmp = tl_tmp->next)
@@ -245,7 +245,7 @@ void load_treasures(void)
 {
     FILE                   *fp;
     char                    filename[MEDIUM_BUF];
-    treasurelist           *previous = NULL;
+    treasurelist_t           *previous = NULL;
 
     /* load default treasure list file from /lib */
     sprintf(filename, "%s/%s", settings.datadir, settings.treasures);
@@ -268,9 +268,9 @@ void load_treasures(void)
 }
 
 
-static void postparse_treasurelist(treasure *t, treasurelist *tl)
+static void postparse_treasurelist(treasure_t *t, treasurelist_t *tl)
 {
-    treasurelist   *tl_tmp;
+    treasurelist_t   *tl_tmp;
 
     if (t->item == NULL && t->name == NULL)
         LOG(llevError, "ERROR: Treasurelist %s has element with no name or archetype\n", STRING_SAFE(tl->listname));
@@ -328,10 +328,10 @@ static void create_money_table(void)
  * into an internal treasure structure (very linked lists)
  */
 
-static treasure * load_treasure(FILE *fp, int *t_style, int *a_chance)
+static treasure_t * load_treasure(FILE *fp, int *t_style, int *a_chance)
 {
     char        buf[MEDIUM_BUF], *cp=NULL, variable[MEDIUM_BUF];
-    treasure   *t   = get_empty_treasure();
+    treasure_t   *t   = get_empty_treasure();
     int         value;
     int         start_marker = 0, t_style2, a_chance2;
 
@@ -489,9 +489,9 @@ static treasure * load_treasure(FILE *fp, int *t_style, int *a_chance)
  * Allocate and return the pointer to an empty treasurelist structure.
  */
 
-static treasurelist * get_empty_treasurelist(void)
+static treasurelist_t * get_empty_treasurelist(void)
 {
-    treasurelist   *tl  = (treasurelist *) malloc(sizeof(treasurelist));
+    treasurelist_t   *tl  = (treasurelist_t *) malloc(sizeof(treasurelist_t));
     if (tl == NULL)
         LOG(llevError, "ERROR: get_empty_treasurelist(): OOM.\n");
     tl->listname = NULL;
@@ -526,9 +526,9 @@ static inline void set_change_arch(_change_arch *ca)
  * Allocate and return the pointer to an empty treasure structure.
  */
 
-static treasure * get_empty_treasure(void)
+static treasure_t * get_empty_treasure(void)
 {
-    treasure   *t   = (treasure *) malloc(sizeof(treasure));
+    treasure_t   *t   = (treasure_t *) malloc(sizeof(treasure_t));
     if (t == NULL)
         LOG(llevError, "ERROR: get_empty_treasure(): OOM.\n");
 
@@ -555,10 +555,10 @@ static treasure * get_empty_treasure(void)
  * Searches for the given treasurelist in the globally linked list
  * of treasurelists which has been built by load_treasures().
  */
-treasurelist * find_treasurelist(const char *name)
+treasurelist_t * find_treasurelist(const char *name)
 {
     const char     *tmp = shstr_find(name);
-    treasurelist   *tl;
+    treasurelist_t   *tl;
 
     /* Special cases - randomitems of none is to override default.  If
     * first_treasurelist is null, it means we are on the first pass of
@@ -580,9 +580,9 @@ treasurelist * find_treasurelist(const char *name)
     return NULL;
 }
 
-static inline treasurelist * find_treasurelist_intern(const char *name)
+static inline treasurelist_t * find_treasurelist_intern(const char *name)
 {
-    treasurelist   *tl;
+    treasurelist_t   *tl;
 
     for (tl = first_treasurelist; tl != NULL; tl = tl->next)
     {
@@ -673,7 +673,7 @@ objectlink_t * link_treasurelists(char *liststring, uint32 flags)
 {
     char               *tmp, *parm;
     const char         *name;
-    treasurelist       *tl;
+    treasurelist_t       *tl;
     objectlink_t*list =   NULL, *list_start = NULL;
 
     if (!first_treasurelist)
@@ -934,7 +934,7 @@ void create_treasure_list(struct objectlink_t *t, object_t *op, int flag, int di
     }
 }
 
-int create_treasure(treasurelist *t, object_t *op, int flag, int difficulty, int t_style, int a_chance,
+int create_treasure(treasurelist_t *t, object_t *op, int flag, int difficulty, int t_style, int a_chance,
         int magic, int magic_chance, int tries, struct _change_arch *arch_change)
 {
     int ret = 0;
@@ -971,7 +971,7 @@ int create_treasure(treasurelist *t, object_t *op, int flag, int difficulty, int
  * start with equipment, but only their abilities).
  */
 
-int create_all_treasures(treasure *t, object_t *op, int flag, int difficulty, int t_style, int a_chance,
+int create_all_treasures(treasure_t *t, object_t *op, int flag, int difficulty, int t_style, int a_chance,
                           int magic, int magic_chance, int tries, struct _change_arch *change_arch)
 {
     int     ret = 0;
@@ -1073,11 +1073,11 @@ int create_all_treasures(treasure *t, object_t *op, int flag, int difficulty, in
     return ret;
 }
 
-int create_one_treasure(treasurelist *tl, object_t *op, int flag, int difficulty, int t_style, int a_chance,
+int create_one_treasure(treasurelist_t *tl, object_t *op, int flag, int difficulty, int t_style, int a_chance,
                          int magic, int magic_chance,int tries,struct _change_arch *change_arch)
 {
     int         ret = 0, value, diff_tries = 0;
-    treasure   *t;
+    treasure_t   *t;
     object_t     *tmp;
 
     /*LOG(llevNoLog,"-COT-: %s (%d)\n", tl->name,change_arch?tl->items->change_arch.material_quality:9999); */
@@ -2156,9 +2156,9 @@ int fix_generated_item(object_t **op_ptr, object_t *creator, int difficulty, int
 /*
  * For debugging purposes.  Dumps all treasures recursively (see below).
  */
-void dump_monster_treasure_rec(const char *name, treasure *t, int depth)
+void dump_monster_treasure_rec(const char *name, treasure_t *t, int depth)
 {
-    treasurelist   *tl;
+    treasurelist_t   *tl;
     int             i;
 
     if (depth > 100)
@@ -2200,7 +2200,7 @@ void dump_monster_treasure_rec(const char *name, treasure *t, int depth)
     }
 }
 
-void free_treasurestruct(treasure *t)
+void free_treasurestruct(treasure_t *t)
 {
     if (t->next)
         free_treasurestruct(t->next);
@@ -2219,7 +2219,7 @@ void free_treasurestruct(treasure *t)
 
 void free_all_treasures()
 {
-    treasurelist   *tl, *next;
+    treasurelist_t   *tl, *next;
 
 
     for (tl = first_treasurelist; tl != NULL; tl = next)

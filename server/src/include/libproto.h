@@ -153,7 +153,7 @@ extern recipelist      *get_formulalist(int i);
 extern void             init_formulae(void);
 extern void             check_formulae(void);
 extern void             dump_alchemy(void);
-extern archetype_t       *find_treasure_by_name(treasure *t, char *name, int depth);
+extern archetype_t       *find_treasure_by_name(treasure_t *t, char *name, int depth);
 extern sint64           find_ingred_cost(const char *name);
 extern void             dump_alchemy_costs(void);
 extern const char      *ingred_name(const char *name);

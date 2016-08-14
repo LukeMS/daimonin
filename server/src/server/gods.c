@@ -46,7 +46,7 @@
 // * and limitations to priests */
 //#define MORE_PRIEST_GIFTS
 //
-//static int  god_gives_present(object *op, object *god, treasure *tr);
+//static int  god_gives_present(object *op, object *god, treasure_t *tr);
 //static void follower_remove_similar_item(object *op, object *item);
 //
 //// TODO: look over usage of those two functions and see if we can get
@@ -199,7 +199,7 @@
 //    objectlink *ol;
 //    object     *skillgroup = op->chosen_skill->skillgroup; /* obj. containing god data */
 //    object     *old_god = NULL;                      /* old god */
-//    treasure   *tr;
+//    treasure_t   *tr;
 //    /*    object *item ;*/
 //    int         i;
 //
@@ -472,7 +472,7 @@
 //{
 //    object     *item;
 //    objectlink *ol;
-//    treasure   *tr;
+//    treasure_t   *tr;
 //
 //    if (!god || !god->randomitems)
 //    {
@@ -648,7 +648,7 @@
 //    }
 //}
 //
-//static int god_gives_present(object *op, object *god, treasure *tr)
+//static int god_gives_present(object *op, object *god, treasure_t *tr)
 //{
 //    object *tmp;
 //
@@ -674,7 +674,7 @@
 //{
 //    int         level   = SK_level(op);
 //    objectlink *ol;
-//    treasure   *tr;
+//    treasure_t   *tr;
 //
 //    if (!god || !god->randomitems)
 //    {
@@ -701,7 +701,7 @@
 //            // Treasurelist - generate some treasure for the follower
 //            if (tr->name)
 //            {
-//                treasurelist   *tl  = find_treasurelist(tr->name);
+//                treasurelist_t   *tl  = find_treasurelist(tr->name);
 //                if (tl == NULL)
 //                    continue;
 //                new_draw_info(NDI_UNIQUE, 0, op,

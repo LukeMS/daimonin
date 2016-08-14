@@ -505,6 +505,8 @@ typedef struct rv_cache_t        rv_cache_t;
 typedef struct settings_t        settings_t;
 typedef struct shstr_linked_t    shstr_linked_t;
 typedef struct tiling_t          tiling_t;
+typedef struct treasure_t        treasure_t;
+typedef struct treasurelist_t    treasurelist_t;
 typedef struct view_map_t        view_map_t;
 typedef struct view_msp_t        view_msp_t;
 
@@ -1057,7 +1059,7 @@ EXTERN player_t                  *last_player;
 EXTERN int                      player_active;
 EXTERN int                      player_active_meta;
 EXTERN map_t               *first_map;
-EXTERN treasurelist            *first_treasurelist;
+EXTERN treasurelist_t            *first_treasurelist;
 EXTERN artifactlist_t            *first_artifactlist;
 EXTERN godlink                 *first_god;
 EXTERN racelink                *first_race;

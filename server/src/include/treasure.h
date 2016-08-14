@@ -107,15 +107,15 @@ typedef struct _tlist_tweak
  * is generated (from a generator)
 */
 
-typedef struct treasurestruct
+struct treasure_t
 {
     archetype_t               *item;           /* Which item this link can be */
     const char                 *name;               /* If non null, name of list to use instead */
-    struct treasureliststruct  *tlist; /* this list */
-    struct treasurestruct      *next;       /* Next treasure-item in a linked list */
-    struct treasurestruct      *next_yes;  /* If this item was generated, use */
+    treasurelist_t  *tlist; /* this list */
+    treasure_t      *next;       /* Next treasure-item in a linked list */
+    treasure_t      *next_yes;  /* If this item was generated, use */
     /* this link instead of ->next */
-    struct treasurestruct      *next_no;   /* If this item was not generated, */
+    treasure_t      *next_no;   /* If this item was not generated, */
     /* then continue here */
     int                         t_style;        /* local t_style (will overrule global one) - used from artifacts */
     int                         magic_chance;   /* value from 0-1000. chance of item is magic. */
@@ -135,10 +135,9 @@ typedef struct treasurestruct
     sint16                      chance_fix;     /* will overrule chance: if set (!=-1) it will create 1/chance_single */
     uint8                       chance;             /* Percent chance for this item */
     struct _change_arch         change_arch;  /* override default arch values if set in treasure list */
-} treasure;
+};
 
-
-typedef struct treasureliststruct
+struct treasurelist_t
 {
     const char                 *listname;               /* Usually monster-name/combination */
     int                         t_style;                /* global style (used from artifacts file) */
@@ -149,25 +148,25 @@ typedef struct treasureliststruct
                                                         * total_chance contains the sum of
                                                         * the chance for this list.
                                                         */
-    struct treasureliststruct  *next;   /* Next treasure-item in linked list */
-    struct treasurestruct      *items;      /* Items in this list, linked */
-} treasurelist;
+    treasurelist_t  *next;   /* Next treasure-item in linked list */
+    treasure_t      *items;      /* Items in this list, linked */
+};
 
 extern void            load_treasures(void);
-extern treasurelist   *find_treasurelist(const char *name);
+extern treasurelist_t *find_treasurelist(const char *name);
 extern objectlink_t   *link_treasurelists(char *liststring, uint32 flags);
 extern void            unlink_treasurelists(objectlink_t *list, int flag);
 extern object_t       *generate_treasure(struct objectlink_t *t, int difficulty);
 extern void            create_treasure_list(struct objectlink_t *t, object_t *op, int flag, int difficulty, int a_chance, int tries);
-extern int             create_treasure(treasurelist *t, object_t *op, int flag, int difficulty, int t_style, int a_chance, int magic, int magic_chance, int tries, struct _change_arch *change_arch);
-extern int             create_all_treasures(treasure *t, object_t *op, int flag, int difficulty, int t_style, int a_chance,  int magic, int magic_chance, int tries, struct _change_arch *change_arch);
-extern int             create_one_treasure(treasurelist *tl, object_t *op, int flag, int difficulty, int t_style, int a_chance,  int magic, int magic_chance, int tries, struct _change_arch *change_arch);
+extern int             create_treasure(treasurelist_t *t, object_t *op, int flag, int difficulty, int t_style, int a_chance, int magic, int magic_chance, int tries, struct _change_arch *change_arch);
+extern int             create_all_treasures(treasure_t *t, object_t *op, int flag, int difficulty, int t_style, int a_chance,  int magic, int magic_chance, int tries, struct _change_arch *change_arch);
+extern int             create_one_treasure(treasurelist_t *tl, object_t *op, int flag, int difficulty, int t_style, int a_chance,  int magic, int magic_chance, int tries, struct _change_arch *change_arch);
 extern void            set_abs_magic(object_t *op, int magic);
 extern int             set_ring_bonus(object_t *op, int bonus, int level);
 extern int             get_magic(int diff);
 extern int             fix_generated_item(object_t **op, object_t *creator, int difficulty, int a_chance, int t_style, int max_magic, int chance_magic, int flags);
-extern void            dump_monster_treasure_rec(const char *name, treasure *t, int depth);
-extern void            free_treasurestruct(treasure *t);
+extern void            dump_monster_treasure_rec(const char *name, treasure_t *t, int depth);
+extern void            free_treasurestruct(treasure_t *t);
 extern void            free_all_treasures(void);
 extern void            dump_monster_treasure(const char *name);
 extern int             get_enviroment_level(object_t *op);

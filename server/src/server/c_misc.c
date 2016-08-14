@@ -120,7 +120,7 @@ void malloc_info(object_t *op)
 {
     int             nrofmaps, fd;
     int             nrm = 0, mapmem = 0, anr, anims, sum_alloc = 0, sum_used = 0, i, tlnr, alnr;
-    treasurelist   *tl;
+    treasurelist_t   *tl;
     map_t      *m;
     archetype_t      *at;
     artifactlist_t   *al;
@@ -179,9 +179,9 @@ void malloc_info(object_t *op)
     sum_alloc += i; sum_used += i;
     ndi(NDI_UNIQUE, 0, op, "%4d spells:          %8d", NROFREALSPELLS, i = (NROFREALSPELLS * sizeof(spell)));
     sum_alloc += i; sum_used += i;
-    ndi(NDI_UNIQUE, 0, op, "%4d treasurelists    %8d", tlnr, i = (tlnr * sizeof(treasurelist)));
+    ndi(NDI_UNIQUE, 0, op, "%4d treasurelists    %8d", tlnr, i = (tlnr * sizeof(treasurelist_t)));
     sum_alloc += i; sum_used += i;
-    ndi(NDI_UNIQUE, 0, op, "%4ld treasures        %8d", nroftreasures, i = (nroftreasures * sizeof(treasure)));
+    ndi(NDI_UNIQUE, 0, op, "%4ld treasures        %8d", nroftreasures, i = (nroftreasures * sizeof(treasure_t)));
     sum_alloc += i; sum_used += i;
     ndi(NDI_UNIQUE, 0, op, "%4ld artifacts        %8d", nrofartifacts, i = (nrofartifacts * sizeof(artifact_t)));
     sum_alloc += i; sum_used += i;
