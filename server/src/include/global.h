@@ -486,6 +486,7 @@ typedef int tiling_direction_t;
  * Older code tended (inconsistently) to use #pragma pack (on Windows). Don't
  * do this. */
 typedef struct archetype_t       archetype_t;
+typedef struct artifact_t        artifact_t;
 typedef struct artifactlist_t    artifactlist_t;
 typedef struct attack_name_t     attack_name_t;
 typedef struct ban_t             ban_t;

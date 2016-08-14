@@ -75,7 +75,7 @@
 #define YY_DECL int lex_load(object_t *op, int mapflags)
 static char *yval();
 static object_t *singularity;
-static artifact *amask_art;
+static artifact_t *amask_art;
 
 static void *cur_buffer; /* thats needed to track the used buffers for recursive calling */
 static int object_load_flag;
@@ -134,7 +134,7 @@ WS	[ \t]*{NL}?
 			  * to adjust here speed.
 			  */
 			if (op->arch) {
-				artifact *tmp_art;
+				artifact_t *tmp_art;
 			    object_t *tmp = NULL;
 				float old_sleft,old_speed;
 				char *yv = yval();
