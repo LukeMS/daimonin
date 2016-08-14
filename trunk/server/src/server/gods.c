@@ -57,7 +57,7 @@
 //
 //    if (name && name != shstr_cons.none)
 //    {
-//        godlink    *gl;
+//        godlink_t    *gl;
 //        for (gl = first_god; gl; gl = gl->next)
 //            if (!strncmp(name, gl->name, MIN((int) strlen(gl->name), nmlen)))
 //                break;
@@ -73,7 +73,7 @@
 //
 //    if (name && name != shstr_cons.none)
 //    {
-//        godlink    *gl;
+//        godlink_t    *gl;
 //        for (gl = first_god; gl; gl = gl->next)
 //            if (!strcmp(name, gl->name))
 //                break;
@@ -444,7 +444,7 @@
 //    {
 //        if (!op->title)
 //        {
-//            godlink *gl;
+//            godlink_t *gl;
 //            int      godnr;
 //
 //            for (gl = first_god; gl; gl = gl->next)
@@ -999,9 +999,9 @@
 #else
 #include "global.h"
 
-static godlink * init_godslist()
+static godlink_t * init_godslist()
 {
-    godlink    *gl  = (godlink *) malloc(sizeof(godlink));
+    godlink_t    *gl  = (godlink_t *) malloc(sizeof(godlink_t));
     if (gl == NULL)
         LOG(llevError, "ERROR: init_godslist(): OOM.\n");
     gl->name = NULL;        /* how to describe the god to the player */
@@ -1031,7 +1031,7 @@ void init_gods(void)
 /* add_god_to_list()- called only from init_gods */
 void add_god_to_list(archetype_t *god_arch)
 {
-    godlink    *god;
+    godlink_t    *god;
 
     if (!god_arch)
     {
@@ -1069,7 +1069,7 @@ int baptize_altar(object_t *op)
      * already dedicated. */
     if (!op->title)
     {
-        godlink    *god = get_rand_god();
+        godlink_t    *god = get_rand_god();
         if (!god || !god->name)
         {
             LOG(llevBug, "BUG: baptise_altar(): bizarre nameless god!\n");
@@ -1087,9 +1087,9 @@ int baptize_altar(object_t *op)
     return 0;
 }
 
-godlink * get_rand_god(void)
+godlink_t * get_rand_god(void)
 {
-    godlink    *god = first_god;
+    godlink_t    *god = first_god;
     int         i;
 
     if (god)
@@ -1106,7 +1106,7 @@ godlink * get_rand_god(void)
  * We need to be VERY carefull about using this, as we
  * are returning a pointer to the CLONE object. -b.t.
  */
-object_t * pntr_to_god_obj(godlink *godlnk)
+object_t * pntr_to_god_obj(godlink_t *godlnk)
 {
     object_t *god = NULL;
 
@@ -1117,7 +1117,7 @@ object_t * pntr_to_god_obj(godlink *godlnk)
 
 void free_all_god()
 {
-    godlink    *god, *godnext;
+    godlink_t    *god, *godnext;
 
     LOG(llevDebug, "Freeing god information\n");
     for (god = first_god; god; god = godnext)
@@ -1132,7 +1132,7 @@ void free_all_god()
 void dump_gods()
 {
 #ifdef DUMP_SWITCHES
-    godlink    *glist;
+    godlink_t    *glist;
 
     LOG(llevInfo, "\n");
     for (glist = first_god; glist; glist = glist->next)
@@ -1252,7 +1252,7 @@ int lookup_god_by_name(const char *name)
 
     if (name && name != shstr_cons.none)
     {
-        godlink    *gl;
+        godlink_t    *gl;
         for (gl = first_god; gl; gl = gl->next)
             if (!strncmp(name, gl->name, MIN((int) strlen(gl->name), nmlen)))
                 break;
@@ -1308,7 +1308,7 @@ const char *determine_god(object_t *op)
     {
         if (!op->title)
         {
-            godlink *gl;
+            godlink_t *gl;
             int      godnr;
 
             for (gl = first_god; gl; gl = gl->next)
@@ -1338,7 +1338,7 @@ object_t * find_god(const char *name)
 
     if (name && name != shstr_cons.none)
     {
-        godlink    *gl;
+        godlink_t    *gl;
         for (gl = first_god; gl; gl = gl->next)
             if (!strcmp(name, gl->name))
                 break;
