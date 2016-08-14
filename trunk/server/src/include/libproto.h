@@ -33,15 +33,6 @@ extern int              find_animation(char *name);
 extern void             animate_object(object_t *op, int count);
 /* arch.c */
 /* artifact.c */
-extern void             load_artifacts(int mode);
-extern inline artifactlist *find_artifactlist(int type);
-extern artifact        *find_artifact(const char *name);
-extern void             dump_artifacts(void);
-extern void             add_artifact_archetype_type(void);
-extern void             give_artifact_abilities(object_t *op, artifact *art);
-extern int              generate_artifact(object_t *op, int difficulty, int t_style, int a_chance);
-extern void             free_artifactlist(artifactlist *al);
-extern int              legal_artifact_combination(object_t *op, artifact *art);
 /* button.c */
 extern void             signal_connection(object_t *op, object_t *activator, object_t *originator, map_t *m);
 extern void             update_button(object_t *op, object_t *activator, object_t *originator);

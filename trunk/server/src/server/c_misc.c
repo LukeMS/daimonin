@@ -123,7 +123,7 @@ void malloc_info(object_t *op)
     treasurelist   *tl;
     map_t      *m;
     archetype_t      *at;
-    artifactlist   *al;
+    artifactlist_t   *al;
 
     for (tl = first_treasurelist,tlnr = 0; tl != NULL; tl = tl->next,tlnr++)
         ;
@@ -187,7 +187,7 @@ void malloc_info(object_t *op)
     sum_alloc += i; sum_used += i;
     ndi(NDI_UNIQUE, 0, op, "%4ld artifacts strngs %8d", nrofallowedstr, i = (nrofallowedstr * sizeof(shstr_linked_t)));
     sum_alloc += i;sum_used += i;
-    ndi(NDI_UNIQUE, 0, op, "%4d artifactlists    %8d", alnr, i = (alnr * sizeof(artifactlist)));
+    ndi(NDI_UNIQUE, 0, op, "%4d artifactlists    %8d", alnr, i = (alnr * sizeof(artifactlist_t)));
     sum_alloc += i; sum_used += i;
 
     ndi(NDI_UNIQUE, 0, op, "Total space allocated:%8d", sum_alloc);

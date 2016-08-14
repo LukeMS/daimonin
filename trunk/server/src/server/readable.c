@@ -1153,7 +1153,7 @@ char * mon_info_msg(int level, int booksize)
 
 char * artifact_msg(int level, int booksize)
 {
-    artifactlist   *al              = NULL;
+    artifactlist_t   *al              = NULL;
     artifact       *art;
     int             chance, i, type, index;
     sint64            val;

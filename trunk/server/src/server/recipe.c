@@ -385,7 +385,7 @@ sint64 find_ingred_cost(const char *name)
 {
     archetype_t      *at;
     /*  archetype_t    *at2;*/
-    artifactlist   *al;
+    artifactlist_t   *al;
     artifact       *art;
     long            mult;
     char           *cp;
@@ -624,7 +624,7 @@ int strtoint(const char *buf)
 artifact * locate_recipe_artifact(recipe *rp)
 {
     object_t         *item    = get_archetype(rp->arch_name);
-    artifactlist   *at      = NULL;
+    artifactlist_t   *at      = NULL;
     artifact       *art     = NULL;
 
     if (!item)

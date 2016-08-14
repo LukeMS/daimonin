@@ -42,14 +42,24 @@ typedef struct artifactstruct
     uint8                    flags;            /* artifact flags */
 } artifact;
 
-typedef struct artifactliststruct
+struct artifactlist_t
 {
-    struct artifactliststruct  *next;
+    artifactlist_t  *next;
     struct artifactstruct      *items;
     uint16                      total_chance;   /* sum of chance for are artifacts on this list */
     sint16                      type;           /* Object type that this list represents.
                                                          * -1 are "Allowed none" items. They are called explicit by name
                                                          */
-} artifactlist;
+};
+
+extern void            load_artifacts(int mode);
+extern artifactlist_t *find_artifactlist(int type);
+extern artifact       *find_artifact(const char *name);
+extern void            dump_artifacts(void);
+extern void            add_artifact_archetype_type(void);
+extern void            give_artifact_abilities(object_t *op, artifact *art);
+extern int             generate_artifact(object_t *op, int difficulty, int t_style, int a_chance);
+extern void            free_artifactlist(artifactlist_t *al);
+extern int             legal_artifact_combination(object_t *op, artifact *art);
 
 #endif /* ifndef __ARTIFACT_H */

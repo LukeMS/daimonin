@@ -713,7 +713,7 @@ int command_listarch(object_t *op, char *params)
 {
     int             atype;
     archetype_t      *at;
-    artifactlist   *al;
+    artifactlist_t   *al;
     artifact       *art = NULL;
     char            buf[MEDIUM_BUF] = "";
 
