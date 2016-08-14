@@ -26,21 +26,21 @@
 #ifndef __GOD_H
 #define __GOD_H
 
-typedef struct glnk
+struct godlink_t
 {
     /* Used to link together the gods */
     const char     *name;           /* name of this god */
     archetype_t   *arch;       /* pointer to the archetype of this god */
     int             id;                 /* id of the god */
     char           *pantheon;           /* the name of the group this god belongs to */
-    struct glnk    *next;
-} godlink;
+    godlink_t    *next;
+};
 
 extern void        init_gods(void);
 extern void        add_god_to_list(archetype_t *god_arch);
 extern int         baptize_altar(object_t *op);
-extern godlink    *get_rand_god(void);
-extern object_t   *pntr_to_god_obj(godlink *godlnk);
+extern godlink_t  *get_rand_god(void);
+extern object_t   *pntr_to_god_obj(godlink_t *godlnk);
 extern void        free_all_god(void);
 extern void        dump_gods(void);
 extern int         lookup_god_by_name(const char *name);

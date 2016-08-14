@@ -490,6 +490,7 @@ typedef struct artifact_t        artifact_t;
 typedef struct artifactlist_t    artifactlist_t;
 typedef struct attack_name_t     attack_name_t;
 typedef struct ban_t             ban_t;
+typedef struct godlink_t         godlink_t;
 typedef struct hashtable_t       hashtable_t;
 typedef struct living_t          living_t;
 typedef struct map_t             map_t;
@@ -1061,7 +1062,7 @@ EXTERN int                      player_active_meta;
 EXTERN map_t               *first_map;
 EXTERN treasurelist_t            *first_treasurelist;
 EXTERN artifactlist_t            *first_artifactlist;
-EXTERN godlink                 *first_god;
+EXTERN godlink_t                 *first_god;
 EXTERN racelink                *first_race;
 
 /*
