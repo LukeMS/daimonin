@@ -28,18 +28,18 @@
 static hashtable_t *art_table;
 
 /* quick table to access artifact list for types */
-static artifactlist *art_type_table[ARCH_MAX_TYPES];
+static artifactlist_t *art_type_table[ARCH_MAX_TYPES];
 
 /*
 * Allocate and return the pointer to an empty artifactlist structure.
 */
-static artifactlist * get_empty_artifactlist(void)
+static artifactlist_t * get_empty_artifactlist(void)
 {
-    artifactlist   *tl  = (artifactlist *) malloc(sizeof(artifactlist));
+    artifactlist_t   *tl  = (artifactlist_t *) malloc(sizeof(artifactlist_t));
 
     if (tl == NULL)
         LOG(llevError, "ERROR: get_empty_artifactlist(): OOM!\n");
-    memset(tl, 0, sizeof(artifactlist));
+    memset(tl, 0, sizeof(artifactlist_t));
 
     return tl;
 }
@@ -61,7 +61,7 @@ static artifact * get_empty_artifact(void)
 /* fill the artifacts table */
 static void fill_artifact_table(void)
 {
-    artifactlist   *al;
+    artifactlist_t   *al;
     artifact       *art;
 
     art_table = string_hashtable_new(4096);
@@ -95,7 +95,7 @@ static void init_artifacts(FILE *fp)
     artifact       *art             = NULL;
     shstr_linked_t    *tmp;
     int             lcount, value, none_flag = 0, editor_flag = 0;
-    artifactlist   *al;
+    artifactlist_t   *al;
     char            buf_text[10 * 1024]; /* ok, 10k arch text... if we bug here, we have a design problem */
     object_t            *dummy_obj=get_object(), *parse_obj;
 
@@ -445,7 +445,7 @@ void load_artifacts(int mode)
 {
     static int      has_been_inited = 0;
     FILE           *fp;
-    artifactlist   *al;
+    artifactlist_t   *al;
     artifact       *art;
     char            filename[MEDIUM_BUF];
 
@@ -509,7 +509,7 @@ void load_artifacts(int mode)
 * Searches the artifact lists and returns one that has the same type
 * of objects on it.
 */
-inline artifactlist * find_artifactlist(int type)
+artifactlist_t * find_artifactlist(int type)
 {
     return art_type_table[type+1];
 }
@@ -527,7 +527,7 @@ artifact *find_artifact(const char *name)
 
 void add_artifact_archetype_type(void)
 {
-    artifactlist   *al;
+    artifactlist_t   *al;
     artifact       *art = NULL;
 
     for (al = first_artifactlist; al != NULL; al = al->next)
@@ -617,7 +617,7 @@ int legal_artifact_combination(object_t *op, artifact *art)
  */
 int generate_artifact(object_t *op, int difficulty, int t_style, int a_chance)
 {
-    artifactlist   *al;
+    artifactlist_t   *al;
     artifact       *art;
     artifact       *art_tmp = NULL;
     int             i, style_abs, chance_tmp = 0;
@@ -735,9 +735,9 @@ static void free_artifact(artifact *at)
 /*
  * TODO: this should also clean up the hashtable
  */
-void free_artifactlist(artifactlist *al)
+void free_artifactlist(artifactlist_t *al)
 {
-    artifactlist   *nextal;
+    artifactlist_t   *nextal;
     for (al = first_artifactlist; al != NULL; al = nextal)
     {
         nextal = al->next;
@@ -755,7 +755,7 @@ void free_artifactlist(artifactlist *al)
 
 void dump_artifacts()
 {
-    artifactlist   *al;
+    artifactlist_t   *al;
     artifact       *art;
     shstr_linked_t    *next;
 

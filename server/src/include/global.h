@@ -486,6 +486,7 @@ typedef int tiling_direction_t;
  * Older code tended (inconsistently) to use #pragma pack (on Windows). Don't
  * do this. */
 typedef struct archetype_t       archetype_t;
+typedef struct artifactlist_t    artifactlist_t;
 typedef struct attack_name_t     attack_name_t;
 typedef struct ban_t             ban_t;
 typedef struct hashtable_t       hashtable_t;
@@ -1056,7 +1057,7 @@ EXTERN int                      player_active;
 EXTERN int                      player_active_meta;
 EXTERN map_t               *first_map;
 EXTERN treasurelist            *first_treasurelist;
-EXTERN artifactlist            *first_artifactlist;
+EXTERN artifactlist_t            *first_artifactlist;
 EXTERN godlink                 *first_god;
 EXTERN racelink                *first_race;
 
