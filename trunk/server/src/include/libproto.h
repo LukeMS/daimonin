@@ -165,28 +165,6 @@ extern recipe          *get_random_recipe(recipelist *rpl);
 extern void             free_all_recipes(void);
 /* shstr.c */
 /* treasure.c */
-extern void             load_treasures(void);
-extern treasurelist    *find_treasurelist(const char *name);
-extern objectlink_t      *link_treasurelists(char *liststring, uint32 flags);
-extern void             unlink_treasurelists(objectlink_t *list, int flag);
-extern object_t          *generate_treasure(struct objectlink_t *t, int difficulty);
-extern void             create_treasure_list(struct objectlink_t *t, object_t *op, int flag, int difficulty, int a_chance, int tries);
-extern int              create_treasure(treasurelist *t, object_t *op, int flag, int difficulty, int t_style,
-                                        int a_chance, int magic, int magic_chance, int tries, struct _change_arch *change_arch);
-extern int              create_all_treasures(treasure *t, object_t *op, int flag, int difficulty, int t_style,
-                                             int a_chance,  int magic, int magic_chance, int tries, struct _change_arch *change_arch);
-extern int              create_one_treasure(treasurelist *tl, object_t *op, int flag, int difficulty, int t_style,
-                                            int a_chance,  int magic, int magic_chance, int tries, struct _change_arch *change_arch);
-extern void             set_abs_magic(object_t *op, int magic);
-extern int              set_ring_bonus(object_t *op, int bonus, int level);
-extern int              get_magic(int diff);
-extern int              fix_generated_item(object_t **op, object_t *creator, int difficulty, int a_chance, int t_style,
-                                           int max_magic, int chance_magic, int flags);
-extern void             dump_monster_treasure_rec(const char *name, treasure *t, int depth);
-extern void             free_treasurestruct(treasure *t);
-extern void             free_all_treasures(void);
-extern void             dump_monster_treasure(const char *name);
-extern int              get_enviroment_level(object_t *op);
 /* utils.c */
 extern int              random_roll(int min, int max);
 extern int              look_up_spell_name(const char *spname);
