@@ -3421,7 +3421,7 @@ void move_fired_arch(object_t *op)
 //{
 //    char        buf[MEDIUM_BUF], *race;
 //    int         racenr, mon_nr, i;
-//    racelink   *list;
+//    racelink_t   *list;
 //    objectlink *tobl;
 //    object     *otmp;
 //

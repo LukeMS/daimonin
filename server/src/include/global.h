@@ -501,6 +501,7 @@ typedef struct object_t          object_t;
 typedef struct objectlink_t      objectlink_t;
 typedef struct player_t          player_t;
 typedef struct player_template_t player_template_t;
+typedef struct racelink_t        racelink_t;
 typedef struct rv_t              rv_t;
 typedef struct rv_cache_t        rv_cache_t;
 typedef struct settings_t        settings_t;
@@ -1063,7 +1064,7 @@ EXTERN map_t               *first_map;
 EXTERN treasurelist_t            *first_treasurelist;
 EXTERN artifactlist_t            *first_artifactlist;
 EXTERN godlink_t                 *first_god;
-EXTERN racelink                *first_race;
+EXTERN racelink_t                *first_race;
 
 /*
  * Variables set by different flags (see init.c):

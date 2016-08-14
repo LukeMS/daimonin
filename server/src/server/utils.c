@@ -65,9 +65,9 @@ int look_up_spell_name(const char *spname)
 }
 
 
-racelink * find_racelink(const char *name)
+racelink_t * find_racelink(const char *name)
 {
-    racelink   *test    = NULL;
+    racelink_t   *test    = NULL;
 
     if (name && first_race)
         for (test = first_race; test && test != test->next; test = test->next)

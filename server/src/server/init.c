@@ -755,7 +755,7 @@ static void init_signals()
 
 static void add_ai_to_racelist(const char *race_name, archetype_t *op)
 {
-    racelink   *race;
+    racelink_t   *race;
 
     if (!op || !race_name)
         return;
@@ -775,7 +775,7 @@ static void add_ai_to_racelist(const char *race_name, archetype_t *op)
 
 static void add_corpse_to_racelist(const char *race_name, archetype_t *op)
 {
-    racelink   *race;
+    racelink_t   *race;
 
     if (!op || !race_name)
         return;
@@ -790,11 +790,11 @@ static void add_corpse_to_racelist(const char *race_name, archetype_t *op)
         race->corpse = op;
 }
 
-static racelink * get_racelist()
+static racelink_t * get_racelist()
 {
-    racelink   *list;
+    racelink_t   *list;
 
-    list = (racelink *) malloc(sizeof(racelink));
+    list = (racelink_t *) malloc(sizeof(racelink_t));
     list->name = NULL;
     list->corpse = NULL;
     list->nrof = 0;
@@ -811,7 +811,7 @@ static racelink * get_racelist()
  */
 void free_racelists()
 {
-    racelink     *list,
+    racelink_t     *list,
                  *next;
     objectlink_t *tmp;
 
@@ -831,7 +831,7 @@ void free_racelists()
 
 static void add_to_racelist(const char *race_name, object_t *op)
 {
-    racelink   *race;
+    racelink_t   *race;
 
     if (!op || !race_name)
         return;
@@ -860,7 +860,7 @@ static void add_to_racelist(const char *race_name, object_t *op)
 
 static void dump_races()
 {
-    racelink   *list;
+    racelink_t   *list;
     objectlink_t *tmp;
     for (list = first_race; list; list = list->next)
     {
@@ -881,7 +881,7 @@ static void dump_races()
 void init_races()
 {
     archetype_t  *at;
-    racelink   *list;
+    racelink_t   *list;
     static int  init_done   = 0;
     int i, prev_index;
 
