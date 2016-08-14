@@ -336,11 +336,6 @@ void                        write_gmaster_file(void);
 void                        update_gmaster_file(void);
 void                        free_gmaster_list(void);
 /* gods.c */
-int                         lookup_god_by_name(const char *name);
-const char                 *determine_god(object_t *op);
-object_t                     *find_god(const char *name);
-void                        pray_at_altar(object_t *pl, object_t *altar);
-void                        become_follower(object_t *op, object_t *new_god);
 /* init.c */
 char                       *version_string(void);
 void                        init(int argc, char **argv);

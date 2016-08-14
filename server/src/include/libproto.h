@@ -62,13 +62,6 @@ extern object_t          *guild_get(player_t *pl, char *name);
 extern object_t          *guild_join(player_t *pl, char *name, int s1_group, int s1_value, int s2_group, int s2_value, int s3_group, int s3_value);
 extern void             guild_leave(player_t *pl);
 /* holy.c */
-extern void             init_gods(void);
-extern void             add_god_to_list(archetype_t *god_arch);
-extern int              baptize_altar(object_t *op);
-extern godlink         *get_rand_god(void);
-extern object_t          *pntr_to_god_obj(godlink *godlnk);
-extern void             free_all_god(void);
-extern void             dump_gods(void);
 /* image.c */
 extern int              ReadBmapNames(void);
 extern int              FindFace(const char *name, int error);

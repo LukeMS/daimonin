@@ -36,4 +36,17 @@ typedef struct glnk
     struct glnk    *next;
 } godlink;
 
+extern void        init_gods(void);
+extern void        add_god_to_list(archetype_t *god_arch);
+extern int         baptize_altar(object_t *op);
+extern godlink    *get_rand_god(void);
+extern object_t   *pntr_to_god_obj(godlink *godlnk);
+extern void        free_all_god(void);
+extern void        dump_gods(void);
+extern int         lookup_god_by_name(const char *name);
+extern const char *determine_god(object_t *op);
+extern object_t   *find_god(const char *name);
+extern void        pray_at_altar(object_t *pl, object_t *altar);
+extern void        become_follower(object_t *op, object_t *new_god);
+
 #endif /* ifndef __GOD_H */
