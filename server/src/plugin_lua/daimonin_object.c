@@ -1015,7 +1015,7 @@ static int GameObject_DeleteInstance(lua_State *L)
 static int GameObject_CreateArtifact(lua_State *L)
 {
     char *name;
-    artifact *art;
+    artifact_t *art;
     lua_object *self, *whatptr;
 
     get_lua_args(L, "OOs", &self, &whatptr, &name);

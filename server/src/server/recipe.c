@@ -283,7 +283,7 @@ void dump_alchemy(void)
             num_ingred > 1 ? "s." : ".",fl->number,fl->total_chance);
         for (formula = fl->items; formula != NULL; formula = formula->next)
         {
-            artifact   *art = NULL;
+            artifact_t   *art = NULL;
             char        buf[MEDIUM_BUF], tmpbuf[MEDIUM_BUF], *string;
 
             strncpy(tmpbuf, formula->arch_name, MEDIUM_BUF - 1);
