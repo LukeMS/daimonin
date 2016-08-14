@@ -2123,7 +2123,7 @@ int fix_generated_item(object_t **op_ptr, object_t *creator, int difficulty, int
               if (op->slaying == shstr_cons.none) /* compare hash ptrs */
               {
                   int           tmp = RANDOM() % global_race_counter;
-                  racelink     *list;
+                  racelink_t     *list;
 
                   /* get the right race */
                   for (list = first_race; list && tmp; list = list->next, tmp--)

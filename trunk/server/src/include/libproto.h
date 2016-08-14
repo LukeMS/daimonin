@@ -161,7 +161,7 @@ extern void             free_all_recipes(void);
 /* utils.c */
 extern int              random_roll(int min, int max);
 extern int              look_up_spell_name(const char *spname);
-extern racelink        *find_racelink(const char *name);
+extern racelink_t        *find_racelink(const char *name);
 extern char            *cleanup_string(char *ustring);
 extern char            *get_token(char *string, char *token, uint8 qflag);
 extern int              buf_overflow(const char *buf1, const char *buf2, int bufsize);

@@ -27,21 +27,21 @@
 #define __RACE_H
 
 /* thats the race list - init is in init.c */
-typedef struct ralnk
+struct racelink_t
 {
     /* Used to link the race lists together */
     const char                       *name;       /* name of this race entry */
     int                               nrof;       /* nrof things belonging to this race */
     archetype_t                     *corpse; /* thats the default corpse of this race */
-    struct objectlink_t                     *member; /* linked object list of things belonging to this race */
-    struct ralnk                     *next;
+    objectlink_t                     *member; /* linked object list of things belonging to this race */
+    racelink_t                     *next;
     struct mob_behaviourset          *ai; /* That is the default ai for this race */
 
     // The first and last indices of the start_locations array in map.c
     // that match up to this race. Used to pick a random location.
     sint8                             first_start_location;
     sint8                             last_start_location;
-} racelink;
+};
 
 #define RACE_TYPE_NONE 0
 

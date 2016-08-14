@@ -916,7 +916,7 @@ struct mob_behaviourset * setup_behaviours(object_t *op)
         }
         else if (op->race)
         {
-            racelink   *race    = find_racelink(op->race);
+            racelink_t   *race    = find_racelink(op->race);
             if (race && race->ai)
             {
                 //                LOG(llevDebug,"parse_behaviourconfig(): found race AI for %s.\n", STRING_OBJ_NAME(op));
