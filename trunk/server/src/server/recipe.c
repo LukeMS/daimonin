@@ -105,7 +105,7 @@ static int check_recipe(recipe *rp)
 {
     if (find_archetype(rp->arch_name) != NULL)
     {
-        artifact   *art = locate_recipe_artifact(rp);
+        artifact_t   *art = locate_recipe_artifact(rp);
         if (!art && rp->title != shstr_cons.NONE)
         {
             LOG(llevBug, "\n BUG: Formula %s of %s has no artifact.\n", rp->arch_name, rp->title);
@@ -386,7 +386,7 @@ sint64 find_ingred_cost(const char *name)
     archetype_t      *at;
     /*  archetype_t    *at2;*/
     artifactlist_t   *al;
-    artifact       *art;
+    artifact_t       *art;
     long            mult;
     char           *cp;
     char            part1[100];
@@ -487,7 +487,7 @@ void dump_alchemy_costs(void)
             num_ingred > 1 ? "s." : ".",fl->number,fl->total_chance);
         for (formula = fl->items; formula != NULL; formula = formula->next)
         {
-            artifact   *art = NULL;
+            artifact_t   *art = NULL;
             archetype_t  *at  = NULL;
             char        buf[MEDIUM_BUF], tmpbuf[MEDIUM_BUF], *string;
 
@@ -621,14 +621,14 @@ int strtoint(const char *buf)
     return val * mult;
 }
 
-artifact * locate_recipe_artifact(recipe *rp)
+artifact_t * locate_recipe_artifact(recipe *rp)
 {
     object_t         *item    = get_archetype(rp->arch_name);
     artifactlist_t   *at      = NULL;
-    artifact       *art     = NULL;
+    artifact_t       *art     = NULL;
 
     if (!item)
-        return (artifact *) NULL;
+        return (artifact_t *) NULL;
 
     if ((at = find_artifactlist(item->type)))
         for (art = at->items; art; art = art->next)

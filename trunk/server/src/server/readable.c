@@ -1154,7 +1154,7 @@ char * mon_info_msg(int level, int booksize)
 char * artifact_msg(int level, int booksize)
 {
     artifactlist_t   *al              = NULL;
-    artifact       *art;
+    artifact_t       *art;
     int             chance, i, type, index;
     sint64            val;
     int             book_entries    = level > 5 ? RANDOM() % 3 + RANDOM() % 3 + 2 : RANDOM() % level + 1;

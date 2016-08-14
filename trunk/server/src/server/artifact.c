@@ -47,13 +47,13 @@ static artifactlist_t * get_empty_artifactlist(void)
 /*
  * Allocate and return the pointer to an empty artifact structure.
  */
-static artifact * get_empty_artifact(void)
+static artifact_t * get_empty_artifact(void)
 {
-    artifact   *t   = (artifact *) malloc(sizeof(artifact));
+    artifact_t   *t   = (artifact_t *) malloc(sizeof(artifact_t));
 
     if (t == NULL)
         LOG(llevError, "ERROR: get_empty_artifact(): OOM!\n");
-    memset(t, 0, sizeof(artifact));
+    memset(t, 0, sizeof(artifact_t));
 
     return t;
 }
@@ -62,7 +62,7 @@ static artifact * get_empty_artifact(void)
 static void fill_artifact_table(void)
 {
     artifactlist_t   *al;
-    artifact       *art;
+    artifact_t       *art;
 
     art_table = string_hashtable_new(4096);
 
@@ -92,7 +92,7 @@ static void init_artifacts(FILE *fp)
     archetype_t      *atemp;
     long            old_pos, file_pos;
     char            buf[LARGE_BUF], *cp, *next; // buf must be large so we can have a big Allowed line.
-    artifact       *art             = NULL;
+    artifact_t       *art             = NULL;
     shstr_linked_t    *tmp;
     int             lcount, value, none_flag = 0, editor_flag = 0;
     artifactlist_t   *al;
@@ -446,7 +446,7 @@ void load_artifacts(int mode)
     static int      has_been_inited = 0;
     FILE           *fp;
     artifactlist_t   *al;
-    artifact       *art;
+    artifact_t       *art;
     char            filename[MEDIUM_BUF];
 
     if (has_been_inited >= mode)
@@ -517,18 +517,18 @@ artifactlist_t * find_artifactlist(int type)
 /*
  * find a artifact entry by name
  */
-artifact *find_artifact(const char *name)
+artifact_t *find_artifact(const char *name)
 {
     if (name == NULL)
         return NULL;
 
-    return (artifact *)hashtable_find(art_table, name);
+    return (artifact_t *)hashtable_find(art_table, name);
 }
 
 void add_artifact_archetype_type(void)
 {
     artifactlist_t   *al;
-    artifact       *art = NULL;
+    artifact_t       *art = NULL;
 
     for (al = first_artifactlist; al != NULL; al = al->next)
     {
@@ -549,7 +549,7 @@ void add_artifact_archetype_type(void)
  * Fixes the given object, giving it the abilities and titles
  * it should have due to the second artifact-template.
  */
-void give_artifact_abilities(object_t *op, artifact *art)
+void give_artifact_abilities(object_t *op, artifact_t *art)
 {
     sint64 tmp_value   = op->value;
 
@@ -577,7 +577,7 @@ void give_artifact_abilities(object_t *op, artifact *art)
     return;
 }
 
-int legal_artifact_combination(object_t *op, artifact *art)
+int legal_artifact_combination(object_t *op, artifact_t *art)
 {
     int             neg, success = 0;
     shstr_linked_t    *tmp;
@@ -618,8 +618,8 @@ int legal_artifact_combination(object_t *op, artifact *art)
 int generate_artifact(object_t *op, int difficulty, int t_style, int a_chance)
 {
     artifactlist_t   *al;
-    artifact       *art;
-    artifact       *art_tmp = NULL;
+    artifact_t       *art;
+    artifact_t       *art_tmp = NULL;
     int             i, style_abs, chance_tmp = 0;
 
     al = find_artifactlist(op->type);
@@ -711,7 +711,7 @@ static void free_charlinks(shstr_linked_t *lc)
     }
 }
 
-static void free_artifact(artifact *at)
+static void free_artifact(artifact_t *at)
 {
     SHSTR_FREE(at->name);
     SHSTR_FREE(at->def_at.name);
@@ -756,7 +756,7 @@ void free_artifactlist(artifactlist_t *al)
 void dump_artifacts()
 {
     artifactlist_t   *al;
-    artifact       *art;
+    artifact_t       *art;
     shstr_linked_t    *next;
 
     for (al = first_artifactlist; al != NULL; al = al->next)

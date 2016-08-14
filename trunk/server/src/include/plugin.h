@@ -273,7 +273,7 @@ struct plugin_hooklist
     /* F */
     int (*find_animation)(char *);
     archetype_t *(*find_archetype)(const char *);
-    artifact *(*find_artifact)(const char *);
+    artifact_t *(*find_artifact)(const char *);
     object_t *(*find_next_object)(object_t *, uint8, uint8, object_t *);
     object_t *(*find_skill)(object_t *, int);
     int (*FindFace)(const char *, int);
@@ -293,7 +293,7 @@ struct plugin_hooklist
     void *(*get_poolchunk_array_real)(struct mempool *, uint32);
     void (*get_tad)(timeanddate_t *, sint32);
     sint32 (*get_tad_offset_from_string)(const char *);
-    void (*give_artifact_abilities)(object_t *, artifact *);
+    void (*give_artifact_abilities)(object_t *, artifact_t *);
     object_t *(*guild_get)(player_t *, char *);
     object_t *(*guild_join)(player_t *, char *, int, int, int, int, int, int);
     void (*guild_leave)(player_t *);

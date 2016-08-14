@@ -203,7 +203,7 @@ void dump_all_archetypes()
 {
     archetype_t      *at;
     artifactlist_t   *al;
-    artifact       *art = NULL;
+    artifact_t       *art = NULL;
 
     for (at = first_archetype; at != NULL; at = (at->more == NULL) ? at->next : at->more)
     {

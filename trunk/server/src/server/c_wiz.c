@@ -430,7 +430,7 @@ static int CreateObject(object_t *op, char *params, CreateMode_t mode)
                buf[LARGE_BUF];
     object_t    *tmp = NULL;
     archetype_t *at;
-    artifact  *art = NULL;
+    artifact_t  *art = NULL;
 
     if (!op || op->type != PLAYER)
         return COMMANDS_RTN_VAL_ERROR;
@@ -714,7 +714,7 @@ int command_listarch(object_t *op, char *params)
     int             atype;
     archetype_t      *at;
     artifactlist_t   *al;
-    artifact       *art = NULL;
+    artifact_t       *art = NULL;
     char            buf[MEDIUM_BUF] = "";
 
     /* This command runs too slowly / sends too much data to client in one go,

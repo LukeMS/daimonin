@@ -183,7 +183,7 @@ void malloc_info(object_t *op)
     sum_alloc += i; sum_used += i;
     ndi(NDI_UNIQUE, 0, op, "%4ld treasures        %8d", nroftreasures, i = (nroftreasures * sizeof(treasure)));
     sum_alloc += i; sum_used += i;
-    ndi(NDI_UNIQUE, 0, op, "%4ld artifacts        %8d", nrofartifacts, i = (nrofartifacts * sizeof(artifact)));
+    ndi(NDI_UNIQUE, 0, op, "%4ld artifacts        %8d", nrofartifacts, i = (nrofartifacts * sizeof(artifact_t)));
     sum_alloc += i; sum_used += i;
     ndi(NDI_UNIQUE, 0, op, "%4ld artifacts strngs %8d", nrofallowedstr, i = (nrofallowedstr * sizeof(shstr_linked_t)));
     sum_alloc += i;sum_used += i;
