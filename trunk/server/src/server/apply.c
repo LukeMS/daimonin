@@ -901,7 +901,6 @@ void move_apply(object_t *const trap_obj, object_t *const victim, object_t *cons
           */
           //goto leave;
 
-//        case FBULLET:
         case BULLET:
           if ((QUERY_FLAG(victim, FLAG_NO_PASS) || IS_LIVE(victim)) && !(flags & MOVE_FLAG_VANISHED))
               check_fired_arch(trap);
@@ -1017,33 +1016,6 @@ void move_apply(object_t *const trap_obj, object_t *const victim, object_t *cons
           }
 
           goto leave;
-
-#if 0
-//        /* The following missile types do not cause TRIGGER events */
-//        case MMISSILE:
-//          /* no need to hit anything */
-//          if (IS_LIVE(victim) && !(flags & MOVE_FLAG_VANISHED))
-//          {
-//              tag_t     trap_tag    = trap->count;
-//              damage_ob(victim, trap->stats.dam, trap, ENV_ATTACK_CHECK);
-//              if (!was_destroyed(trap, trap_tag))
-//                  remove_ob(trap);
-//              move_check_off(trap, NULL, MOVE_FLAG_VANISHED);
-//          }
-//          goto leave;
-//        case CANCELLATION:
-//        case BALL_LIGHTNING:
-//          if (IS_LIVE(victim) && !(flags & MOVE_FLAG_VANISHED))
-//              damage_ob(victim, trap->stats.dam, trap, ENV_ATTACK_CHECK);
-//          goto leave;
-//
-//          /* we don't have this atm.
-//          case DEEP_SWAMP:
-//            if(!(flags&MOVE_FLAG_VANISHED))
-//              walk_on_deep_swamp (trap, victim);
-//            goto leave;
-//          */
-#endif
 
         default:
           LOG(llevMapbug, "MAPBUG:: %s[%s %d %d]: Type %d with fly/walk on/off not handled!\n",
