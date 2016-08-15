@@ -70,6 +70,11 @@
  * Also, if you add new entries, try and fill up the holes in this list.
  */
 /* type 0 will be undefined and shows a non valid type information */
+/* TODO:  The marker ' // R' means all code referring to these obsolete types
+ * has been removed so following a tidy of the arches and scripts they can be
+ * removed from this list too (and the Lua one).
+ *
+ * -- Smacky 200160815 */
 #define PLAYER                  1
 #define BULLET                  2
 #define ROD                     3
@@ -79,8 +84,8 @@
 #define POISON                  7
 #define BOOK                    8
 /* 9 is free. */
-#define FBULLET                 10
-#define FBALL                   11
+#define FBULLET                 10 // R
+#define FBALL                   11 // R
 #define LIGHTNING               12
 #define ARROW                   13
 #define BOW                     14
@@ -91,10 +96,10 @@
 #define BUFF_FORCE              19
 #define TYPE_DOOR               20
 #define TYPE_KEY                21
-#define MAP                     22
+#define MAP                     22 // R
 /* 23 is free. */
 #define TYPE_SPARKLY            24
-#define MMISSILE                25
+#define MMISSILE                25 // R
 #define TIMED_GATE              26
 #define TRIGGER                 27 /* triggered when applied, resets after interval */
 #define TYPE_FLOORMASK          28
@@ -114,16 +119,16 @@
 #define CREATOR                 42
 #define TYPE_SKILL              43
 #define TYPE_SKILLGROUP         44
-#define EARTHWALL               45
+#define EARTHWALL               45 // R
 #define GOLEM                   46
 #define BOMB                    47
 #define THROWN_OBJ              48
-#define BLINDNESS               49
+#define BLINDNESS               49 // R
 #define GOD                     50
 /*  peterm:  detector is an object which notices the presense of
      another object and is triggered like buttons.  */
 #define DETECTOR                51
-#define SPEEDBALL               52
+#define SPEEDBALL               52 // R
 #define DEAD_OBJECT             53
 #define DRINK                   54
 #define MARKER                  55 /* inserts an invisible, weightless
@@ -131,10 +136,9 @@
 #define HOLY_ALTAR              56
 #define PLAYER_CHANGER          57
 /* 58 is free */
-#define PEACEMAKER              59  /* Object owned by a player which can convert
-                                      a monster into a peaceful being incapable of attack.  */
+#define PEACEMAKER              59 // R
 #define GEM                     60
-#define FIRECHEST               61
+#define FIRECHEST               61 // R
 #define FIREWALL                62
 #define ANVIL                   63
 #define CHECK_INV               64  /* by b.t. thomas@nomad.astro.psu.edu */
@@ -149,7 +153,7 @@
 #define INORGANIC               73  /* metals and minerals */
 #define TYPE_LIGHT_APPLY        74  /* new light source for player */
 /* 75 is free. */
-#define TRAP_PART               76  /* Needed by set traps skill -b.t. */
+#define TRAP_PART               76 // R
 #define WALL                    77 /* this is a wall. put it always in layer 1 if not set is_floor */
 #define LIGHT_SOURCE            78 /* thats now light sources on the map (invisible lights) */
 #define MISC_OBJECT             79 /* misc. objects are for objects without a function
@@ -171,15 +175,15 @@
 #define ORGANIC                 86 /* body parts which can't be eaten - dragon scales for example */
 #define CLOAK                   87
 #define CONE                    88
-#define AURA                    89  /* aura spell object_t */
+#define AURA                    89 // R
 #define SPINNER                 90
 #define GATE                    91
 #define BUTTON                  92
 #define CF_HANDLE               93 /* Only triggered when applied */
 #define PIT                     94 /* PIT are called HOLE in crossfire) - normal hole is type EXIT */
 #define TRAPDOOR                95
-#define WORD_OF_RECALL          96
-#define PARAIMAGE               97
+#define WORD_OF_RECALL          96 // R
+#define PARAIMAGE               97 // R
 #define SIGN                    98
 #define BOOTS                   99
 #define GLOVES                  100
@@ -192,7 +196,7 @@
 /* 105 is free. */
 #define SAVEBED                 106
 #define POISONCLOUD             107
-#define FIREHOLES               108
+#define FIREHOLES               108 // R
 #define WAND                    109
 #define ABILITY                 110
 #define SCROLL                  111
@@ -229,10 +233,10 @@
 #define TYPE_PEARL              135        /* gem/jewel type pearl */
 #define TYPE_QUEST_INFO         136
 #define TYPE_BEACON             137     /* Beacons are used mostly to locate objects by scripts */
-#define DEEP_SWAMP              138
+#define DEEP_SWAMP              138 // R
 /* 139 is free. */
 #define TYPE_GUILD_FORCE        140
-#define CANCELLATION            141
+#define CANCELLATION            141 // R
 #define SHOULDER                142     /* armour... */
 #define LEGS                    143     /* armour... */
 #define TYPE_FOOD_FORCE         144
@@ -242,9 +246,11 @@
 /* 148 is free. */
 /* 149 is free. */
 /* 150 is free. */
-#define BALL_LIGHTNING          151 /* peterm:  ball lightning and color spray */
-#define SWARM_SPELL             153
+#define BALL_LIGHTNING          151 // R
+/* 152 is free. */
+#define SWARM_SPELL             153 // R
 #define RUNE                    154
+/* 155 is free. */
 #define POWER_CRYSTAL           156
 #define CORPSE                  157
 #define DISEASE                 158
