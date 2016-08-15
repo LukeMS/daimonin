@@ -823,15 +823,6 @@ void move_firewall(object_t *op)
     cast_spell(op, op, op->direction, op->stats.dam, 1, spellNPC, NULL);
 }
 
-#if 0
-//void move_firechest(object_t *op)
-//{
-//    if (!op->map)
-//        return;   /* dm has created a firechest in his inventory */
-//    fire_a_ball(op, random_roll(1, 8), 7);
-//}
-#endif
-
 /*  move_player_mover:  this function takes a "player mover" as an
  * argument, and performs the function of a player mover, which is:
 
@@ -1634,48 +1625,6 @@ int process_object(object_t *op)
         case TYPE_ENV_SENSOR:
           move_environment_sensor(op);
           return 0;
-#if 0
-//        case FBULLET:
-//          move_fired_arch(op);
-//          return 0;
-//        case MMISSILE:
-//          move_magic_missile(op);
-//          return 0;
-//        case FIRECHEST:
-//          move_firechest(op);
-//          return 0;
-//        case FBALL:
-//        case POISONCLOUD:
-//          explosion(op);
-//          return 0;
-//        case WORD_OF_RECALL:
-//          execute_wor(op);
-//          return 0;
-//        case BOMB:
-//          animate_bomb(op);
-//          return 0;
-//        case EARTHWALL:
-//          damage_ob(op, 2, op, ENV_ATTACK_CHECK);
-//          return 0;
-//        case DEEP_SWAMP:
-//          move_deep_swamp(op);
-//          return 0;
-//        case CANCELLATION:
-//          move_cancellation(op);
-//          return 0;
-//        case BALL_LIGHTNING:
-//          move_ball_lightning(op);
-//          return 0;
-//        case SWARM_SPELL:
-//          move_swarm_spell(op);
-//          return 0;
-//        case AURA:
-//          move_aura(op);
-//          return 0;
-//        case PEACEMAKER:
-//          move_peacemaker(op);
-//          return 0;
-#endif
     }
 
     return 0;
