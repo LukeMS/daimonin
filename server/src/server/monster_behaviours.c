@@ -1172,11 +1172,6 @@ void ai_avoid_line_of_fire(object_t *op, struct mob_behaviour_param *params, mov
             case ARROW:
             case BULLET:
             case THROWN_OBJ:
-#if 0
-//            case MMISSILE:
-//            case FBULLET:
-//            case FBALL:
-#endif
                 /* Don't stand still in line of fire.
                  * TODO: should possibly do a random throw against the mob's reaction
                  * time, intelligence or somesuch */
@@ -1970,13 +1965,6 @@ void ai_look_for_enemy_missiles(object_t *op, struct mob_behaviour_param *params
                 case ARROW:
                 case LIGHTNING:
                 case CONE:
-#if 0
-//                case MMISSILE:
-//                case FBULLET:
-//                case FBALL:
-//                case POISONCLOUD:
-//                case BOMB:
-#endif
                     if (obj->owner == NULL || get_friendship(op, obj->owner) <= FRIENDSHIP_ATTACK)
                     {
                         struct mob_known_obj *known = hashtable_find(MOB_DATA(op)->known_objs_ht, obj);
