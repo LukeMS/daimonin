@@ -355,6 +355,24 @@ static int compar(struct bmappair *a, struct bmappair *b)
     return strcmp(a->name, b->name);
 }
 
+/* DAI_CHECKSUM() outputs its inputs as follows:
+ *
+ * We need to calculate the checksum of the bmaps file name->number mapping to
+ * send to the client. This does not need to match what sum or other utility
+ * may come up with as long as we get the same results on the same real file
+ * data, it does the job as it lets the client know if the file has the same
+ * data or not. */
+#define DAI_CHECKSUM(__a, __b) \
+    if ((__a) & 1) \
+    { \
+        (__a) = ((__a) >> 1) + 0x80000000; \
+    } \
+    else \
+    { \
+        (__a) >>= 1; \
+    } \
+    (__a) += (__b); \
+    (__a) &= 0xffffffff;
 
 /* This reads the bmaps.paths file to get all the bitmap names and
  * stuff.  It only needs to be done once, because it is player
@@ -407,28 +425,13 @@ int ReadBmapNames()
             q[i--] = '\0';
 
         xbm[nroffiles].name = strdup_local(q);
+        DAI_CHECKSUM(bmaps_checksum, value & 0xff);
+        DAI_CHECKSUM(bmaps_checksum, (value >> 8) & 0xff);
 
-        /* We need to calculate the checksum of the bmaps file
-         * name->number mapping to send to the client.  This does not
-         * need to match what sum or other utility may come up with -
-         * as long as we get the same results on the same real file
-         * data, it does the job as it lets the client know if
-         * the file has the same data or not.
-         */
-        ROTATE_RIGHT(bmaps_checksum);
-        bmaps_checksum += value & 0xff;
-        bmaps_checksum &= 0xffffffff;
-
-        ROTATE_RIGHT(bmaps_checksum);
-        bmaps_checksum += (value >> 8) & 0xff;
-        bmaps_checksum &= 0xffffffff;
         for (i = 0; i < (int) strlen(q); i++)
         {
-            ROTATE_RIGHT(bmaps_checksum);
-            bmaps_checksum += q[i];
-            bmaps_checksum &= 0xffffffff;
+            DAI_CHECKSUM(bmaps_checksum, q[i]);
         }
-
 
         xbm[nroffiles].number = value;
         nroffiles++;
@@ -463,6 +466,7 @@ int ReadBmapNames()
     return nrofpixmaps;
 }
 
+#undef DAI_CHECKSUM
 
 /* This returns an the face number of face 'name'.  Number is constant
  * during an invocation, but not necessarily between versions (this
