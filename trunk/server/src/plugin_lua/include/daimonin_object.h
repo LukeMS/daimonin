@@ -143,19 +143,5 @@ static int  GameObject_StartNewInstance(lua_State *L);
 static int  GameObject_UpdateQuest(lua_State *L);
 static int  GameObject_Withdraw(lua_State *L);
 static int  GameObject_Write(lua_State *L);
-#if 0
-/* Hmmm... Still requires constants... */
-static PyObject* GameObject_GetUnmodifiedAttribute(GameObject* self, PyObject* args);
-#endif
-
-#if 0
-/* Get rid of these? */
-static PyObject* GameObject_GetEventHandler(GameObject *self, PyObject* args);
-static PyObject* GameObject_SetEventHandler(GameObject *self, PyObject* args);
-static PyObject* GameObject_GetEventPlugin(GameObject *self, PyObject* args);
-static PyObject* GameObject_SetEventPlugin(GameObject *self, PyObject* args);
-static PyObject* GameObject_GetEventOptions(GameObject *self, PyObject* args);
-static PyObject* GameObject_SetEventOptions(GameObject *self, PyObject* args);
-#endif
 
 #endif /* ifndef __DAIMONIN_OBJECT_H */

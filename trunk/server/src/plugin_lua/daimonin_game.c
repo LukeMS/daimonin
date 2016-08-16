@@ -42,7 +42,6 @@ static struct method_decl Game_methods[] =
     {"MatchString",      Game_MatchString},
     {"PrintTimeAndDate", Game_PrintTimeAndDate},
     {"ReadyMap",         Game_ReadyMap},
-/*  {"RegisterCommand",  Game_RegisterCommand}, */
     {"UpgradeApartment", Game_UpgradeApartment},
 
     {NULL, NULL}
@@ -1217,51 +1216,3 @@ static int Game_PrintTimeAndDate(lua_State *L)
 }
 
 /* FUNCTIONEND -- End of the Lua plugin functions. */
-
-/*
- * Old stuff for possible future reimplementation
- */
-
-#if 0
-/*****************************************************************************/
-/* Name   : Game_RegisterCommand                                             */
-/* Lua    : game.RegisterCommand(cmdname, scriptname, speed)                 */
-/*****************************************************************************/
-/* pretty untested... */
-static int Game_RegisterCommand(lua_State *L)
-{
-    char *cmdname;
-    char *scriptname;
-    double cmdspeed;
-    int i;
-
-    if (!PyArg_ParseTuple(args, "ssd",&cmdname,&scriptname,&cmdspeed))
-        return NULL;
-
-    for (i=0;i<NR_CUSTOM_CMD;i++)
-    {
-        if (CustomCommand[i].name)
-        {
-            if (!strcmp(CustomCommand[i].name,cmdname))
-            {
-                LOG(llevDebug, "PYTHON - This command is already registered !\n");
-                RAISE("This command is already registered");
-            }
-        }
-    }
-    for (i=0;i<NR_CUSTOM_CMD;i++)
-    {
-        if (CustomCommand[i].name == NULL)
-        {
-            CustomCommand[i].name = (char *)(malloc(sizeof(char)*strlen(cmdname)));
-            CustomCommand[i].script = (char *)(malloc(sizeof(char)*strlen(scriptname)));
-            strcpy(CustomCommand[i].name,cmdname);
-            strcpy(CustomCommand[i].script,scriptname);
-            CustomCommand[i].speed = cmdspeed;
-            i = NR_CUSTOM_CMD;
-        }
-    }
-
-    return 0;
-}
-#endif

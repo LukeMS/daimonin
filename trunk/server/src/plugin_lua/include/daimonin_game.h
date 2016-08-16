@@ -44,6 +44,5 @@ static int  Game_MatchString(lua_State *L);
 static int  Game_PrintTimeAndDate(lua_State *L);
 static int  Game_ReadyMap(lua_State *L);
 static int  Game_UpgradeApartment(lua_State *L);
-// static int Game_RegisterCommand(lua_State *L);
 
 #endif /* ifndef__DAIMONIN_GAME_H */
