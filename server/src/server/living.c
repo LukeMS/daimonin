@@ -508,9 +508,15 @@ int change_abil(object_t *op, object_t *tmp)
             }
             else
             {
-                SHSTR_FREE(op->race);
                 if (op->arch->clone.race)
+                {
                     SHSTR_FREE_AND_ADD_STRING(op->race, op->arch->clone.race);
+                }
+                else
+                {
+                    SHSTR_FREE(op->race);
+                }
+
                 ndi(NDI_UNIQUE | NDI_WHITE, 0, op, "Your lifeforce returns!");
             }
         }
@@ -1768,8 +1774,10 @@ void fix_player(object_t *op)
                 op->weapon_speed = skill_weapon->weapon_speed;
             }
 
-            if (skill_weapon->slaying != NULL)
+            if (skill_weapon->slaying)
+            {
                 SHSTR_FREE_AND_ADD_STRING(op->slaying, skill_weapon->slaying);
+            }
 
             /* now we must add this special skill attack */
             for (i = 0; i < NROFATTACKS; i++)
