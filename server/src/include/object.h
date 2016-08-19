@@ -269,7 +269,7 @@ struct object_t
     sint8           anim_last_facing_last;/* the last direction this monster was facing backbuffer*/
 
     uint8           anim_speed;         /* animation speed in ticks */
-    uint8           last_anim;          /* ticks between animation-frames */
+    uint8           anim_speed_last;          /* ticks between animation-frames */
     /* TODO: get rid of this one with AI system change */
     uint8           run_away;           /* Monster runs away if it's hp goes below this percentage. */
 
@@ -443,7 +443,7 @@ struct object_t
     sint8           anim_last_facing;     /* the last direction this monster was facing */
     sint8           anim_last_facing_last;/* the last direction this monster was facing backbuffer*/
     uint8           anim_speed;         /* animation speed in ticks */
-    uint8           last_anim;          /* ticks between animation-frames */
+    uint8           anim_speed_last;          /* ticks between animation-frames */
     /* TODO: get rid of this one with AI system change */
     uint8           run_away;           /* Monster runs away if it's hp goes below this percentage. */
     uint8           layer;              /* the layer in a map, this object will be sorted in */
