@@ -414,7 +414,7 @@ static void process_map_events(map_t *map)
            at speed-events. */
         if (QUERY_FLAG(op, FLAG_ANIMATE))
         {
-            if (op->last_anim >= op->anim_speed)
+            if (op->anim_speed_last >= op->anim_speed)
             {
                 animate_object(op, 1);
                 /* let reset move & fight anims */
@@ -431,13 +431,13 @@ static void process_map_events(map_t *map)
                         op->anim_enemy_dir = -1;
                     }
                 }
-                op->last_anim = 1;
+                op->anim_speed_last = 1;
             }
             else
             {
                 if (NUM_FACINGS(op) >= 25) /* check for direction changing */
                     animate_object(op, 0);
-                op->last_anim++;
+                op->anim_speed_last++;
             }
         }
 
