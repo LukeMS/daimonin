@@ -335,13 +335,6 @@ int move_player(object_t * const op, int dir, const int flag)
     op->anim_enemy_dir = -1;
     op->anim_last_facing = -1;
 
-    /* puh, we should move hide to FLAG_ ASAP */
-    if (op->hide)
-    {
-        op->anim_moving_dir = dir;
-        do_hidden_move(op);
-    }
-
     if (flag)
     {
         if (move_ob(op, dir, NULL) != MOVE_RETURN_SUCCESS)
@@ -530,96 +523,6 @@ void cast_dust(object_t *op, object_t *throw_ob, int dir)
     }
 }
 
-void make_visible(object_t *op)
-{
-    /*
-       if(op->type==PLAYER)
-       if(QUERY_FLAG(op, FLAG_UNDEAD)&&!is_true_undead(op))
-         CLEAR_FLAG(op, FLAG_UNDEAD);
-       update_object(op,UP_OBJ_FACE);
-    */
-}
-
-int is_true_undead(object_t *op)
-{
-    /*
-      object_t *tmp=NULL;
-
-      if(QUERY_FLAG(&op->arch->clone,FLAG_UNDEAD)) return 1;
-
-      if(op->type==PLAYER)
-        FOREACH_OBJECT_IN_OBJECT(tmp, op)
-           if(tmp->type==TYPE_SKILLGROUP && tmp->stats.Wis)
-          if(QUERY_FLAG(tmp,FLAG_UNDEAD)) return 1;
-    */
-    return 0;
-}
-
-/* look at the surrounding terrain to determine
- * the hideability of this object. Positive levels
- * indicate greater hideability.
- */
-
-int hideability(object_t *ob)
-{
-#if 0
-  int i,x,y,level=0;
-
-  if(!ob||!ob->map) return 0;
-
-
-  /* scan through all nearby squares for terrain to hide in */
-  for(i=0,x=ob->x,y=ob->y;i<9;i++,x=ob->x+OVERLAY_X(i),y=ob->y+OVERLAY_Y(i))
-  {
-    if(blocks_view(ob->map,x,y)) /* something to hide near! */
-      level += 2;
-    else /* open terrain! */
-      level -= 1;
-  }
-
-  LOG(llevDebug,"hideability of %s is %d\n",ob->name,level);
-  return level;
-#endif
-    return 0;
-}
-
-/* For Hidden creatures - a chance of becoming 'unhidden'
- * every time they move - as we subtract off 'invisibility'
- * AND, for players, if they move into a ridiculously unhideable
- * spot (surrounded by clear terrain in broad daylight). -b.t.
- */
-
-void do_hidden_move(object_t *op)
-{
-    int hide = 0, num = random_roll(0, 19);
-
-    if (!op || !op->map)
-        return;
-
-    /* its *extremely* hard to run and sneak/hide at the same time! */
-    if (op->type == PLAYER && CONTR(op)->run_on)
-    {
-        if (num >= SK_level(op))
-        {
-            ndi(NDI_UNIQUE, 0, op, "You ran too much! You are no longer hidden!");
-            make_visible(op);
-            return;
-        }
-        else
-            num += 20;
-    }
-    num += op->map->difficulty;
-    hide = hideability(op); /* modify by terrain hidden level */
-    num -= hide;
-
-    if (op->type == PLAYER && hide < -10)
-    {
-        make_visible(op);
-        if (op->type == PLAYER)
-            ndi(NDI_UNIQUE, 0, op, "You moved out of hiding! You are visible!");
-    }
-}
-
 /* determine if who is standing near a hostile creature. */
 int stand_near_hostile(object_t *who)
 {
@@ -655,30 +558,6 @@ int stand_near_hostile(object_t *who)
         }
     }
 
-    return 0;
-}
-
-/* routine for both players and monsters. We call this when
- * there is a possibility for our action distrubing our hiding
- * place or invisiblity spell. Artefact invisiblity is not
- * effected by this. If we arent invisible to begin with, we
- * return 0.
- */
-int action_makes_visible(object_t *op)
-{
-    /*
-      if(QUERY_FLAG(op,FLAG_IS_INVISIBLE) && QUERY_FLAG(op,FLAG_ALIVE)) {
-        if(!QUERY_FLAG(op,FLAG_SEE_INVISIBLE))
-          return 0;
-        else if(op->hide) {
-          ndi(NDI_UNIQUE, 0,op,"You become %!",op->hide?"unhidden":"visible");
-          return 1;
-        } else if(CONTR(op) && !CONTR(op)->shottype==range_magic) {
-              ndi(NDI_UNIQUE, 0,op,"Your invisibility spell is broken!");
-              return 1;
-        }
-      }
-    */
     return 0;
 }
 
