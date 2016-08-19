@@ -396,7 +396,6 @@ op->oz= op->z;
 ^path_denied{S}				op->path_denied = IVAL;
 ^magic{S}					op->magic = IVAL;
 ^state{S}					op->state = IVAL;
-^hidden{S}					op->hide = IVAL;
 ^layer{S}					op->layer = IVAL;
 ^ego{S}						SET_OR_CLEAR_FLAG(op, FLAG_IS_EGOITEM, IVAL);
 ^egobound{S}				SET_OR_CLEAR_FLAG(op, FLAG_IS_EGOBOUND, IVAL);
@@ -1333,8 +1332,6 @@ char *get_ob_diff(const object_t *op, const object_t *op2) {
 
   if(op->layer!=op2->layer)
     save_long(buf, "layer", op->layer);
-  if(op->hide!=op2->hide)
-    save_long(buf, "hidden", op->hide);
   if(op->path_attuned!=op2->path_attuned)
     save_long(buf, "path_attuned", op->path_attuned);
   if(op->path_repelled!=op2->path_repelled)

@@ -1332,12 +1332,6 @@ void cs_cmd_fire(char *params, int len, NewSocket *ns)
         return;
     }
 
-    /* NOT IMPLEMENTED: check for loss of invisiblity/hide */
-    if (action_makes_visible(op))
-    {
-        make_visible(op);
-    }
-
     /* TODO: Remove at 0.11.0. Compatibility code for pre-0.10.6 clients. */
     if (mode == ALTACT_MODE_ARCHERY)
     {

@@ -217,7 +217,6 @@ struct attribute_decl GameObject_attributes[] =
     {"anim_speed",            FIELDTYPE_UINT8,     offsetof(object_t, anim_speed),                0,                  0},
     {"last_anim",             FIELDTYPE_UINT8,     offsetof(object_t, last_anim),                 0,                  0},
     {"run_away",              FIELDTYPE_UINT8,     offsetof(object_t, run_away),                  0,                  0},
-    {"hide",                  FIELDTYPE_UINT8,     offsetof(object_t, hide),                      0,                  0},
     {"layer",                 FIELDTYPE_UINT8,     offsetof(object_t, layer),                     FIELDFLAG_PLAYER_READONLY, 0},
     {"resist_impact",         FIELDTYPE_SINT8,     offsetof(object_t, resist[ATNR_IMPACT]),       FIELDFLAG_PLAYER_READONLY, 0},
     {"resist_slash",          FIELDTYPE_SINT8,     offsetof(object_t, resist[ATNR_SLASH]),        FIELDFLAG_PLAYER_READONLY, 0},

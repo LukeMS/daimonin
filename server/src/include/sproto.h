@@ -357,12 +357,7 @@ void                        flee_player(object_t *op);
 int                         move_player(object_t *const op, int dir, const int flag);
 void                        do_some_living(object_t *op);
 void                        cast_dust(object_t *op, object_t *throw_ob, int dir);
-void                        make_visible(object_t *op);
-int                         is_true_undead(object_t *op);
-int                         hideability(object_t *ob);
-void                        do_hidden_move(object_t *op);
 int                         stand_near_hostile(object_t *who);
-int                         action_makes_visible(object_t *op);
 void                        reset_instance_data(player_t *pl);
 void                        kick_player(player_t *pl);
 char                       *get_online_players_info(player_t *who, player_t *diff,

@@ -273,9 +273,6 @@ struct object_t
     /* TODO: get rid of this one with AI system change */
     uint8           run_away;           /* Monster runs away if it's hp goes below this percentage. */
 
-    uint8           hide;               /* The object is hidden. We don't use a flag here because
-                                         * the range from 0-255 tells us the quality of the hide
-                                         */
     uint8           layer;              /* the layer in a map, this object will be sorted in */
 
     /* TODO: get rid of using attrsets? */
@@ -449,9 +446,6 @@ struct object_t
     uint8           last_anim;          /* ticks between animation-frames */
     /* TODO: get rid of this one with AI system change */
     uint8           run_away;           /* Monster runs away if it's hp goes below this percentage. */
-    uint8           hide;               /* The object is hidden. We don't use a flag here because
-                                         * the range from 0-255 tells us the quality of the hide
-                                         */
     uint8           layer;              /* the layer in a map, this object will be sorted in */
     /* TODO: get rid of using attrsets? */
     sint8           resist[NROFATTACKS];/* Intrinsic resist against damage - range from -125 to +125 */
