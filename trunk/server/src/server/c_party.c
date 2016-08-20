@@ -203,8 +203,12 @@ int command_party_invite(object_t *pl, char *params)
     /* ok... we can invite this guy. send the /invite to him and setup the invite */
     /* remember who has given the invite request so player can give a simple /join or /deny */
     target->group_status = GROUP_STATUS_INVITE;
+
     if(target->group_mode != GROUP_MODE_INVITE)
+    {
         SHSTR_FREE_AND_ADD_REF(target->group_invite_name, pl->name);
+    }
+
     target->group_leader = pl;
     target->group_leader_count = pl->count;
 

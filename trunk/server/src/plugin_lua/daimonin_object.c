@@ -3252,8 +3252,11 @@ static int GameObject_AddOneDropQuest(lua_State *L)
     /* store name & arch name of the quest obj. so we can id it later */
     SHSTR_FREE_AND_ADD_STRING(WHAT->name, name);
     SHSTR_FREE_AND_ADD_STRING(WHAT->race, WHAT->arch->name);
+
     if(title)
+    {
         SHSTR_FREE_AND_ADD_STRING(WHAT->title, title);
+    }
 
     if(!CONTR(WHO)->quest_one_drop)
         hooks->add_quest_containers(WHO);

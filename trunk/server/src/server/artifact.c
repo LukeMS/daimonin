@@ -228,12 +228,15 @@ static void init_artifacts(FILE *fp)
             memcpy(art->parse_text, buf_text, lcount);
 
             if(art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH)
+            {
                 SHSTR_FREE_AND_ADD_STRING(art->def_at.name, art->name); /* finally, change the archetype name of
                                                                   * our fake arch to the fake arch name.
                                                                   * without it, treasures will get the
                                                                   * original arch, not this (hm, this
                                                                   * can be a glitch in treasures too...)
                                                                   */
+            }
+
             /* now handle the <Allowed none> in the artifact to create
              * unique items or add them to the given type list.
              */

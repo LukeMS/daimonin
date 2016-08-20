@@ -237,7 +237,9 @@ account_status account_load(Account *ac, char *name, char *pass)
 
     /* finally remember our account name */
     if(ret == ACCOUNT_STATUS_OK)
+    {
         SHSTR_FREE_AND_ADD_STRING(ac->name, name);
+    }
 
     return ret;
 }
