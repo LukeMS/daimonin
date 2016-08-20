@@ -66,15 +66,15 @@ struct objectlink_t
 {
     union
     {
-        struct objectlink_t               *link;
+        objectlink_t               *link;
         object_t                     *ob;
-        struct treasureliststruct  *tl;
+        treasurelist_t  *tl;
         struct _gmaster_struct       *gm;
-        struct ban_t           *ban;
+        ban_t           *ban;
     } objlink;
 
-    struct objectlink_t               *prev;
-    struct objectlink_t               *next;
+    objectlink_t               *prev;
+    objectlink_t               *next;
 
     tag_t                       id;
     int                         value;

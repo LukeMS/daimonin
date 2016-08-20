@@ -1401,7 +1401,7 @@ char *get_ob_diff(const object_t *op, const object_t *op2) {
 		    strcat(buf2, "none\n");
 		else /* we have different lists - generate the "list1;list2;list3" string */
 		{
-			struct objectlink_t *ol = op->randomitems;
+			objectlink_t *ol = op->randomitems;
 			if(ol->parmlink.tl_tweak) /* tlist with or without '&' parameter list* */
 				strcat(buf2,ol->parmlink.tl_tweak->name); /* save name and '&' tail */
 			else
