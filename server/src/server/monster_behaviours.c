@@ -1530,7 +1530,9 @@ void ai_move_towards_waypoint(object_t *op, struct mob_behaviour_param *params, 
                 }
 
                 if(destmap && destmap->orig_path != wp->slaying)
+                {
                     SHSTR_FREE_AND_ADD_REF(wp->slaying, destmap->orig_path);
+                }
             }
             else
                 destmap = op->map;

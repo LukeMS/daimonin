@@ -382,7 +382,9 @@ static void set_attribute(lua_State *L, lua_object *obj, struct attribute_decl *
               SHSTR_FREE(*(char * *) field_ptr);
           }
           if (str && strcmp(str, ""))
+          {
               SHSTR_FREE_AND_ADD_STRING(*(const char * *) field_ptr, str);
+          }
           break;
 
         case FIELDTYPE_UINT8:

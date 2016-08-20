@@ -258,7 +258,9 @@ WS	[ \t]*{NL}?
 			    return LL_IGNORED;
 			}
 			if (op->arch!=NULL)
+                        {
 				SHSTR_FREE_AND_ADD_STRING(op->arch->name, yv);
+                        }
 			SHSTR_FREE_AND_ADD_STRING(op->name, yv);
 			object_load_flag = 1; /* ok - now we know the pre speed values are valid */
 		    }
@@ -269,17 +271,26 @@ WS	[ \t]*{NL}?
 	    		    LOG(llevMapbug, "\n\tMAPBUG: SKIPPED msg/endmsg -> buffer overflow!! (obj: %s) %d (max allowed=%d)\n",
                                 STRING_OBJ_NAME(op), (int)strlen(msgbuf), HUGE_BUF - 16);
                 else
+                {
     		    	SHSTR_FREE_AND_ADD_STRING(op->msg, msgbuf);
+                }
                 }
 			/*<MESSAGE>.*	    {if(msg_flag)strcat(msgbuf,"\n");msg_flag=1;strcat(msgbuf, yytext); }*/
 <MESSAGE>.*{WS}	strcat(msgbuf, yytext);
 
 ^name{S}	    {	char *yv=yval();
 			if (*yv=='\0') LOG(llevError,"Name without val\n");
-			else SHSTR_FREE_AND_ADD_STRING(op->name, yv);
+			else
+                        {
+                             SHSTR_FREE_AND_ADD_STRING(op->name, yv);
+                        }
 		    }
-^race{S}	    SHSTR_FREE_AND_ADD_STRING(op->race,yval());
-^slaying{S}	    SHSTR_FREE_AND_ADD_STRING(op->slaying, yval());
+^race{S}	    {
+                        SHSTR_FREE_AND_ADD_STRING(op->race,yval());
+                    }
+^slaying{S}	    {
+                        SHSTR_FREE_AND_ADD_STRING(op->slaying, yval());
+                    }
 
 ^other_arch{S}        op->other_arch=find_archetype(yval());
 ^animation{S}	    {
@@ -585,7 +596,10 @@ op->oz= op->z;
 ^been_applied{S}    SET_OR_CLEAR_FLAG(op, FLAG_BEEN_APPLIED, IVAL);
 ^title{S}	    {	char *y=yval();
 			if (*y=='\0') LOG(llevMapbug,"MAPBUG: loader(): Title without value. op=%s\n", STRING_OBJ_NAME(op));
-			else SHSTR_FREE_AND_ADD_STRING(op->title, y);
+			else
+                        {
+                            SHSTR_FREE_AND_ADD_STRING(op->title, y);
+                        }
 		    }
 ^inv_locked{S}		SET_OR_CLEAR_FLAG(op, FLAG_INV_LOCKED, IVAL);
 ^is_wooded{S}		SET_OR_CLEAR_FLAG(op, FLAG_IS_WOODED, IVAL);

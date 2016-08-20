@@ -186,9 +186,13 @@ struct objectlink_t *add_ban_entry(const char *account, const char *name, char *
     if(ip)
         ol->objlink.ban->ip = strdup_local(ip);
     if(name)
+    {
         SHSTR_FREE_AND_ADD_STRING(ol->objlink.ban->name, name);
+    }
     if(account)
+    {
         SHSTR_FREE_AND_ADD_STRING(ol->objlink.ban->account, account);
+    }
 
     LOG(llevNoLog,"Banning: Account: %s / Player: %s / IP: %s for %d seconds (%d sec left).\n", STRING_SAFE(ol->objlink.ban->account),
         STRING_SAFE(ol->objlink.ban->name), STRING_SAFE(ip), ticks/8,ol->objlink.ban->ticks_init==-1?-1:(int)(ol->objlink.ban->ticks-pticks)/8);
