@@ -377,7 +377,7 @@ void move_missile(object_t *op)
                 continue;
             }
 
-            if (!QUERY_FLAG(tmp, FLAG_REFL_MISSILE) || (random_roll(0, 99) > (90 - op->level / 10)))
+            if (!QUERY_FLAG(tmp, FLAG_REFL_MISSILE) || (RANDOM_ROLL(0, 99) > (90 - op->level / 10)))
             {
                 /* Attack the object. */
                 op = hit_with_arrow(op, tmp);
@@ -413,7 +413,7 @@ void move_missile(object_t *op)
     else if (MSP_IS_RESTRICTED(msp))
     {
         /* if the object doesn't reflect, stop the arrow from moving */
-        if (!QUERY_FLAG(op, FLAG_REFLECTING) || !(random_roll(0, 19)))
+        if (!QUERY_FLAG(op, FLAG_REFLECTING) || !(RANDOM_ROLL(0, 19)))
         {
             stop_missile(op);
             return;

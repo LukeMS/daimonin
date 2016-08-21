@@ -283,7 +283,7 @@
 
 /* Gravestones mark the spot where a player died (they disappear after a few
  * minutes). They cause damage to players stepping on them if
- * random_roll(0, player->stats.Wis)) -- so lower Wis (taken to mean the player
+ * RANDOM_ROLL(0, player->stats.Wis)) -- so lower Wis (taken to mean the player
  * is less sensitive to the divine) means more chance of getting away with it
  * -- and prayers cannot never be invoked by a player standing on a gravestone.
  * So healers, don't let your groupmates die! */

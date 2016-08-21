@@ -861,7 +861,7 @@ void move_player_mover(object_t *op)
     /* Determine direction now for random movers so we do the right thing */
     if (!(dir = op->direction))
     {
-        dir = random_roll(1, 8);
+        dir = RANDOM_ROLL(1, 8);
     }
 
     msp = MSP_KNOWN(op);

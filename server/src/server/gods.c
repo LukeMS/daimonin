@@ -341,7 +341,7 @@ const char *determine_god(object_t *op)
             {
                 if (gl == first_god)
                 {
-                    godnr = random_roll(1, gl->id);
+                    godnr = RANDOM_ROLL(1, gl->id);
                 }
                 else if (gl->id == godnr)
                 {
@@ -417,7 +417,7 @@ void pray_at_altar(object_t *pl, object_t *altar)
 //         */
 //        bonus = MAX(1, bonus); /* -- DAMN -- */
 //
-//        if ((random_roll(0, 399) - bonus) < 0)
+//        if ((RANDOM_ROLL(0, 399) - bonus) < 0)
 //            god_intervention(pl, pl_god);
     }
     else
@@ -435,7 +435,7 @@ void pray_at_altar(object_t *pl, object_t *altar)
         if (pl_god->other_arch && (altar->other_arch->name == pl_god->other_arch->name))
         {
             angry = 2;
-            if (random_roll(0, SK_level(pl) + 2) - 5 > 0)
+            if (RANDOM_ROLL(0, SK_level(pl) + 2) - 5 > 0)
             {
                 /* you really screwed up */
                 angry = 3;
@@ -449,7 +449,7 @@ void pray_at_altar(object_t *pl, object_t *altar)
 
         /* May switch Gods, but its random chance based on our current level
          * note it gets harder to swap gods the higher we get */
-        if ((angry == 1) && !(random_roll(0, pl->chosen_skill->skillgroup->level)))
+        if ((angry == 1) && !(RANDOM_ROLL(0, pl->chosen_skill->skillgroup->level)))
         {
             become_follower(pl, &altar->other_arch->clone);
         } /* If angry... switching gods */
@@ -485,7 +485,7 @@ void become_follower(object_t *op, object_t *new_god)
     if (op->race && new_god->slaying && strstr(op->race, new_god->slaying))
     {
         ndi(NDI_UNIQUE | NDI_NAVY, 0, op, "Fool! %s detests your kind!", new_god->name);
-        if (random_roll(0, op->level - 1) - 5 > 0)
+        if (RANDOM_ROLL(0, op->level - 1) - 5 > 0)
             cast_mana_storm(op, new_god->level + 10);
         return;
     }

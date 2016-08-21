@@ -278,7 +278,7 @@ void flee_player(object_t *op)
         CLEAR_FLAG(op, FLAG_SCARED);
         return;
     }
-    if (!random_roll(0, 4))
+    if (!RANDOM_ROLL(0, 4))
     {
         op->enemy = NULL;
         CLEAR_FLAG(op, FLAG_SCARED);

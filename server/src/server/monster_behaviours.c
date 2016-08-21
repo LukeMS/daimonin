@@ -1162,7 +1162,7 @@ void ai_avoid_line_of_fire(object_t *op, struct mob_behaviour_param *params, mov
         }
 
         /* Don't always dodge - Put it to a test of WC vs. AC */
-        if (random_roll(0, owner->stats.Dex) + missile->stats.wc >= op->stats.ac)
+        if (RANDOM_ROLL(0, owner->stats.Dex) + missile->stats.wc >= op->stats.ac)
         {
             return;
         }

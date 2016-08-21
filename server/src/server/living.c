@@ -2570,7 +2570,7 @@ void leech_hind(object_t *leecher, object_t *leechee, uint8 attack, sint16 plose
             leechee->stats.grace = 0;
         }
 
-        pgain = random_roll(1, (int)(plose / 100.0f * chance));
+        pgain = RANDOM_ROLL(1, (int)(plose / 100.0f * chance));
 
         if (leecher->type == PLAYER)
         {
@@ -2601,7 +2601,7 @@ void leech_hind(object_t *leecher, object_t *leechee, uint8 attack, sint16 plose
             leechee->stats.sp = 0;
         }
 
-        pgain = random_roll(1, (int)(plose / 100.0f * chance));
+        pgain = RANDOM_ROLL(1, (int)(plose / 100.0f * chance));
 
         if ((leecher->stats.sp += pgain) > leecher->stats.maxsp)
         {
@@ -2623,7 +2623,7 @@ void leech_hind(object_t *leecher, object_t *leechee, uint8 attack, sint16 plose
             leechee->stats.hp = 0;
         }
 
-        pgain = random_roll(1, (int)(plose / 100.0f * chance));
+        pgain = RANDOM_ROLL(1, (int)(plose / 100.0f * chance));
 
         if ((leecher->stats.hp += pgain) > leecher->stats.maxhp)
         {

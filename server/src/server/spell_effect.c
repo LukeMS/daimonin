@@ -95,7 +95,7 @@ int recharge(object_t *op)
         if (wand->type == WAND &&
             QUERY_FLAG(wand, FLAG_APPLIED))
         {
-            if (!(random_roll(0, 3)))
+            if (!(RANDOM_ROLL(0, 3)))
             {
                 ndi(NDI_UNIQUE, 0, op, "%s vibrates violently, then explodes!",
                     QUERY_SHORT_NAME(wand, op));
@@ -106,7 +106,7 @@ int recharge(object_t *op)
             {
                 ndi(NDI_UNIQUE, 0, op, "%s glows with power.",
                     QUERY_SHORT_NAME(wand, op));
-                wand->stats.food += random_roll(1, spells[wand->stats.sp].charges);
+                wand->stats.food += RANDOM_ROLL(1, spells[wand->stats.sp].charges);
 
                 if (wand->arch &&
                     QUERY_FLAG(&wand->arch->clone, FLAG_ANIMATE))
@@ -250,7 +250,7 @@ int cast_heal(object_t *op, int level, object_t *target, int spell_type)
         case SP_MINOR_HEAL:
           success = 1;
 
-          heal = random_roll(level / 2, (level + 3) / 4 * 3) + 5;
+          heal = RANDOM_ROLL(level / 2, (level + 3) / 4 * 3) + 5;
 
           /* give bonus or malus to damage depending on if the player/mob is attuned/repelled to that spell path */
           heal = (int)(heal * (double)(PATH_DMG_MULT(op, find_spell(spell_type))));
@@ -332,12 +332,12 @@ int cast_heal(object_t *op, int level, object_t *target, int spell_type)
 
           /*
             case SP_MED_HEAL:
-              heal=random_roll_roll(3, 6)+4;
+              heal=RANDOM_ROLL_roll(3, 6)+4;
               ndi(NDI_UNIQUE, 0,tmp, "Your wounds start to fade.");
               break;
             case SP_MAJOR_HEAL:
               ndi(NDI_UNIQUE, 0,tmp, "Your skin looks as good as new!");
-              heal=random_roll_roll(4, 8)+8;
+              heal=RANDOM_ROLL_roll(4, 8)+8;
               break;
             case SP_HEAL:
               heal=tmp->stats.maxhp;
@@ -625,7 +625,7 @@ int cast_identify(object_t *op, int level, object_t *single_ob, int mode)
                 }
 
                 if (IDENTIFY_MODE_NORMAL
-                 && ((random_val = random_roll(0, chance - 1)) > (chance - ++success - 2)))
+                 && ((random_val = RANDOM_ROLL(0, chance - 1)) > (chance - ++success - 2)))
                     break;
             }
         }

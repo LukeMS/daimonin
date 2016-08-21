@@ -1005,10 +1005,10 @@ void move_apply(object_t *const trap_obj, object_t *const victim, object_t *cons
               int wis = victim->stats.Wis;
 
               if ((wis >= 30 &&
-                   random_roll(0, 99)) ||
+                   RANDOM_ROLL(0, 99)) ||
                   (wis <= 29 &&
                    wis >= 16 &&
-                   random_roll(0, 99) < (wis + (wis - 16) * 5)))
+                   RANDOM_ROLL(0, 99) < (wis + (wis - 16) * 5)))
               {
                   damage_ob(victim, trap->stats.dam, trap, ENV_ATTACK_CHECK);
                   ndi(NDI_UNIQUE, 0, victim, "Your passage disturbs holy ground and you are punished by the gods!");

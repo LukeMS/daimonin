@@ -309,7 +309,7 @@ int infect_object(object_t *victim, object_t *disease, int force)
         return 0;
 
     /* roll the dice on infection before doing the inventory check!  */
-    if (!force && (random_roll(0, 126) >= disease->stats.wc))
+    if (!force && (RANDOM_ROLL(0, 126) >= disease->stats.wc))
         return 0;
 
     FOREACH_OBJECT_IN_OBJECT(tmp, victim, next)
@@ -429,7 +429,7 @@ int do_symptoms(object_t *disease)
         {
             int dam = disease->stats.dam;
             /* reduce the damage, on average, 50%, and making things random. */
-            dam = random_roll(1, ABS(dam));
+            dam = RANDOM_ROLL(1, ABS(dam));
             if (disease->stats.dam < 0)
                 dam = -dam;
             new_symptom->stats.dam = dam;
@@ -650,7 +650,7 @@ int cure_disease(object_t *sufferer, object_t *caster)
                */
             is_disease = 1;
             if ((casting_level >= disease->level)
-             || (!(random_roll(0, (disease->level - casting_level - 1)))))
+             || (!(RANDOM_ROLL(0, (disease->level - casting_level - 1)))))
             {
                 if (sufferer->type == PLAYER)
                     ndi(NDI_UNIQUE, 0, sufferer, "You are healed from disease %s.", disease->name);
