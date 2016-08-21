@@ -149,8 +149,6 @@ struct player_t
 
     object_t             *ob;                     /* The object representing the player */
     object_t             *golem;                  /* Which golem is controlled */
-    object_t             *anim_enemy;             /* which enemy we hack. needed to skip extra swing animation */
-
     object_t             *selected_weapon;        /* thats the weapon in our hand */
     object_t             *skill_weapon;           /* thats the hth skill we use when we not use a weapon (like karate) */
     object_t             *target_ob;
@@ -185,10 +183,6 @@ struct player_t
 
 
     int                    state;                /* player system state... PLAYING, LOGIN IN... */
-    uint32              anim_enemy_count;   /* hm, this can be kicked now - i do it for a quick hack to
-                                             * implement the animations. use is_melee_range() instead.
-                                             * for the client: skill/weapon values for the distance weapon
-                                             * - calculated in fix_player() */
     int                 dist_dps;
     int                 dist_last_dps;
     int                 dist_wc;

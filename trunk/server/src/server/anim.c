@@ -256,14 +256,11 @@ void animate_object(object_t *op, int count)
                 {
                     CONTR(op)->anim_flags |= PLAYER_AFLAG_ADDFRAME; /* so we do one more swing */
                     CONTR(op)->anim_flags |= PLAYER_AFLAG_FIGHT; /* so we do one swing */
-                    /* this can perhaps be skipped when we have a clean enemy handling in attack.c */
-                    CONTR(op)->anim_enemy = op->enemy; /* save this for be sure to skip unneeded animation */
-                    CONTR(op)->anim_enemy_count = op->enemy_count;
                 }
                 else
                 {
                     /* only do ADDFRAME if we still fight something */
-                    if (OBJECT_VALID(op->enemy, CONTR(op)->anim_enemy_count))
+                    if (OBJECT_VALID(op->enemy, op->enemy_count))
                         CONTR(op)->anim_flags |= PLAYER_AFLAG_FIGHT; /* so we do one swing */
                     CONTR(op)->anim_flags &= ~PLAYER_AFLAG_ADDFRAME; /* we do our additional frame*/
                 }
