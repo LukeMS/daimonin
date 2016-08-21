@@ -4428,7 +4428,7 @@ sint8 overlay_find_free(msp_t *msp, object_t *what, sint8 start, sint8 stop, uin
 
     if (index)
     {
-        return a[random_roll(0, index - 1)];
+        return a[RANDOM_ROLL(0, index - 1)];
     }
 
     return -1;

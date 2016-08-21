@@ -159,7 +159,6 @@ extern void             free_all_recipes(void);
 /* shstr.c */
 /* treasure.c */
 /* utils.c */
-extern int              random_roll(int min, int max);
 extern int              look_up_spell_name(const char *spname);
 extern racelink_t        *find_racelink(const char *name);
 extern char            *cleanup_string(char *ustring);

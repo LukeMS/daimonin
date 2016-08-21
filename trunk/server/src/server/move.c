@@ -491,7 +491,7 @@ int push_roll_object(object_t * const op, int dir, const int flag)
         }
         else if (QUERY_FLAG(this, FLAG_CAN_ROLL))
         {
-            if ((random_roll(0, this->weight / 50000 - 1) > op->stats.Str) ||
+            if ((RANDOM_ROLL(0, this->weight / 50000 - 1) > op->stats.Str) ||
                 move_ob(this, dir, op) == MOVE_RETURN_INSERTION_FAILED)
             {
                 ndi(NDI_UNIQUE, 0, op, "You fail to push %s.",
@@ -588,7 +588,7 @@ static int PushLiving(object_t *who, sint8 dir, object_t *pusher)
     str1 = str1 + who->weight / 50000 - 1;
     str2 = (pusher->stats.Str > 0 ? pusher->stats.Str : 9 + pusher->level / 10);
 
-    if (random_roll(str1, str1 / 2 + str1 * 2) >= random_roll(str2, str2 / 2 + str2 * 2) ||
+    if (RANDOM_ROLL(str1, str1 / 2 + str1 * 2) >= RANDOM_ROLL(str2, str2 / 2 + str2 * 2) ||
         move_ob(who, dir, pusher) != MOVE_RETURN_SUCCESS)
     {
         ndi(NDI_UNIQUE, 0, who, "%s tried to push you.",

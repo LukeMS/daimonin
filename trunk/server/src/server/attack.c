@@ -217,7 +217,7 @@ int attack_ob(object_t *target, object_t *hitter, object_t *hit_obj)
     }
 
     /* Fight Step 1: Get the random hit value */
-    roll = random_roll(0, 100);
+    roll = RANDOM_ROLL(0, 100);
 
     /* Fight Step 2: Adjust for special cases. Target is invinsible we can't see it? Is levitating? ... */
     if (env_attack == ENV_ATTACK_NO)
@@ -339,7 +339,7 @@ int attack_ob(object_t *target, object_t *hitter, object_t *hit_obj)
         /* Handle monsters that hit back */
         if (env_attack  == ENV_ATTACK_NO && QUERY_FLAG(target, FLAG_HITBACK) && IS_LIVE(hitter))
         {
-            damage_ob(hitter, random_roll(0, target->stats.dam), target, env_attack);
+            damage_ob(hitter, RANDOM_ROLL(0, target->stats.dam), target, env_attack);
 
             if (!OBJECT_VALID(target, op_tag) ||
                 !OBJECT_VALID(hitter, hitter_tag) ||
@@ -348,7 +348,7 @@ int attack_ob(object_t *target, object_t *hitter, object_t *hit_obj)
         }
 
         /* the damage is between 70 and 100% of the (adjusted) base damage */
-        hitdam = damage_ob(target, random_roll((int)(hitdam*0.7f)+1, hitdam), hit_obj, env_attack);
+        hitdam = damage_ob(target, RANDOM_ROLL((int)(hitdam*0.7f)+1, hitdam), hit_obj, env_attack);
         if (!OBJECT_VALID(target, op_tag) ||
             !OBJECT_VALID(hitter, hitter_tag) ||
             AbortAttack(target, hitter, env_attack))
@@ -600,7 +600,7 @@ int damage_ob(object_t *op, int dam, object_t *hitter, attack_envmode_t env_atta
 
         if (hitter->type == ARROW)
         {
-            if (!random_roll(0, 9))
+            if (!RANDOM_ROLL(0, 9))
             {
                 detail = "struck down by";
             }
@@ -614,7 +614,7 @@ int damage_ob(object_t *op, int dam, object_t *hitter, attack_envmode_t env_atta
                 uint8 v = hitter->attack[i];
 
                 if (v &&
-                    !random_roll(0, 9))
+                    !RANDOM_ROLL(0, 9))
                 {
                     headline = attack_name[i].kill_headline;
                     detail = attack_name[i].kill_detail;
@@ -1016,7 +1016,7 @@ static int HitPlayerAttacktype(object_t *op, object_t *hitter, int *flags, int d
                 dam = 1.0;
             SendAttackMsg(op, hitter, attacknum, (int) dam, damage);
             /*
-            if (random_roll(0, (int)dam + 4) > random_roll(0, 39) + 2 * tmp->magic)
+            if (RANDOM_ROLL(0, (int)dam + 4) > RANDOM_ROLL(0, 39) + 2 * tmp->magic)
             {
                 if (op->type == PLAYER)
                 {

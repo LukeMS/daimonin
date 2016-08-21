@@ -935,14 +935,6 @@ enum apply_flag
         (fraction) += (dx2); \
     }
 
-/*
- * We use the Mersenne Twister random number generator which
- * is much faster than the standard random function
- */
-
-#define RANDOM() MTRand_randComp()
-#define SRANDOM(xyz) MTRand_init(xyz)
-
 /* PvP stat flags are used on the archetype_global.pvp_stat_force object in a player's inventory to keep track of PvP stats such as total
  * kills, kills per PvP match, and possibly a rank system.
  */

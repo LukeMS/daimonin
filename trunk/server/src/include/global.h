@@ -371,6 +371,28 @@ error - Your ANSI C compiler should be defining __STDC__;
         gettimeofday((__a));
 #endif
 
+/* We use the Mersenne Twister random number generator which is much faster
+ * than the standard random function. */
+
+/* SRANDOM() seeds the random number generator with its input. */
+#define SRANDOM(__a) \
+    MTRand_init((__a))
+
+/* RANDOM() outputs a random integer (0-2147483647). */
+#define RANDOM() \
+    MTRand_randComp()
+
+/* RANDOM_ROLL() outputs a random integer between its two inputs (which must
+ * also be integers). The default is __a which is output if __b is less than
+ * __a or there is 0 or 1 difference between the inputs. Within those rules
+ * either input may be positive, negative, or zero.
+ *
+ * Many times the older code does, eg, RANDOM() % x or RANDOM() % x + y. New
+ * code should prefer RANDOM_ROLL(0, x-1) or RANDOM_ROLL(y, x-1) (or reverse
+ * the inputs according to the rules abovei). */
+#define RANDOM_ROLL(__a, __b) \
+    (((__b) <= (__a) + 1) ? (__a) : (RANDOM() % ((__b) - (__a) + 1) + (__a)))
+
 /* Here we typedef *all* the data types used in the non-3rd party server code.
  * TODO: There are a lot of unupdated typedefs yet.
  *

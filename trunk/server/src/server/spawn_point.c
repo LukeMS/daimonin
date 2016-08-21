@@ -96,7 +96,7 @@ static void Autogen(object_t *monster, sint16 diff)
          * bits would seem a more sensible move, but as level is used all
          * over the place for all sorts of things, I can't be bothered to
          * do all the testing such a change would need, hence the cap. */
-        monster->level = random_roll(MAX(level, MIN(min, MAXMOBLEVEL)),
+        monster->level = RANDOM_ROLL(MAX(level, MIN(min, MAXMOBLEVEL)),
                                      MAX(level, MIN(max, MAXMOBLEVEL)));
     }
 
@@ -143,7 +143,7 @@ void adjust_monster(object_t *monster)
 
             if (arcattack != 0 && objattack == arcattack)
             {
-                objattack += random_roll(0 - monster->item_condition,
+                objattack += RANDOM_ROLL(0 - monster->item_condition,
                                          monster->item_condition);
                 monster->attack[i] = MAX(0, MIN(objattack, 200));
             }
@@ -151,7 +151,7 @@ void adjust_monster(object_t *monster)
             /* resistances of 100 mean immunity. Don't mess with that. */
             if (arcresist != 0 && arcresist != 100 && objresist == arcresist)
             {
-                objresist += random_roll(0 - monster->item_condition,
+                objresist += RANDOM_ROLL(0 - monster->item_condition,
                                          monster->item_condition);
                 monster->resist[i] = MAX(-100, MIN(objresist, 100));
             }

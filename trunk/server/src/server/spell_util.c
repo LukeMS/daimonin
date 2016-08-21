@@ -671,14 +671,14 @@ int cast_spell(object_t *op, object_t *caster, int dir, int type, int ability, S
     /* chance to fumble the spell by to low wisdom */
     /* FIXME: we have now spell_fumble */
     if (item == spellNormal && op->type == PLAYER && s->flags & SPELL_DESC_WIS
-            && random_roll(0, 99) < s->level / (float) MAX(1, op->chosen_skill->level) * 1)
+            && RANDOM_ROLL(0, 99) < s->level / (float) MAX(1, op->chosen_skill->level) * 1)
     {
         play_sound_player_only(CONTR(op), SOUND_FUMBLE_SPELL, SOUND_NORMAL, 0, 0);
         ndi(NDI_UNIQUE, 0, op, "You fumble the prayer because your wisdom is low.");
 
         if (s->sp == 0) /* Shouldn't happen... */
             return 0;
-        return(random_roll(1, SP_level_spellpoint_cost(op, caster, type)));
+        return(RANDOM_ROLL(1, SP_level_spellpoint_cost(op, caster, type)));
     }
 
     else if (item == spellNormal && op->type == PLAYER && !(s->flags & SPELL_DESC_WIS))
@@ -687,10 +687,10 @@ int cast_spell(object_t *op, object_t *caster, int dir, int type, int ability, S
             - (op->chosen_skill->level / 10)
             + s->fumble_factor;
 
-        if (random_roll(0,99) < fumble)
+        if (RANDOM_ROLL(0,99) < fumble)
         {
             ndi(NDI_UNIQUE, 0, op, "You bungle the spell because you have too much heavy equipment in use.");
-            return(random_roll(0, SP_level_spellpoint_cost(op, caster, type)));
+            return(RANDOM_ROLL(0, SP_level_spellpoint_cost(op, caster, type)));
         }
     }
 
@@ -1066,7 +1066,7 @@ void check_cone_push(object_t *op)
         }
 
         /* move it. */
-        if (random_roll(0, weight_move - 1) > tmp->weight / num_sections)
+        if (RANDOM_ROLL(0, weight_move - 1) > tmp->weight / num_sections)
         {
             (void)move_ob(tmp, absdir(op->stats.sp), op);
         }
@@ -1241,7 +1241,7 @@ void forklightning(object_t *op, object_t *tmp)
               Should start out at 50, down to 25 for one already going left
              down to 0 for one going 90 degrees left off original path*/
 
-    if (random_roll(0, 99) < tmp->stats.Con)  /* fork left */
+    if (RANDOM_ROLL(0, 99) < tmp->stats.Con)  /* fork left */
         new_dir = -1;
 
     /* check the new dir for a wall and in the map*/
@@ -1307,7 +1307,7 @@ int reflwall(msp_t *msp, object_t *sp_op)
     }
 
     /* we get resisted - except a small fail chance */
-    if ((random_roll(0, 99)) < 90 - sp_op->level / 10)
+    if ((RANDOM_ROLL(0, 99)) < 90 - sp_op->level / 10)
     {
         SET_FLAG(sp_op, FLAG_WAS_REFLECTED);
         return 1;
@@ -1409,7 +1409,7 @@ void move_bolt(object_t *op)
             }
 
             /* Possibly create forks of this object going off in other directions. */
-            if (random_roll(0, 99) < tmp->stats.Dex)
+            if (RANDOM_ROLL(0, 99) < tmp->stats.Dex)
             {
                 /* stats.Dex % of forking */
                 forklightning(op, tmp);

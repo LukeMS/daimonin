@@ -29,26 +29,6 @@
 
 #include <global.h>
 
-
-/*
- * Another convenience function.  Returns a number between min and max.
- * It is suggested one use these functions rather than RANDOM()%, as it
- * would appear that a number of off-by-one-errors exist due to improper
- * use of %.  This should also prevent SIGFPE.
- */
-
-int random_roll(int min, int max)
-{
-    int diff;
-
-    diff = max - min + 1;
-    if (max < 1 || diff < 1)
-        return(min);
-
-    return(RANDOM() % diff + min);
-}
-
-
 /*
  *  Return the number of the spell that whose name passes the pasesed string
  *  argument.   Return -1 if no such spell name match is found.

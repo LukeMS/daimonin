@@ -1355,33 +1355,33 @@ int roll_ring_bonus_stat(int current, int level, int bonus) {
           roll = 1;
      } else if(level <= 50)
      {
-          roll = random_roll(1,2);
+          roll = RANDOM_ROLL(1,2);
      } else if(level <= 80)
      {
           if (current == 6)
           {
-               roll = random_roll(1,2);
+               roll = RANDOM_ROLL(1,2);
           } else
           {
-               roll = random_roll(1,3);
+               roll = RANDOM_ROLL(1,3);
           }
      } else if(level <= 100)
      {
           if (current >= 7)
           {
-               roll = random_roll(1,2);
+               roll = RANDOM_ROLL(1,2);
           } else
           {
-               roll = random_roll(1,4);
+               roll = RANDOM_ROLL(1,4);
           }
      } else if(level > 100)
      {
           if (current >= 7)
           {
-               roll = random_roll(1,2);
+               roll = RANDOM_ROLL(1,2);
           } else
           {
-               roll = random_roll(1,5);
+               roll = RANDOM_ROLL(1,5);
           }
      }
      if (bonus < 0)
@@ -1438,7 +1438,7 @@ void set_ring_bonus_value_calc(object_t *op)
 
     /* freak copper coins for make prices more fun */
 
-    op->value += random_roll(0, 199);
+    op->value += RANDOM_ROLL(0, 199);
 }
 /*
  * Randomly adds one magical ability to the given object.
@@ -1475,7 +1475,7 @@ int set_ring_bonus(object_t *op, int bonus, int level)
            r = 10;
        else
            r = 13 + RANDOM() % 7;*/
-    roll = random_roll(0,100);
+    roll = RANDOM_ROLL(0,100);
 
     if(roll < 7) {
         r = 0; /* hp + */
@@ -1498,7 +1498,7 @@ int set_ring_bonus(object_t *op, int bonus, int level)
     }
 /*   switch (r % 25)*/
     else {
-    roll = random_roll(0,100);
+    roll = RANDOM_ROLL(0,100);
 
     if(roll < 4) {
         r = 0; /* hp + */
@@ -1683,17 +1683,17 @@ int set_ring_bonus(object_t *op, int bonus, int level)
           {
               SET_FLAG(op, FLAG_REFL_CASTABLE);
           if(bonus < 0) {
-            op->item_quality -= random_roll(1,30), op->item_condition = op->item_quality;
+            op->item_quality -= RANDOM_ROLL(1,30), op->item_condition = op->item_quality;
         }
           }
           else
           {
         if(bonus > 0) {
-        roll = random_roll(1,10);
+        roll = RANDOM_ROLL(1,10);
         op->stats.sp = roll; /* regenerate spell points */
           }
          else {
-        roll = random_roll(1,3);
+        roll = RANDOM_ROLL(1,3);
         op->stats.sp = (roll * -1);
         }
           }
@@ -1704,17 +1704,17 @@ int set_ring_bonus(object_t *op, int bonus, int level)
           {
               SET_FLAG(op, FLAG_REFL_MISSILE);
           if(bonus < 0) {
-            op->item_quality -= random_roll(1,30), op->item_condition = op->item_quality;
+            op->item_quality -= RANDOM_ROLL(1,30), op->item_condition = op->item_quality;
         }
           }
           else
           {
         if(bonus > 0) {
-        roll = random_roll(1,10);
+        roll = RANDOM_ROLL(1,10);
         op->stats.hp = roll; /* regenerate hit points */
           }
          else {
-        roll = random_roll(1,3);
+        roll = RANDOM_ROLL(1,3);
         op->stats.hp = (roll * -1);
         }
           }
