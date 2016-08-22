@@ -1302,14 +1302,6 @@ int key_event(SDL_KeyboardEvent *key)
             case SDLK_RSHIFT:
                 cpl.inventory_win = IWIN_BELOW;
                 break;
-            case SDLK_LALT:
-            case SDLK_RALT:
-                send_game_command("/run_stop");
-#ifdef DEBUG_TEXT
-                textwin_showstring(COLOR_DGOLD, "run_stop");
-#endif
-                cpl.run_on = 0;
-                break;
             case SDLK_RCTRL:
             case SDLK_LCTRL:
                 cpl.fire_on = 0;
@@ -1385,10 +1377,6 @@ int key_event(SDL_KeyboardEvent *key)
                 if (!options.playerdoll)
                     SetPriorityWidget(PDOLL_ID);
                 cpl.inventory_win = IWIN_INV;
-                break;
-            case SDLK_RALT:
-            case SDLK_LALT:
-                cpl.run_on = 1;
                 break;
             case SDLK_RCTRL:
             case SDLK_LCTRL:
@@ -1684,15 +1672,6 @@ uint8 process_macro_keys(int id, int value)
         else if (cpl.input_mode == INPUT_MODE_CONSOLE)
             cpl.input_mode = INPUT_MODE_NO;
         map_udate_flag = 2;
-        break;
-
-    case KEYFUNC_RUN:
-        if (!(cpl.runkey_on = cpl.runkey_on ? 0 : 1))
-            send_game_command("/run_stop");
-#ifdef DEBUG_TEXT
-        textwin_showstring(COLOR_DGOLD, "runmode %s",
-                           (cpl.runkey_on) ? "on" : "off");
-#endif
         break;
     case KEYFUNC_MOVE:
         move_keys(value);
@@ -2176,17 +2155,6 @@ static void move_keys(int num)
         return;
     }
 
-    /* move will overruled from fire */
-    /* because real toggle mode don't work, this works a bit different */
-    /* pressing alt will not set move mode until unpressed when firemode is on */
-    /* but it stops running when released */
-    if ((cpl.runkey_on || cpl.run_on) && (!cpl.firekey_on && !cpl.fire_on)) /* runmode on, or ALT key trigger */
-    {
-        send_game_command(directionsrun[num]);
-#ifdef DEBUG_TEXT
-        sprintf(buf, "run ");
-#endif
-    }
     /* thats the range menu - we handle it messages unique */
     else if (cpl.firekey_on || cpl.fire_on)
     {

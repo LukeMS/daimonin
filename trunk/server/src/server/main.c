@@ -171,22 +171,6 @@ void process_players1(map_t *map)
             continue;
         }
 
-        /* player is fine, check for speed */
-        if (op->speed_left >= 0.0 &&
-            !QUERY_FLAG(op, FLAG_PARALYZED) &&
-            !QUERY_FLAG(op, FLAG_ROOTED))
-        {
-            /* this movement action will dramatically change in the future.
-             * basically we will go for a "steps per ticks" */
-            if (op->direction &&
-                pl->run_on)     /* automove */
-            {
-                /* All move commands take 1 tick, at least for now */
-                move_player(op, op->direction, 1);
-                op->speed_left--;
-            }
-        }
-
         /* we call do_some_living now in a interval of 1 sec.
          * That will save us some cpu time per player
          * to avoid one big tick event we use a player based timer which

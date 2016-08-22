@@ -115,7 +115,6 @@ typedef enum rangetype
  * server thinks the fireon & runon states are.
  */
 #define SF_FIREON           1
-#define SF_RUNON            2
 #define SF_BLIND            4
 #define SF_XRAYS            8
 #define SF_INFRAVISION      16

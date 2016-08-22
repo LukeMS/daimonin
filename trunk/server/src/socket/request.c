@@ -323,8 +323,6 @@ void esrv_update_stats(player_t *pl)
     }
 
     flags = 0;
-    if (pl->run_on)
-        flags |= SF_RUNON;
     /* we add additional player status flags - in old style, you got a msg
      * in the text windows when you get xray of get blineded - we will skip
      * this and add the info here, so the client can track it down and make

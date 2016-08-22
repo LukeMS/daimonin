@@ -183,11 +183,9 @@ typedef struct Player_Struct
 
     uint32                  no_echo             : 1;    /* If 1, don't echo keystrokes */
     uint32                  fire_on             : 1;    /* True if fire key is pressed = action key (ALT;CTRL)*/
-    uint32                  run_on              : 1;    /* True if run key is on = action key (ALT;CTRL)*/
     uint32                  resize_twin         : 1;
     uint32                  resize_twin_marker  : 1;
     uint32                  firekey_on          : 1;    /* True if fire key is pressed = permanent mode*/
-    uint32                  runkey_on           : 1;    /* sic! */
     uint32                  echo_bindings       : 1;/* If true, echo the command that the key */
 
     sint32                   window_weight;
