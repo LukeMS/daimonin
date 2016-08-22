@@ -348,7 +348,23 @@ struct player_t
     sint32          tadoffset; // offset of the last visited map
 };
 
-void increment_pvp_counter(object_t *op, int counter);
-int command_pvp_stats(object_t *op, char *params);
+extern player_t *find_player(char *plname);
+extern player_t *find_player_hash(const char *plname);
+extern void      display_motd(object_t *op);
+extern void      free_player(player_t *pl);
+extern void      destroy_player_struct(player_t *pl);
+extern object_t *get_nearest_player(object_t *mon);
+extern int       path_to_player(object_t *mon, object_t *pl, int mindiff);
+extern void      give_initial_items(object_t *pl, struct objectlink_t *items);
+extern void      flee_player(object_t *op);
+extern int       move_player(object_t *const op, int dir, const int flag);
+extern void      do_some_living(object_t *op);
+extern void      cast_dust(object_t *op, object_t *throw_ob, int dir);
+extern int       stand_near_hostile(object_t *who);
+extern void      reset_instance_data(player_t *pl);
+extern void      kick_player(player_t *pl);
+extern char     *get_online_players_info(player_t *who, player_t *diff, uint8 force);
+extern void      increment_pvp_counter(object_t *op, int counter);
+extern int       command_pvp_stats(object_t *op, char *params);
 
 #endif /* ifndef __PLAYER_H */

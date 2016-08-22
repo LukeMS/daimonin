@@ -259,4 +259,42 @@ typedef struct behaviour_move_response
     } data;
 } move_response;
 
+/* monster.c */
+extern object_t           *get_active_waypoint(object_t *op);
+extern object_t           *get_aggro_waypoint(object_t *op);
+extern object_t           *get_return_waypoint(object_t *op);
+extern object_t           *find_waypoint(object_t *op, const char *name);
+extern object_t           *get_random_waypoint(object_t *op, object_t *ignore);
+extern object_t           *get_next_waypoint(object_t *op, object_t *wp);
+extern int                 move_monster(object_t *op, int mode);
+extern void                object_accept_path(object_t *op);
+extern void                dump_abilities(void);
+extern void                print_monsters(void);
+/* monster_memory.c */
+extern void                cleanup_mob_knowns(object_t *op, struct mob_known_obj **first, hashtable_t *ht);
+extern void                clear_mob_knowns(object_t *op, struct mob_known_obj **first, hashtable_t *ht);
+extern struct mob_known_obj *update_npc_knowledge(object_t *npc, object_t *other, int delta_friendship, int delta_attraction);
+extern void                update_npc_known_obj(struct mob_known_obj *known, int delta_friendship, int delta_attraction);
+extern struct mob_known_obj *register_npc_known_obj(object_t *npc, object_t *other, int friendship, int attraction, int check_los);
+extern rv_t               *get_known_obj_rv(object_t *op, struct mob_known_obj *known_obj, int maxage);
+/* monster_behaviourset.c */
+extern struct mob_behaviourset *parse_behaviourconfig(const char *conf_text, object_t *op);
+extern void                init_arch_default_behaviours();
+extern void                initialize_mob_data(struct mobdata *data);
+extern void                cleanup_mob_data(struct mobdata *data);
+extern struct mob_behaviourset *setup_behaviours(object_t *op);
+extern void                cleanup_behaviourset(struct mob_behaviourset *data);
+extern void                cleanup_mob_known_obj(struct mob_known_obj *data);
+extern int                 can_hit(object_t *ob1, object_t *ob2, rv_t *rv);
+extern void                cleanup_all_behavioursets();
+extern void                reload_behaviours(object_t *op);
+/* monster_behaviours.c */
+extern int                 mob_can_see_obj(object_t *op, object_t *obj, struct mob_known_obj *known_obj);
+extern int                 get_friendship(object_t *op, object_t *obj);
+extern int                 get_attitude(object_t *op, object_t *obj);
+extern object_t           *monster_choose_random_spell(object_t *monster);
+extern void                monster_check_pickup(object_t *monster);
+extern void                monster_check_apply(object_t *mon, object_t *item);
+extern void                npc_call_help(object_t *op);
+
 #endif /* ifndef __MONSTER_H */
