@@ -290,44 +290,6 @@ void                        shutdown_agent(int timer, int ret, player_t *pl, cha
 int                         main(int argc, char **argv);
 void                        process_events();
 void                        iterate_main_loop();
-/* monster.c */
-object_t                     *get_active_waypoint(object_t *op);
-object_t                     *get_aggro_waypoint(object_t *op);
-object_t                     *get_return_waypoint(object_t *op);
-object_t                     *find_waypoint(object_t *op, const char *name);
-object_t                     *get_random_waypoint(object_t *op, object_t *ignore);
-object_t                     *get_next_waypoint(object_t *op, object_t *wp);
-int                         move_monster(object_t *op, int mode);
-void                        object_accept_path(object_t *op);
-void                        dump_abilities(void);
-void                        print_monsters(void);
-/* monster_memory.c */
-void                        cleanup_mob_knowns(object_t *op, struct mob_known_obj **first, hashtable_t *ht);
-void                        clear_mob_knowns(object_t *op, struct mob_known_obj **first, hashtable_t *ht);
-struct mob_known_obj       *update_npc_knowledge(object_t *npc, object_t *other, int delta_friendship, int delta_attraction);
-void                        update_npc_known_obj(struct mob_known_obj *known, int delta_friendship, int delta_attraction);
-struct                      mob_known_obj *register_npc_known_obj(object_t *npc, object_t *other, int friendship, int attraction, int check_los);
-rv_t                  *get_known_obj_rv(object_t *op, struct mob_known_obj *known_obj, int maxage);
-/* monster_behaviourset.c */
-struct mob_behaviourset    *parse_behaviourconfig(const char *conf_text, object_t *op);
-void                        init_arch_default_behaviours();
-void                        initialize_mob_data(struct mobdata *data);
-void                        cleanup_mob_data(struct mobdata *data);
-struct mob_behaviourset    *setup_behaviours(object_t *op);
-void                        cleanup_behaviourset(struct mob_behaviourset *data);
-void                        cleanup_mob_known_obj(struct mob_known_obj *data);
-int                         can_hit(object_t *ob1, object_t *ob2, rv_t *rv);
-void                        cleanup_all_behavioursets();
-void                        reload_behaviours(object_t *op);
-/* monster_behaviours.c */
-int                         mob_can_see_obj(object_t *op, object_t *obj, struct mob_known_obj *known_obj);
-int                         get_friendship(object_t *op, object_t *obj);
-int                         get_attitude(object_t *op, object_t *obj);
-object_t                     *monster_choose_random_spell(object_t *monster);
-void                        monster_check_pickup(object_t *monster);
-void                        monster_check_apply(object_t *mon, object_t *item);
-void                        npc_call_help(object_t *op);
-map_t                  *normalize_and_ready_map(map_t *defmap, const char **path);
 /* mtrand.c */
 void                        MTRand_init(const uint32 seed);
 sint32                      MTRand_randComp(void);
@@ -345,23 +307,6 @@ void                        send_link_spawn_signal(object_t *spawn, object_t *ta
 /* move.c */
 /* pets.c */
 /* player.c */
-player_t                     *find_player(char *plname);
-player_t                     *find_player_hash(const char *plname);
-void                        display_motd(object_t *op);
-void                        free_player(player_t *pl);
-void                        destroy_player_struct(player_t *pl);
-object_t                     *get_nearest_player(object_t *mon);
-int                         path_to_player(object_t *mon, object_t *pl, int mindiff);
-void                        give_initial_items(object_t *pl, struct objectlink_t *items);
-void                        flee_player(object_t *op);
-int                         move_player(object_t *const op, int dir, const int flag);
-void                        do_some_living(object_t *op);
-void                        cast_dust(object_t *op, object_t *throw_ob, int dir);
-int                         stand_near_hostile(object_t *who);
-void                        reset_instance_data(player_t *pl);
-void                        kick_player(player_t *pl);
-char                       *get_online_players_info(player_t *who, player_t *diff,
-                                                    uint8 force);
 /* plugins.c */
 object_t                     *get_event_object(object_t *op, int event_nr);
 int                         trigger_object_plugin_event(int event_type,
