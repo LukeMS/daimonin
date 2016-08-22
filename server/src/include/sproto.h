@@ -148,8 +148,6 @@ int                         command_push_object (object_t *op, char *params);
 int                         command_turn_right (object_t *op, char *params);
 int                         command_turn_left (object_t *op, char *params);
 /* c_new.c */
-int                         command_run(object_t *op, char *params);
-int                         command_run_stop(object_t *op, char *params);
 int                         command_combat(object_t *op, char *params);
 int                         command_target(object_t *op, char *params);
 void                        command_face_request(char *params, int len, NewSocket *ns);

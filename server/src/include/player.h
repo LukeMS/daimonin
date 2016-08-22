@@ -320,8 +320,6 @@ struct player_t
     uint32              count;              /* Any numbers typed before a command */
 
     unsigned char       listening; /* Which priority will be used in info_all */
-
-    unsigned char       run_on;
     uint32              last_weight_limit;  /* Last weight limit transmitted to client */
     living_t              orig_stats;       /* Can be less in case of poisoning */
     living_t              last_stats;       /* Last stats drawn with draw_stats() */

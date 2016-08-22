@@ -63,7 +63,6 @@
 /* These are used with CS_STAT_FLAGS above to communicate S->C what the
  * server thinks the fireon & runon states are.
  */
-#define SF_RUNON            2
 #define SF_BLIND            4
 #define SF_XRAYS            8
 #define SF_INFRAVISION      16

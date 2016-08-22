@@ -62,8 +62,6 @@ CommArray_s Commands[] =
     {"target",        command_target,         0.1f, 0, NULL}, /* enter combat and attack object in reach */
     {"combat",        command_combat,         0.1f, 0, NULL}, /* toggle attack mode of player */
     {"rest",          command_resting,        1.0f, 1, NULL}, /* enter resting mode */
-	 {"run",           command_run,            1.0f, 0, NULL}, /* starts running*/
-    {"run_stop",      command_run_stop,       0.0f, 0, NULL}, /* stops running*/
     {"cast",          command_cast_spell,     0.0f, 1, NULL}, /* use time comes from spells! */
     {"push",          command_push_object,    1.0f, 1, NULL}, /* move an object you are facing if movable */
     {"right",         command_turn_right,     1.0f, 0, NULL}, /* player rotates clockwise on same tile*/
@@ -1086,20 +1084,6 @@ void cs_cmd_move(char *buf, int len, NewSocket *ns)
     mode = GetChar_Buffer(buf);
 
     move_player(pl->ob, dir, 1);
-
-    /*
-    if (params)
-    {
-    if (params[0] == 'r' && !CONTR(op)->run_on)
-    CONTR(op)->run_on = 1;
-    }
-    move_player(op, dir, 1);
-    int command_stay(object_t *op, char *params)
-    {
-    fire(op, 0);
-    return 0;
-    }
-    */
 }
 
 
