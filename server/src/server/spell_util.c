@@ -1564,76 +1564,6 @@ void control_golem(object_t *op, int dir)
 }
 
 
-void move_magic_missile(object_t *op)
-{
-    object_t     *owner;
-    map_t  *m;
-    sint16      x,
-                y;
-    msp_t   *msp;
-    sint8       i;
-
-    /* .... hm... no "instant missiles?" */
-    owner = get_owner(op);
-    if (owner == NULL)
-    {
-        remove_ob(op);
-        move_check_off(op, NULL, MOVE_FLAG_VANISHED);
-        return;
-    }
-
-    m = op->map;
-    x = op->x + OVERLAY_X(op->direction);
-    y = op->y + OVERLAY_Y(op->direction);
-    msp = MSP_GET2(m, x, y);
-
-    if (!msp)
-    {
-        remove_ob(op);
-        move_check_off(op, NULL, MOVE_FLAG_VANISHED);
-        return;
-    }
-
-    if (msp_blocked(op, NULL, OVERLAY_X(op->direction), OVERLAY_Y(op->direction)))
-    {
-        tag_t tag = op->count;
-
-        (void)hit_map(op, msp);
-
-        if (OBJECT_VALID(op, tag))
-        {
-            remove_ob(op);
-            move_check_off(op, NULL, MOVE_FLAG_VANISHED);
-        }
-
-        return;
-    }
-
-    remove_ob(op);
-    move_check_off(op, NULL, MOVE_FLAG_VANISHED);
-
-    if (!op->direction ||
-        (msp->flags & MSP_FLAG_BLOCKSVIEW) ||
-        MSP_IS_RESTRICTED(msp))
-    {
-        return;
-    }
-
-    op->map = m;
-    op->x = x;
-    op->y = y;
-    i = overlay_find_dir(msp, get_owner(op));
-
-    if (i &&
-        i != op->direction)
-    {
-        op->direction = absdir(op->direction + ((op->direction - i + 8) % 8 < 4 ? -1 : 1));
-        SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction);
-    }
-
-    insert_ob_in_map(op, m, op, 0);
-}
-
 /* explode object will remove the exploding object from a container and set on map.
  * for this action, out_of_map() is called.
  * If the object is on a map, we assume that the position is controlled when object
@@ -1682,15 +1612,6 @@ void explode_object(object_t *op)
         if (!insert_ob_in_map(op, m, op, 0))
             return;
     }
-
-#if 0
-//    if (op->attacktype)
-//    {
-//        hit_map(op, 0);
-//        if (!OBJECT_VALID(op, op_tag))
-//            return;
-//    }
-#endif
 
     /*  peterm:  hack added to make fireballs and other explosions level
      *  dependent:

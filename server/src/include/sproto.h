@@ -430,7 +430,6 @@ int                         reflwall(msp_t *msp, object_t *sp_op);
 void                        move_bolt(object_t *op);
 void                        move_golem(object_t *op);
 void                        control_golem(object_t *op, int dir);
-void                        move_magic_missile(object_t *op);
 void                        explode_object(object_t *op);
 void                        drain_rod_charge(object_t *rod);
 void                        fix_rod_speed(object_t *rod);
