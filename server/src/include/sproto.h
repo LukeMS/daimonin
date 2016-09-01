@@ -444,28 +444,6 @@ int                         SP_lvl_dam_adjust(int level, int spell_type, int bas
 /* stats.c */
 void                        stats_event(stats_event_type type, ...);
 /* time.c */
-void                        regenerate_rod(object_t *rod);
-void                        remove_force(object_t *op);
-void                        poison_more(object_t *op);
-void                        move_gate(object_t *op);
-void                        move_timed_gate(object_t *op);
-void                        move_detector(object_t *op);
-void                        move_conn_sensor(object_t *op);
-void                        move_environment_sensor(object_t *op);
-void                        animate_trigger(object_t *op);
-void                        move_pit(object_t *op);
-void                        change_object(object_t *op);
-void                        move_teleporter(object_t *op);
-void                        move_firewall(object_t *op);
-void                        move_player_mover(object_t *op);
-void                        move_creator(object_t *op);
-void                        move_marker(object_t *op);
-int                         process_object(object_t *op);
-/* timers.c */
-void                        cftimer_process_timers(void);
-int                         cftimer_create(int id, long delay, object_t *ob, int mode);
-int                         cftimer_destroy(int id);
-int                         cftimer_find_free_id(void);
 /* pathfinder.c */
 /* swamp.c */
 extern object_t *sparkly_create(archetype_t *at, object_t *who, sint16 t, sint16 nr, uint8 stype);

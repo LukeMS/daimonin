@@ -870,9 +870,30 @@ extern sint16 brightness[MAX_DARKNESS + 1];
         (_OC_); \
         (_OC_) = (_ON_), (_ON_) = (_OC_) ? (_OC_)->more : NULL)
 
-/* global typedefs.
- * which needs defined before header loading.
- */
+/* Generic function for simple timeval arithmetic (addition & subtraction) */
+static inline void add_time(struct timeval *dst, struct timeval *a, struct timeval *b)
+{
+    dst->tv_sec = a->tv_sec + b->tv_sec;
+    dst->tv_usec = a->tv_usec + b->tv_usec;
+
+    if(dst->tv_sec < 0 || (dst->tv_sec == 0 && dst->tv_usec < 0))
+    {
+        while(dst->tv_usec < -1000000) {
+            dst->tv_sec -= 1;
+            dst->tv_usec += 1000000;
+        }
+    } else
+    {
+        while(dst->tv_usec < 0) {
+            dst->tv_sec -= 1;
+            dst->tv_usec += 1000000;
+        }
+        while(dst->tv_usec > 1000000) {
+            dst->tv_sec += 1;
+            dst->tv_usec -= 1000000;
+        }
+    }
+}
 
 #include "hashtable.h"
 #include "hashfunc.h"
