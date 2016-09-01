@@ -22,38 +22,26 @@
 
     The author can be reached via e-mail to info@daimonin.org
 */
-/* Copyright 2005 Björn Axelsson */
 
-#ifndef __TIMEUTILS_H
-#define __TIMEUTILS_H
+#ifndef __TIME_H
+#define __TIME_H
 
-#ifndef WIN32 /* ---win32 exclude unix headers */
-    #include <sys/time.h>
-#endif
+extern void regenerate_rod(object_t *rod);
+extern void remove_force(object_t *op);
+extern void poison_more(object_t *op);
+extern void move_gate(object_t *op);
+extern void move_timed_gate(object_t *op);
+extern void move_detector(object_t *op);
+extern void move_conn_sensor(object_t *op);
+extern void move_environment_sensor(object_t *op);
+extern void animate_trigger(object_t *op);
+extern void move_pit(object_t *op);
+extern void change_object(object_t *op);
+extern void move_teleporter(object_t *op);
+extern void move_firewall(object_t *op);
+extern void move_player_mover(object_t *op);
+extern void move_creator(object_t *op);
+extern void move_marker(object_t *op);
+extern int  process_object(object_t *op);
 
-/* Generic function for simple timeval arithmetic (addition & subtraction) */
-static inline void add_time(struct timeval *dst, struct timeval *a, struct timeval *b)
-{
-    dst->tv_sec = a->tv_sec + b->tv_sec;
-    dst->tv_usec = a->tv_usec + b->tv_usec;
-
-    if(dst->tv_sec < 0 || (dst->tv_sec == 0 && dst->tv_usec < 0))
-    {
-        while(dst->tv_usec < -1000000) {
-            dst->tv_sec -= 1;
-            dst->tv_usec += 1000000;
-        }
-    } else
-    {
-        while(dst->tv_usec < 0) {
-            dst->tv_sec -= 1;
-            dst->tv_usec += 1000000;
-        }
-        while(dst->tv_usec > 1000000) {
-            dst->tv_sec += 1;
-            dst->tv_usec -= 1000000;
-        }
-    }
-}
-
-#endif /* ifndef __TIMEUTILS_H */
+#endif /* ifndef __TIME_H */
