@@ -1426,6 +1426,8 @@ char *get_ob_diff(const object_t *op, const object_t *op2) {
     save_long(buf, "run_away", op->run_away);
   if(op->weight_limit!=op2->weight_limit)
     save_long(buf, "container", op->weight_limit);
+  if(op->anim_speed!=op2->anim_speed)
+    save_long(buf, "anim_speed", op->anim_speed);
 
   for (tmp=0; tmp <= NUM_FLAGS; tmp++) {
     if (flag_names[tmp] && (QUERY_FLAG(op, tmp) != QUERY_FLAG(op2, tmp)))
