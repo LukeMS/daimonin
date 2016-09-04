@@ -2656,10 +2656,14 @@ static int GameObject_AcquireSkill(lua_State *L)
 
     get_lua_args(L, "Oii", &self, &skill, &mode);
 
-    CFP.Value[0] = (void *) (WHO);
-    CFP.Value[1] = (void *) (&skill);
-    CFP.Value[2] = (void *) (&mode);
-    (PlugHooks[HOOK_LEARNSKILL]) (&CFP);
+	if (mode == 0)
+	{
+		hooks->learn_skill(WHO, skill);
+	}
+	else
+	{
+		hooks->unlearn_skill(WHO, skill);
+	}
 
     return 0;
 }

@@ -106,6 +106,7 @@ struct plugin_hooklist  hooklist    =
     /* K */
     kill_object,
     /* L */
+	learn_skill,
     load_object_str,
     locate_beacon,
     LOG,
@@ -178,6 +179,7 @@ struct plugin_hooklist  hooklist    =
 #else
     update_object,
 #endif
+	unlearn_skill,
     /* V */
     /* W */
     /* X */
@@ -802,28 +804,6 @@ CFParm * CFWDoLearnSpell(CFParm *PParm)
     else
     {
         do_learn_spell((object_t *) (PParm->Value[0]), *(int *) (PParm->Value[1]));
-    }
-    return NULL;
-}
-
-
-
-/*****************************************************************************/
-/* do_learn_skill wrapper.                                                   */
-/*****************************************************************************/
-/* 0 - object to affect;                                                     */
-/* 1 - skill index to learn;                                                 */
-/* 3 - mode 0=leanr, 1=unlearn                                               */
-/*****************************************************************************/
-CFParm * CFWDoLearnSkill(CFParm *PParm)
-{
-    if (*(int *) (PParm->Value[2]))
-    {
-        /* TODO: add again unlearn skills. atm we don't need to unlearn them */
-    }
-    else
-    {
-        learn_skill((object_t *) (PParm->Value[0]), *(int *) (PParm->Value[1]));
     }
     return NULL;
 }

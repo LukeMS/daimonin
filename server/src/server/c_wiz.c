@@ -1106,15 +1106,10 @@ static int AddExp(object_t *op, char *params, const char *command)
         {
             learn_skill(pl->ob, snr);
             skill = pl->skill_ptr[snr];
-            FIX_PLAYER(pl->ob, "setskill");
         }
         else if (!level)/* if level is 0 we unlearn the skill! */
         {
-            (void)add_exp(pl->ob, -skill->stats.exp, snr, 0);
-            pl->skill_ptr[skill->stats.sp] = NULL;
-            remove_ob(skill);
-            ndi(NDI_UNIQUE, 0, op, "Removed skill!");
-            FIX_PLAYER(pl->ob, "setskill");
+
 
             return COMMANDS_RTN_VAL_OK;
         }

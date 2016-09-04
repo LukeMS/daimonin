@@ -694,7 +694,41 @@ int learn_skill(object_t *pl, int skillnr)
         send_skilllist_cmd(p, skillnr, SPLIST_MODE_ADD);
     }
 
+	FIX_PLAYER(pl, "learn skill");
+
     return 1;
+}
+
+int unlearn_skill(object_t *op, int skillnr)
+{
+	player_t *pl = CONTR(op);
+	object_t *skill = pl->skill_ptr[skillnr];
+
+	if (op->type != PLAYER)
+		return 0;
+
+	if (skillnr < 0 ||
+		skillnr >= NROFSKILLS)
+	{
+		return 0;
+	}
+
+	if (!find_skill(pl, skillnr))
+	{
+		if (pl && (pl->state & ST_PLAYING))
+		{
+			ndi(NDI_UNIQUE, 0, pl, "You don't know the skill '%s'!", skill->name);
+		}
+		return 0;
+	}
+
+	(void)add_exp(op, -skill->stats.exp, skillnr, 0);
+	pl->skill_ptr[skill->stats.sp] = NULL;
+	remove_ob(skill);
+	ndi(NDI_UNIQUE, 0, op, "Removed skill!");
+	FIX_PLAYER(pl->ob, "unlearn skill");
+
+	return 1;
 }
 
 /* use_skill() - similar to invoke command, it executes the skill in the
