@@ -210,7 +210,9 @@ function _error(prefix)
     local message = prefix .. "\n"
 
     -------------------
-    -- Affix all the event data.
+    -- Affix all the event data. Also this is a convenient time to ascertain
+    -- our reporter. It does not matter who or what it is, any GameObject will
+    -- do.
     -------------------
     local ev = {
         [1] = { k = "me" },
@@ -218,13 +220,16 @@ function _error(prefix)
         [3] = { k = "other" },
         [4] = { k = "message" },
         [5] = { k = "options" } } 
+    local reporter = nil
     for _, v in ipairs(ev) do 
         local val = event[v.k]
         local typ = type(val)
         if typ == "GameObject" or typ == "Map" then
             if game:IsValid(val) == false then
-               val = nil
-               typ = "nil"
+                 val = nil
+                 typ = "nil"
+            elseif typ == "GameObject" then
+                reporter = val
             end
         end
         v.v = val
@@ -245,44 +250,19 @@ function _error(prefix)
     message = message .. debug.traceback()
 
     -------------------
-    -- Try to post the error report to the MW channel. I think event.me should
-    -- always be a non-player object.
+    -- Where reporter is nil or messaging the MW channel fails, just return the
+    -- entire message. The server logs this in the tech logs.
     -------------------
-    local name = event.me.name
-    event.me.name = "|Lua|"
-    local done = event.me:ChannelMsg("MW", message)
-    event.me.name = name
-
+    if reporter == nil or not reporter:ChannelMsg("MW", message, game.CHANNEL_MODE_SYSTEM) then
+        return message
     -------------------
-    -- In 0.10.5 object:ChannelMsg() is disabled: it exists but does nothing
-    -- and returns nil. In 0.10.6 and later it returns true or false according
-    -- to success. So if it returned false or nil, report the error the
-    -- old-fashioned way.
-    -------------------
-    if not done then
-       for _, v in ipairs(ev) do
-           if v.t == "GameObject" and
-               v.v.type == game.TYPE_PLAYER then
-               local mode = v.v:GetGmasterMode()
-               if mode == game.GMASTER_MODE_SA or
-                   mode == game.GMASTER_MODE_MM or
-                   mode == game.GMASTER_MODE_MW then
-                   v.v:Write(message)
-               end
-           end
-       end
-    -------------------
-    -- Otherwise, we just want to rturn the prefix (which is the basic error)
-    -- and a quick note as the detail is already logged in the chat logs.
+    -- Otherwise return the prefix (which is the basic error) and a quick note
+    -- as the detail is already logged in the chat logs. The server logs this
+    -- in the tech logs.
     -------------------
     else
-        message = prefix .. "\n(See chat logs for details.)"
+        return prefix .. "\n(See chat logs for details.)"
     end
-
-    -------------------
-    -- Return message. The server logs this in the tech logs.
-    -------------------
-    return message
 end
 
 -- Shutdown hook called when server unloads the plugin
