@@ -319,12 +319,34 @@ void flee_player(object_t *op)
 int move_player(object_t * const op, int dir, const int flag)
 {
     player_t *pl = CONTR(op);
+	static uint32 last_move = 0;
+	static uint8 moves_this_tick = 0;
 
     pl->rest_sitting = pl->rest_mode = 0;
 
     if (op->map == NULL || op->map->in_memory != MAP_MEMORY_ACTIVE ||
         QUERY_FLAG(op,FLAG_PARALYZED) || QUERY_FLAG(op,FLAG_ROOTED))
         return -1;
+
+	/* This next bit is a hack to set a maximum movement speed. Essentially the server is only
+	 * allowed to process up to 4 movement commands per tick.
+	 */
+	if (last_move == ROUND_TAG)
+	{
+		moves_this_tick++;
+
+		// Hard-coded max moves this tick, which essentially synchronizes client max with server max.
+		if (moves_this_tick > 4)
+		{
+			return -1;
+		}
+	}
+	else
+	{
+		moves_this_tick = 1;
+	}
+
+	last_move = ROUND_TAG;
 
     if ((dir = absdir(dir)))
         op->facing = dir;

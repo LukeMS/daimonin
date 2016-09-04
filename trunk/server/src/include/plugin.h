@@ -166,7 +166,6 @@ enum
     HOOK_CHECKFORSPELL,
     HOOK_LOADOBJECT,
     HOOK_UPDATESPEED,
-    HOOK_LEARNSKILL,
     HOOK_DUMPOBJECT,
     HOOK_ADDEXP,
     HOOK_DETERMINEGOD,
@@ -323,6 +322,7 @@ struct plugin_hooklist
     /* K */
     object_t *(*kill_object)(object_t *, object_t *, const char *, const char *);
     /* L */
+	int *(*learn_skill)(object_t *, int);
     object_t *(*load_object_str)(char *);
     object_t *(*locate_beacon)(shstr_t *);
     sint8 (*LOG)(log_t, char *, ...) DAI_GNUC_PRINTF(2, 3);
@@ -396,6 +396,7 @@ struct plugin_hooklist
 #else
     void (*update_object)(object_t *, int);
 #endif
+	int (*unlearn_skill)(object_t *, int);
     /* V */
     /* W */
     /* X */
