@@ -2084,16 +2084,31 @@ static int GameObject_SayTo(lua_State *L)
 /*****************************************************************************/
 /* Name   : GameObject_ChannelMsg                                            */
 /* Lua    : object:ChannelMsg(channel, message, mode)                        */
-/* Info   : object sends message on the channel                              */
-/*          mode: 0 (default) normal message                                 */
-/*          mode: 1 emote                                                    */
+/* Info   : object sends message on the channel according to mode.           */
+/*          object can be any  object, not just a player and does not need to*/
+/*          be subscribed to channel. The message is attributed to the       */
+/*          object's name. This is underlined to show it came from a script. */
+/*          See also mode below.                                             */
+/*          channel must be a full channel name, not an abbreviation.        */
+/*          message is an arbitray string of less than 250 characters or so. */
+/*          mode should be one of:                                           */
+/*            game.CHANNEL_MODE_NORMAL: message is sent as a normal message. */
+/*              This is the default.                                         */
+/*            game.CHANNEL_MODE_EMOTE: message is sent as an emote.          */
+/*            game.CHANNEL_MODE_SYSTEM: message is sent as a system message. */
+/*            It is attributed to |Daimonin| rather than the object name.    */
+/* Return: True on success. False on failure.                                */
+/* TODO  : Where object is a (channel) muted player nothing should be posted.*/
+/*         The main problem here is that we nedd the checks to be done       */
+/*         silently -- ie, on mute just fail, don't notify the player -- but */
+/*         the code has not been written in such a flexible way.             */
 /*****************************************************************************/
 static int GameObject_ChannelMsg(lua_State *L)
 {
     lua_object *self;
-    char       *channel;
-    int mode = 0;
-    char *message;
+    char       *channel,
+               *message;
+    int         mode = 0;
 
     get_lua_args(L, "Oss|i", &self, &channel, &message, &mode);
 
@@ -2101,52 +2116,36 @@ static int GameObject_ChannelMsg(lua_State *L)
     /* No point mucking about with an empty message. */
     if (*message)
     {
-        char  buf[MEDIUM_BUF];
-        uint8 i = 0;
+        char buf[SMALL_BUF];
 
-        /* Underline the name to indicate this is chat from a script. */
-        buf[i++] = ECC_UNDERLINE;
-
-        if (!WHO->name)
+        /* System messages don't use object's name, but are otherwise 'normal'
+         * messages. */
+        if (mode == 2)
         {
-            buf[i++] = '?';
+            sprintf(buf, "%c|Daimonin|%c", ECC_UNDERLINE, ECC_UNDERLINE);
+            mode = 0;
+        }
+        /* Actually this should never happen -- it's very important that
+         * objects always have names (this is handled elsewhere), but JIC... */
+        else if (!WHO->name)
+        {
+            sprintf(buf, "%c???%c", ECC_UNDERLINE, ECC_UNDERLINE);
         }
         else
         {
-            char  c;
-            uint8 j = 0;
-
-            while ((c = *(WHO->name + j)) != '\0')
-            {
-                if (c != ECC_UNDERLINE)
-                {
-                    buf[i++] = c;
-                }
-
-                j++;
-            }
+            sprintf(buf, "%c%s%c", ECC_UNDERLINE, WHO->name, ECC_UNDERLINE);
         }
-
-        buf[i++] = ECC_UNDERLINE;
-        buf[i] = '\0';
 
         if (hooks->lua_channel_message(channel, buf, message, mode) == 0)
         {
             lua_pushboolean(L, 1);
+            return 1;
         }
-        else
-        {
-            lua_pushboolean(L, 0);
-        }
-    }
-    else
-    {
-        lua_pushboolean(L, 0);
     }
 
+    lua_pushboolean(L, 0);
     return 1;
 #else
-
     return 0;
 #endif
 }

@@ -496,6 +496,11 @@ static struct constant_decl preset_game_constants[] =
 #endif
     {"LAYER_PLAYER",  MSP_SLAYER_PLAYER},
     {"LAYER_EFFECT",  MSP_SLAYER_EFFECT},
+
+    /* Channel modes (constants not defined by server) */
+    {"CHANNEL_MODE_NORMAL", 0},
+    {"CHANNEL_MODE_EMOTE",  1},
+    {"CHANNEL_MODE_SYSTEM", 2},
 };
 
 lua_class Game =
