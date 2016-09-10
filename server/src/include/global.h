@@ -301,12 +301,16 @@ error - Your ANSI C compiler should be defining __STDC__;
     ((__a) * (__a))
 
 /* MIN() outputs the minimum value of its inputs. */
-#define MIN(__a, __b) \
-    ((__a) < (__b) ? (__a) : (__b))
+#if !defined MIN
+#   define MIN(__a, __b) \
+        ((__a) < (__b) ? (__a) : (__b))
+#endif
 
 /* MAX() outputs the maximum value of its inputs. */
-#define MAX(__a, __b) \
-    ((__a) > (__b) ? (__a) : (__b))
+#if !defined MAX
+#   define MAX(__a, __b) \
+        ((__a) > (__b) ? (__a) : (__b))
+#endif
 
 /* CLAMP() outputs __c if __a is more than, __b if __a is less than, or __a
  * otherwise. */
