@@ -713,11 +713,11 @@ int unlearn_skill(object_t *op, int skillnr)
 		return 0;
 	}
 
-	if (!find_skill(pl, skillnr))
+	if (!find_skill(op, skillnr))
 	{
 		if (pl && (pl->state & ST_PLAYING))
 		{
-			ndi(NDI_UNIQUE, 0, pl, "You don't know the skill '%s'!", skill->name);
+			ndi(NDI_UNIQUE, 0, op, "You don't know the skill '%s'!", skill->name);
 		}
 		return 0;
 	}
