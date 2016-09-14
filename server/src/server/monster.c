@@ -897,8 +897,10 @@ void object_accept_path(object_t *op)
 
     if(!goal_m)
     {
+#ifdef DEBUG_PATHFINDING
         LOG(llevDebug, "object_accept_path(): NULL goal map. op=%s, map %s, target=%s\n",
                 STRING_OBJ_NAME(op), STRING_MAP_PATH(op->map), STRING_OBJ_NAME(target));
+#endif
         return;
     }
     /* Early exit if we are already close enough */
@@ -943,6 +945,7 @@ void object_accept_path(object_t *op)
     }
     else
     {
+#ifdef DEBUG_PATHFINDING
         LOG(llevDebug, "object_accept_path(): no path to destination ('%s' -> [object '%s' / coordinate %d:%d@%s])\n",
                 STRING_OBJ_NAME(op),
                 STRING_OBJ_NAME(MOB_PATHDATA(op)->target_obj),
@@ -950,6 +953,7 @@ void object_accept_path(object_t *op)
                 STRING_SAFE(MOB_PATHDATA(op)->target_map));
         LOG(llevDebug, "  last movement behaviour of '%s': '%s'\n",
                 STRING_OBJ_NAME(op), MOB_DATA(op)->last_movement_behaviour->name);
+#endif
         SET_FLAG(MOB_PATHDATA(op), PATHFINDFLAG_PATH_FAILED);
     }
 }
