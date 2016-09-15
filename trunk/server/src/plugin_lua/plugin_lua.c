@@ -338,7 +338,7 @@ void lua_context_remove(struct lua_context *context)
 
 void detach_lua_context(struct lua_context *context, int resume_time)
 {
-#ifdef PLUGIN_LUA_DEBUG
+#if PLUGIN_LLEV > 1
     LOG(llevDebug, "LUA - Detaching context (%s)\n", context->file);
 #endif
     context->resume_time = resume_time;
@@ -396,7 +396,7 @@ void resume_detached_contexts()
         if(context->resume_time < 0) {
             lua_State *L = context->state;
             int res;
-#ifdef PLUGIN_LUA_DEBUG
+#if PLUGIN_LLEV > 1
     LOG(llevDebug, "LUA - Resuming detached script: %s\n", context->file);
 #endif
             res = lua_resume(L, 0);
@@ -412,14 +412,14 @@ void resume_detached_contexts()
                 const char *error;
 
                 if ((error = lua_tostring(L, -1)))
-                    LOG(llevDebug, "LUA - %s\n", error);
+                    LOG(llevBug, "LUA - %s\n", error);
                 else
-                    LOG(llevDebug, "LUA - unknown error %d type %s\n", res,
+                    LOG(llevBug, "LUA - unknown error %d type %s\n", res,
                             lua_typename(L, lua_type(L, -1)));
             }
 
             if(context->resume_time < 0) {
-#ifdef PLUGIN_LUA_DEBUG_ALL
+#if PLUGIN_LLEV > 2
                 LOG(llevDebug, "LUA - Terminating context (%s)\n", context->file);
 #endif
                 terminate_lua_context(context);
@@ -489,7 +489,7 @@ MODULEAPI int triggerEvent(CFParm *PParm)
     switch (eventcode)
     {
         case EVENT_NONE:
-          LOG(llevDebug, "LUA - Warning - EVENT_NONE requested\n");
+          LOG(llevBug, "LUA - Warning - EVENT_NONE requested\n");
           break;
         case EVENT_ATTACK:
         case EVENT_APPLY:
@@ -545,11 +545,11 @@ MODULEAPI int HandleGlobalEvent(CFParm *PParm)
             break;
 
         default:
-            LOG(llevDebug, "Unimplemented for now\n");
+            LOG(llevBug, "Unimplemented for now\n");
             break;
 #if 0
         case EVENT_CRASH:
-            LOG(llevDebug, "Unimplemented for now\n");
+            LOG(llevBug, "Unimplemented for now\n");
             break;
         case EVENT_BORN:
             StackActivator[StackPosition] = (object_t *)(PParm->Value[1]);
@@ -672,9 +672,9 @@ static int RunLuaScript(struct lua_context *context)
     }
 
     if ((error = lua_tostring(L, -1)))
-        LOG(llevDebug, "LUA - %s\n", error);
+        LOG(llevBug, "LUA - %s\n", error);
     else
-        LOG(llevDebug, "LUA - unknown error %d type %s\n", res,
+        LOG(llevBug, "LUA - unknown error %d type %s\n", res,
                 lua_typename(L, lua_type(L, -1)));
 
     return -1;
@@ -688,7 +688,7 @@ MODULEAPI int HandleEvent(CFParm *PParm)
     struct lua_context *context;
     int                 ret, res;
 
-    /* This info is always good to see in the logs. */
+#if PLUGIN_LLEV > 0
     LOG(llevInfo, "LUA - event:%d file:>%s< o1:>%s< o2:>%s< o3:>%s< text:>%s< i1:%d i2:%d i3:%d i4:%d\n",
         *(int*)PParm->Value[0],
         (char *)PParm->Value[9],
@@ -700,6 +700,7 @@ MODULEAPI int HandleEvent(CFParm *PParm)
         PParm->Value[6] ? *(int *) PParm->Value[6] : 0,
         PParm->Value[7] ? *(int *) PParm->Value[7] : 0,
         PParm->Value[8] ? *(int *) PParm->Value[8] : 0);
+#endif
 
     if(PParm->Value[9] == NULL)
     {
@@ -749,7 +750,7 @@ MODULEAPI int HandleEvent(CFParm *PParm)
         }
         hooks->normalize_path(outermost->map->orig_path, (const char *) (PParm->Value[9]), buf);
         context->file = hooks->shstr_add_string(buf);
-#ifdef PLUGIN_LUA_DEBUG
+#if PLUGIN_LLEV > 1
         LOG(llevDebug, "LUA: normalized script path: %s\n", context->file);
 #endif
     }
@@ -765,7 +766,7 @@ MODULEAPI int HandleEvent(CFParm *PParm)
 
     if (res)
     {
-#ifdef PLUGIN_LUA_DEBUG_ALL
+#if PLUGIN_LLEV > 2
         LOG(llevDebug, "LUA - Terminating context due to runtime error (%s)\n", context->file);
 #endif
         terminate_lua_context(context);
@@ -804,12 +805,12 @@ MODULEAPI int HandleEvent(CFParm *PParm)
     ret = context->returnvalue;
 
     if(context->resume_time == -1) {
-#ifdef PLUGIN_LUA_DEBUG
+#if PLUGIN_LLEV > 1
         LOG(llevDebug, "LUA - done and terminated, returncode: %d\n", ret);
 #endif
         terminate_lua_context(context);
     } else {
-#ifdef PLUGIN_LUA_DEBUG
+#if PLUGIN_LLEV > 1
         LOG(llevDebug, "LUA - backgrounded\n");
 #endif
     }
@@ -828,10 +829,8 @@ MODULEAPI int HandleEvent(CFParm *PParm)
 /*****************************************************************************/
 MODULEAPI int initPlugin(CFParm *PParm, const char **name, const char **version)
 {
-    LOG(llevDebug, "    Daimonin Lua Plugin loading.....\n");
-
+    LOG(llevSystem, "    Daimonin Lua Plugin loading.....\n");
     init_Daimonin_Lua();
-
     *name = PLUGIN_NAME;
     *version = PLUGIN_VERSION;
     return 0;
@@ -842,7 +841,7 @@ MODULEAPI int initPlugin(CFParm *PParm, const char **name, const char **version)
 /*****************************************************************************/
 MODULEAPI CFParm * removePlugin(CFParm *PParm)
 {
-    LOG(llevDebug, "    Daimonin Lua Plugin unloading.....\n");
+    LOG(llevSystem, "    Daimonin Lua Plugin unloading.....\n");
 
     /* Try to find the function '_shutdown' and run it */
     lua_pushliteral(global_state, "_shutdown");
@@ -901,7 +900,7 @@ MODULEAPI int getPluginProperty(CFParm *PParm, CommArray_s *RTNCmd)
         }
         else
         {
-            LOG(llevDebug, "LUA - Unknown property tag: %s\n", (char *) (PParm->Value[0]));
+            LOG(llevBug, "LUA - Unknown property tag: %s\n", (char *) (PParm->Value[0]));
         }
     }
     return 0;
@@ -969,8 +968,7 @@ MODULEAPI CFParm * postinitPlugin(CFParm *PParm)
     CFParm CFP;
     int i;
 
-    LOG(llevDebug, "LUA - Start postinitPlugin.\n");
-
+    LOG(llevSystem, "LUA - Start postinitPlugin.\n");
     CFP.Value[1] = (void *)PLUGIN_NAME;
 
     /* Register for logout events (needed by the datastore system) */
