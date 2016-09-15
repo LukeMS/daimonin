@@ -179,15 +179,30 @@
 
 #endif /* ifdef DAI_DEVELOPMENT_CODE */
 
+/* PLUGIN_LLEV determines the level/amount of logging of plugin activity. The
+ * possible values are:
+ *  0   nothing is logged -- this is useful on local servers for hunting
+ *      unrelated bugs;
+ *  1   generally useful info is logged -- this means when a plugin is used and
+ *      various parameters, etc. This is the minimum value which should be used
+ *      any public server;
+ *  2   debug info is logged;
+ *  3   more debug info is logged.
+ *
+ * A higher level includes lower levels and actual bugs (including script
+ * errors) are always logged. */
+#if !defined  PLUGIN_LLEV
+#   if defined DAI_DEVELOPMENT_CODE
+#       define PLUGIN_LLEV 3
+#   else
+#       define PLUGIN_LLEV 1
+#   endif
+#endif
+
 #ifdef DEBUG_FIX_PLAYER
 #define FIX_PLAYER(_o_, _m_) fix_player(_o_, _m_)
 #else
 #define FIX_PLAYER(_o_, _m_) fix_player(_o_)
-#endif
-
-#ifdef DAI_DEVELOPMENT_CONTENT
-#define PLUGIN_LUA_DEBUG       /* give us some general infos out */
-#define PLUGIN_LUA_DEBUG_ALL   /* give us more infos out */
 #endif
 
 /* Include this first, because it lets us know what we are missing */
