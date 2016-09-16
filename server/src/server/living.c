@@ -885,10 +885,10 @@ void fix_player(object_t *op)
     int                 thac0=0, thacm=0, temp_fumble=0;
     int                 resists_boni[NROFATTACKS], resists_mali[NROFATTACKS];
     int                 potion_resist_boni[NROFATTACKS], potion_resist_mali[NROFATTACKS], potion_attack[NROFATTACKS];
-    object_t             *tmp, *tmp_ptr, *skill_weapon = NULL, *applied_skill = NULL;
-    player_t             *pl;
+    object_t           *tmp, *tmp_ptr, *skill_weapon = NULL, *applied_skill = NULL;
+    player_t           *pl;
     float               f;
-    msp_t           *msp = MSP_KNOWN(op);
+	msp_t			   *msp;
     uint32              opflags[NUM_FLAGS_32];
 
     /*LOG(llevDebug,"FIX_PLAYER called (%s} %s\n", STRING_OBJ_NAME(op), QUERY_FLAG(op, FLAG_NO_FIX_PLAYER)?"IGNORED":"");*/
@@ -900,6 +900,8 @@ void fix_player(object_t *op)
 #endif
         return;
     }
+
+	msp = MSP_KNOWN(op);
 
     /* ok, in crossfire, fix_player is called for objects not for players
      * we redirect mobs to fix_monster() and let only player pass
