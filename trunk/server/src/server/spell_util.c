@@ -1321,6 +1321,11 @@ void move_bolt(object_t *op)
     object_t *tmp;
     int     w, r;
 
+    if (!op->map)
+    {
+        return;
+    }
+
     if (--(op->stats.hp) < 0)
     {
         remove_ob(op);
