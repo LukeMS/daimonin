@@ -215,7 +215,7 @@ static void InsertLoot(object_t *op, object_t *mob, object_t *tmp)
  */
 void spawn_point(object_t *op)
 {
-    msp_t    *msp = MSP_KNOWN(op);
+    msp_t    *msp;
     uint8     oflags;
     sint8     i;
     sint16    b;
@@ -225,6 +225,13 @@ void spawn_point(object_t *op)
              *mob,
              *next,
              *loot;
+
+    if (!op->map)
+    {
+        return;
+    }
+
+    msp = MSP_KNOWN(op);
 
     if (op->enemy)
     {

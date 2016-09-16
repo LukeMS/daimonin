@@ -187,7 +187,7 @@ int attack_ob(object_t *target, object_t *hitter, object_t *hit_obj)
     if (GetAttackMode(&target, &hitter, &env_attack))
         goto error;
 
-    if(trigger_object_plugin_event(EVENT_ATTACK, target, hitter, hitter, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
+    if(trigger_object_plugin_event(EVENT_ATTACK, target, hitter, hit_obj, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
         goto error;
 
     if(!hit_obj)
@@ -1434,7 +1434,7 @@ object_t * hit_with_arrow(object_t *op, object_t *victim)
     owner_tag = op->owner_count;
 
     if(!trigger_object_plugin_event(EVENT_ATTACK,
-                victim, op, owner, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
+                victim, owner, op, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
     {
         /*LOG(llevNoLog, "hit: %s (%d %d)\n", hitter->name, op->stats.dam, op->stats.wc);*/
         hit_something = attack_ob(victim, owner, op);
