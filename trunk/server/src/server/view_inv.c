@@ -380,6 +380,7 @@ static void NotifyClients(_server_client_cmd cmd, uint16 flags, object_t *op)
         msp_t *msp = MSP_KNOWN(op);
         object_t   *next;
 
+LOG(llevDebug,"%s[%d] %s %d,%d (%c%c)\n",op->name,op->count,op->map->path,op->x,op->y,QUERY_FLAG(op,FLAG_INSERTED)?'I':' ',QUERY_FLAG(op,FLAG_REMOVED)?'R':' ');
         if (msp)
         {
             /* Send cmd to each valid client on the square. */
