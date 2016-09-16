@@ -1449,6 +1449,11 @@ int process_object(object_t *op)
     if (OBJECT_FREE(op))
         return 1;
 
+    if (QUERY_FLAG(op, FLAG_REMOVED))
+    {
+        return 1;
+    }
+
     if (op->type == MONSTER)
         if (move_monster(op, 1))
             return 1;
