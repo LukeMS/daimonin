@@ -2252,8 +2252,23 @@ void ai_choose_enemy(object_t *op, struct mob_behaviour_param *params)
     {
         /* conservative use of the linked spawns - if linked spawns, give enemy signal to all */
         /* only kick the signal here in, when we have a new target */
+        /* TODO: This is a quick temp workaround a crash bug. Full fix later.
+         *
+         * -- Smacky 20160921 */
+#if 1
+        object_t *spawninfo = MOB_DATA(op)->spawn_info;
+        object_t *spawnpoint = (spawninfo) ? get_owner(spawninfo) : NULL;
+
+        if (spawnpoint &&
+            spawnpoint->map &&
+            spawnpoint->slaying)
+        {
+            send_link_spawn_signal(spawnpoint, worst_enemy->obj, LINK_SPAWN_ENEMY);
+        }
+#else
         if (MOB_DATA(op)->spawn_info && MOB_DATA(op)->spawn_info->owner->slaying)
             send_link_spawn_signal(MOB_DATA(op)->spawn_info->owner, worst_enemy->obj, LINK_SPAWN_ENEMY);
+#endif
 
         //        LOG(llevDebug,"ai_choose_enemy(): %s's worst enemy is '%s', friendship: %d\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(worst_enemy->ob), worst_enemy->tmp_friendship);
         op->enemy = worst_enemy->obj;
