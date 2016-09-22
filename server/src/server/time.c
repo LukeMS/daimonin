@@ -1634,4 +1634,3 @@ int process_object(object_t *op)
 
     return 0;
 }
-
