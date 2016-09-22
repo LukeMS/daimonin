@@ -336,77 +336,127 @@ static void AddFakeObject(sockbuf_struct *sb, _server_client_cmd cmd,
  * attaches a broadcast sockbuf to them. */
 static void NotifyClients(_server_client_cmd cmd, uint16 flags, object_t *op)
 {
-    object_t         *who = NULL;
+    object_t       *this;
+    map_t          *m;
+    object_t       *where;
+    msp_t          *msp;
+    object_t       *next;
     sockbuf_struct *sb = NULL;
 
-    /* When no-one is playing, there's nothing to do. */
-    if (!first_player)
+    /* Sanity checks. All we're interested in is clients interested in op. That
+     * means players on the same msp as op or carrying op (or whatever it is in
+     * in both cases), Therefore if no players are online there is nothing to
+     * do (see final check too because if anyone is online we need to consider
+     * if they have an interest). Also check that op is non-NULL and has not
+     * been freed. */
+    if (!first_player ||
+        !op ||
+        OBJECT_FREE(op)) 
     {
         return;
     }
 
-    if (op->env)
+    /* Starting at op, ascend through its parents until an object directly on a
+     * map is reached. On exit, this will be that object, where will be NULL,
+     * and m will be the map (guaranteed to be non-NULL). Notwithstanding the
+     * sanity check, this must always be the case. If not, something
+     * fundamental is broken within the object system; which is both beyond the
+     * scope of this function to fix and probably means we never get this far
+     * anyway so we never even address it.*/
+    this = op;
+    m = op->map;
+    where = op->env;
+//LOG(llevDebug,">>>>%s[%d] %s %d,%d %s (%c%c)\n",this->name,this->count,(m)?m->path:"NOMAP",this->x,this->y,(where)?where->name:"NOENV",QUERY_FLAG(this,FLAG_INSERTED)?'I':' ',QUERY_FLAG(this,FLAG_REMOVED)?'R':' ');
+
+    while (!m)
     {
-        object_t *where = op->env;
-
-        /* Loop through the envs of op, sending cmd to each valid client. */
-        while (where &&
-               where->type != TYPE_VOID_CONTAINER)
+        /* Another sanity check. Neither ->map nor ->env means either this is
+         * fully removed or has never been inserted in the first place. Either
+         * way, we can't carry on (and there can't be any players involved
+         * anyway) so return. */
+        if (!where)
         {
-            if (where->type == PLAYER)
-            {
-                who = where;
-                where = NULL; // players cant have envs
-            }
-            else if (where->type == CONTAINER)
-            {
-                who = (!who) ? where->attacked_by : CONTR(who)->container_above;
-            }
+            return;
+        }
 
-            /* No (more) players? Move on to where's parent. */
-            if (!who)
+        this = where;
+        m = where->map;
+        where = where->env;
+//LOG(llevDebug,"++++%s[%d] %s %d,%d %s (%c%c)\n",this->name,this->count,(m)?m->path:"NOMAP",this->x,this->y,(where)?where->name:"NOENV",QUERY_FLAG(this,FLAG_INSERTED)?'I':' ',QUERY_FLAG(this,FLAG_REMOVED)?'R':' ');
+    };
+
+    /* TODO: This is a temp workaround. ATM spawning mobs set ->map out of
+     * sequence. So here we double check that even though m is non-NULL this is
+     * *really* inserted. Otherwise eventually the server will crash.
+     *
+     * -- Smacky 20160921 */
+    if (!QUERY_FLAG(this, FLAG_INSERTED))
+    {
+        return;
+    }
+
+    /* So get the msp. */
+    msp = MSP_KNOWN(this);
+
+    /* Final sanity check. This saves a LOT of time -- no players here, nothing
+     * to do. */
+    if (!(msp->flags & MSP_FLAG_PLAYER))
+    {
+        return;
+    }
+
+    /* Browse msp for players, sending cmd to each valid client as
+     * appropriate. */
+    FOREACH_OBJECT_IN_MSP(this, msp, next)
+    {
+        player_t *pl;
+
+        /* Once we reach the first sys object there can be no more players, so
+         * abort. */
+        if (QUERY_FLAG(this, FLAG_SYS_OBJECT))
+        {
+            break;
+        }
+
+        /* Found a player/client? If not, continue. Alsso, no need to update
+         * the client about its own avatar. */
+        if (!(pl = (this->type == PLAYER) ? CONTR(this) : NULL) ||
+            pl->ob == op)
+        {
+            continue;
+        }
+
+//LOG(llevDebug,">>>>%s[%d] %s %d,%d %s (%c%c)\n",op->name,op->count,(op->map)?op->map->path:"NOMAP",op->x,op->y,(op->env)?op->env->name:"NOENV",QUERY_FLAG(op,FLAG_INSERTED)?'I':' ',QUERY_FLAG(op,FLAG_REMOVED)?'R':' ');
+
+        /* If op (not this) is on a map... */
+        if (op->map)
+        {
+            /* If pl is not viewing a long list of items, just send a normal
+             * broadcast sockbuf. */
+            if (!pl->socket.look_flag)
             {
-                where = where->env;
+                sb = BroadcastItemCmd(sb, cmd, flags, pl, op);
             }
+            /* Otherwise there's a bit of specific work to do so send THIS
+             * client a new below window. */
             else
             {
-                sb = BroadcastItemCmd(sb, cmd, flags, CONTR(who), op);
+                esrv_send_below(pl);
             }
-        };
-    }
-    else if (!OBJECT_FREE(op) &&
-             op->map)
-    {
-        msp_t *msp = MSP_KNOWN(op);
-        object_t   *next;
-
-LOG(llevDebug,"%s[%d] %s %d,%d (%c%c)\n",op->name,op->count,op->map->path,op->x,op->y,QUERY_FLAG(op,FLAG_INSERTED)?'I':' ',QUERY_FLAG(op,FLAG_REMOVED)?'R':' ');
-        if (msp)
+        }
+        /* Otherwise op must be in an env. If pl is an SA (who can see all,
+         * including inside other objects, whatever depth) OR op is directly
+         * inside pl's linked (means open) container or inventory, send a
+         * broadcast sockbuf. */
+        else if ((pl->gmaster_mode & GMASTER_MODE_SA) ||
+            pl->container == op->env ||
+            pl->ob == op->env)
         {
-            /* Send cmd to each valid client on the square. */
-            FOREACH_OBJECT_IN_MSP(who, msp, next)
-            {
-                player_t *pl;
-
-                if (who->type != PLAYER)
-                {
-                    continue;
-                }
-
-                pl = CONTR(who);
-
-                if (!pl->socket.look_flag)
-                {
-                    sb = BroadcastItemCmd(sb, cmd, flags, pl, op);
-                }
-                else
-                {
-                    esrv_send_below(pl);
-                }
-            }
+            sb = BroadcastItemCmd(sb, cmd, flags, pl, op);
         }
     }
 
+    /* Tidy up our toys (if any). */
     SOCKBUF_COMPOSE_FREE(sb);
 }
 

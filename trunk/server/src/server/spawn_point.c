@@ -359,14 +359,26 @@ void spawn_point(object_t *op)
         return; /* that happens when we have no free spot....*/
     }
 
-	FOREACH_PART_OF_OBJECT(tmp, mob, next)
-	{
-		tmp->env = NULL;
-		tmp->map = msp->map;
-		tmp->x = msp->x + OVERLAY_X(i);
-		tmp->y = msp->y + OVERLAY_Y(i);
-		tmp->type = MONSTER;
-	}
+    /* TODO: This is all a bit naughty. Really clone_object() (or copy()) ought
+     * always NULL both ->map and ->env, clear INSERTED, and set REMOVED. ->map
+     * and ->env should otherwise never be wriiten outside insert_ob_in_*()
+     * and remove_ob() (and possibly a few other technical maintenance
+     * functions). Perhaps type should be a param to clone_object()? The
+     * remaining loop should occur right beforethe insert_ob_in_map() call for
+     * clarity and should *always occur -- it is safe for both singleparts and
+     * multiparts.
+     *
+     * -- Smacky 20160921 */
+    FOREACH_PART_OF_OBJECT(tmp, mob, next)
+    {
+        tmp->type = MONSTER;
+        tmp->env = NULL;
+        tmp->map = op->map;
+        CLEAR_FLAG(tmp, FLAG_INSERTED);
+        SET_FLAG(tmp, FLAG_REMOVED);
+        tmp->x = msp->x + tmp->arch->clone.x + OVERLAY_X(i);
+        tmp->y = msp->y + tmp->arch->clone.y + OVERLAY_Y(i);
+    }
 
     Autogen(mob, op->map->difficulty);
 
@@ -451,7 +463,7 @@ void spawn_point(object_t *op)
     }
     else
 #else
-    if (insert_ob_in_map(mob, mob->map, op, 0))
+    if (insert_ob_in_map(mob, op->map, op, 0))
 #endif
     {
         /* initialise any beacons in the newly spawned mob's inv */

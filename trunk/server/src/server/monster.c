@@ -60,14 +60,28 @@ static int calc_direction_towards(object_t *op, object_t *target, msp_t *msp)
     }
 
     /* Get general direction and distance to target */
-    if (!RV_GET_OBJ_TO_MSP(op, msp, &target_rv, RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
+        /* FIXME: Actually, the recursive search (essentially loads maps into
+         * memory until it finds what its looking for) is extremely wasteful.
+         * So when other can't be found in memory, just return NULL, don't log
+         * a bug.
+         *
+         * -- Smacky 20160917 */
+#if 0
+//    if (!RV_GET_OBJ_TO_MSP(op, msp, &target_rv, RV_FLAG_RECURSIVE_SEARCH | RV_FLAG_DIAGONAL_D))
+//    {
+//        LOG(llevDebug, "BUG: calc_direction_towards(): unhandled rv failure '%s'\n", STRING_OBJ_NAME(op));
+//        /* TODO: verify results */
+//        /* if not on same map (or close) do something else... */
+//        return 0;
+//    }
+#else
+    if (!RV_GET_OBJ_TO_MSP(op, msp, &target_rv, RV_FLAG_DIAGONAL_D))
     {
-        LOG(llevDebug, "BUG: calc_direction_towards(): unhandled rv failure '%s'\n", STRING_OBJ_NAME(op));
         /* TODO: verify results */
         /* if not on same map (or close) do something else... */
         return 0;
     }
-
+#endif
 
     /* Close enough already? */
     if (target_rv.distance <= 1)
@@ -145,19 +159,36 @@ static int calc_direction_towards(object_t *op, object_t *target, msp_t *msp)
         return target_rv.direction;
     }
 
+        /* FIXME: Actually, the recursive search (essentially loads maps into
+         * memory until it finds what its looking for) is extremely wasteful.
+         * So when other can't be found in memory, just return NULL, don't log
+         * a bug.
+         *
+         * -- Smacky 20160917 */
+#if 0
+//    if (!(path_map = map_is_ready(pf->path->map)) ||
+//        !(path_msp = MSP_GET2(path_map, pf->path->x, pf->path->y)) ||
+//        !RV_GET_OBJ_TO_MSP(op, path_msp, &segment_rv, RV_FLAG_RECURSIVE_SEARCH | RV_FLAG_DIAGONAL_D))
+//    {
+//        LOG(llevDebug, "calc_direction_towards(): segment rv failure for '%s' @(%s:%d,%d) -> (%s (%s):%d:%d)\n",
+//                STRING_OBJ_NAME(op),
+//                STRING_MAP_PATH(op->map), op->x, op->y,
+//                STRING_MAP_PATH(path_map), STRING_SAFE(pf->path->map), pf->path->x, pf->path->y);
+//
+//        /* Discard invalid path. This will force a new path request later */
+//        PATHFINDER_FREE_PATH(pf->path);
+//        return 0;
+//    }
+#else
     if (!(path_map = map_is_ready(pf->path->map)) ||
         !(path_msp = MSP_GET2(path_map, pf->path->x, pf->path->y)) ||
-        !RV_GET_OBJ_TO_MSP(op, path_msp, &segment_rv, RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
+        !RV_GET_OBJ_TO_MSP(op, path_msp, &segment_rv, RV_FLAG_DIAGONAL_D))
     {
-        LOG(llevDebug, "calc_direction_towards(): segment rv failure for '%s' @(%s:%d,%d) -> (%s (%s):%d:%d)\n",
-                STRING_OBJ_NAME(op),
-                STRING_MAP_PATH(op->map), op->x, op->y,
-                STRING_MAP_PATH(path_map), STRING_SAFE(pf->path->map), pf->path->x, pf->path->y);
-
         /* Discard invalid path. This will force a new path request later */
         PATHFINDER_FREE_PATH(pf->path);
         return 0;
     }
+#endif
 
     /* throw away segment if we are finished with it */
     if (segment_rv.distance <= 1 && pf->path != NULL)
@@ -247,8 +278,8 @@ static int calc_direction_towards_object(object_t *op, object_t *target)
             PATHFINDER_FREE_PATH(MOB_PATHDATA(op)->path);
         }
         else if ((goal_msp = MSP_GET2(goal_m, goal_x, goal_y)) &&
-                 RV_GET_OBJ_TO_MSP(target, goal_msp, &rv_goal, RV_DIAGONAL_DISTANCE) &&
-                 RV_GET_OBJ_TO_OBJ(op, target, &rv_target, RV_DIAGONAL_DISTANCE))
+                 RV_GET_OBJ_TO_MSP(target, goal_msp, &rv_goal, RV_FLAG_DIAGONAL_D) &&
+                 RV_GET_OBJ_TO_OBJ(op, target, &rv_target, RV_FLAG_DIAGONAL_D))
         {
             /* Heuristic: if dist(target, path goal) > dist(target, self)
              * then get a new path */
@@ -905,7 +936,7 @@ void object_accept_path(object_t *op)
     }
     /* Early exit if we are already close enough */
     else if ((goal_msp = MSP_GET2(goal_m, goal_x, goal_y)) &&
-             RV_GET_OBJ_TO_MSP(op, goal_msp, &rv, RV_DIAGONAL_DISTANCE) && 
+             RV_GET_OBJ_TO_MSP(op, goal_msp, &rv, RV_FLAG_DIAGONAL_D) && 
              rv.distance <= 1)
     {
         return;

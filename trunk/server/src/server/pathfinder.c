@@ -333,7 +333,7 @@ path_node *compress_path(path_node *path)
     next = path->next;
     this_msp = MSP_KNOWN(path);
     next_msp = MSP_KNOWN(next);
-    RV_GET_MSP_TO_MSP(this_msp, next_msp, &rv, RV_MANHATTAN_DISTANCE);
+    RV_GET_MSP_TO_MSP(this_msp, next_msp, &rv, RV_FLAG_MANHATTAN_D);
     last_dir = rv.direction;
 
     for (this = next; this && (next = this->next); this = next)
@@ -343,7 +343,7 @@ path_node *compress_path(path_node *path)
 #endif
         this_msp = MSP_KNOWN(this);
         next_msp = MSP_KNOWN(next);
-        RV_GET_MSP_TO_MSP(this_msp, next_msp, &rv, RV_MANHATTAN_DISTANCE);
+        RV_GET_MSP_TO_MSP(this_msp, next_msp, &rv, RV_FLAG_MANHATTAN_D);
 
         if (last_dir == rv.direction)
         {
@@ -392,7 +392,7 @@ float distance_heuristic(path_node *start, path_node *current, path_node *goal, 
     float  h;
 
     /* Diagonal distance (not manhattan distance or euclidian distance!) */
-    if (!rv_get(op1, current_msp, op2, goal_msp, &rv1, RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
+    if (!rv_get(op1, current_msp, op2, goal_msp, &rv1, RV_FLAG_DIAGONAL_D))
     {
         return HEURISTIC_ERROR;
     }
@@ -404,7 +404,7 @@ float distance_heuristic(path_node *start, path_node *current, path_node *goal, 
 
     /* Add straight-line preference by calculating cross product   */
     /* (gives better performance on open areas _and_ nicer-looking paths) */
-    if (!rv_get(op1, start_msp, op2, goal_msp, &rv2, RV_RECURSIVE_SEARCH | RV_NO_DISTANCE))
+    if (!rv_get(op1, start_msp, op2, goal_msp, &rv2, RV_FLAG_DIAGONAL_D))
     {
         return HEURISTIC_ERROR;
     }
