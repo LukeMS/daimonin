@@ -101,14 +101,21 @@ static sint8   on_same_instance(map_t *m1, map_t *m2);
 #ifndef __RV_H
 #define __RV_H
 
-/* constants for the flags for rv_get(). */
-#define RV_DIAGONAL_DISTANCE        0
-#define RV_IGNORE_MULTIPART         (1 << 0)
-#define RV_RECURSIVE_SEARCH         (1 << 1)
-#define RV_MANHATTAN_DISTANCE       (1 << 2)
-#define RV_EUCLIDIAN_DISTANCE       (1 << 3)
-#define RV_FAST_EUCLIDIAN_DISTANCE  (1 << 4)
-#define RV_NO_DISTANCE              (RV_MANHATTAN_DISTANCE | RV_EUCLIDIAN_DISTANCE | RV_FAST_EUCLIDIAN_DISTANCE)
+/* These flags are used in the flags parameter of rv_get() (in practical terms
+ * that really means as the final (_F_) input of the RV_GET_*() macros).
+ * Although these are used and set up as a bitmask, in fact the lower few
+ * (*_D) behave more as a mode. That is, where multiple such flags are given
+ * only the first one found (in the order they are defined below, which is
+ * according to speed from slow to fast) is used. If none are given, neither
+ * distance nor direction are calculated, which i s obviously fastest. */
+#define RV_FLAG_EUCLIDIAN_D       (1 << 0) // straight line 
+#define RV_FLAG_FAST_EUCLIDIAN_D  (1 << 1) // squared straight line
+#define RV_FLAG_MANHATTAN_D       (1 << 2) // manhattan
+#define RV_FLAG_DIAGONAL_D        (1 << 3) // diagonal
+/* (1 << 4) is free. */
+/* (1 << 5) is free. */
+#define RV_FLAG_IGNORE_MULTIPART  (1 << 6) // don't translate for closest body part
+#define RV_FLAG_RECURSIVE_SEARCH  (1 << 7) // needs work -- DO NOT USE
 
 /* Maximum number of tiles to search in relative_tile_position() before giving up */
 /* 8 => 1 level deep, 24 => 2 levels, 48 =>3 levels */
@@ -195,7 +202,7 @@ struct mapsearch_node
     struct mapsearch_node  *next;
 };
 
-extern int rv_get(object_t *op1, msp_t *msp1, object_t *op2, msp_t *msp2, rv_t *retval, int flags);
+extern sint8 rv_get(object_t *op1, msp_t *msp1, object_t *op2, msp_t *msp2, rv_t *retval, uint8 flags);
 
 #endif /* ifndef __RV_H */
 

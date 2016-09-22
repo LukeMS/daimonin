@@ -368,21 +368,11 @@ static int RelativeTilePosition(map_t *map1, map_t *map2, rv_t *rv);
 *
 * If the objects are not on maps, results are likely to be unexpected or fatal
 *
-* Flags:
-*  RV_IGNORE_MULTIPART   - don't translate for closest body part.
-*  RV_RECURSIVE_SEARCH   - handle separate maps better (slow and does still not
-*                                search the whole mapset).
-*  RV_MANHATTAN_DISTANCE - Calculate manhattan distance (dx+dy)  (fast)
-*  RV_EUCLIDIAN_DISTANCE - straight line distance (slowest)
-*  RV_FAST_EUCLIDIAN_DISTANCE - squared straight line distance (slow)
-*  RV_DIAGONAL_DISTANCE  - diagonal (max(dx + dy)) distance (fast) (default)
-*  RV_NO_DISTANCE        - don't calculate distance (or direction) (fastest)
-*
 * @return 0 if the function fails (because of the maps being separate), and the rangevector will not be touched. Otherwise it will return 1.
 *
 *  TODO: support multipart->multipart handling
 */
-int rv_get(object_t *op1, msp_t *msp1, object_t *op2, msp_t *msp2, rv_t *rv, int flags)
+sint8 rv_get(object_t *op1, msp_t *msp1, object_t *op2, msp_t *msp2, rv_t *rv, uint8 flags)
 {
     map_t *m1,
           *m2;
@@ -462,7 +452,7 @@ int rv_get(object_t *op1, msp_t *msp1, object_t *op2, msp_t *msp2, rv_t *rv, int
         rv->distance_x -= m2->width;
         rv->distance_y -= m2->height;
     }
-    else if (flags & RV_RECURSIVE_SEARCH) /* Search */
+    else if (flags & RV_FLAG_RECURSIVE_SEARCH) /* Search */
     {
         if (!RelativeTilePosition(m1, m2, rv))
         {
@@ -484,7 +474,7 @@ int rv_get(object_t *op1, msp_t *msp1, object_t *op2, msp_t *msp2, rv_t *rv, int
     rv->head = rv->part = op1;
 
     /* If this is multipart, find the closest part now */
-    if (!(flags & RV_IGNORE_MULTIPART) &&
+    if (!(flags & RV_FLAG_IGNORE_MULTIPART) &&
         op1 &&
         op1->more)
     {
@@ -519,33 +509,32 @@ int rv_get(object_t *op1, msp_t *msp1, object_t *op2, msp_t *msp2, rv_t *rv, int
         }
     }
 
-    /* Calculate approximate direction */
-    rv->direction = find_dir_2(-rv->distance_x, -rv->distance_y);
-
     /* Calculate distance */
-    switch (flags & (0x04 | 0x08 | 0x10))
+    if ((flags & RV_FLAG_EUCLIDIAN_D))
     {
-        case RV_MANHATTAN_DISTANCE:
-        rv->distance = abs(rv->distance_x) + abs(rv->distance_y);
-        break;
-
-        case RV_EUCLIDIAN_DISTANCE:
         rv->distance = isqrt(rv->distance_x * rv->distance_x + rv->distance_y * rv->distance_y);
-        break;
-
-        case RV_FAST_EUCLIDIAN_DISTANCE:
+    }
+    else if ((flags & RV_FLAG_FAST_EUCLIDIAN_D))
+    {
         rv->distance = rv->distance_x * rv->distance_x + rv->distance_y * rv->distance_y;
-        break;
-
-        case RV_DIAGONAL_DISTANCE:
-        rv->distance = MAX(abs(rv->distance_x), abs(rv->distance_y));
-        break;
-
-        case RV_NO_DISTANCE:
+    }
+    else if ((flags & RV_FLAG_MANHATTAN_D))
+    {
+        rv->distance = ABS(rv->distance_x) + ABS(rv->distance_y);
+    }
+    else if ((flags & RV_FLAG_DIAGONAL_D))
+    {
+        rv->distance = MAX(ABS(rv->distance_x), ABS(rv->distance_y));
+    }
+    else
+    {
         rv->distance = UINT_MAX;
-        break;
+        rv->direction = 0;
+        return 1;
     }
 
+    /* Calculate approximate direction */
+    rv->direction = find_dir_2(-rv->distance_x, -rv->distance_y);
     return 1;
 }
 

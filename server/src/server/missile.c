@@ -710,7 +710,7 @@ void stop_missile(object_t *op)
 //    /* Experimental targetting throw hack */
 //    if(! dir && thrower->type == PLAYER && OBJECT_VALID(CONTR(op)->target_ob, CONTR(op)->target_tag)) {
 //        object_t *target = CONTR(op)->target_ob;
-//        RV_GET_OBJ_TO_OBJ(op, target, &target_vec, 0);
+//        RV_GET_OBJ_TO_OBJ(op, target, &target_vec, RV_FLAG_DIAGONAL_D);
 //        dir = target_vec.direction;
 //        target_throw = 1;
 //    } else

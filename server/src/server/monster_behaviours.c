@@ -103,7 +103,7 @@ int mob_can_see_obj(object_t *op, object_t *obj, struct mob_known_obj *known_obj
     /* Get the rangevector, trying to use a cached version first */
     if (known_obj)
         rv_p = get_known_obj_rv(op, known_obj, MAX_KNOWN_OBJ_RV_AGE);
-    else if (RV_GET_OBJ_TO_OBJ(op, obj, &rv, RV_EUCLIDIAN_DISTANCE))
+    else if (RV_GET_OBJ_TO_OBJ(op, obj, &rv, RV_FLAG_EUCLIDIAN_D))
         rv_p = &rv;
 
     if (rv_p == NULL)
@@ -690,7 +690,7 @@ int nret;
         }
 
         if (basemap &&
-            !RV_GET_MSP_TO_OBJ(MSP_GET2(basemap, base->x, base->y), op, &rv, RV_NO_DISTANCE)) /* the mob is not a controled map */
+            !RV_GET_MSP_TO_OBJ(MSP_GET2(basemap, base->x, base->y), op, &rv, RV_FLAG_DIAGONAL_D)) /* the mob is not a controled map */
         {
             aDirWeight[0] = 0;
             aDirWeight[1] = 0;
@@ -1176,7 +1176,7 @@ void ai_avoid_line_of_fire(object_t *op, struct mob_behaviour_param *params, mov
                  * TODO: should possibly do a random throw against the mob's reaction
                  * time, intelligence or somesuch */
                 /* TODO: smart mobs should ignore weak missiles or anything it is immune against */
-                if (RV_GET_OBJ_TO_OBJ(tmp->obj, op, &rv, RV_DIAGONAL_DISTANCE) &&
+                if (RV_GET_OBJ_TO_OBJ(tmp->obj, op, &rv, RV_FLAG_DIAGONAL_D) &&
                     RV_TEST_MISSILE_EXACT(rv) &&
                     tmp->obj->direction == rv.direction)
                 {
@@ -1195,7 +1195,7 @@ void ai_avoid_line_of_fire(object_t *op, struct mob_behaviour_param *params, mov
 
                     /* Avoid moving into line of fire */
                     if (msp &&
-                        RV_GET_OBJ_TO_MSP(tmp->obj, msp, &rv, RV_DIAGONAL_DISTANCE) &&
+                        RV_GET_OBJ_TO_MSP(tmp->obj, msp, &rv, RV_FLAG_DIAGONAL_D) &&
                         RV_TEST_MISSILE_EXACT(rv) &&
                         tmp->obj->direction == rv.direction)
                     {
@@ -1310,7 +1310,7 @@ void ai_optimize_line_of_fire(object_t *op, struct mob_behaviour_param *params, 
 
                 /* Find a spot in or near line of fire, and forbid movements to other spots */
                 if (msp &&
-                    RV_GET_OBJ_TO_MSP(op->enemy, msp, &rv, RV_DIAGONAL_DISTANCE))
+                    RV_GET_OBJ_TO_MSP(op->enemy, msp, &rv, RV_FLAG_DIAGONAL_D))
                 {
                     if (RV_TEST_MISSILE_EXACT(rv))
                     {
@@ -1436,7 +1436,7 @@ void ai_move_towards_enemy_last_known_pos(object_t *op, struct mob_behaviour_par
         map_t              *map     = map_is_ready(enemy->last_map);
 
         if (map &&
-            RV_GET_OBJ_TO_MSP(op, MSP_GET2(map, enemy->last_x, enemy->last_y), &rv, RV_EUCLIDIAN_DISTANCE))
+            RV_GET_OBJ_TO_MSP(op, MSP_GET2(map, enemy->last_x, enemy->last_y), &rv, RV_FLAG_EUCLIDIAN_D))
         {
             op->anim_enemy_dir = rv.direction;
             if (rv.distance > 3)
@@ -1546,8 +1546,8 @@ void ai_move_towards_waypoint(object_t *op, struct mob_behaviour_param *params, 
         {
             /* We know which map we want to. Can we figure out where that
              * map lies relative to current position? */
-
-            if (!RV_GET_OBJ_TO_MSP(op, MSP_GET2(destmap, wp_x, wp_y), &rv, RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
+            /* FIXME: This used to have RV_FLAG_RECURSIVE_SEARCH. */
+            if (!RV_GET_OBJ_TO_MSP(op, MSP_GET2(destmap, wp_x, wp_y), &rv, RV_FLAG_DIAGONAL_D))
             {
                 /* Problem: we couldn't find a relative direction between the
                  * maps. Usually it means that they are in different mapsets
@@ -1768,9 +1768,9 @@ void ai_stay_near_home(object_t *op, struct mob_behaviour_param *params, move_re
 
     if(AIPARAM_INT(AIPARAM_STAY_NEAR_HOME_EUCLIDIAN_DISTANCE)) {
         maxdist *= maxdist;
-        distflags = RV_FAST_EUCLIDIAN_DISTANCE;
+        distflags = RV_FLAG_FAST_EUCLIDIAN_D;
     } else
-        distflags = RV_DIAGONAL_DISTANCE;
+        distflags = RV_FLAG_DIAGONAL_D;
 
     if (!RV_GET_OBJ_TO_MSP(op, MSP_GET2(map, base->x, base->y), &rv, distflags))
     {
@@ -1974,7 +1974,7 @@ void ai_look_for_enemy_missiles(object_t *op, struct mob_behaviour_param *params
                         {
                             rv_t rv;
 
-                            if (RV_GET_OBJ_TO_OBJ(op, obj, &rv, RV_DIAGONAL_DISTANCE) &&
+                            if (RV_GET_OBJ_TO_OBJ(op, obj, &rv, RV_FLAG_DIAGONAL_D) &&
                                 (int)rv.distance <= sense_range)
                             {
                                 known = register_npc_known_obj(op, obj, 0, -10, 1);
@@ -2223,7 +2223,7 @@ void ai_choose_enemy(object_t *op, struct mob_behaviour_param *params)
                     rv_t   base_rv;
 
                     /* TODO: actually use tmp->last_map, last_x, last_y */
-                    if(RV_GET_MSP_TO_MSP(tmp_msp, base_msp, &base_rv, RV_FAST_EUCLIDIAN_DISTANCE))
+                    if(RV_GET_MSP_TO_MSP(tmp_msp, base_msp, &base_rv, RV_FLAG_FAST_EUCLIDIAN_D))
                     {
                         if((int)base_rv.distance > antilure_dist_2)
                         {

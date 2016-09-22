@@ -2400,30 +2400,6 @@ object_t *insert_ob_in_map(object_t *const op, map_t *m, object_t *const origina
     op->oy = op->y;
 #endif
 
-#if 0
-    /* this is now a key part of this function, because
-     * we adjust multi arches here when they cross map boarders!
-     */
-    x = op->x;
-    y = op->y;
-    op->map = m;
-    msp = MSP_GET(m, x, y);
-
-    if (!msp)
-    {
-        LOG(llevBug, "BUG: insert_ob_in_map(): Trying to insert object %s outside the map %s (%d,%d).\n\n",
-            STRING_OBJ_NAME(op), op->map->path, op->x, op->y);
-        return NULL;
-    }
-
-    /* x and y will only change when we change the map too - so check the map */
-    if (op->map != m)
-    {
-        op->map = m;
-        op->x = x;
-        op->y = y;
-    }
-#else
     x = op->x;
     y = op->y;
     op->map = m;
@@ -2443,7 +2419,6 @@ object_t *insert_ob_in_map(object_t *const op, map_t *m, object_t *const origina
         op->x = x;
         op->y = y;
     }
-#endif
 
     if (!(flag & INS_NO_MERGE))
         (void)merge_ob(op, NULL);

@@ -646,7 +646,7 @@ int cast_spell(object_t *op, object_t *caster, int dir, int type, int ability, S
         else
         {
             /* if valid target is not in range for selected spell, skip here casting */
-            if (!RV_GET_OBJ_TO_OBJ(op, target, &rv, RV_DIAGONAL_DISTANCE) ||
+            if (!RV_GET_OBJ_TO_OBJ(op, target, &rv, RV_FLAG_DIAGONAL_D) ||
                 rv.distance > (unsigned int)spells[type].range)
             {
                 if (pl)

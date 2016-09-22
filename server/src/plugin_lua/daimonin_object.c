@@ -4035,7 +4035,7 @@ static int GameObject_GetVector(lua_State *L)
 
     get_lua_args(L, "OO", &self, &whatptr);
 
-    if (!hooks->rv_get(WHO, MSP_KNOWN(WHO), WHAT, MSP_KNOWN(WHAT), &rv, RV_DIAGONAL_DISTANCE))
+    if (!hooks->rv_get(WHO, MSP_KNOWN(WHO), WHAT, MSP_KNOWN(WHAT), &rv, RV_FLAG_DIAGONAL_D))
     {
         return 0;
     }

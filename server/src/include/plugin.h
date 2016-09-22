@@ -372,7 +372,7 @@ struct plugin_hooklist
     int  (*remove_item_buff)(object_t *, char *, uint32);
     void (*reset_instance_data)(player_t *pl);
     void (*return_poolchunk_array_real)(void *, uint32, struct mempool *);
-    int (*rv_get)(object_t *, msp_t *, object_t *, msp_t *, rv_t *, int);
+    sint8 (*rv_get)(object_t *, msp_t *, object_t *, msp_t *, rv_t *, uint8);
     /* S */
     void (*set_personal_light)(player_t *, int);
     void (*set_quest_status)(object_t *, int, int);

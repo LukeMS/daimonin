@@ -154,21 +154,35 @@ struct mob_known_obj *register_npc_known_obj(object_t *npc, object_t *other, int
     }
     else
     {
-        /* We do a recursive search here because this logs a lot of unnecessary
-         * bugs on maps without tileset_id set. This will avoid those bugs.
-         * However, recursive searching is (comparatively) slow, but the good
-         * news is that on public servers tileset_id is always set meaning the
-         * slow manual recursive search is never done (and this bug will only
-         * be logged for a genuine bug). So this only causes a recursive search
-         * on local servers where speed is not so important and we still want
-         * to avoid spurious bugs.
-         * -- Smacky 20101116 */
-        if (!RV_GET_OBJ_TO_OBJ(npc, other, &rv, RV_EUCLIDIAN_DISTANCE | RV_RECURSIVE_SEARCH) ||
+        /* FIXME: Actually, the recursive search (essentially loads maps into
+         * memory until it finds what its looking for) is extremely wasteful.
+         * So when other can't be found in memory, just return NULL, don't log
+         * a bug.
+         *
+         * -- Smacky 20160917 */
+#if 0
+//        /* We do a recursive search here because this logs a lot of unnecessary
+//         * bugs on maps without tileset_id set. This will avoid those bugs.
+//         * However, recursive searching is (comparatively) slow, but the good
+//         * news is that on public servers tileset_id is always set meaning the
+//         * slow manual recursive search is never done (and this bug will only
+//         * be logged for a genuine bug). So this only causes a recursive search
+//         * on local servers where speed is not so important and we still want
+//         * to avoid spurious bugs.
+//         * -- Smacky 20101116 */
+//        if (!RV_GET_OBJ_TO_OBJ(npc, other, &rv, RV_FLAG_EUCLIDIAN_D | RV_FLAG_RECURSIVE_SEARCH) ||
+//            !rv.part)
+//        {
+//            LOG(llevBug, "BUG: register_npc_known_obj(): '%s' can't get rv to '%s'\n", STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other));
+//            return NULL;
+//        }
+#else
+        if (!RV_GET_OBJ_TO_OBJ(npc, other, &rv, RV_FLAG_EUCLIDIAN_D) ||
             !rv.part)
         {
-            LOG(llevBug, "BUG: register_npc_known_obj(): '%s' can't get rv to '%s'\n", STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other));
             return NULL;
         }
+#endif
 
         /* We check LOS here, only if we are registering a new object_t */
         /* Also, we only check against players, and not if we have
@@ -388,7 +402,7 @@ rv_t * get_known_obj_rv(object_t *op, struct mob_known_obj *known_obj, int maxag
     if (ROUND_TAG - known_obj->rv_time >= (uint32) maxage || known_obj->rv_time == 0 || maxage == 0)
     {
         /* Recalculating the rv might very well fail */
-        if (!RV_GET_OBJ_TO_OBJ(op, known_obj->obj, &known_obj->rv, 0))
+        if (!RV_GET_OBJ_TO_OBJ(op, known_obj->obj, &known_obj->rv, RV_FLAG_EUCLIDIAN_D))
         {
             known_obj->rv_time = 0;
             return NULL;
