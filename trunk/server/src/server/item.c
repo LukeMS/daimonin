@@ -1256,7 +1256,7 @@ static object_t *PickUp(object_t *who, object_t *what, object_t *where, uint32 n
         !QUERY_FLAG(what, FLAG_SYS_OBJECT) &&
         what->layer)
     {
-        what = clone_object(what, MODE_NO_INVENTORY);
+        what = clone_object(what, 0, MODE_NO_INVENTORY);
         what->nrof = nrof;
 
         if (pl)

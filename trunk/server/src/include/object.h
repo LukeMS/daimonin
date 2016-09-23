@@ -474,7 +474,7 @@ extern object_t *present_arch_in_ob_temp(archetype_t *at, object_t *op);
 extern int       find_dir_2(int x, int y);
 extern int       absdir(int d);
 extern int       dirdiff(int dir1, int dir2);
-extern object_t *clone_object(object_t *original, uint8 mode);
+extern object_t *clone_object(object_t *original, uint8 type, uint8 mode);
 extern object_t *load_object_str(char *obstr);
 extern void      object_gc();
 extern int       auto_apply(object_t *op);

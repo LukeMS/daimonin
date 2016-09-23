@@ -3988,7 +3988,7 @@ static int GameObject_Clone(lua_State *L)
     object_t     *clone;
 
     get_lua_args(L, "O|i", &self, &mode);
-    clone = hooks->clone_object(WHO, mode);
+    clone = hooks->clone_object(WHO, 0, mode);
 
     return push_object(L, &GameObject, clone);
 }
