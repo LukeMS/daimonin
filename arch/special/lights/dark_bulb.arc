@@ -2,6 +2,7 @@ Object dark1
 name dark
 face dark_bulb_1.111
 glow_radius -1
+last_sp -1
 no_pick 1
 no_drop 1
 no_teleport 1
@@ -12,6 +13,7 @@ Object dark2
 name dark
 face dark_bulb_2.111
 glow_radius -2
+last_sp -2
 no_pick 1
 no_drop 1
 no_teleport 1
@@ -22,6 +24,7 @@ Object dark3
 name dark
 face dark_bulb_3.111
 glow_radius -3
+last_sp -3
 no_pick 1
 no_drop 1
 type 78
@@ -36,6 +39,7 @@ no_drop 1
 type 78
 no_teleport 1
 glow_radius -4
+last_sp -4
 sys_object 1
 end
 Object dark5
@@ -46,6 +50,7 @@ no_drop 1
 type 78
 no_teleport 1
 glow_radius -5
+last_sp -5
 sys_object 1
 end
 Object dark6
@@ -56,6 +61,7 @@ no_drop 1
 type 78
 no_teleport 1
 glow_radius -6
+last_sp -6
 sys_object 1
 end
 Object dark7
@@ -66,6 +72,7 @@ no_drop 1
 type 78
 no_teleport 1
 glow_radius -7
+last_sp -7
 sys_object 1
 end
 Object dark8
@@ -76,6 +83,7 @@ no_drop 1
 type 78
 no_teleport 1
 glow_radius -8
+last_sp -8
 sys_object 1
 end
 Object dark9
@@ -86,5 +94,6 @@ no_drop 1
 type 78
 no_teleport 1
 glow_radius -9
+last_sp -9
 sys_object 1
 end
