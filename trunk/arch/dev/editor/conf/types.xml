@@ -678,20 +678,30 @@
   <import_type name="default_flags" />
   <ignore>
     <attribute arch="speed_left" />
-    <ignore_list name="system_object" />
   </ignore>
   <description><![CDATA[
-	Light Sources are system objects which used as a light/darkness set point. ]]>
+    Light Sources are objects which are used as a light/dark set point. They
+    may be connected. ]]>
   </description>
-  <attribute arch="glow_radius" editor="glow intensity" type="int" min="-9" max="9">
+  <attribute arch="glow_radius" editor="actual glow intensity" type="int" min="-9" max="9">
+    This determines how much light/dark the object will emit while it is
+    switched on. See also &lt;potential glow intensity&gt;.
     If the value is from 1 to 9, the object will emit light. The higher the
     value, the more light is emitted.
-    If the value is from -1 to -9, the object will emit darkness. The lower
-    the value, the more darkness is emitted.
-    If the value is 0, the object emits neither light nor darkness.
+    If the value is from -1 to -9, the object will emit dark. The lower the
+    value, the more dark is emitted.
+    If the value is 0, the object emits neither light nor dark. Ths means the
+    object is in fact switched off.
+  </attribute>
+  <attribute arch="last_sp" editor="potential glow intensity" type="int" min="-9" max="9">
+    This determines how much light/dark the object will emit when it is next
+    switched on. This value should be the same as &lt;actual glow intensity&gt;
+    if that is non-0, or a non-0 value if that is 0.
   </attribute>
   <attribute arch="connected" editor="connection" type="int">
-  If set, the light can be controlled via the specified connection.
+    If set, the object can be switched on and off via the specified connection.
+    If not set, the object is permanently switched on or off as determined by
+    &lt;actual glow intensity&gt;.
   </attribute>
 </type>
 

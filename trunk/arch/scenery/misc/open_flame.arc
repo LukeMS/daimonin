@@ -1,10 +1,11 @@
 Object open_flame
 name flame
 layer 3
-type 79
+type 78
 face open_flame.101
 material 144
 glow_radius 5
+last_sp 5
 weight 500
 no_pick 1
 no_pass 1
