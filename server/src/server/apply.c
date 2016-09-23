@@ -2472,6 +2472,10 @@ void turn_off_light(object_t *op)
     }
 
     /* Simple case for map light sources (non-appliable) */
+    /* TODO: ATM non-system object light sources, such as open flames, will
+     * continue to burn but emit no light. I'll fix this soon.
+     *
+     * -- Smacky 20160923 */
     if(op->type == LIGHT_SOURCE)
     {
         op->last_sp = op->glow_radius;

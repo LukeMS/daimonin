@@ -282,11 +282,21 @@ void signal_connection(object_t *op, object_t *activator, object_t *originator, 
               break;
 
             case TYPE_LIGHT_APPLY:
-            case LIGHT_SOURCE: /* Dunno if this really works for LIGHT_SOURCE */
-              if(op->weight_limit == 0 && tmp->glow_radius > 0)
-                  turn_off_light(tmp);
-              else if(op->weight_limit != 0 && tmp->glow_radius == 0)
-                  turn_on_light(tmp);
+            case LIGHT_SOURCE:
+              if (!op->weight_limit)
+              {
+                  if (tmp->glow_radius)
+                  {
+                      turn_off_light(tmp);
+                  }
+              }
+              else
+              {
+                  if (!tmp->glow_radius)
+                  {
+                      turn_on_light(tmp);
+                  }
+              }
               break;
 
             case SPAWN_POINT:
