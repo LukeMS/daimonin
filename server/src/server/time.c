@@ -1041,7 +1041,7 @@ void move_creator(object_t *op)
                 continue;
             }
 
-            creation = clone_object(this, MODE_INVENTORY);
+            creation = clone_object(this, 0, MODE_INVENTORY);
 
             if (QUERY_FLAG(op, FLAG_ONE_DROP) &&
                 CheckForDuplicate(creation, msp))
@@ -1056,7 +1056,7 @@ void move_creator(object_t *op)
 #else
             if (n == 0)
             {
-                creation = clone_object(this, MODE_INVENTORY);
+                creation = clone_object(this, 0, MODE_INVENTORY);
 
                 if (QUERY_FLAG(op, FLAG_ONE_DROP) &&
                     CheckForDuplicate(creation, msp))

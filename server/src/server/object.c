@@ -841,9 +841,15 @@ void initialize_object(object_t *op)
     op->count_debug=op->count;
 }
 
-/* clone_object() clones original (multiparts are correctly handled). If mode
- * is zero it also clones any inventory. The return is the clone. */
-object_t *clone_object(object_t *original, uint8 mode)
+/* clone_object() clones original (multiparts are correctly handled). If type
+ * is non-zero, (each part of) the clone will be set to this ->type. If 0,
+ * original->type is inherited as usual. THIS IS NOT A SHORTCUT TO MORPH AN
+ * OBJECT TO ANOTHER TYPE. This is generally unsafe, or at least not trivial,
+ * because many other attributes have particular meanings per type.
+ * Nevertheless, historically some code does operate this way (eg, monster
+ * spawning). If mode is zero it also clones any inventory. The return is the
+ * clone. */
+object_t *clone_object(object_t *original, uint8 type, uint8 mode)
 {
     object_t *clone = NULL,
            *prev = NULL,
@@ -881,25 +887,37 @@ object_t *clone_object(object_t *original, uint8 mode)
         that = get_object();
         copy_object(this, that);
 
-        if (original->env)
+        if (type)
         {
-            that->env = original->env;
+            that->type = type;
         }
-        else if (original->map)
-        {
-            map_t  *m = original->map;
-            sint16  x = original->x + this->arch->clone.x,
-                    y = original->y + this->arch->clone.y;
 
-            /* out_of_map() will check and adjust map,x,y so that spawn points on
-             * or near the edge of a map will spawn a mob with the correct values
-             * on a tiled map (ie, the point is at map_0000 5 0 and the mob spawns
-             * on the northeast square -- this is map_0001 6 23, not map_0000 6 -1).
-             * -- Smacky 20131205 */
-            that->map = OUT_OF_MAP(m, x, y);
-            that->x = x;
-            that->y = y;
-        }
+        /* The clone is a new object that is and has never been inserted
+         * anywhere. */
+        that->env = NULL;
+        that->map = NULL;
+        CLEAR_FLAG(that, FLAG_INSERTED);
+        SET_FLAG(that, FLAG_REMOVED);
+
+//        if (original->env)
+//        {
+//            that->env = original->env;
+//        }
+//        else if (original->map)
+//        {
+//            map_t  *m = original->map;
+//            sint16  x = original->x + this->arch->clone.x,
+//                    y = original->y + this->arch->clone.y;
+//
+//            /* out_of_map() will check and adjust map,x,y so that spawn points on
+//             * or near the edge of a map will spawn a mob with the correct values
+//             * on a tiled map (ie, the point is at map_0000 5 0 and the mob spawns
+//             * on the northeast square -- this is map_0001 6 23, not map_0000 6 -1).
+//             * -- Smacky 20131205 */
+//            that->map = OUT_OF_MAP(m, x, y);
+//            that->x = x;
+//            that->y = y;
+//        }
 
         if (!this->head)
         {
@@ -925,7 +943,7 @@ object_t *clone_object(object_t *original, uint8 mode)
     {
         FOREACH_OBJECT_IN_OBJECT(this, original, next)
         {
-            object_t *that = clone_object(this, MODE_INVENTORY);
+            object_t *that = clone_object(this, 0, MODE_INVENTORY);
 
             (void)insert_ob_in_ob(that, clone);
         }

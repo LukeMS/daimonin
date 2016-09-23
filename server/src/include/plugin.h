@@ -249,7 +249,7 @@ struct plugin_hooklist
                       char *);
     sint8 (*check_path)(const char *, uint8);
     void (*clear_mob_knowns)(object_t *, struct mob_known_obj **, hashtable_t *);
-    object_t *(*clone_object)(object_t *, uint8);
+    object_t *(*clone_object)(object_t *, uint8, uint8);
     int (*command_combat)(object_t *, char *);
     int (*command_target)(object_t *, char *);
     char *(*cost_string_from_value)(sint64, int);

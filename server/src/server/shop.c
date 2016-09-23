@@ -644,7 +644,7 @@ object_t *create_financial_loot(moneyblock_t *money, object_t *who, uint8 mode)
 /* InsertCoin() inserts nrof * coins of cointype into into. */
 static void InsertCoin(uint8 cointype, uint32 nrof, object_t *into)
 {
-     object_t *coin = clone_object(&coins_arch[cointype]->clone, MODE_NO_INVENTORY);
+     object_t *coin = clone_object(&coins_arch[cointype]->clone, 0, MODE_NO_INVENTORY);
 
      coin->nrof = nrof;
      (void)insert_ob_in_ob(coin, into);

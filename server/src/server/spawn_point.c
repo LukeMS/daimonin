@@ -352,30 +352,16 @@ void spawn_point(object_t *op)
      * point in a house won't spawn in the street, but beware of windows). */
     oflags = OVERLAY_RANDOM | OVERLAY_SPECIAL | OVERLAY_WITHIN_LOS | OVERLAY_FIRST_AVAILABLE;
 
-    if (!(mob = clone_object(mob, MODE_INVENTORY)) ||
+    if (!(mob = clone_object(mob, MONSTER, MODE_INVENTORY)) ||
         (i = overlay_find_free_by_flags(msp, mob, oflags)) == -1)
     {
         mark_object_removed(loot);
         return; /* that happens when we have no free spot....*/
     }
 
-    /* TODO: This is all a bit naughty. Really clone_object() (or copy()) ought
-     * always NULL both ->map and ->env, clear INSERTED, and set REMOVED. ->map
-     * and ->env should otherwise never be wriiten outside insert_ob_in_*()
-     * and remove_ob() (and possibly a few other technical maintenance
-     * functions). Perhaps type should be a param to clone_object()? The
-     * remaining loop should occur right beforethe insert_ob_in_map() call for
-     * clarity and should *always occur -- it is safe for both singleparts and
-     * multiparts.
-     *
-     * -- Smacky 20160921 */
     FOREACH_PART_OF_OBJECT(tmp, mob, next)
     {
-        tmp->type = MONSTER;
-        tmp->env = NULL;
         tmp->map = op->map;
-        CLEAR_FLAG(tmp, FLAG_INSERTED);
-        SET_FLAG(tmp, FLAG_REMOVED);
         tmp->x = msp->x + tmp->arch->clone.x + OVERLAY_X(i);
         tmp->y = msp->y + tmp->arch->clone.y + OVERLAY_Y(i);
     }
