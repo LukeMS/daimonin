@@ -969,43 +969,12 @@ enum apply_flag
 #define LOS_TARGET_TALK   3
 #define LOS_TARGET_MOUSE  4
 
-/* LOS_VALIDATE_TARGET() checks that _O_ is a valid object with tag _T_ -- or
- * if _T_ is 0 assume _O_ is already known to be valid -- and not invisible to
- * _PL_. If so, return _O_. If not, return NULL. */
-#define LOS_VALIDATE_TARGET(_PL_, _O_, _T_) \
-    (((!(_T_) || \
-       OBJECT_VALID((_O_), (_T_))) && \
-      !IS_GMASTER_INVIS_TO((_O_), (_PL_)->ob) && \
-      !IS_NORMAL_INVIS_TO((_O_), (_PL_)->ob)) ? (_O_) : NULL)
-
-/* LOS_GET_REAL_TARGET_MODE() returns the target mode to be sent to the client
- * according to the parameters: _O_ is the target object (which should already
- * have been validated); _M_ is the full target mode as sent from the client;
- * _F_ is the friendship value between the player and this target. */
-/* TODO: Dai does not use a traditional alignment system (for the most part --
- * there ARE good/neutral/evil object flags which are remnants from CF). Rather
- * we use friendship. This system is rudimentary. The basic idea is that the
- * friendship between two creatures is measured on a pretty open-ended scale
- * where anything <= ATTACK means the two are enemies, anything >= HELP means
- * friends, and any other value means neutral. In terms of targeting, the
- * client does not recognize neutral targets. Changing this would require a
- * x.Y.z update. For now we just say neutrals are classed as friends.
- *
- * -- Smacky 20150918 */
-#define LOS_GET_REAL_TARGET_MODE(_O_, _M_, _F_) \
-    ((((_M_) == LOS_TARGET_ENEMY && \
-       (_F_) <= FRIENDSHIP_ATTACK) || \
-      ((_M_) == LOS_TARGET_FRIEND && \
-       (_F_) > FRIENDSHIP_ATTACK) || \
-      ((_M_) == LOS_TARGET_TALK && \
-       (_O_)->type != PLAYER) || \
-      ((_M_) >= LOS_TARGET_MOUSE)) ? \
-     (((_F_) <= FRIENDSHIP_ATTACK) ? LOS_TARGET_ENEMY : LOS_TARGET_FRIEND) : LOS_TARGET_SELF)
-
 /* LOS_SET_TARGET() sets the various target pointers for _PL_ according to the
  * other parameters. Most important of these is _M_ (mode). This should be one
  * of LOS_TARGET_SELF, LOS_TARGET_ENEMY, or LOS_TARGET_FRIEND. When it is SELF,
  * essentially _O_ and _I_ are ignored and _PL_->ob and 0 are used instead.
+ * Once all are set, the relevant client is updated.
+ *
  * The macro also sets _PL_->ob->enemy/enemy_count. Here when _M_ is ENEMY,
  * they are set according to _O_. Otherwise they are NULL/0. */
 #define LOS_SET_TARGET(_PL_, _O_, _M_, _I_) \
@@ -1062,6 +1031,7 @@ enum apply_flag
         } \
     } \
     (_PL_)->target_mode = (_M_); \
+    send_target_command((_PL_)); \
     if ((_M_) == LOS_TARGET_ENEMY) \
     { \
         (_PL_)->ob->enemy = (_O_); \
