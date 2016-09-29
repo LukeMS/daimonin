@@ -281,7 +281,6 @@ static player_t *get_player_struct(void)
     p->listening = 9;
     p->last_weapon_sp = -1;
     p->update_los = 1;
-    p->update_target = 1;
 
     /* Disable static socket: important setting to tell the engine the socket is not valid */
     p->socket.status = Ns_Disabled;

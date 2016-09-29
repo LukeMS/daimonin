@@ -399,9 +399,9 @@ void los_find_target(player_t *pl, uint8 mode, sint16 start, sint16 stop, sint16
         m = who->map;
         x = who->x + ox + LosX[i];
         y = who->y + oy + LosY[i];
-
         msp = MSP_GET2(m, x, y);
 
+        /* Should be impossible... */
         if (!msp)
         {
             LOG(llevBug, "BUG:: %s:los_find_target(): missing msp?\n", __FILE__);
@@ -409,34 +409,96 @@ void los_find_target(player_t *pl, uint8 mode, sint16 start, sint16 stop, sint16
             return;
         }
 
-        /* Only monsters and players are targetable so we can immediately
-         * discount this msp if it lackks both flags. */
-        if (!(msp->flags & (MSP_FLAG_ALIVE | MSP_FLAG_PLAYER)))
+        /* For modes other than TALK only monsters and players, and for TALK
+         * only monsters, are targetable. So we can immediately discount this
+         * msp if it lacks the relevant flags. */
+        if ((mode == LOS_TARGET_TALK &&
+             !(msp->flags & MSP_FLAG_ALIVE)) ||
+            !(msp->flags & (MSP_FLAG_ALIVE | MSP_FLAG_PLAYER)))
         {
             continue;
         }
 
         FOREACH_OBJECT_IN_MSP(this, msp, next)
         {
-            if (this != who &&
-                IS_LIVE(this))
+            sint32 friendship;
+
+            if (QUERY_FLAG(this, FLAG_SYS_OBJECT))
             {
-                object_t *target = (this->head) ? this->head : this;
+                break;
+            }
 
-                if (target != pl->target_ob &&
-                    LOS_VALIDATE_TARGET(pl, target, 0))
+            this = (this->head) ? this->head : this;
+
+            if (this == who ||
+                this == pl->target_ob ||
+                ((mode == LOS_TARGET_TALK ||
+                  this->type != PLAYER) &&
+                 this->type != MONSTER) ||
+                !IS_LIVE(this) ||
+                IS_GMASTER_INVIS_TO(this, who) ||
+                IS_NORMAL_INVIS_TO(this, who))
+            {
+                continue;
+            }
+
+            friendship = get_friendship(who, this);
+
+            if ((mode == LOS_TARGET_ENEMY &&
+                 friendship <= FRIENDSHIP_ATTACK) ||
+                (mode == LOS_TARGET_FRIEND &&
+                 friendship > FRIENDSHIP_ATTACK))
+            {
+                LOS_SET_TARGET(pl, this, mode, LosOverlay[ay][ax]);
+                return;
+            }
+            else if ((mode == LOS_TARGET_TALK &&
+                 this->type != PLAYER) ||
+                mode >= LOS_TARGET_MOUSE)
+            {
+                if (friendship <= FRIENDSHIP_ATTACK)
                 {
-                    sint32 friendship = get_friendship(who, target);
-                    uint8  target_mode = LOS_GET_REAL_TARGET_MODE(target, mode, friendship);
+                    LOS_SET_TARGET(pl, this, LOS_TARGET_ENEMY, LosOverlay[ay][ax]);
+                }
+                else
+                {
+                    LOS_SET_TARGET(pl, this, LOS_TARGET_FRIEND, LosOverlay[ay][ax]);
+                }
 
-                    LOS_SET_TARGET(pl, target, target_mode, LosOverlay[ay][ax]);
-                    return;
+                return;
+            }
+            /* TODO: I haven't put a huge amount of thought into this. I
+             * suspect it doesn't quite work as intended, but shouldn't cause
+             * problems either. The theory is that players on PVP squares and
+             * monsters always cannot stack, so under these circumstances break
+             * out of the loop. But players on non-PVP squares can stack, so
+             * continue to next iteration. This logic is broken by SAs in wiz
+             * mode and /create'd multiple mobs so faultless targeting may fail
+             * under those circumstances. But they're rare and temporary so we
+             * can live with those.
+             *
+             * -- Smacky 20160927 */
+            else
+            {
+                if ((msp->flags & MSP_FLAG_PVP) ||
+                    this->type != PLAYER)
+                {
+                    break;
+                }
+                else
+                {
+                    continue;
                 }
             }
         }
     }
 
-    LOS_SET_TARGET(pl, who, LOS_TARGET_SELF, 0);
+    /* Getting here means no suitable target is in LoS. For modes other than
+     * TALK, target SELF. But for TALK, leave current target unchanged. */
+    if (mode != LOS_TARGET_TALK)
+    {
+        LOS_SET_TARGET(pl, who, LOS_TARGET_SELF, 0);
+    }
 }
 
 #include "global.h"

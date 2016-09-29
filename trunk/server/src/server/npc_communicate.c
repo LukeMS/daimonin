@@ -201,14 +201,10 @@ void talk_to_npc(player_t *pl, char *topic)
     if (!OBJECT_VALID(pl->target_ob, pl->target_tag) ||
         pl->target_ob->type == PLAYER)
     {
-        pl->target_ob = NULL;
-
-        command_target(pl->ob, "3");
+        los_find_target(pl, LOS_TARGET_TALK, pl->target_index - 1, pl->socket.mapx * pl->socket.mapy - 1, 0, 0);
     }
 
-    /* If we now have a valid target and it's in LOS and within it's sensing
-     * range (modified if it is asleep), talk to it. */
-    if (OBJECT_VALID(pl->target_ob, pl->target_tag))
+    if (pl->target_ob->type != PLAYER)
     {
         rv_t rv;
 

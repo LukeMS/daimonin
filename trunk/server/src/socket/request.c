@@ -69,6 +69,10 @@ static int  cs_stat_skillexp[]    =
 /* send_target_command() updates the client with the current target data. The
  * function does not change or verify this data, just sends it. So it is the
  * caller's responsibility to do any necessary checks first. */
+/* TODO: Split this to SERVER_CMD_COMBAT (just the first byte, in fact a bit
+ * will do) and SERVER_CMD_TARGET (everything else). Requires Y update.
+ *
+ * -- Smacky 20160929 */
 void send_target_command(player_t *pl)
 {
     char buf[MEDIUM_BUF];

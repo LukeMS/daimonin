@@ -47,9 +47,8 @@ int command_combat(object_t *op, char *params)
         return COMMANDS_RTN_VAL_ERROR;
     }
 
-    pl->combat_mode = !pl->combat_mode;
-    pl->update_target = 1;
     pl->rest_sitting = pl->rest_mode = 0;
+    pl->combat_mode = !pl->combat_mode;
 
     /* Player's pets take their cue from their master. */
     for (ol = pl->pets; ol; ol = ol->next)
@@ -60,6 +59,7 @@ int command_combat(object_t *op, char *params)
         }
     }
 
+    send_target_command(pl);
     return COMMANDS_RTN_VAL_OK;
 }
 
@@ -142,7 +142,6 @@ int command_target(object_t *op, char *params)
         return COMMANDS_RTN_VAL_ERROR;
     }
 
-    pl->update_target = 1;
     return COMMANDS_RTN_VAL_OK;
 }
 

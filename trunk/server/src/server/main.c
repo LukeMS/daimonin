@@ -206,64 +206,46 @@ void process_players2(map_t *map)
 
         /* Check that our target is still valid  -- if not, update client. When
          * mode is SELF, assume that all is well. */
-        /* NOTE: In currrent practical terms this is a rather ridiculous
-         * concern, because the times are so small. But if Dai gets many (100s)
-         * more players in future and/or the tick time is reduced it may be
-         * less daft.
-         *
-         * On my machine the old code took, regardless of mode and assuming the
-         * target was valid, 6-7 ums. This code takes 2-4 ums when mode == SELF
-         * or 8-17 ums (usually 10-12) otherwise -- but see below for how to
-         * reduce this.
-         *
-         * -- Smacky 20150919 */
         if (pl->target_mode != LOS_TARGET_SELF)
         {
-           object_t *target = LOS_VALIDATE_TARGET(pl, pl->target_ob, pl->target_tag);
-
             /* No target (probably means it was a mob which has recently been
-             * killed or otherwise removed)? Target self. */
-            if (!target)
+             * killed or otherwise removed) or target is now invisble to the
+             * player? Target self. */
+            if (!OBJECT_VALID(pl->target_ob, pl->target_tag) ||
+                IS_NORMAL_INVIS_TO(pl->target_ob, who) ||
+                IS_GMASTER_INVIS_TO(pl->target_ob, who))
             {
                 LOS_SET_TARGET(pl, who, LOS_TARGET_SELF, 0);
-                pl->update_target = 1;
             }
             /* target_level differs from the target's actual level? Well,
              * recalculate and update. */
-            else if (pl->target_level != target->level)
+            else if (pl->target_level != pl->target_ob->level)
             {
-                LOS_SET_TARGET(pl, target, pl->target_mode, pl->target_index);
-                pl->update_target = 1;
+                LOS_SET_TARGET(pl, pl->target_ob, pl->target_mode, pl->target_index);
             }
             /* Changed mode (ie, friend becomes enemy or vice versa)? Set
              * pl->target_mode accordingly and update. This means, for example,
              * that a player can keep another player targeted and he will
              * alternate between friend and enemy as their movements carry them
              * in and out of PvP zones so attacking is automatically and
-             * immediately corrected. However this does require extra code
-             * (chiefly a call to get_friendship() -- which I have streamlined
-             * to save 2-4 ums) which adds (very small) amounts of tme (as
-             * above). Comment out this clause to reduce the overall time to
-             * about 5 ums.
+             * immediately corrected.
              *
              * -- Smacky 20150919 */
             else
             {
-                sint32 friendship = get_friendship(who, target);
-                uint8  mode = LOS_GET_REAL_TARGET_MODE(target, pl->target_mode, friendship);
-                
-                if (mode != pl->target_mode)
+                sint32 friendship = get_friendship(who, pl->target_ob);
+
+                if (pl->target_mode == LOS_TARGET_ENEMY &&
+                    friendship > FRIENDSHIP_ATTACK)
                 {
-                    LOS_SET_TARGET(pl, target, mode, pl->target_index);
-                    pl->update_target = 1;
+                    LOS_SET_TARGET(pl, pl->target_ob, LOS_TARGET_FRIEND, pl->target_index);
+                }
+                else if (pl->target_mode == LOS_TARGET_FRIEND &&
+                    friendship <= FRIENDSHIP_ATTACK)
+                {
+                    LOS_SET_TARGET(pl, pl->target_ob, LOS_TARGET_ENEMY, pl->target_index);
                 }
             }
-        }
-
-        if (pl->update_target)
-        {
-            send_target_command(pl);
-            pl->update_target = 0;
         }
 
         if (who->weapon_speed_left <= 0)
@@ -279,12 +261,12 @@ void process_players2(map_t *map)
             {
                 object_t *target = pl->target_ob;
 
-                if (is_melee_range(who, target))
+                if (is_melee_range(who, pl->target_ob))
                 {
                     /* tell our enemy we swing at him now */
-                    update_npc_knowledge(target, who, FRIENDSHIP_TRY_ATTACK, 0);
+                    update_npc_knowledge(pl->target_ob, who, FRIENDSHIP_TRY_ATTACK, 0);
                     pl->rest_mode = 0;
-                    skill_attack(target, who, 0, NULL);
+                    skill_attack(pl->target_ob, who, 0, NULL);
                 }
             }
         }
