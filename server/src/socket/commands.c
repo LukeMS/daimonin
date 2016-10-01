@@ -1599,29 +1599,23 @@ void cs_cmd_addme(char *buf, int len, NewSocket *ns)
         LOG(llevInfo, "Banned player %s tried to add. [%s]\n", hash_name, ns->ip_host);
         error_msg = ADDME_MSG_BANNED;
     }
+    /* Kick any ghost. */
     else
     {
-        char    double_login_warning[] = "3 Double login! Kicking older instance!";
-        player_t *ptmp = first_player;
+        char double_login_warning[] = "3 Double login! Kicking older instance!";
 
-        for (; ptmp; ptmp = ptmp->next)
+        for (pl = first_player; pl; pl = pl->next)
         {
-            /* If a same-named player is already playing, kick him (he's a
-             * ghost) BEFORE we load the player file for this new instance.
-             * This avoids duping. */
-            if ((ptmp->state & ST_PLAYING) &&
-                ptmp->ob->name == hash_name)
+            if ((pl->state & ST_PLAYING) &&
+                pl->ob->name == hash_name)
             {
-                LOG(llevInfo, "Double login! Kicking older instance!");
-                Write_String_To_Socket(ns, SERVER_CMD_DRAWINFO,
-                                       double_login_warning,
-                                       strlen(double_login_warning));
-                ptmp->state &= ~ST_PLAYING;
-                ptmp->state |= ST_ZOMBIE;
-                ptmp->socket.status = Ns_Dead;
-                remove_ns_dead_player(ptmp);/* super hard kick! */
-
-                continue;
+                LOG(llevInfo, "%s (%s)!\n", double_login_warning + 2, hash_name);
+                Write_String_To_Socket(&pl->socket, SERVER_CMD_DRAWINFO, double_login_warning, strlen(double_login_warning));
+                pl->state &= ~ST_PLAYING;
+                pl->state |= ST_ZOMBIE;
+                pl->socket.status = Ns_Dead;
+                remove_ns_dead_player(pl);
+                break; // there can be only one -- this check ensures that.
             }
         }
 
