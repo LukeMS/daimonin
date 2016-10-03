@@ -390,7 +390,8 @@ static void NotifyClients(_server_client_cmd cmd, uint16 flags, object_t *op)
      * *really* inserted. Otherwise eventually the server will crash.
      *
      * -- Smacky 20160921 */
-    if (!QUERY_FLAG(this, FLAG_INSERTED))
+    if (this->type == MONSTER &&
+        !QUERY_FLAG(this, FLAG_INSERTED))
     {
         return;
     }
