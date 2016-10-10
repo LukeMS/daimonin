@@ -615,10 +615,15 @@ static char *PrepareData(_server_client_cmd cmd, uint16 flags, player_t *pl,
         {
             char    name[SMALL_BUF];
             object_t *who = (pl) ? pl->ob : NULL;
-            size_t  len;
+            size_t len;
 
-            sprintf(name, "%s", query_name(op, who, ARTICLE_NONE, (op->type == RING || op->type == AMULET) ? 1 : 0));
-            name[127] = '\0'; // max 127
+            if (snprintf(name, SMALL_BUF, "%s", query_name(op, who, ARTICLE_NONE, (op->type == RING || op->type == AMULET) ? 1 : 0)) < 0)
+            {
+                strcpy(name + SMALL_BUF - 4, "...");
+            }
+
+            name[SMALL_BUF - 1] = '\0';
+
             len = strlen(name);
             *((uint8 *)cp++) = len + 1;
             sprintf(cp, "%s", name);
