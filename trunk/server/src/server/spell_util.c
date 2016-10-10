@@ -1016,7 +1016,7 @@ int cast_cone(object_t *op, object_t *caster, int dir, int strength, int spell_t
         if (QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
             SET_ANIMATION(tmp, (NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * dir);
 
-        if (!insert_ob_in_map(tmp, op->map, op, 0))
+        if (!insert_ob_in_map(tmp, m, op, 0))
             return 0;
         if (tmp->other_arch)
             cone_drop(tmp);
