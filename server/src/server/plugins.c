@@ -37,7 +37,7 @@ struct plugin_hooklist  hooklist    =
     /* FUNCTIONS */
     /* A */
     add_exp,
-    add_item_buff,
+    buff_add,
     add_pet,
     add_quest_containers,
     add_quest_trigger,
@@ -153,7 +153,7 @@ struct plugin_hooklist  hooklist    =
     ready_map_name,
     reload_behaviours,
     remove_ob,
-    remove_item_buff,
+    buff_remove,
     reset_instance_data,
     return_poolchunk_array_real,
     rv_get,

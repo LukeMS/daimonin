@@ -3340,48 +3340,98 @@ object_t *find_next_object(object_t *op, uint8 type, uint8 mode, object_t *root)
     return next;
 }
 
-/*
- * Changes an item back to its original/unbuffed state so that it can be saved
- * or buff effects can be recalculated.
+/* If item's original stats are not already saved, save them to a new buff_force.
+ * If they are already saved, revert item to its original state.
  */
-void revert_buff_stats(object_t *item)
+void buff_set_original_stats(object_t *item)
 {
-    object_t *original;
+    object_t *from;
+    object_t *to;
+    int i;
 
-    if (item && item->original)
+    if (item == NULL || item->buffed == 0 || item->type == PLAYER)
     {
-        original = item->original;
+        return;
+    }
 
-        // The original version will still have the coordinates from when it was copied.
-        original->x = item->x;
-        original->y = item->y;
+    if (item->original == NULL)
+    {
+        to = get_archetype("buff_force");
+        to = insert_ob_in_ob(to, item);
 
-        // Null the item's "original" so it's not copied in copy_object.
-        item->original = NULL;
+        if (to == NULL)
+        {
+            LOG(llevBug, "Could not create/insert original buff force\n");
+            return;
+        }
 
-        // Copy the original over the real item
-        copy_object(original, item);
+        item->original = to;
 
-        // Get rid of the original object.
-        remove_ob(original);
+        from = item;
+        to = item->original;
+    }
+    else
+    {
+        from = item->original;
+        to = item;
+    }
+
+    to->stats.ac = from->stats.ac;
+    to->stats.Cha = from->stats.Cha;
+    to->stats.Con = from->stats.Con;
+    to->stats.dam = from->stats.dam;
+    to->stats.Dex = from->stats.Dex;
+    to->stats.food = from->stats.food;
+    to->stats.grace = from->stats.grace;
+    to->stats.hp = from->stats.hp;
+    to->stats.Int = from->stats.Int;
+    to->stats.maxgrace = from->stats.maxgrace;
+    to->stats.maxhp = from->stats.maxhp;
+    to->stats.maxsp = from->stats.maxsp;
+    to->stats.Pow = from->stats.Pow;
+    to->stats.sp = from->stats.sp;
+    to->stats.Str = from->stats.Str;
+    to->stats.thac0 = from->stats.thac0;
+    to->stats.thacm = from->stats.thacm;
+    to->stats.wc = from->stats.wc;
+    to->stats.Wis = from->stats.Wis;
+
+    to->item_condition = from->item_condition;
+
+    to->item_level = from->item_level;
+    to->item_skill = from->item_skill;
+
+    to->level = from->level;
+    to->magic = from->magic;
+
+    to->path_attuned = from->path_attuned;
+    to->path_denied = from->path_denied;
+    to->path_repelled = from->path_repelled;
+    to->terrain_flag = from->terrain_flag;
+
+    to->value = from->value;
+    to->weapon_speed = from->weapon_speed;
+    to->weight = from->weight;
+    to->weight_limit = from->weight_limit;
+
+    for (i = 0; i < NROFATTACKS; i++)
+    {
+        to->attack[i] = from->attack[i];
+        to->resist[i] = from->resist[i];
     }
 }
 
-/* Copy stats from all BUFF_FORCEs in item's inventory to the item. It will also
- * store the original version of that object in item->original so that it can
- * easily be reverted or compared.
- */
-void fix_buff_stats(object_t *item)
+/* Copy stats from all BUFF_FORCEs in item's inventory to the item. */
+void buff_fix_stats(object_t *item)
 {
     int i = 0;
     uint32 n = 0;
-    object_t *inv,
-           *next;
+    object_t *inv, *next, *original;
     uint8 buffs = 0; // Only tracks if the object still has *any* buffs
 
     if (!item)
     {
-        LOG(llevBug, "fix_buff_stats() called without item!\n");
+        LOG(llevBug, "buff_fix_stats() called without item!\n");
         return;
     }
 
@@ -3390,34 +3440,22 @@ void fix_buff_stats(object_t *item)
         return;
     }
 
-    // Try to create a duplicate of the object to make changing stats relative to the original.
-    if (item->original)
-    {
-        // If orig was found, item should be different than orig, so revert item to orig.
-        revert_buff_stats(item);
-    }
-
-    // Try to create a duplicate of the object to make changing stats relative to the original.
-    item->original = get_object();
-    copy_object(item, item->original);
-
-    // Even though the object isn't on a map or inside another, it shouldn't be removed on cleanup.
-    CLEAR_FLAG(item->original, FLAG_REMOVED);
+    buff_set_original_stats(item);
 
     if (!item->original)
     {
-        LOG(llevDebug, "fix_buff_stats() failed - could not copy original object\n");
+        LOG(llevDebug, "buff_fix_stats() failed - could not revert original object\n");
         return;
      }
 
     FOREACH_OBJECT_IN_OBJECT(inv, item, next)
     {
-        buffs++;
-
-        if (inv->type != BUFF_FORCE)
+        if (inv->type != BUFF_FORCE || inv == item->original)
         {
             continue;
         }
+
+        buffs++;
 
         // Buff is disabled?
         if (!QUERY_FLAG(inv, FLAG_APPLIED))
@@ -3473,8 +3511,10 @@ void fix_buff_stats(object_t *item)
     }
 
     // Make sure the player notices the change if they're wearing the item.
-    if (QUERY_FLAG(item, FLAG_APPLIED) && item->env && item->env->type == PLAYER)
+    if (QUERY_FLAG(item, FLAG_APPLIED))
     {
+        // The item will have been unapplied by this point.
+        //apply_object(item->env, item, AP_APPLY);
         // Only items in the root of players' inventories can be applied.
         FIX_PLAYER(item->env, "buff applied");
     }
@@ -3492,7 +3532,7 @@ void fix_buff_stats(object_t *item)
  * This does not take into account if the object has already taken
  * this buff.
  */
-uint8 check_buff_limit(object_t *op, int nr)
+uint8 buff_check_limit(object_t *op, int nr)
 {
     sint8 real_max = 0; // The max after considering item_condition
     sint8 buffs = 0;
@@ -3540,14 +3580,14 @@ uint8 check_buff_limit(object_t *op, int nr)
 
 }
 
-object_t * check_buff_exists(object_t *item, const char *name)
+object_t * buff_check_exists(object_t *item, const char *name)
 {
     object_t *inv,
            *next;
 
     if (!item || !name)
     {
-        LOG(llevDebug, "check_buff_exists() called without item or name!\n");
+        LOG(llevDebug, "buff_check_exists() called without item or name!\n");
         return NULL;
     }
 
@@ -3571,7 +3611,7 @@ object_t * check_buff_exists(object_t *item, const char *name)
  *
  * Multiple flags can be applied to better inform the user of why the buff wasn't applied.
  */
-int add_item_buff(object_t *item, object_t *buff, short just_checking)
+int buff_add(object_t *item, object_t *buff, short just_checking)
 {
     object_t *oldbuff;
     uint8 ret = BUFF_ADD_SUCCESS;
@@ -3583,13 +3623,13 @@ int add_item_buff(object_t *item, object_t *buff, short just_checking)
     }
 
     // Make sure the item won't exceed its numerical buff limit.
-    if (!check_buff_limit(item, buff->last_sp))
+    if (!buff_check_limit(item, buff->last_sp))
     {
         ret |= BUFF_ADD_LIMITED;
         ret &= ~BUFF_ADD_SUCCESS;
     }
 
-    oldbuff = check_buff_exists(item, buff->name);
+    oldbuff = buff_check_exists(item, buff->name);
 
     if (oldbuff)
     {
@@ -3634,13 +3674,13 @@ int add_item_buff(object_t *item, object_t *buff, short just_checking)
          * of unmerging all and then remerging all.
          */
         item->buffed = 1;
-        fix_buff_stats(item);
+        buff_fix_stats(item);
     }
 
     return ret;
 }
 
-int remove_item_buff(object_t *item, char *name, uint32 nrof)
+int buff_remove(object_t *item, char *name, uint32 nrof)
 {
     object_t *oldbuff;
 
@@ -3649,7 +3689,7 @@ int remove_item_buff(object_t *item, char *name, uint32 nrof)
         return BUFF_ADD_BAD_PARAMS;
     }
 
-    oldbuff = check_buff_exists(item, name);
+    oldbuff = buff_check_exists(item, name);
 
     if (!oldbuff)
     {
@@ -3658,7 +3698,7 @@ int remove_item_buff(object_t *item, char *name, uint32 nrof)
 
     decrease_ob_nr(oldbuff, (nrof > 0) ? nrof : oldbuff->nrof);
 
-    fix_buff_stats(item);
+    buff_fix_stats(item);
 
     return BUFF_ADD_SUCCESS;
 }
