@@ -247,7 +247,7 @@ WS	[ \t]*{NL}?
 				}
             if (op->buffed && op->inv)
             {
-                fix_buff_stats(op);
+                buff_fix_stats(op);
             }
 		    }
 
@@ -1471,7 +1471,7 @@ void save_object(FILE *fp, object_t *op, int flag)
         return;
     }
 
-    revert_buff_stats(op);
+    buff_set_original_stats(op);
 
     if (!(at = op->arch))
     {
