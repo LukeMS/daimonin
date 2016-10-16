@@ -237,7 +237,7 @@ struct plugin_hooklist
     /* FUNCTIONS */
     /* A */
     sint32 (*add_exp)(object_t *, int, int, int);
-    int (*buff_add)(object_t *, object_t *, short);
+    int (*add_item_buff)(object_t *, object_t *, short);
     int (*add_pet)(object_t *, object_t *, int);
     void (*add_quest_containers)(object_t *);
     void (*add_quest_trigger)(object_t *, object_t *);
@@ -369,7 +369,7 @@ struct plugin_hooklist
     map_t *(*ready_map_name)(shstr_t *, shstr_t *, uint32, shstr_t *);
     void  (*reload_behaviours)(object_t *);
     void (*remove_ob)(object_t *);
-    int  (*buff_remove)(object_t *, char *, uint32);
+    int  (*remove_item_buff)(object_t *, char *, uint32);
     void (*reset_instance_data)(player_t *pl);
     void (*return_poolchunk_array_real)(void *, uint32, struct mempool *);
     sint8 (*rv_get)(object_t *, msp_t *, object_t *, msp_t *, rv_t *, uint8);

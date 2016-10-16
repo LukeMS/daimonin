@@ -481,11 +481,11 @@ extern int       auto_apply(object_t *op);
 extern object_t *locate_beacon(shstr_t *id);
 extern void      init_object_initializers();
 extern object_t *find_next_object(object_t *op, uint8 type, uint8 mode, object_t *root);
-extern void      buff_set_original_stats(object_t *item);
-extern void      buff_fix_stats(object_t *item);
-extern object_t *buff_check_exists(object_t *item, const char *name);
-extern int       buff_add(object_t *item, object_t *buff, short just_checking);
-extern int       buff_remove(object_t *item, char *name, uint32 nrof);
+extern void      revert_buff_stats(object_t *item);
+extern void      fix_buff_stats(object_t *item);
+extern object_t *check_buff_exists(object_t *item, const char *name);
+extern int       add_item_buff(object_t *item, object_t *buff, short just_checking);
+extern int       remove_item_buff(object_t *item, char *name, uint32 nrof);
 extern char     *query_name(object_t *what, object_t *who, uint32 nrof, uint8 mode);
 extern map_t    *parent_map(object_t *what);
 
