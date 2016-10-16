@@ -4865,7 +4865,7 @@ static int GameObject_AddBuff(lua_State *L)
     sprintf(buff_str, "arch buff_force\nname %s\n%s\nend", name, buff);
     obj = hooks->load_object_str(buff_str);
 
-    lua_pushnumber(L, hooks->buff_add(WHO, obj, 0));
+    lua_pushnumber(L, hooks->add_item_buff(WHO, obj, 0));
 
     return 1;
 }
@@ -4895,7 +4895,7 @@ static int GameObject_CheckBuff(lua_State *L)
     sprintf(buff_str, "arch buff_force\nname %s\nend", buff);
     obj = hooks->load_object_str(buff_str);
 
-    lua_pushnumber(L, hooks->buff_add(WHO, obj, 1));
+    lua_pushnumber(L, hooks->add_item_buff(WHO, obj, 1));
 
     return 1;
 }
@@ -4917,7 +4917,7 @@ static int GameObject_RemoveBuff(lua_State *L)
 
     get_lua_args(L, "Os|i", &self, &name, &nrof);
 
-    lua_pushnumber(L, hooks->buff_remove(WHO, name, nrof));
+    lua_pushnumber(L, hooks->remove_item_buff(WHO, name, nrof));
 
     return 1;
 }
