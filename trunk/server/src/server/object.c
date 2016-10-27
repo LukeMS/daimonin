@@ -2152,6 +2152,10 @@ static void KillPlayer(player_t *pl, object_t *killer, object_t *killer_owner, c
 
 static void KillMonster(object_t *victim, object_t *killer, object_t *killer_owner)
 {
+    object_t *this,
+             *next;
+    player_t *pl = (killer_owner &&
+                    killer_owner->type == PLAYER) ? CONTR(killer_owner) : NULL;
     object_t *corpse, // is there a corpse?
              *bounty; // if so, whose bounty?
     sint8     loot;   // is there any loot?
@@ -2164,17 +2168,9 @@ static void KillMonster(object_t *victim, object_t *killer, object_t *killer_own
         bounty = NULL;
         loot = (!QUERY_FLAG(victim, FLAG_NO_DROP)) ? 1 : 0;
     }
-    else if (killer_owner->type == PLAYER)
+    /* player kill */
+    else if (pl)
     {
-        object_t *corpse_owner = aggro_calculate_exp(victim, killer_owner);
-
-#if 0
-        if (!corpse_owner)
-        {
-            corpse_owner = killer_owner;
-        }
-
-#endif
         if (killer_owner != killer)
         {
             killer_owner->skillgroup = killer->skillgroup;
@@ -2182,8 +2178,42 @@ static void KillMonster(object_t *victim, object_t *killer, object_t *killer_own
 
         corpse = (QUERY_FLAG(victim, FLAG_CORPSE) ||
                   QUERY_FLAG(victim, FLAG_CORPSE_FORCED)) ? victim : NULL;
-        bounty = corpse_owner;
+        bounty = aggro_calculate_exp(victim, killer_owner);
+
+        if (bounty)
+        {
+            pl = CONTR(bounty);
+        }
+
         loot = (!QUERY_FLAG(victim, FLAG_NO_DROP)) ? 1 : 0;
+
+        /* Players on quests get quest items delivered straight to
+         * their inv. */
+        FOREACH_OBJECT_IN_OBJECT(this, victim, next)
+        {
+            if(this->type == TYPE_QUEST_TRIGGER)
+            {
+                remove_ob(this);
+
+                if (!(pl->group_status & GROUP_STATUS_GROUP))
+                {
+                    insert_quest_item(this, pl->ob); /* single player */
+                }
+                else
+                {
+                    object_t *member;
+
+                    for (member = pl->group_leader; member; member = CONTR(member)->group_next)
+                    {
+                        /* check for out of (kill) range */
+                        if(!(CONTR(member)->group_status & GROUP_STATUS_NOQUEST))
+                        {
+                           insert_quest_item(this, member); /* give it to member */
+                        }
+                    }
+                }
+            }
+        }
     }
     /* mob/npc kill - force a droped corpse without items */
     else
@@ -2196,11 +2226,6 @@ static void KillMonster(object_t *victim, object_t *killer, object_t *killer_own
     /* Unless victim is on a map he won't drop under any circumstances. */
     if (victim->map)
     {
-        object_t *this,
-                 *next;
-        player_t *pl = (killer_owner &&
-                        killer_owner->type == PLAYER) ? CONTR(killer_owner) : NULL;
-
         /* Create any corpse and place it on the map (empty). */
         if (corpse)
         {
@@ -2260,37 +2285,11 @@ static void KillMonster(object_t *victim, object_t *killer, object_t *killer_own
         {
             FOREACH_OBJECT_IN_OBJECT(this, victim, next)
             {
-                remove_ob(this);
-
-                /* Players on quests get quest items delivered straight to
-                 * their inv. */
-                if(this->type == TYPE_QUEST_TRIGGER)
+                if (!QUERY_FLAG(this, FLAG_NO_DROP) &&
+                    (!QUERY_FLAG(this, FLAG_SYS_OBJECT) ||
+                     this->type == RUNE))
                 {
-                    if (pl)
-                    {
-                        if (!(pl->group_status & GROUP_STATUS_GROUP))
-                        {
-                            insert_quest_item(this, killer_owner); /* single player */
-                        }
-                        else
-                        {
-                            object_t *member;
-
-                            for (member = pl->group_leader; member; member = CONTR(member)->group_next)
-                            {
-                                /* check for out of (kill) range */
-                                if(!(CONTR(member)->group_status & GROUP_STATUS_NOQUEST))
-                                {
-                                   insert_quest_item(this, member); /* give it to member */
-                                }
-                            }
-                        }
-                    }
-                }
-                else if (!QUERY_FLAG(this, FLAG_NO_DROP) &&
-                         (!QUERY_FLAG(this, FLAG_SYS_OBJECT) ||
-                          this->type == RUNE))
-                {
+                    remove_ob(this);
                     CLEAR_FLAG(this, FLAG_APPLIED);
 
                     if(!this->item_level &&
