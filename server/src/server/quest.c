@@ -48,6 +48,7 @@ static object_t *find_quest_item(object_t *target, object_t *obj)
         }
         else if (!QUERY_FLAG(tmp, FLAG_SYS_OBJECT) &&
                  tmp->type == obj->type &&
+                 tmp->slaying == obj->slaying &&
                  tmp->name == obj->name &&
                  tmp->title == obj->title)
         {
@@ -74,7 +75,7 @@ static inline object_t *find_one_drop_quest_item(object_t *target, object_t *obj
         FOREACH_OBJECT_IN_OBJECT(tmp, tmp, next)
         {
             /* the race to arch compare is needed for faked items and to hold comp. to beta 3 and lower */
-            if (tmp->name == obj->name && tmp->race == obj->arch->name && tmp->title == obj->title)
+            if (tmp->slaying == obj->slaying && tmp->name == obj->name && tmp->race == obj->arch->name && tmp->title == obj->title)
                 return tmp;
         }
     }
