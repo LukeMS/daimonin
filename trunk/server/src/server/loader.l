@@ -244,10 +244,6 @@ WS	[ \t]*{NL}?
 					else
 						singularity = create_singularity(yval());
 					/* note: speed will handled in load_object() for this */
-				}
-            if (op->buffed && op->inv)
-            {
-                fix_buff_stats(op);
             }
 		    }
 
@@ -869,6 +865,10 @@ int load_object(void *fp, object_t *op, void *mybuffer, int bufstate, int mapfla
           object_initializers[op->type](op);
 	}
 
+    if (op->buffed && op->inv)
+    {
+        buff_fix_stats(op);
+    }
 
     /*LOG(llevDebug," load completed, object=%s %s (%d - %d)\n",op->name,op->title, op->item_quality, op->item_condition);*/
     return retval;
@@ -1471,7 +1471,7 @@ void save_object(FILE *fp, object_t *op, int flag)
         return;
     }
 
-    revert_buff_stats(op);
+    buff_set_original_stats(op);
 
     if (!(at = op->arch))
     {
