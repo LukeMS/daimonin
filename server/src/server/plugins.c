@@ -37,13 +37,14 @@ struct plugin_hooklist  hooklist    =
     /* FUNCTIONS */
     /* A */
     add_exp,
-    add_item_buff,
     add_pet,
     add_quest_containers,
     add_quest_trigger,
     adjust_light_source,
     arch_to_object,
     /* B */
+    buff_add,
+    buff_remove,
     /* C */
     cast_spell,
     check_path,
@@ -153,7 +154,6 @@ struct plugin_hooklist  hooklist    =
     ready_map_name,
     reload_behaviours,
     remove_ob,
-    remove_item_buff,
     reset_instance_data,
     return_poolchunk_array_real,
     rv_get,
