@@ -180,8 +180,6 @@
     <ClCompile Include="..\..\..\src\socket\request.c" />
     <ClCompile Include="..\..\..\src\socket\startup.c" />
     <ClCompile Include="..\..\..\src\socket\write.c" />
-    <ClCompile Include="..\..\..\src\tests\benchmark_main.c" />
-    <ClCompile Include="..\..\..\src\tests\test_main.c" />
     <ClCompile Include="..\..\..\src\server\aggro.c" />
     <ClCompile Include="..\..\..\src\server\anim.c" />
     <ClCompile Include="..\..\..\src\server\arch.c" />

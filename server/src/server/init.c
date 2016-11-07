@@ -638,8 +638,6 @@ static void help()
     LOG(llevInfo, " -o          Prints out info on what was defined at compile time.\n");
     LOG(llevInfo, " -stat_loss <num> - if not 0, players lose stat(s) when they die.\n");
     LOG(llevInfo, " -v          Print version and contributors.\n");
-    LOG(llevInfo, " -test       Run unit tests and exit.\n");
-    LOG(llevInfo, " -benchmark  Run benchmarks and exit.\n");
 
 #ifndef SECURE
     LOG(llevInfo, "\nThe following options are only available if a secure server was not compiled.\n");
@@ -1127,8 +1125,6 @@ struct Command_Line_Options options[]   =
     {"-m9", 0, 3, set_dumpmon9}, {"-mA", 0, 3, set_dumpmonA}, {"-mt", 1, 3, set_dumpmont},
 #endif
     {"-stat_loss", 1, 3, set_stat_loss},
-    {"-test", 0, 4, run_unit_tests},
-    {"-benchmark", 0, 4, run_benchmarks}
 };
 
 /* Note since this may be called before the library has been set up,

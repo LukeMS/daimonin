@@ -24,7 +24,7 @@
 VPATH = @srcdir@
 srcdir = @srcdir@
 
-LOCAL_LIBRARIES = ../porting/libporting.a ../protocol/libprotocol.a ../tests/libtest.a ../socket/socket.a ../3rdparty/zlib/zlib.a
+LOCAL_LIBRARIES = ../porting/libporting.a ../protocol/libprotocol.a ../socket/socket.a ../3rdparty/zlib/zlib.a
 
 SRCS = \
 	aggro.c \
@@ -127,7 +127,7 @@ INCLUDES= $(EXTRA_INCLUDES) -I../include -I$(srcdir)/../include
 
 LDFLAGS = @LDFLAGS@
 
-LIBS = @CHECK_LIBS@ @LIBS@ $(EXTRA_LIBS)
+LIBS = @LIBS@ $(EXTRA_LIBS)
 
 SHELL = @BOURNE_SHELL@
 
