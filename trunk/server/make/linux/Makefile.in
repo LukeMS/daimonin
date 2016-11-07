@@ -77,7 +77,6 @@ SUBDIRS = \
 	../../src/protocol \
 	../../src/3rdparty/zlib \
 	../../src/socket \
-	../../src/tests \
 	../../src/server \
 	../../src/include \
 	../../src/3rdparty/lua \

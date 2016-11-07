@@ -13,14 +13,6 @@ http://daimonin.sourceforge.net
 
 == Advanced configure options ==
 
---enable-benchmarks
-  enable the benchmarking code. Requires libcheck. 
-  Run benchmarks with "daimonin_server -benchmark"
-
---enable-tests
-  enable unit tests. Requires libcheck. 
-  Run unit tests with "daimonin_server -test"
-
 --enable-unredistributable-features
   select fast but non-GPL-compatible algorithms very possible.
   The resulting binary cannot be redistributed legally.

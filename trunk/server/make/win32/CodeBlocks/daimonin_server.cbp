@@ -398,18 +398,6 @@
 		<Unit filename="..\..\..\src\socket\write.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\..\src\tests\benchmark_main.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\src\tests\benchmark_shstr.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\src\tests\test_main.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\..\src\tests\test_shstr.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="..\..\..\src\3rdparty\zlib\adler32.c">
 			<Option compilerVar="CC" />
 		</Unit>

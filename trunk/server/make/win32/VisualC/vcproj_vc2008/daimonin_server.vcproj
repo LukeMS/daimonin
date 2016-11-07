@@ -303,18 +303,6 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="tests"
-				>
-				<File
-					RelativePath="..\..\..\src\tests\benchmark_main.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\src\tests\test_main.c"
-					>
-				</File>
-			</Filter>
-			<Filter
 				Name="server"
 				>
 				<File
