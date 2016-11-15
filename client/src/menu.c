@@ -42,7 +42,7 @@ int                     media_show_update;
 int                     keybind_startoff    = 0;
 static char            *get_range_item_name(int id);
 
-int                     quickslots_loaded = FALSE;
+int                     quickslots_loaded = 0;
 _quickslot_two          new_quickslots[MAX_QUICK_SLOTS];
 int                     quickslots_pos[MAX_QUICK_SLOTS][2]  =
     {
@@ -2308,5 +2308,5 @@ void quickslot_swap(int qs_dest, int qs_src)
 void quickslot_init()
 {
     memset(&new_quickslots, 0, sizeof(new_quickslots));
-    quickslots_loaded = FALSE;
+    quickslots_loaded = 0;
 }

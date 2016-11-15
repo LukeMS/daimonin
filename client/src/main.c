@@ -2048,11 +2048,11 @@ int main(int argc, char *argv[])
             }
         }
 
-        if (GameStatus == GAME_STATUS_PLAY && cpl.ob && cpl.ob->inv && quickslots_loaded == FALSE)
+        if (GameStatus == GAME_STATUS_PLAY && cpl.ob && cpl.ob->inv && quickslots_loaded == 0)
         {
             LOG(LOG_MSG, "Loading quickslot settings for server\n");
             load_quickslots_entrys();
-            quickslots_loaded = TRUE;
+            quickslots_loaded = 1;
         }
 
         /* TODO: This should be moved to the anim functions, but for that we
